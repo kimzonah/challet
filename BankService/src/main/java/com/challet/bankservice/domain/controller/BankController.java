@@ -1,6 +1,7 @@
 package com.challet.bankservice.domain.controller;
 
 import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
@@ -82,6 +83,16 @@ public class BankController {
             @ApiResponse(responseCode = "400", description = "이체 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity processAccountTransfer(@RequestBody AccountTransferRequestDTO accountTransferRequestDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+    
+    @PostMapping("/challet-banks/mydatas")
+    @Operation(summary = "마이데이터 연결", description = "선택한 은행 기반 마이 데이터 연결")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "마이데이터 연결 성공"),
+            @ApiResponse(responseCode = "400", description = "마이데이터 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity connectMyData(@RequestBody MyDataConnectionRequestDTO myDataConnectionRequestDTO){
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
