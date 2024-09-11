@@ -66,6 +66,18 @@ public class ChalletBankController {
         return null;
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "챌렛은행 계좌 거래 내역 검색", description = "keyword, category를 통해 거래 내역 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검색 성공"),
+            @ApiResponse(responseCode = "400", description = "검색 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<List<TransactionHistoryResponseDTO>> searchAccountTransactions(@RequestParam String keyword,
+                                                                                         @RequestParam String category){
+        return null;
+    }
+
+
     @PostMapping("/payments")
     @Operation(summary = "결제 서비스", description = "결제 금액, 결제 장소, 결제 카테고리 데이터를 이용한 결제")
     @ApiResponses(value = {
