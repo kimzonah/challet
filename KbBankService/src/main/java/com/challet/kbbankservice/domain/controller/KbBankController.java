@@ -1,6 +1,7 @@
 package com.challet.kbbankservice.domain.controller;
 
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.TransactionHistoryResponseDTO;
 import com.challet.kbbankservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/bank-service/kb-banks")
 @Tag(name = "ChalletController", description="KB은행 컨트롤러")
@@ -24,7 +27,17 @@ public class KbBankController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    public ResponseEntity<AccountInfoResponseDTO> getBankAccounts(){
+    public ResponseEntity<AccountInfoResponseDTO> getAccountInfo(){
+        return null;
+    }
+
+    @GetMapping("/account")
+    @Operation(summary = "국민은행 계좌내역 조회", description = "계좌 ID를 통해 계좌내역 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
+    public ResponseEntity<List<TransactionHistoryResponseDTO>> getAccountTransactions(){
         return null;
     }
 }
