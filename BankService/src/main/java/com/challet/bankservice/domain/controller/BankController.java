@@ -9,10 +9,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,5 +40,15 @@ public class BankController {
     public ResponseEntity<List<TransactionHistoryResponseDTO>> getAccountTransactions() {
 
         return null;
+    }
+
+    @PostMapping("/challet-banks")
+    @Operation(summary = "챌렛은행 계좌 생성", description = "계좌를 생성하며 입력받은 전화번호를 ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity createAccount(@RequestBody String phoneNumber) {
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
