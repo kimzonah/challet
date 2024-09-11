@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "welcome 요청 DTO")
-public class WelcomeRequest {
+@Schema(description = "프로필 사진 수정 요청 DTO")
+public class UserUpdateProfileRequestDTO {
 
-    @Schema(description = "요청 보낼 메세지")
-    private String message;
+    @Schema(description = "새 프로필 이미지")
+    private String profileImage;
 
 }
