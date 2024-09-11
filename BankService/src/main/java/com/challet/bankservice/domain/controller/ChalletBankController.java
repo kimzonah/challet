@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bank-service")
+@RequestMapping("/bank-service/challet-banks")
 @Tag(name = "ChalletController", description="챌렛 은행 컨트롤러")
 public class ChalletBankController {
 
@@ -35,8 +35,8 @@ public class ChalletBankController {
         return null;
     }
 
-    @GetMapping("/challet-banks")
-    @Operation(summary = "챌렛계좌 내역 조회", description = "계좌id를 이용하여 조회합니다")
+    @GetMapping("/accounts")
+    @Operation(summary = "챌렛계좌 거래 내역 조회", description = "계좌id를 이용하여 조회합니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -46,7 +46,7 @@ public class ChalletBankController {
         return null;
     }
 
-    @PostMapping("/challet-banks")
+    @PostMapping("/")
     @Operation(summary = "챌렛은행 계좌 생성", description = "계좌를 생성하며 입력받은 전화번호를 ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
@@ -56,7 +56,7 @@ public class ChalletBankController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/challet-banks/details")
+    @GetMapping("/details")
     @Operation(summary = "챌렛계좌 상세 거래 내역 조회", description = "계좌 상세 거래내역 조회 내역")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "계좌 상세 거래내역 조회 성공"),
@@ -66,7 +66,7 @@ public class ChalletBankController {
         return null;
     }
 
-    @PostMapping("/challet-banks/payments")
+    @PostMapping("/payments")
     @Operation(summary = "결제 서비스", description = "결제 금액, 결제 장소, 결제 카테고리 데이터를 이용한 결제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "결제 성공"),
@@ -76,7 +76,7 @@ public class ChalletBankController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/challet-banks/account-transfers")
+    @PostMapping("/account-transfers")
     @Operation(summary = "계좌 이체 서비스", description = "이체 계좌, 이체 금액  데이터를 이용한 결제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "이체 성공"),
@@ -86,7 +86,7 @@ public class ChalletBankController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
-    @PostMapping("/challet-banks/mydatas")
+    @PostMapping("/mydatas")
     @Operation(summary = "마이데이터 연결", description = "선택한 은행 기반 마이 데이터 연결")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "마이데이터 연결 성공"),
