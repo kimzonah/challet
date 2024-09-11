@@ -1,5 +1,6 @@
 package com.challet.bankservice.domain.controller;
 
+import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
@@ -56,10 +57,20 @@ public class BankController {
     @GetMapping("/challet-banks/details")
     @Operation(summary = "챌렛계좌 상세 거래 내역 조회", description = "계좌 상세 거래내역 조회 내역")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "계좌 상세 거래내역 조회 성공"),
+            @ApiResponse(responseCode = "201", description = "계좌 상세 거래내역 조회 성공"),
             @ApiResponse(responseCode = "400", description = "계좌 상세 거래내역 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails(){
         return null;
+    }
+
+    @PostMapping("/payments")
+    @Operation(summary = "결제 서비스", description = "결제 금액, 결제 장소, 결제 카테고리 데이터를 이용한 결제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "결제 성공"),
+            @ApiResponse(responseCode = "400", description = "결제 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity processPayment(@RequestBody PaymentRequestDTO paymentRequestDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
