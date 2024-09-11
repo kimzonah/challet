@@ -1,6 +1,7 @@
 package com.challet.kbbankservice.domain.controller;
 
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.kbbankservice.domain.dto.response.TransactionHistoryResponseDTO;
 import com.challet.kbbankservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +39,16 @@ public class KbBankController {
             @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     public ResponseEntity<List<TransactionHistoryResponseDTO>> getAccountTransactions(){
+        return null;
+    }
+
+    @GetMapping("/details")
+    @Operation(summary = "극민은행 상세 거래 내역 조회", description = "계좌 상세 거래내역 조회 내역")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계좌 상세 거래내역 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "계좌 상세 거래내역 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails(){
         return null;
     }
 }
