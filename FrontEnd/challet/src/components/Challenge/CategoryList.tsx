@@ -1,67 +1,93 @@
-import React from 'react';
+import React, { useState } from 'react';
+import AllSearch from '../../assets/Challenge/Search.png';
+import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
+import Car from '../../assets/Challenge/Car.png';
+import Coffee from '../../assets/Challenge/Coffee.png';
+import shopping from '../../assets/Challenge/Shopping.png';
 
 interface CategoryProps {
   icon: string;
   label: string;
   isActive: boolean;
+  onClick: (label: string) => void;
 }
 
-const Category: React.FC<CategoryProps> = ({ icon, label, isActive }) => {
+function Category({ icon, label, isActive, onClick }: CategoryProps) {
   const borderClass = isActive ? 'border-2 border-teal-500 border-solid' : '';
   const textColorClass = isActive ? 'text-teal-500' : 'text-zinc-400';
 
   return (
-    <div>
+    <button
+      onClick={() => onClick(label)}
+      className="flex flex-col items-center bg-white"
+    >
       <div
-        className={`flex flex-col justify-center items-center px-2.5 bg-gray-100 rounded-full h-[60px] w-[60px] ${borderClass}`}
+        className={`flex justify-center items-center bg-gray-100 rounded-full ${borderClass}`}
       >
         <img
-          loading='lazy'
+          loading="lazy"
           src={icon}
           alt={`${label} icon`}
-          className='object-contain w-10 aspect-square'
+          className="object-contain w-full"
         />
       </div>
+      <div className="pb-1"></div>
       <div
-        className={`self-center text-sm font-medium tracking-wider text-center ${textColorClass}`}
+        className={`text-sm font-medium tracking-wider text-center ${textColorClass}`}
       >
         {label}
       </div>
-    </div>
+    </button>
   );
-};
+}
 
-const CategoryList: React.FC = () => {
+function CategoryList() {
+  const [activeCategory, setActiveCategory] = useState('전체');
+
   const categories = [
     {
-      icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/94d3656e83bbb171252292737a504ea9868aafdcac2c8be96438d9a3eaeae764?placeholderIfAbsent=true&apiKey=656f776864a74c6a987a4837913d3a96',
+      icon: AllSearch,
       label: '전체',
-      isActive: true,
+      isActive: activeCategory === '전체',
     },
     {
-      icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/5bff82b392fbf0ddd0121ede5d1d8229b97590ad0deda084fe3939a26f23191a?placeholderIfAbsent=true&apiKey=656f776864a74c6a987a4837913d3a96',
+      icon: Delivery,
       label: '배달',
-      isActive: false,
+      isActive: activeCategory === '배달',
     },
     {
-      icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/22d57a3dcb6d86b904030ce7964d0c580b721436ef5790aa433c16a206649f66?placeholderIfAbsent=true&apiKey=656f776864a74c6a987a4837913d3a96',
+      icon: Coffee,
+      label: '커피',
+      isActive: activeCategory === '커피',
+    },
+    {
+      icon: Car,
       label: '교통',
-      isActive: false,
+      isActive: activeCategory === '교통',
     },
     {
-      icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/ea0b4eee14033226b22e944ea5f5a303dc418308da18d60717749bd4e663b80f?placeholderIfAbsent=true&apiKey=656f776864a74c6a987a4837913d3a96',
+      icon: shopping,
       label: '생활',
-      isActive: false,
+      isActive: activeCategory === '생활',
     },
   ];
 
+  const handleCategoryClick = (label: string) => {
+    setActiveCategory(label);
+    console.log(`${label} 카테고리 선택됨`);
+  };
+
   return (
-    <div className='flex overflow-hidden gap-6 px-6 py-2.5 mt-3.5 bg-white'>
+    <div className="flex overflow-x-auto gap-6 bg-white scrollbar-hide"> {/* X축 오버플로우 활성화 */}
       {categories.map((category, index) => (
-        <Category key={index} {...category} />
+        <Category
+          key={index}
+          {...category}
+          onClick={handleCategoryClick}
+        />
       ))}
     </div>
   );
-};
+}
 
 export default CategoryList;

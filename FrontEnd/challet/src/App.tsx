@@ -2,8 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage/LoginPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import ChallengeFeed from './components/Challenge/ChallengeFeed';
-import ChallengeForm from './components/Challenge/ChallengeForm';
-import Navbar from './components/navigation';
+import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
 import MyPage from './pages/MyPage/MyPage';
@@ -28,10 +27,6 @@ function App() {
           <Route
             path='/challet-service/challenges/:id'
             element={<ChallengeFeed />}
-          />
-          <Route
-            path='/challet-service/challege-form'
-            element={<ChallengeForm />}
           />
         </Routes>
         {/* 네비게이션 바 */}
