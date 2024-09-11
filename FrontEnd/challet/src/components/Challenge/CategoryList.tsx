@@ -11,7 +11,7 @@ const Category: React.FC<CategoryProps> = ({ icon, label, isActive }) => {
   const textColorClass = isActive ? 'text-teal-500' : 'text-zinc-400';
 
   return (
-    <div className='flex flex-col flex-1'>
+    <div>
       <div
         className={`flex flex-col justify-center items-center px-2.5 bg-gray-100 rounded-full h-[60px] w-[60px] ${borderClass}`}
       >

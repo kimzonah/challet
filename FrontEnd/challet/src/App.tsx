@@ -1,16 +1,12 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
-import LoginPage from './pages/LoginPage';
-import ChallengePage from './pages/ChallengePage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import ChallengePage from './pages/ChallengePage/ChallengePage';
 import ChallengeFeed from './components/Challenge/ChallengeFeed';
 import ChallengeForm from './components/Challenge/ChallengeForm';
 import Navbar from './components/navigation';
-import WalletPage from './pages/WalletPage';
-import ChallengePage from './pages/ChallengePage';
-import AnalysisPage from './pages/AnalysisPage';
-import MyPage from './pages/MyPage';
-import LoginPage from './pages/LoginPage';
+import WalletPage from './pages/WalletPage/WalletPage';
+import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
+import MyPage from './pages/MyPage/MyPage';
 import './App.css';
 
 function App() {

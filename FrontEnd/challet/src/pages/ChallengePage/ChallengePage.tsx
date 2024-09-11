@@ -8,9 +8,8 @@ const ChallengePage = () => {
 
   return (
     <div>
-      <div className='challenge-page'></div>
-      <CategoryList />
-      <ChallengeForm />
+      {/* <CategoryList /> */}
+      {/* <ChallengeForm /> */}
       {/* <ChallengeList /> */}
       <button onClick={() => navigate('/challet-service/challenges/1')}>
         <span>1번 챌린지</span>
