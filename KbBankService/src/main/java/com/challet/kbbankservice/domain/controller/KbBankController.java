@@ -1,16 +1,30 @@
 package com.challet.kbbankservice.domain.controller;
 
+import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
+import com.challet.kbbankservice.global.exception.ExceptionDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/kb-bank-service")
+@RequestMapping("/bank-service/kb-banks")
+@Tag(name = "ChalletController", description="KB은행 컨트롤러")
 public class KbBankController {
-    
-    //개발 시 지우기
-    @GetMapping("/welcome")
-    public String welcome() {
-        return "Welcome to KB-Bank Service";
+
+    @GetMapping("/")
+    @Operation(summary = "국민은행 조회", description = "전화번호를 이용하여 국민은행 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
+    public ResponseEntity<AccountInfoResponseDTO> getBankAccounts(){
+        return null;
     }
 }
