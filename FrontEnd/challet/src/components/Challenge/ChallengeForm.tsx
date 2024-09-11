@@ -1,14 +1,13 @@
 const ChallengeForm = () => {
   return (
     <div>
-      <h1>Challenge Form</h1>
       <div className='flex flex-col w-[336px] items-start gap-2.5 px-[11px] py-[22px] relative bg-white rounded-[15px] overflow-hidden'>
         <div className='relative w-[237px] h-14'>
           <div className='absolute w-[50px] h-[50px] top-[3px] left-0 bg-[#7f797980] rounded-[7px] overflow-hidden'>
             <img
               className='absolute w-10 h-10 top-[5px] left-[5px] object-cover'
               alt='Element'
-              src='3dicons.png'
+              src='../assets/3dicons.png'
             />
           </div>
           <div className='flex flex-col w-[175px] items-start gap-1 absolute top-0 left-[62px]'>
@@ -31,7 +30,7 @@ const ChallengeForm = () => {
                 <img
                   className='absolute w-[11px] h-[11px] top-0.5 left-0.5'
                   alt='Subtract'
-                  src='subtract.svg'
+                  src='./assets/Time_fill.png'
                 />
               </div>
             </div>
