@@ -1,6 +1,7 @@
 package com.challet.bankservice.domain.controller;
 
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
 import com.challet.bankservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,5 +51,15 @@ public class BankController {
     })
     public ResponseEntity createAccount(@RequestBody String phoneNumber) {
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/challet-banks/details")
+    @Operation(summary = "챌렛계좌 상세 거래 내역 조회", description = "계좌 상세 거래내역 조회 내역")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계좌 상세 거래내역 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "계좌 상세 거래내역 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails(){
+        return null;
     }
 }
