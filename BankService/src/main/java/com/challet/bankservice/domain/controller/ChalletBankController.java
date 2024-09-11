@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bank-service")
 @Tag(name = "ChalletController", description="챌렛 은행 컨트롤러")
-public class BankController {
+public class ChalletBankController {
 
     @GetMapping("/")
     @Operation(summary = "챌렛은행 조회", description = "전화번호를 이용하여 계좌를 조회합니다")
