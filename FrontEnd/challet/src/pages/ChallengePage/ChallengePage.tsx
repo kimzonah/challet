@@ -5,8 +5,8 @@ import CategoryList from '../../components/Challenge/CategoryList';
 const ChallengePage = () => {
   const [activeTab, setActiveTab] = useState('챌린지 찾기'); // 기본 활성화된 탭
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
-  const [keyword, setKeyword] = useState('null'); // 기본 keyword
-  const [category, setCategory] = useState('null'); // 기본 category
+  const [keyword] = useState('null'); // 기본 keyword
+  const [category] = useState('null'); // 기본 category
 
   const tabs = [{ label: '챌린지 찾기' }, { label: '나의 챌린지' }];
 
