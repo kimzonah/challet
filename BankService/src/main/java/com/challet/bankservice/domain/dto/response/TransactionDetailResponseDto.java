@@ -22,6 +22,6 @@ public class TransactionDetailResponseDto {
     private String withdrawal;
     @Schema(description = "거래 후 잔액")
     private Long transactionBalance;
-    @Schema(description = "카테고리")
+    @Schema(description = "카테고리", allowableValues = {"DELIVERY","TRANSPORT","COFFEE","SHOPPING"})
     private String category;
 }
