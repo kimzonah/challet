@@ -32,7 +32,7 @@ springdoc:
   api-docs:
     version: openapi_3_1
     enabled: true
-    path: /nh-bank-service/v3/api-docs
+    path: nh-bank-service/v3/api-docs
     # 게이트웨이 라우팅에서 prefix를 제거하지 않았다면 해당 설정을 추가
     # json으로 swagger를 변환시켜 주고 받기
   enable-spring-security: true
