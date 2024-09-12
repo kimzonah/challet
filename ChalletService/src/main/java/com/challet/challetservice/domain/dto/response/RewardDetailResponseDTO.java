@@ -34,6 +34,6 @@ public class RewardDetailResponseDTO {
     private Long spendingAmount;
 
     @Schema(description = "리워드 종류(실패 : 0, 성공 : 1)")
-    private boolean type;
+    private Boolean type;
 
 }

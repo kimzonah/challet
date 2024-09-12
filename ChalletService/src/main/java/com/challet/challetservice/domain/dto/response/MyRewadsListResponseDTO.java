@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class MyRewadsListResponseDTO {
 
     @Schema(description = "리워드ID")
-    private int id;
+    private Integer id;
 
     @Schema(description = "리워드 종류 (실패 : 0, 성공 : 1)")
-    private boolean type;
+    private Boolean type;
 
 }

@@ -1,7 +1,9 @@
 package com.challet.challetservice.domain.controller;
 
+import com.challet.challetservice.domain.dto.request.TokenRefreshRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserLoginRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.TokenRefreshResponseDTO;
 import com.challet.challetservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,6 +40,16 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginRequestDTO request){
+        return null;
+    }
+
+    @Operation(summary = "토큰 재발급", description = "리프레시 토큰을 입력 받아 액세스 토큰 재발급")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공"),
+            @ApiResponse(responseCode = "400", description = "토큰 재발급 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenRefreshResponseDTO> refresh(@RequestBody TokenRefreshRequestDTO request){
         return null;
     }
 

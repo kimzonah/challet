@@ -30,9 +30,9 @@ public class ChallengeRegisterRequestDTO {
     private LocalDate endDate;
 
     @Schema(description = "참여 가능 인원")
-    private int maxParticipants;
+    private Integer maxParticipants;
 
     @Schema(description = "공개 여부 (비공개 : 0, 공개 : 1)")
-    private boolean isPublic;
+    private Boolean isPublic;
 
 }

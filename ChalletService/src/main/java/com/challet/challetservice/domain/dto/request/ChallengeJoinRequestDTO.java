@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ChallengeJoinRequestDTO {
 
     @Schema(description = "챌린지 공개 여부 (공개 : 1, 비공개 : 0)")
-    private boolean isPublic;
+    private Boolean isPublic;
 
     @Schema(description = "초대코드")
     private String inviteCode;

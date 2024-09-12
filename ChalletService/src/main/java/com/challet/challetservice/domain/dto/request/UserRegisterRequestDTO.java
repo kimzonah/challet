@@ -26,7 +26,7 @@ public class UserRegisterRequestDTO {
     private String profileImage;
 
     @Schema(description = "나이")
-    private int age;
+    private Integer age;
 
     @Schema(description = "성별")
     private String gender;

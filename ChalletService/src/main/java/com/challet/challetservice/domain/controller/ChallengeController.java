@@ -4,7 +4,7 @@ import com.challet.challetservice.domain.dto.request.ChallengeJoinRequestDTO;
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
-import com.challet.challetservice.domain.dto.response.SharedTransactionListResponseDTO;
+import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,7 +105,7 @@ public class ChallengeController {
             @Parameter(name = "id", description = "챌린지ID", in = ParameterIn.PATH),
     })
     @GetMapping("/{id}/shared-transactions")
-    public ResponseEntity<List<SharedTransactionListResponseDTO>> getSharedTransactions(@RequestHeader(value = "Authorization") String header, @PathVariable("id") String id) {
+    public ResponseEntity<List<SharedTransactionDetailResponseDTO>> getSharedTransactions(@RequestHeader(value = "Authorization") String header, @PathVariable("id") String id) {
         return null;
     }
 

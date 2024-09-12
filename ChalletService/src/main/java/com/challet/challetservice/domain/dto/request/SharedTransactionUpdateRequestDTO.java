@@ -4,15 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "공유 거래 내역 수동 등록 요청 DTO")
-public class SharedTransactionRegisterRequestDTO {
+@Schema(description = "공유 거래 내역 수정 요청 DTO")
+public class SharedTransactionUpdateRequestDTO {
 
     @Schema(description = "이미지")
     private String image;

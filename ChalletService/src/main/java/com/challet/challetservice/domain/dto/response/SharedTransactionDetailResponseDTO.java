@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "공유 거래 내역 목록 조회 응답 DTO")
-public class SharedTransactionListResponseDTO {
+public class SharedTransactionDetailResponseDTO {
 
     @Schema(description = "내가 공유한 거래 내역인지 여부")
-    private boolean isMine;
+    private Boolean isMine;
 
     @Schema(description = "공유자 ID")
     private Long userId;
@@ -44,5 +44,20 @@ public class SharedTransactionListResponseDTO {
 
     @Schema(description = "이미지")
     private String image;
+
+    @Schema(description = "3점 이모지 갯수")
+    private Integer threeEmojiNum;
+
+    @Schema(description = "2점 이모지 갯수")
+    private Integer twoEmojiNum;
+
+    @Schema(description = "1점 이모지 갯수")
+    private Integer oneEmojiNum;
+
+    @Schema(description = "댓글 갯수")
+    private Integer commentNum;
+
+    @Schema(description = "내가 누른 이모지")
+    private Integer pushedEmoji;
 
 }
