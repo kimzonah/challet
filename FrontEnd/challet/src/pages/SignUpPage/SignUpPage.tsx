@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // 페이지 이동 및 데이터 수신을 위해 사용
-import axiosInstance from '../../api/axios';
-import { AxiosResponse, AxiosError } from 'axios';
+import useSignUpStore from '../../store/useSignUpStore'; // Zustand store 사용
 
 const SignUpPage = () => {
   const location = useLocation(); // 이전 페이지에서 전달된 데이터 받기
   const navigate = useNavigate(); // 페이지 이동을 위해 사용
 
+  const { setSignUpData } = useSignUpStore(); // Zustand로 상태 저장
   const [name, setName] = useState(''); // 이름 입력 상태
   const [idNumberFront, setIdNumberFront] = useState(''); // 주민등록번호 앞자리
   const [idNumberBackFirst, setIdNumberBackFirst] = useState(''); // 주민등록번호 뒷자리 첫 숫자
@@ -14,6 +14,7 @@ const SignUpPage = () => {
     location.state?.phoneNumber || ''
   ); // 전화번호 상태 (인증된 번호가 있으면 자동 입력)
   const [isFormValid, setIsFormValid] = useState(false); // 회원가입 버튼 활성화 여부
+  const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지 상태
 
   // 나이 계산 함수 (주민번호 앞자리로 계산)
   const calculateAge = (idFront: string): number => {
@@ -35,7 +36,6 @@ const SignUpPage = () => {
 
   // 모든 필드가 올바르게 입력되었는지 확인하는 함수
   useEffect(() => {
-    // 모든 필드가 입력되었고, 전화번호는 11자리여야 함
     if (
       name &&
       idNumberFront.length === 6 &&
@@ -43,6 +43,7 @@ const SignUpPage = () => {
       phoneNumber.length === 11
     ) {
       setIsFormValid(true);
+      setErrorMessage('');
     } else {
       setIsFormValid(false);
     }
@@ -60,28 +61,16 @@ const SignUpPage = () => {
       return;
     }
 
-    // 전송 데이터
-    const userData = {
+    // 입력된 데이터 전역 상태에 저장 (서버로 전송하지 않음)
+    setSignUpData({
       name,
       phone_number: phoneNumber,
       age,
-      GENDER: gender, // 성별 (남자: 0, 여자: 1)
-    };
+      gender,
+    });
 
-    // axios POST 요청
-    axiosInstance
-      .post('/challet-service/users', userData)
-      .then((response: AxiosResponse) => {
-        if (response.status === 201) {
-          console.log('회원가입이 완료되었습니다!');
-          navigate('/set-password'); // 성공 시 비밀번호 설정 페이지로 이동
-        }
-      })
-      .catch((error: AxiosError<{ message: string }>) => {
-        const errorMessage =
-          error.response?.data?.message || '회원가입에 실패했습니다.';
-        console.error(errorMessage); // 에러 메시지 콘솔 출력
-      });
+    // 비밀번호 설정 페이지로 이동
+    navigate('/set-password');
   };
 
   return (
@@ -138,6 +127,9 @@ const SignUpPage = () => {
             required
           />
         </div>
+
+        {/* 오류 메시지 표시 */}
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
         {/* 확인 버튼 */}
         <button type='submit' disabled={!isFormValid}>

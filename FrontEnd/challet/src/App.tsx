@@ -5,10 +5,10 @@ import SignUpPage from './pages/SignUpPage/SignUpPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import Navbar from './components/navigation';
-import WalletPage from './pages/WalletPage';
-import ChallengePage from './pages/ChallengePage';
-import AnalysisPage from './pages/AnalysisPage';
-import MyPage from './pages/MyPage';
+import WalletPage from './pages/WalletPage/WalletPage';
+import ChallengePage from './pages/ChallengePage/ChallengePage';
+import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
+import MyPage from './pages/MyPage/MyPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
 import './App.css';
@@ -16,20 +16,13 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path='/' element={<OnboardingPage />} />
-        <Route path='/phone-auth' element={<PhoneAuthPage />} />
-        <Route path='/signup' element={<SignUpPage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/set-password' element={<SetPasswordPage />} />
-      </Routes>
-
       <div className='min-h-screen flex flex-col justify-between'>
         {/* Routes 설정 */}
         <Routes>
           <Route path='/' element={<OnboardingPage />} />
           <Route path='/phone-auth' element={<PhoneAuthPage />} />
           <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/set-password' element={<SetPasswordPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/wallet' element={<WalletPage />} />
           <Route path='/challenge' element={<ChallengePage />} />

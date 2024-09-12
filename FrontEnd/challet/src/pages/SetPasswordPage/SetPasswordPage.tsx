@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axios';
+import { AxiosResponse, AxiosError } from 'axios';
 
 const SetPasswordPage = () => {
   const [password, setPassword] = useState<string>(''); // 비밀번호 상태
@@ -18,13 +19,13 @@ const SetPasswordPage = () => {
     if (password.length === 6) {
       axiosInstance
         .post('/challet-service/users/set-password', { password }) // 서버에 비밀번호 전송
-        .then((response) => {
+        .then((response: AxiosResponse) => {
           if (response.status === 200) {
             console.log('비밀번호 설정이 완료되었습니다!');
             navigate('/success'); // 성공 페이지로 이동
           }
         })
-        .catch((error) => {
+        .catch((error: AxiosError) => {
           console.error('비밀번호 설정에 실패했습니다.', error);
         });
     } else {
