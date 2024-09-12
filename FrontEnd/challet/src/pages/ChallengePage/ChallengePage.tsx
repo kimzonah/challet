@@ -23,7 +23,7 @@ const ChallengePage = () => {
   };
 
   return (
-    <div className='min-h-screen flex flex-col items-center p-4'>
+    <div className='min-h-screen flex flex-col items-center p-2'>
       {/* 탭 버튼 목록 */}
       <div className='flex justify-center w-full mb-2 mt-8'>
         {tabs.map((tab) => (
