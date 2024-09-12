@@ -1,8 +1,15 @@
-import ChalletLogo from '../../assets/wallet/challet-logo.png'; // 로고 이미지 파일 경로 가져오기
-import MyDataButton from '../../assets/wallet/mydata-button.png'; // 마이데이터 버튼 이미지 파일 경로 가져오기
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 사용하여 페이지 이동
+import ChalletLogo from '../../assets/wallet/challet-logo.png';
+import MyDataButton from '../../assets/wallet/mydata-button.png';
 import PaymentButton from '../../assets/wallet/payment-button.png';
 
 const WalletPage = () => {
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+
+  const handlePaymentClick = () => {
+    navigate('/payment'); // /payment 페이지로 이동
+  };
+
   return (
     <div className='min-h-screen bg-white flex flex-col items-center p-2 mt-12'>
       {/* Header */}
@@ -21,6 +28,8 @@ const WalletPage = () => {
           src={PaymentButton}
           alt='Payment Button'
           className='w-full h-auto'
+          onClick={handlePaymentClick} // 버튼 클릭 시 /payment 페이지로 이동
+          style={{ cursor: 'pointer' }}
         />
       </div>
 
