@@ -1,13 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-// import ChallengeForm from '../../components/Challenge/ChallengeForm';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import CategoryList from '../../components/Challenge/CategoryList';
-// import ChallengeList from '../../components/Challenge/ChallengeList';
 
 const ChallengePage = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('챌린지 찾기'); // 기본 활성화된 탭
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  const [keyword, setKeyword] = useState('null'); // 기본 keyword
+  const [category, setCategory] = useState('null'); // 기본 category
 
   const tabs = [{ label: '챌린지 찾기' }, { label: '나의 챌린지' }];
 
@@ -15,12 +14,41 @@ const ChallengePage = () => {
   const handleTabClick = (tabLabel: string) => {
     setActiveTab(tabLabel);
     setIsLoading(true); // 로딩 시작
-
-    // 로딩 시뮬레이션 (1초)
-    setTimeout(() => {
-      setIsLoading(false); // 로딩 완료
-    }, 100);
   };
+
+  // 탭 전환 시 API 요청
+  useEffect(() => {
+    if (activeTab === '챌린지 찾기') {
+      // 챌린지 찾기 API 요청 (axios 사용)
+      axios
+        .get(`/challet-service/challenges`, {
+          params: {
+            keyword: keyword,
+            category: category,
+          },
+        })
+        .then((response) => {
+          console.log('챌린지 찾기 응답 데이터:', response.data);
+          setIsLoading(false); // 로딩 완료
+        })
+        .catch((error) => {
+          console.error('챌린지 찾기 API 호출 중 오류 발생:', error);
+          setIsLoading(false);
+        });
+    } else if (activeTab === '나의 챌린지') {
+      // 나의 챌린지 API 요청 (axios 사용)
+      axios
+        .get('/challet-service/challenges/my-challenges')
+        .then((response) => {
+          console.log('나의 챌린지 응답 데이터:', response.data);
+          setIsLoading(false); // 로딩 완료
+        })
+        .catch((error) => {
+          console.error('나의 챌린지 API 호출 중 오류 발생:', error);
+          setIsLoading(false);
+        });
+    }
+  }, [activeTab, keyword, category]);
 
   return (
     <div className='min-h-screen flex flex-col items-center p-2'>
@@ -52,8 +80,6 @@ const ChallengePage = () => {
           {activeTab === '챌린지 찾기' && (
             <div>
               <CategoryList />
-              {/* <ChallengeForm /> */}
-              {/* <ChallengeList /> */}
             </div>
           )}
 
