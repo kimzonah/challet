@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class TokenRefreshResponseDTO {
 
     @Schema(description = "새로 발급 받은 액세스 토큰")
-    private String accessToken;
+    private String refreshToken;
 
 }
