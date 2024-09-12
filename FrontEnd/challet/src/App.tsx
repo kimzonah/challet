@@ -7,6 +7,8 @@ import AnalysisPage from './pages/AnalysisPage';
 import MyPage from './pages/MyPage';
 import LoginPage from './pages/LoginPage';
 import './App.css';
+import PaymentPage from './pages/PaymentPage/PaymentPage';
+import PayResult from './pages/PayresultPage/PayresultPage';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           <Route path='/wallet' element={<WalletPage />} />
           <Route path='/challenge' element={<ChallengePage />} />
           <Route path='/analysis' element={<AnalysisPage />} />
+          <Route path='/payment' element={<PaymentPage />} />
+          <Route path='/payresult' element={<PayResult />} />
           <Route path='/my' element={<MyPage />} />
         </Routes>
         {/* 네비게이션 바 */}
