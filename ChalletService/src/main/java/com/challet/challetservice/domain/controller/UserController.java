@@ -30,10 +30,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "로그인 유저 정보 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-//    @Parameters(value = {
-//            @Parameter(name = "header", description = "헤더에 Autorization 값", in = ParameterIn.HEADER)
-//    })
-    @GetMapping("/")
+
+    @GetMapping()
     public ResponseEntity<UserInfoResponseDTO> getUser(@RequestHeader(value = "Authorization") String header) {
         return null;
     }

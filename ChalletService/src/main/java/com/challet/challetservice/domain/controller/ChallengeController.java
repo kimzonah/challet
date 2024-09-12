@@ -32,7 +32,7 @@ public class ChallengeController {
             @ApiResponse(responseCode = "400", description = "챌린지 생성 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<String> createChallenge(@RequestHeader(value = "Authorization") String header, @RequestBody ChallengeRegisterRequestDTO request) {
         return null;
     }
@@ -59,7 +59,7 @@ public class ChallengeController {
             @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
             @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
     })
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<ChallengeDetailResponseDTO>> searchChallenges(@RequestHeader(value = "Authorization") String header,
                                                                              @Param(value = "keyword")String keyword, @Param(value = "category")String category) {
         return null;

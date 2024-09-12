@@ -27,7 +27,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "회원가입 성공"),
             @ApiResponse(responseCode = "400", description = "회원가입 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    @PostMapping("/")
+    @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody UserRegisterRequestDTO request){
         return null;
     }
