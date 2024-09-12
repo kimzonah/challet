@@ -22,22 +22,22 @@ spring:
         - id: bank-service
           uri: lb://BANK-SERVICE
           predicates:
-            - Path=/bank-service/challet-banks/**
+            - Path=/bank-service/**
 
         - id: kbbank-service
           uri: lb://KBBANK-SERVICE
           predicates:
-            - Path=/bank-service/kb-banks/**
+            - Path=/kb-bank-service/**
 
         - id: nhbank-service
           uri: lb://NHBANK-SERVICE
           predicates:
-            - Path=/bank-service/nh-banks/**
+            - Path=/nh-bank-service/**
 
         - id: shbank-service
           uri: lb://SHBANK-SERVICE
           predicates:
-            - Path=/bank-service/sh-banks/**
+            - Path=/sh-bank-service/**
 
 
 springdoc:
@@ -48,13 +48,13 @@ springdoc:
       url: challet-service/v3/api-docs
     urls[1]:
       name: BankService
-      url: bank-service/challet-banks/v3/api-docs
+      url: bank-service/v3/api-docs
     urls[2]:
       name: KbBankService
-      url: bank-service/kb-banks/v3/api-docs
+      url: kb-bank-service/v3/api-docs
     urls[3]:
       name: NhBankService
-      url: bank-service/nh-banks/v3/api-docs
+      url: nh-bank-service/v3/api-docs
     urls[4]:
       name: ShBankService
-      url: bank-service/sh-banks/v3/api-docs
+      url: sh-bank-service/v3/api-docs

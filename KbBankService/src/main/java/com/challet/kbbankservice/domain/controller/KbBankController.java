@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bank-service/kb-banks")
+@RequestMapping("/kb-bank-service")
 @Tag(name = "ChalletController", description="KB은행 컨트롤러")
 public class KbBankController {
 

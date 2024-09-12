@@ -20,6 +20,6 @@ public class TransactionHistoryResponseDTO {
     private long balance;
     @Schema(description = "거래일시")
     private LocalDateTime transactionDate;
-    @Schema(description = "거래카테고리")
+    @Schema(description = "거래카테고리", allowableValues = {"DELIVERY","TRANSPORT","COFFEE","SHOPPING"})
     private String category;
 }
