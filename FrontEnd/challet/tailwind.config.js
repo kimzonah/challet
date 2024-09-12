@@ -1,7 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    './src/**/*.{js,jsx,ts,tsx}', // src 폴더 내의 모든 JavaScript, TypeScript 파일 감시
+    './src/**/*.{js,jsx,ts,tsx}', // Tailwind CSS가 스타일을 적용할 파일들
   ],
   theme: {
     extend: {},
