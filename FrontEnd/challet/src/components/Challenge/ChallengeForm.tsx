@@ -37,61 +37,92 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
     return <div>챌린지가 없습니다.</div>;
   }
 
-  const filteredChallenges = isMyChallenges
-    ? challenges.filter((challenge) => challenge.isIncluded) // 내가 참여한 챌린지 필터링
-    : challenges.filter((challenge) => !challenge.isIncluded); // 참여하지 않은 챌린지 필터링
+  // 챌린지 상태별로 필터링
+  const progressingChallenges = challenges.filter(
+    (challenge) => challenge.status === 'PROGRESSING'
+  );
+  const recruitingChallenges = challenges.filter(
+    (challenge) => challenge.status === 'RECRUITING'
+  );
+  const completedChallenges = challenges.filter(
+    (challenge) => challenge.status === 'END'
+  );
 
-  if (filteredChallenges.length === 0) {
+  // 챌린지 렌더링 함수 (완료된 챌린지는 불투명하게)
+  const renderChallenges = (challenges: Challenge[], isCompleted = false) => {
+    return challenges.map((challenge, index) => (
+      <div
+        key={index}
+        className={`border rounded-md p-4 mb-4 ${
+          isCompleted ? 'opacity-50' : ''
+        }`}
+      >
+        <div className='flex items-center'>
+          <img
+            src={categoryIcons[challenge.category] || AllSearch}
+            alt={challenge.title}
+            className='w-12 h-12 rounded-full'
+          />
+          <div className='ml-4'>
+            <div className='font-bold flex ml-5'>{challenge.title}</div>
+            <div className='flex'>
+              <div className='text-sm text-gray-500 ml-5 mr-4'>
+                {challenge.currentParticipants}/{challenge.maxParticipants}명
+              </div>
+              <div className='text-sm text-[#00B8B8]'>
+                {challenge.spendingLimit.toLocaleString()}원
+              </div>
+            </div>
+            <div className='flex items-center text-sm text-gray-700'>
+              <img src={TimeFill} alt='시간 아이콘' className='w-4 h-4 mr-1' />
+              {new Date(challenge.startDate).toLocaleDateString()} 시작 /{' '}
+              {Math.floor(
+                (new Date(challenge.endDate).getTime() -
+                  new Date(challenge.startDate).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              )}
+              일 동안
+            </div>
+          </div>
+        </div>
+      </div>
+    ));
+  };
+
+  // 나의 챌린지에서만 섹션 나누기
+  if (isMyChallenges) {
     return (
       <div>
-        {isMyChallenges
-          ? '나의 챌린지가 없습니다.'
-          : '참여 가능한 챌린지가 없습니다.'}
+        {/* 진행 중인 챌린지 */}
+        {progressingChallenges.length > 0 && (
+          <div className='mb-6 border-b-2 border-dashed'>
+            <h2 className='flex text-lg font-bold mb-2'>진행 중인 챌린지</h2>
+            {renderChallenges(progressingChallenges)}
+          </div>
+        )}
+
+        {/* 대기 중인 챌린지 */}
+        {recruitingChallenges.length > 0 && (
+          <div className='mb-6 border-b-2 border-dashed'>
+            <h2 className='flex text-lg font-bold mb-2'>대기 중인 챌린지</h2>
+            {renderChallenges(recruitingChallenges)}
+          </div>
+        )}
+
+        {/* 완료된 챌린지 */}
+        {completedChallenges.length > 0 && (
+          <div className='mb-6'>
+            <h2 className='flex text-lg font-bold mb-2'>완료된 챌린지</h2>
+            {renderChallenges(completedChallenges, true)}{' '}
+            {/* 완료된 챌린지는 불투명 */}
+          </div>
+        )}
       </div>
     );
   }
 
-  return (
-    <div>
-      {filteredChallenges.map((challenge, index) => (
-        <div key={index} className='border rounded-md p-4 mb-4'>
-          <div className='flex items-center'>
-            <img
-              src={categoryIcons[challenge.category] || AllSearch}
-              alt={challenge.title}
-              className='w-12 h-12 rounded-full'
-            />
-            <div className='ml-4'>
-              <div className='font-bold'>{challenge.title}</div>
-              <div className='text-sm text-gray-500'>
-                {challenge.currentParticipants}/{challenge.maxParticipants}명 |{' '}
-                {challenge.spendingLimit.toLocaleString()}원
-              </div>
-              <div className='flex items-center text-sm text-gray-500'>
-                <img
-                  src={TimeFill}
-                  alt='시간 아이콘'
-                  className='w-4 h-4 mr-1'
-                />
-                {new Date(challenge.startDate).toLocaleDateString()} 시작 |{' '}
-                {Math.floor(
-                  (new Date(challenge.endDate).getTime() -
-                    new Date(challenge.startDate).getTime()) /
-                    (1000 * 60 * 60 * 24)
-                )}
-                일 동안
-              </div>
-              {challenge.inviteCode && (
-                <div className='text-sm text-gray-500'>
-                  초대 코드: {challenge.inviteCode}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  // 챌린지 찾기일 때는 섹션을 나누지 않고 그대로 렌더링
+  return <div>{renderChallenges(challenges)}</div>;
 };
 
 export default ChallengeForm;

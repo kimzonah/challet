@@ -62,7 +62,7 @@ const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
             <img
               src={category.icon}
               alt={category.label}
-              className={`object-contain w-full h-full rounded-full ${
+              className={`object-contain w-full h-full rounded-full bg-[#F1F4F6] ${
                 activeCategory === category.label
                   ? 'border-2 border-teal-500'
                   : ''
@@ -75,7 +75,11 @@ const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
                 boxSizing: 'border-box',
               }}
             />
-            <div className='text-sm font-medium tracking-wider text-center'>
+            <div
+              className={`text-sm font-medium tracking-wider text-center ${
+                activeCategory === category.label ? 'text-teal-500' : ''
+              }`}
+            >
               {category.label}
             </div>
           </button>
