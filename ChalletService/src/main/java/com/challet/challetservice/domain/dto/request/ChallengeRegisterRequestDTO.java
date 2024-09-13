@@ -14,7 +14,8 @@ import java.time.LocalDate;
 @Schema(description = "챌린지 생성 요청 DTO")
 public class ChallengeRegisterRequestDTO {
 
-    @Schema(description = "챌린지 카테고리", allowableValues = {"DELIVERY","TRANSPORT","COFFEE","SHOPPING"})
+    @Schema(description = "챌린지 카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE",
+        "SHOPPING"})
     private String category;
 
     @Schema(description = "챌린지 제목")

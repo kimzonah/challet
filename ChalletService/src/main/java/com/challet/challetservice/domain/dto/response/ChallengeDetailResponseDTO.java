@@ -21,7 +21,8 @@ public class ChallengeDetailResponseDTO {
     @Schema(description = "챌린지 참여 여부")
     private Boolean isIncluded;
 
-    @Schema(description = "챌린지 카테고리", allowableValues = {"DELIVERY","TRANSPORT","COFFEE","SHOPPING"})
+    @Schema(description = "챌린지 카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE",
+        "SHOPPING"})
     private String category;
 
     @Schema(description = "챌린지 제목")
