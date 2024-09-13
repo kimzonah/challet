@@ -18,12 +18,6 @@ export const useChallengeApi = () => {
         ? 'https://localhost:8000/challet-service/challenges/my-challenges'
         : 'https://localhost:8000/challet-service/challenges';
 
-      // API 요청 직전 로그 찍기
-      console.log('API 요청:', {
-        url,
-        params: { keyword, category },
-      });
-
       const response = await axios.get(url, {
         params: { keyword, category },
       });

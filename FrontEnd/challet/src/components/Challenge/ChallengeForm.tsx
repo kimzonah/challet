@@ -4,6 +4,7 @@ import Car from '../../assets/Challenge/Car.png';
 import Coffee from '../../assets/Challenge/Coffee.png';
 import shopping from '../../assets/Challenge/Shopping.png';
 import TimeFill from '../../assets/Challenge/TimeFill.png';
+import Lock from '../../assets/Challenge/Lock.png';
 
 interface Challenge {
   status: string;
@@ -64,7 +65,12 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
             className='w-12 h-12 rounded-full'
           />
           <div className='ml-4'>
-            <div className='font-bold flex ml-5'>{challenge.title}</div>
+            <div className='font-bold flex ml-5 items-center'>
+              {challenge.title}
+              {!challenge.isPublic && (
+                <img src={Lock} alt='비공개 챌린지' className='ml-2 w-4 h-4' />
+              )}
+            </div>
             <div className='flex'>
               <div className='text-sm text-gray-500 ml-5 mr-4'>
                 {challenge.currentParticipants}/{challenge.maxParticipants}명
