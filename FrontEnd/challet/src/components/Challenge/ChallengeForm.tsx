@@ -33,23 +33,31 @@ const categoryIcons: Record<string, string> = {
 };
 
 const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
-  // 기본값으로 빈 배열 설정 및 조건부 렌더링 추가
   if (!Array.isArray(challenges) || challenges.length === 0) {
     return <div>챌린지가 없습니다.</div>;
   }
 
-  // 카테고리 이미지 결정
-  const getCategoryImage = (category: string) => {
-    return categoryIcons[category] || AllSearch;
-  };
+  const filteredChallenges = isMyChallenges
+    ? challenges.filter((challenge) => challenge.isIncluded) // 내가 참여한 챌린지 필터링
+    : challenges.filter((challenge) => !challenge.isIncluded); // 참여하지 않은 챌린지 필터링
+
+  if (filteredChallenges.length === 0) {
+    return (
+      <div>
+        {isMyChallenges
+          ? '나의 챌린지가 없습니다.'
+          : '참여 가능한 챌린지가 없습니다.'}
+      </div>
+    );
+  }
 
   return (
     <div>
-      {challenges.map((challenge, index) => (
+      {filteredChallenges.map((challenge, index) => (
         <div key={index} className='border rounded-md p-4 mb-4'>
           <div className='flex items-center'>
             <img
-              src={getCategoryImage(challenge.category)} // 카테고리별 이미지 선택
+              src={categoryIcons[challenge.category] || AllSearch}
               alt={challenge.title}
               className='w-12 h-12 rounded-full'
             />

@@ -52,22 +52,28 @@ const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
       </div>
 
       {/* 카테고리 리스트 */}
-      <div className='flex overflow-x-auto gap-6 bg-white scrollbar-hide'>
+      <div className='flex overflow-x-auto whitespace-nowrap gap-6 bg-white scrollbar-hide scrollbar-smooth'>
         {categories.map((category, index) => (
           <button
             key={index}
             onClick={() => handleCategoryClick(category.label, category.class)}
-            className={`flex flex-col items-center bg-white ${
-              activeCategory === category.label
-                ? 'border-2 border-teal-500'
-                : ''
-            }`}
+            className='flex flex-col items-center bg-white'
           >
             <img
               src={category.icon}
               alt={category.label}
-              className='object-contain w-full h-full'
-              style={{ width: '60px', height: '60px', boxSizing: 'border-box' }}
+              className={`object-contain w-full h-full rounded-full ${
+                activeCategory === category.label
+                  ? 'border-2 border-teal-500'
+                  : ''
+              }`}
+              style={{
+                width: '60px',
+                height: '60px',
+                minWidth: '60px',
+                minHeight: '60px',
+                boxSizing: 'border-box',
+              }}
             />
             <div className='text-sm font-medium tracking-wider text-center'>
               {category.label}

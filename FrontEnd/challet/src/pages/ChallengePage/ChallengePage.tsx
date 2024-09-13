@@ -78,9 +78,14 @@ const ChallengePage = () => {
     }
   }, [activeTab, keyword, category]);
 
+  // 챌린지 찾기 탭에서는 isIncluded가 false인 챌린지만 필터링
+  const filteredChallenges =
+    activeTab === '챌린지 찾기'
+      ? exampleChallenges.filter((challenge) => !challenge.isIncluded)
+      : exampleChallenges;
+
   return (
     <div className='min-h-screen flex flex-col items-center p-2'>
-      {/* 탭 버튼 목록 */}
       <div className='flex justify-center w-full mb-2 mt-8'>
         {['챌린지 찾기', '나의 챌린지'].map((tab) => (
           <button
@@ -97,7 +102,6 @@ const ChallengePage = () => {
         ))}
       </div>
 
-      {/* 로딩 상태일 때 로딩 애니메이션 */}
       {isLoading ? (
         <div className='flex justify-center items-center h-64'>
           <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500'></div>
@@ -111,7 +115,7 @@ const ChallengePage = () => {
             />
           )}
           <ChallengeForm
-            challenges={exampleChallenges}
+            challenges={filteredChallenges} // 필터링된 챌린지 목록 전달
             isMyChallenges={activeTab === '나의 챌린지'}
           />
         </div>
