@@ -28,6 +28,7 @@ public class Challenge {
     private Long id;
 
     @Column(name = "category", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(name = "title", nullable = false)
