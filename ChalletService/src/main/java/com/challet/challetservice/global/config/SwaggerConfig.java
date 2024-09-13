@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "API Document", description = "MAIL SERVICE 명세서", version = "v3")
+    info = @Info(title = "API Document", description = "MAIL SERVICE 명세서", version = "v3")
 )
 public class SwaggerConfig {
 
@@ -24,15 +24,15 @@ public class SwaggerConfig {
         String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
-                .name(jwt)
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT")
+            .name(jwt)
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT")
         );
 
         return new OpenAPI()
-                .components(components)
-                .addSecurityItem(securityRequirement)
-                .addServersItem(new Server().url("/"));
+            .components(components)
+            .addSecurityItem(securityRequirement)
+            .addServersItem(new Server().url("/"));
     }
 }
