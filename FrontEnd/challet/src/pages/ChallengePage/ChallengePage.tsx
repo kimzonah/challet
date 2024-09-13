@@ -5,7 +5,8 @@ import { useChallengeApi } from '../../hooks/useChallengeApi';
 
 const ChallengePage = () => {
   const [activeTab, setActiveTab] = useState('챌린지 찾기'); // 기본 활성화된 탭
-  const { challenges, isLoading, fetchChallenges } = useChallengeApi();
+  // const { challenges, isLoading, fetchChallenges } = useChallengeApi();
+  const { isLoading, fetchChallenges } = useChallengeApi();
   const [keyword, setKeyword] = useState(''); // 검색 키워드
   const [category, setCategory] = useState(''); // 선택된 카테고리
 
@@ -71,12 +72,12 @@ const ChallengePage = () => {
     fetchChallenges(newKeyword, category);
   };
 
-  // 기본 탭이 챌린지 찾기일 때, 처음 로드될 때 챌린지 목록 요청
+  // 페이지 처음 로드될 때만 챌린지 목록 요청
   useEffect(() => {
     if (activeTab === '챌린지 찾기') {
-      fetchChallenges(keyword, category);
+      fetchChallenges('', ''); // 페이지 로드 시 한 번만 호출
     }
-  }, [activeTab, keyword, category]);
+  }, [activeTab]);
 
   // 챌린지 찾기 탭에서는 isIncluded가 false인 챌린지만 필터링
   const filteredChallenges =
@@ -110,6 +111,7 @@ const ChallengePage = () => {
         <div className='w-full'>
           {activeTab === '챌린지 찾기' && (
             <CategoryList
+              activeCategory={category}
               onCategoryChange={handleCategoryChange}
               onSearch={handleSearch}
             />

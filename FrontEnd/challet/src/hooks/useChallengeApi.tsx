@@ -15,13 +15,24 @@ export const useChallengeApi = () => {
     setIsLoading(true); // 로딩 시작
     try {
       const url = isMyChallenges
-        ? '/challet-service/challenges/my-challenges'
-        : '/challet-service/challenges';
+        ? 'https://localhost:8000/challet-service/challenges/my-challenges'
+        : 'https://localhost:8000/challet-service/challenges';
+
+      // API 요청 직전 로그 찍기
+      console.log('API 요청:', {
+        url,
+        params: { keyword, category },
+      });
+
       const response = await axios.get(url, {
         params: { keyword, category },
       });
+
+      // API 응답 성공 시 로그
+      console.log('API 응답 성공:', response.data);
       setChallenges(response.data);
     } catch (error) {
+      // API 호출 중 오류 발생 시 로그
       console.error('API 호출 중 오류 발생:', error);
     } finally {
       setIsLoading(false); // 로딩 완료

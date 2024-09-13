@@ -7,12 +7,17 @@ import shopping from '../../assets/Challenge/Shopping.png';
 import SearchBar from '../../assets/Challenge/SearchBar.png';
 
 interface CategoryListProps {
+  activeCategory: string;
   onCategoryChange: (category: string) => void;
   onSearch: (keyword: string) => void;
 }
 
-const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
-  const [activeCategory, setActiveCategory] = useState('전체');
+const CategoryList = ({
+  activeCategory,
+  onCategoryChange,
+  onSearch,
+}: CategoryListProps) => {
+  console.log('activeCategory:', activeCategory);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const categories = [
@@ -24,8 +29,7 @@ const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
   ];
 
   const handleCategoryClick = (label: string, className: string) => {
-    setActiveCategory(label); // Active 카테고리 업데이트
-    onCategoryChange(className); // 카테고리 변경 처리
+    onCategoryChange(className);
   };
 
   const handleSearchClick = () => {
@@ -34,7 +38,7 @@ const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
   };
 
   return (
-    <div className='w-full p-4'>
+    <div className='w-full p-4 border-b-2 mb-2'>
       {/* 검색창 */}
       <div className='flex items-center mb-4'>
         <input
@@ -63,7 +67,7 @@ const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
               src={category.icon}
               alt={category.label}
               className={`object-contain w-full h-full rounded-full bg-[#F1F4F6] ${
-                activeCategory === category.label
+                activeCategory === category.class
                   ? 'border-2 border-teal-500'
                   : ''
               }`}
@@ -77,7 +81,7 @@ const CategoryList = ({ onCategoryChange, onSearch }: CategoryListProps) => {
             />
             <div
               className={`text-sm font-medium tracking-wider text-center ${
-                activeCategory === category.label ? 'text-teal-500' : ''
+                activeCategory === category.class ? 'text-teal-500' : ''
               }`}
             >
               {category.label}
