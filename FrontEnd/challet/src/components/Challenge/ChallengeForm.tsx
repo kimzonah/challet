@@ -36,6 +36,20 @@ const categoryIcons: Record<string, string> = {
   ALL: AllSearch,
 };
 
+// 5가지 색상 정의
+const backgroundColors = [
+  'bg-red-200',
+  'bg-blue-200',
+  'bg-green-200',
+  'bg-yellow-200',
+  'bg-purple-200',
+];
+
+const getRandomBackgroundColor = () => {
+  // 랜덤으로 색상 배열에서 하나를 선택
+  return backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
+};
+
 const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
@@ -56,6 +70,12 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
     setSelectedChallenge(null); // 선택된 챌린지 초기화
   };
 
+  const handleJoinChallenge = () => {
+    // 참가하기 버튼 클릭 시 동작할 함수 추가 가능
+    console.log(`${selectedChallenge?.title}에 참가합니다.`);
+    // 참가 관련 추가 로직 작성
+  };
+
   const renderChallenges = (challenges: Challenge[], isCompleted = false) => {
     return challenges.map((challenge, index) => (
       <div
@@ -65,11 +85,15 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
         style={{ cursor: 'pointer' }}
       >
         <div className='flex items-center'>
-          <img
-            src={categoryIcons[challenge.category] || AllSearch}
-            alt={challenge.title}
-            className='w-12 h-12 rounded-full'
-          />
+          <div
+            className={`w-12 h-12 rounded-xl flex items-center justify-center ${getRandomBackgroundColor()}`}
+          >
+            <img
+              src={categoryIcons[challenge.category] || AllSearch}
+              alt={challenge.title}
+              className='w-12 h-12'
+            />
+          </div>
           <div className='ml-4'>
             <div className='font-bold flex ml-5 items-center'>
               {challenge.title}
@@ -125,7 +149,7 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
               <h2 className='flex text-lg font-bold mb-2'>대기 중인 챌린지</h2>
               {renderChallenges(
                 challenges.filter(
-                  (challenge) => challenge.status === 'RECRUITING'
+                  (challenge) => challenge.status === 'RECRUITING' && challenge.isIncluded
                 )
               )}
             </div>
@@ -150,34 +174,51 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
       {/* 모달 컴포넌트 */}
       {isModalOpen && selectedChallenge && (
         <ChallengeModal onClose={handleCloseModal}>
-          <div className='p-4'>
+          <div className=''>
             <div className='font-bold text-lg'>{selectedChallenge.title}</div>
-            <div className='flex p-2 justify-items-start items-center mt-4 border-2 rounded-xl'>
-              <img
-                src={categoryIcons[selectedChallenge.category] || AllSearch}
-                alt={selectedChallenge.title}
-                className='w-12 h-12 rounded-full'
-              />
+            <div
+              className={`flex p-2 justify-items-start items-center mt-4 border-2 rounded-xl`}
+            >
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center ${getRandomBackgroundColor()}`}
+              >
+                <img
+                  src={categoryIcons[selectedChallenge.category] || AllSearch}
+                  alt={selectedChallenge.title}
+                  className='w-12 h-12'
+                />
+              </div>
               <div className='ml-4'>
-                <div className='text-sm text-gray-500'>
+                <div className='flex text-sm text-gray-500'>
                   {selectedChallenge.currentParticipants}/
                   {selectedChallenge.maxParticipants}명 참여 중
                 </div>
-                <div className='text-sm mt-2'>
-                  {selectedChallenge.spendingLimit.toLocaleString()}원 사용 한도
+                <div className='flex text-sm mr-16 text-base'>
+                  <div className='text-[#00B8B8]'>{selectedChallenge.spendingLimit.toLocaleString()}원&nbsp;</div>
+                  <div>사용 한도</div>
                 </div>
-                <div className='text-sm mt-2'>
-                  {new Date(selectedChallenge.startDate).toLocaleDateString()}{' '}
-                  시작 /{' '}
-                  {Math.floor(
-                    (new Date(selectedChallenge.endDate).getTime() -
-                      new Date(selectedChallenge.startDate).getTime()) /
-                      (1000 * 60 * 60 * 24)
-                  )}{' '}
-                  일 동안
+                <div className='flex text-sm items-center'>
+                  <img src={TimeFill} alt='시간 아이콘' className='w-4 h-4 mr-1' />
+                  {new Date(selectedChallenge.startDate).toLocaleDateString()} 시작
+                </div>
+                <div className='flex text-sm items-center'>
+                  <img src={TimeFill} alt='시간 아이콘' className='w-4 h-4 mr-1' />
+                  {new Date(selectedChallenge.endDate).toLocaleDateString()} 종료
                 </div>
               </div>
             </div>
+
+            {/* 참가하기 버튼 */}
+            {!selectedChallenge.isIncluded && (
+              <div className='mt-4'>
+                <button
+                  onClick={handleJoinChallenge}
+                  className='bg-[#00CCCC] text-white py-4 px-4 rounded-lg hover:bg-teal-600'
+                >
+                  도전하기
+                </button>
+              </div>
+            )}
           </div>
         </ChallengeModal>
       )}
