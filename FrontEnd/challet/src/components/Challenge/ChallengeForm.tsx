@@ -193,87 +193,13 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
 
       {/* 모달 컴포넌트 */}
       {isModalOpen && selectedChallenge && (
-        <ChallengeModal onClose={handleCloseModal}>
-          <div className=''>
-            <div className='font-bold text-lg'>{selectedChallenge.title}</div>
-            <div
-              className={`flex p-2 justify-items-start items-center mt-4 border-2 rounded-xl`}
-            >
-              <div
-                className={`w-12 h-12 rounded-xl flex items-center justify-center ${challengeColors[selectedChallenge.id]}`}
-              >
-                <img
-                  src={categoryIcons[selectedChallenge.category] || AllSearch}
-                  alt={selectedChallenge.title}
-                  className='w-12 h-12'
-                />
-              </div>
-              <div className='ml-4'>
-                <div className='flex text-sm text-gray-500'>
-                  {selectedChallenge.currentParticipants}/
-                  {selectedChallenge.maxParticipants}명 참여 중
-                </div>
-                <div className='flex text-sm mr-16 text-base'>
-                  <div className='text-[#00B8B8]'>
-                    {selectedChallenge.spendingLimit.toLocaleString()}원&nbsp;
-                  </div>
-                  <div>사용 한도</div>
-                </div>
-                <div className='flex text-sm items-center'>
-                  <img
-                    src={TimeFill}
-                    alt='시간 아이콘'
-                    className='w-4 h-4 mr-1'
-                  />
-                  {new Date(selectedChallenge.startDate).toLocaleDateString()}{' '}
-                  시작
-                </div>
-                <div className='flex text-sm items-center'>
-                  <img
-                    src={TimeFill}
-                    alt='시간 아이콘'
-                    className='w-4 h-4 mr-1'
-                  />
-                  {new Date(selectedChallenge.endDate).toLocaleDateString()}{' '}
-                  종료
-                </div>
-              </div>
-            </div>
-
-            <div className='flex'>
-              {/* 비공개 챌린지인 경우 초대코드 입력 필드 */}
-              {!selectedChallenge.isPublic && (
-                <div className='mt-4'>
-                  <input
-                    type='text'
-                    value={inviteCodeInput}
-                    onChange={(e) => setInviteCodeInput(e.target.value)}
-                    placeholder='초대 코드'
-                    maxLength={6} // 초대코드 최대 길이 6자
-                    className='py-4 mr-4 rounded-lg text-center text-gray-700 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500'
-                  />
-                </div>
-              )}
-
-              {/* 참가하기 버튼 */}
-              {!selectedChallenge.isIncluded && (
-                <div className='mt-4'>
-                  <button
-                    onClick={handleJoinChallenge}
-                    disabled={!selectedChallenge.isPublic && inviteCodeInput.length !== 6} // 초대코드가 6자일 때만 활성화
-                    className={`py-4 px-4 rounded-lg ${
-                      selectedChallenge.isPublic || inviteCodeInput.length === 6
-                        ? 'bg-[#00CCCC] text-white hover:bg-teal-600'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    도전하기
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </ChallengeModal>
+        <ChallengeModal
+          onClose={handleCloseModal}
+          selectedChallenge={selectedChallenge}
+          inviteCodeInput={inviteCodeInput}
+          setInviteCodeInput={setInviteCodeInput}
+          handleJoinChallenge={handleJoinChallenge}
+        />
       )}
     </div>
   );

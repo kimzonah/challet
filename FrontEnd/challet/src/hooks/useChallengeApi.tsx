@@ -18,7 +18,7 @@ export const useChallengeApi = () => {
       endDate: '2023-09-30',
       maxParticipants: 10,
       currentParticipants: 5,
-      isPublic: false,
+      isPublic: true,
       inviteCode: null,
     },
     {
