@@ -1,12 +1,15 @@
+import { useState } from 'react';
+import ChallengeModal from './ChallengeModal';
 import AllSearch from '../../assets/Challenge/Search.png';
 import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
 import Car from '../../assets/Challenge/Car.png';
 import Coffee from '../../assets/Challenge/Coffee.png';
-import shopping from '../../assets/Challenge/Shopping.png';
+import Shopping from '../../assets/Challenge/Shopping.png';
 import TimeFill from '../../assets/Challenge/TimeFill.png';
 import Lock from '../../assets/Challenge/Lock.png';
 
-interface Challenge {
+export interface Challenge {
+  id: number;
   status: string;
   isIncluded: boolean;
   category: string;
@@ -29,34 +32,37 @@ const categoryIcons: Record<string, string> = {
   COFFEE: Coffee,
   DELIVERY: Delivery,
   TRANSPORT: Car,
-  SHOPPING: shopping,
+  SHOPPING: Shopping,
   ALL: AllSearch,
 };
 
 const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
+    null
+  ); // 선택된 챌린지
+
   if (!Array.isArray(challenges) || challenges.length === 0) {
     return <div>챌린지가 없습니다.</div>;
   }
 
-  // 챌린지 상태별로 필터링
-  const progressingChallenges = challenges.filter(
-    (challenge) => challenge.status === 'PROGRESSING'
-  );
-  const recruitingChallenges = challenges.filter(
-    (challenge) => challenge.status === 'RECRUITING'
-  );
-  const completedChallenges = challenges.filter(
-    (challenge) => challenge.status === 'END'
-  );
+  const handleChallengeClick = (challenge: Challenge) => {
+    setSelectedChallenge(challenge); // 선택한 챌린지 저장
+    setIsModalOpen(true); // 모달 열기
+  };
 
-  // 챌린지 렌더링 함수 (완료된 챌린지는 불투명하게)
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+    setSelectedChallenge(null); // 선택된 챌린지 초기화
+  };
+
   const renderChallenges = (challenges: Challenge[], isCompleted = false) => {
     return challenges.map((challenge, index) => (
       <div
         key={index}
-        className={`border rounded-md p-4 mb-4 ${
-          isCompleted ? 'opacity-50' : ''
-        }`}
+        className={`border rounded-md p-4 mb-4 ${isCompleted ? 'opacity-50' : ''}`}
+        onClick={() => handleChallengeClick(challenge)} // 클릭 시 모달 열기
+        style={{ cursor: 'pointer' }}
       >
         <div className='flex items-center'>
           <img
@@ -95,40 +101,88 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
     ));
   };
 
-  // 나의 챌린지에서만 섹션 나누기
-  if (isMyChallenges) {
-    return (
-      <div>
-        {/* 진행 중인 챌린지 */}
-        {progressingChallenges.length > 0 && (
-          <div className='mb-6 border-b-2 border-dashed'>
-            <h2 className='flex text-lg font-bold mb-2'>진행 중인 챌린지</h2>
-            {renderChallenges(progressingChallenges)}
-          </div>
-        )}
+  return (
+    <div>
+      {isMyChallenges ? (
+        <>
+          {/* 진행 중인 챌린지 */}
+          {challenges.filter((challenge) => challenge.status === 'PROGRESSING')
+            .length > 0 && (
+            <div className='mb-6 border-b-2 border-dashed'>
+              <h2 className='flex text-lg font-bold mb-2'>진행 중인 챌린지</h2>
+              {renderChallenges(
+                challenges.filter(
+                  (challenge) => challenge.status === 'PROGRESSING'
+                )
+              )}
+            </div>
+          )}
 
-        {/* 대기 중인 챌린지 */}
-        {recruitingChallenges.length > 0 && (
-          <div className='mb-6 border-b-2 border-dashed'>
-            <h2 className='flex text-lg font-bold mb-2'>대기 중인 챌린지</h2>
-            {renderChallenges(recruitingChallenges)}
-          </div>
-        )}
+          {/* 대기 중인 챌린지 */}
+          {challenges.filter((challenge) => challenge.status === 'RECRUITING')
+            .length > 0 && (
+            <div className='mb-6 border-b-2 border-dashed'>
+              <h2 className='flex text-lg font-bold mb-2'>대기 중인 챌린지</h2>
+              {renderChallenges(
+                challenges.filter(
+                  (challenge) => challenge.status === 'RECRUITING'
+                )
+              )}
+            </div>
+          )}
 
-        {/* 완료된 챌린지 */}
-        {completedChallenges.length > 0 && (
-          <div className='mb-6'>
-            <h2 className='flex text-lg font-bold mb-2'>완료된 챌린지</h2>
-            {renderChallenges(completedChallenges, true)}{' '}
-            {/* 완료된 챌린지는 불투명 */}
-          </div>
-        )}
-      </div>
-    );
-  }
+          {/* 완료된 챌린지 */}
+          {challenges.filter((challenge) => challenge.status === 'END').length >
+            0 && (
+            <div className='mb-6'>
+              <h2 className='flex text-lg font-bold mb-2'>완료된 챌린지</h2>
+              {renderChallenges(
+                challenges.filter((challenge) => challenge.status === 'END'),
+                true
+              )}
+            </div>
+          )}
+        </>
+      ) : (
+        <div>{renderChallenges(challenges)}</div>
+      )}
 
-  // 챌린지 찾기일 때는 섹션을 나누지 않고 그대로 렌더링
-  return <div>{renderChallenges(challenges)}</div>;
+      {/* 모달 컴포넌트 */}
+      {isModalOpen && selectedChallenge && (
+        <ChallengeModal onClose={handleCloseModal}>
+          <div className='p-4'>
+            <div className='font-bold text-lg'>{selectedChallenge.title}</div>
+            <div className='flex p-2 justify-items-start items-center mt-4 border-2 rounded-xl'>
+              <img
+                src={categoryIcons[selectedChallenge.category] || AllSearch}
+                alt={selectedChallenge.title}
+                className='w-12 h-12 rounded-full'
+              />
+              <div className='ml-4'>
+                <div className='text-sm text-gray-500'>
+                  {selectedChallenge.currentParticipants}/
+                  {selectedChallenge.maxParticipants}명 참여 중
+                </div>
+                <div className='text-sm mt-2'>
+                  {selectedChallenge.spendingLimit.toLocaleString()}원 사용 한도
+                </div>
+                <div className='text-sm mt-2'>
+                  {new Date(selectedChallenge.startDate).toLocaleDateString()}{' '}
+                  시작 /{' '}
+                  {Math.floor(
+                    (new Date(selectedChallenge.endDate).getTime() -
+                      new Date(selectedChallenge.startDate).getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  )}{' '}
+                  일 동안
+                </div>
+              </div>
+            </div>
+          </div>
+        </ChallengeModal>
+      )}
+    </div>
+  );
 };
 
 export default ChallengeForm;

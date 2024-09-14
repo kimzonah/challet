@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import AllSearch from '../../assets/Challenge/Search.png';
 import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
 import Car from '../../assets/Challenge/Car.png';
@@ -28,7 +28,7 @@ const CategoryList = ({
     { icon: shopping, label: '쇼핑', class: 'SHOPPING' },
   ];
 
-  const handleCategoryClick = (label: string, className: string) => {
+  const handleCategoryClick = (className: string) => {
     onCategoryChange(className);
   };
 
@@ -60,7 +60,7 @@ const CategoryList = ({
         {categories.map((category, index) => (
           <button
             key={index}
-            onClick={() => handleCategoryClick(category.label, category.class)}
+            onClick={() => handleCategoryClick(category.class)}
             className='flex flex-col items-center bg-white'
           >
             <img
