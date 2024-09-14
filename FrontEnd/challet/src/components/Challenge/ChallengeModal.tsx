@@ -69,14 +69,7 @@ const ChallengeModal = ({
           isClosing ? 'animate-modalSlideOut' : 'animate-modalSlideIn'
         }`}
       >
-        {/* 닫기 버튼 */}
-        <button
-          onClick={closeModalWithAnimation}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-        >
-          &times;
-        </button>
-
+    
         {/* 모달 콘텐츠 */}
         <div>
           <div className='font-bold text-lg'>{selectedChallenge.title}</div>
