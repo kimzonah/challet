@@ -18,7 +18,7 @@ export const useChallengeApi = () => {
       endDate: '2023-09-30',
       maxParticipants: 10,
       currentParticipants: 5,
-      isPublic: true,
+      isPublic: false,
       inviteCode: null,
     },
     {
@@ -51,8 +51,27 @@ export const useChallengeApi = () => {
     },
   ];
 
+  // 챌린지 참가 API 요청 함수
+  const joinChallenge = async (challengeId: number, isPublic: boolean, inviteCode: string | null) => {
+    setIsLoading(true); // 로딩 상태
+    try {
+      const url = `https://localhost:8000/challet-service/challenges/${challengeId}`;
+      const requestBody = {
+        isPublic,
+        inviteCode,
+      };
 
-  // API 요청 함수
+      // POST 요청 전송
+      const response = await axios.post(url, requestBody);
+
+      console.log('챌린지 참가 성공:', response.data);
+    } catch (error) {
+      console.error('챌린지 참가 중 오류 발생:', error);
+    } finally {
+      setIsLoading(false); // 로딩 완료
+    }
+  };
+
   const fetchChallenges = async (
     keyword: string,
     category: string,
@@ -79,5 +98,5 @@ export const useChallengeApi = () => {
     }
   };
 
-  return { challenges, isLoading, fetchChallenges, exampleChallenges };
+  return { challenges, isLoading, fetchChallenges, joinChallenge, exampleChallenges };
 };

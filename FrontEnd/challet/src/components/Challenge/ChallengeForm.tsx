@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useChallengeApi } from '../../hooks/useChallengeApi';
 import ChallengeModal from './ChallengeModal';
 import AllSearch from '../../assets/Challenge/Search.png';
 import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
@@ -46,15 +47,26 @@ const backgroundColors = [
 ];
 
 const getRandomBackgroundColor = () => {
-  // 랜덤으로 색상 배열에서 하나를 선택
   return backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
 };
 
 const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
+  const { joinChallenge } = useChallengeApi();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
-  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
-    null
-  ); // 선택된 챌린지
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null); // 선택된 챌린지
+  const [inviteCodeInput, setInviteCodeInput] = useState(''); // 초대코드 입력 상태
+  const [challengeColors, setChallengeColors] = useState<Record<number, string>>({}); // 챌린지 ID별 배경색 상태
+
+  useEffect(() => {
+    // 탭이 변경되거나 카테고리가 변경될 때마다 새 배경 색상을 설정하기 위해 실행
+    const newColors: Record<number, string> = {};
+    challenges.forEach((challenge) => {
+      if (!challengeColors[challenge.id]) {
+        newColors[challenge.id] = getRandomBackgroundColor();
+      }
+    });
+    setChallengeColors((prevColors) => ({ ...prevColors, ...newColors }));
+  }, [challenges]); // 챌린지 목록이 변경될 때마다 실행
 
   if (!Array.isArray(challenges) || challenges.length === 0) {
     return <div>챌린지가 없습니다.</div>;
@@ -63,6 +75,7 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
   const handleChallengeClick = (challenge: Challenge) => {
     setSelectedChallenge(challenge); // 선택한 챌린지 저장
     setIsModalOpen(true); // 모달 열기
+    setInviteCodeInput(''); // 모달 열릴 때 입력 필드 초기화
   };
 
   const handleCloseModal = () => {
@@ -70,23 +83,29 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
     setSelectedChallenge(null); // 선택된 챌린지 초기화
   };
 
-  const handleJoinChallenge = () => {
-    // 참가하기 버튼 클릭 시 동작할 함수 추가 가능
-    console.log(`${selectedChallenge?.title}에 참가합니다.`);
-    // 참가 관련 추가 로직 작성
+  const handleJoinChallenge = async () => {
+    if (!selectedChallenge) return;
+
+    const inviteCode = selectedChallenge.isPublic ? null : inviteCodeInput;
+    await joinChallenge(
+      selectedChallenge.id,
+      selectedChallenge.isPublic,
+      inviteCode
+    );
+    handleCloseModal(); // 모달 닫기
   };
 
   const renderChallenges = (challenges: Challenge[], isCompleted = false) => {
-    return challenges.map((challenge, index) => (
+    return challenges.map((challenge) => (
       <div
-        key={index}
+        key={challenge.id}
         className={`border rounded-md p-4 mb-4 ${isCompleted ? 'opacity-50' : ''}`}
         onClick={() => handleChallengeClick(challenge)} // 클릭 시 모달 열기
         style={{ cursor: 'pointer' }}
       >
         <div className='flex items-center'>
           <div
-            className={`w-12 h-12 rounded-xl flex items-center justify-center ${getRandomBackgroundColor()}`}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center ${challengeColors[challenge.id]}`}
           >
             <img
               src={categoryIcons[challenge.category] || AllSearch}
@@ -149,7 +168,8 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
               <h2 className='flex text-lg font-bold mb-2'>대기 중인 챌린지</h2>
               {renderChallenges(
                 challenges.filter(
-                  (challenge) => challenge.status === 'RECRUITING' && challenge.isIncluded
+                  (challenge) =>
+                    challenge.status === 'RECRUITING' && challenge.isIncluded
                 )
               )}
             </div>
@@ -180,7 +200,7 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
               className={`flex p-2 justify-items-start items-center mt-4 border-2 rounded-xl`}
             >
               <div
-                className={`w-12 h-12 rounded-xl flex items-center justify-center ${getRandomBackgroundColor()}`}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center ${challengeColors[selectedChallenge.id]}`}
               >
                 <img
                   src={categoryIcons[selectedChallenge.category] || AllSearch}
@@ -194,31 +214,64 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
                   {selectedChallenge.maxParticipants}명 참여 중
                 </div>
                 <div className='flex text-sm mr-16 text-base'>
-                  <div className='text-[#00B8B8]'>{selectedChallenge.spendingLimit.toLocaleString()}원&nbsp;</div>
+                  <div className='text-[#00B8B8]'>
+                    {selectedChallenge.spendingLimit.toLocaleString()}원&nbsp;
+                  </div>
                   <div>사용 한도</div>
                 </div>
                 <div className='flex text-sm items-center'>
-                  <img src={TimeFill} alt='시간 아이콘' className='w-4 h-4 mr-1' />
-                  {new Date(selectedChallenge.startDate).toLocaleDateString()} 시작
+                  <img
+                    src={TimeFill}
+                    alt='시간 아이콘'
+                    className='w-4 h-4 mr-1'
+                  />
+                  {new Date(selectedChallenge.startDate).toLocaleDateString()}{' '}
+                  시작
                 </div>
                 <div className='flex text-sm items-center'>
-                  <img src={TimeFill} alt='시간 아이콘' className='w-4 h-4 mr-1' />
-                  {new Date(selectedChallenge.endDate).toLocaleDateString()} 종료
+                  <img
+                    src={TimeFill}
+                    alt='시간 아이콘'
+                    className='w-4 h-4 mr-1'
+                  />
+                  {new Date(selectedChallenge.endDate).toLocaleDateString()}{' '}
+                  종료
                 </div>
               </div>
             </div>
 
-            {/* 참가하기 버튼 */}
-            {!selectedChallenge.isIncluded && (
-              <div className='mt-4'>
-                <button
-                  onClick={handleJoinChallenge}
-                  className='bg-[#00CCCC] text-white py-4 px-4 rounded-lg hover:bg-teal-600'
-                >
-                  도전하기
-                </button>
-              </div>
-            )}
+            <div className='flex'>
+              {/* 비공개 챌린지인 경우 초대코드 입력 필드 */}
+              {!selectedChallenge.isPublic && (
+                <div className='mt-4'>
+                  <input
+                    type='text'
+                    value={inviteCodeInput}
+                    onChange={(e) => setInviteCodeInput(e.target.value)}
+                    placeholder='초대 코드'
+                    maxLength={6} // 초대코드 최대 길이 6자
+                    className='py-4 mr-4 border border-gray-300 rounded-lg text-center text-gray-700 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500'
+                  />
+                </div>
+              )}
+
+              {/* 참가하기 버튼 */}
+              {!selectedChallenge.isIncluded && (
+                <div className='mt-4'>
+                  <button
+                    onClick={handleJoinChallenge}
+                    disabled={!selectedChallenge.isPublic && inviteCodeInput.length !== 6} // 초대코드가 6자일 때만 활성화
+                    className={`py-4 px-4 rounded-lg ${
+                      selectedChallenge.isPublic || inviteCodeInput.length === 6
+                        ? 'bg-[#00CCCC] text-white hover:bg-teal-600'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
+                  >
+                    도전하기
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </ChallengeModal>
       )}
