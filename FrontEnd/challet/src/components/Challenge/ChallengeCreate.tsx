@@ -9,7 +9,10 @@ const ChallengeCreate = () => {
 
   return (
     <div className='fixed bottom-16 left-0 right-12 flex justify-end w-full mb-4'>
-      <button onClick={handleCreateChallenge} className='bg-white '>
+      <button
+        onClick={handleCreateChallenge}
+        className='bg-white transform transition-transform duration-300 ease-in-out hover:scale-110'
+      >
         {/* 이미지 버튼으로 사용 */}
         <img
           src={ChallengePlus}
