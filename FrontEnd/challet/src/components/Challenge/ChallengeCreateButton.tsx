@@ -1,10 +1,12 @@
 import ChallengePlus from '../../assets/Challenge/ChallengePlus.png';
+import { useNavigate } from 'react-router-dom';
 
-const ChallengeCreate = () => {
+const ChallengeCreateButton = () => {
+  const navigate = useNavigate();
   const handleCreateChallenge = () => {
     // 챌린지 생성하기 버튼 클릭 시 처리할 로직
     console.log('챌린지 생성하기 클릭됨');
-    // 예: 페이지 이동 또는 모달 띄우기 로직 추가
+    navigate('/challenge/create'); // 챌린지 생성 페이지로 이동
   };
 
   return (
@@ -24,4 +26,4 @@ const ChallengeCreate = () => {
   );
 };
 
-export default ChallengeCreate;
+export default ChallengeCreateButton;

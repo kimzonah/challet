@@ -45,8 +45,6 @@ const ChallengePage = () => {
 
   return (
     <div className='min-h-screen flex flex-col items-center p-2'>
-
-      
       <div className='flex justify-center w-full mb-2 mt-8'>
         {['챌린지 찾기', '나의 챌린지'].map((tab) => (
           <button
