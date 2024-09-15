@@ -1,26 +1,28 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
+// SignUpState 인터페이스 정의
 interface SignUpState {
   name: string;
-  phone_number: string;
+  phoneNumber: string;
   age: number;
-  gender: number | null;
+  gender: 'MALE' | 'FEMALE' | null; // 성별을 직접 인터페이스에서 정의
   password: string;
+  nickname: string;
   setSignUpData: (data: Partial<SignUpState>) => void;
 }
 
 // Zustand로 상태 관리
 const useSignUpStore = create<SignUpState>((set) => ({
   name: '',
-  phone_number: '',
-  auth_code: '',
+  phoneNumber: '',
   age: 0,
-  gender: null,
+  gender: null, // 초기값은 null
   password: '',
+  nickname: '',
   setSignUpData: (data) =>
     set((state) => ({
       ...state,
-      ...data,
+      ...data, // 새로운 데이터로 상태 업데이트
     })),
 }));
 

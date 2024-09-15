@@ -8,4 +8,4 @@ const axiosInstance = axios.create({
   },
 });
 
-export default axiosInstance; // default export로 내보냄
+export default axiosInstance;
