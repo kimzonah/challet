@@ -1,8 +1,16 @@
 #root {
-  max-width: 1280px;
+  width: 100%; /* 화면 크기에 맞춰 넓이 조정 */
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+}
+/* CSS 코드에 추가 */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE 및 Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .logo {

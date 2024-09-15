@@ -1,34 +1,48 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ChallengeFeed from './components/Challenge/ChallengeFeed';
+import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
+import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
+import SignUpPage from './pages/SignUpPage/SignUpPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import Navbar from './components/navigation/Navbar';
+import WalletPage from './pages/WalletPage/WalletPage';
+import ChallengePage from './pages/ChallengePage/ChallengePage';
+import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
+import MyPage from './pages/MyPage/MyPage';
+import PaymentPage from './pages/PaymentPage/PaymentPage';
+import PayResult from './pages/PayresultPage/PayresultPage';
 import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className='min-h-screen flex flex-col justify-between'>
+        {/* Routes 설정 */}
+        <Routes>
+          <Route path='/' element={<OnboardingPage />} />
+          <Route path='/phone-auth' element={<PhoneAuthPage />} />
+          <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/wallet' element={<WalletPage />} />
+          <Route path='/challenge' element={<ChallengePage />} />
+          <Route path='/analysis' element={<AnalysisPage />} />
+          <Route path='/payment' element={<PaymentPage />} />
+          <Route path='/payresult' element={<PayResult />} />
+          <Route path='/my' element={<MyPage />} />
+          <Route path='/challet-service/users/login' element={<LoginPage />} />
+          <Route
+            path='/challet-service/challenges'
+            element={<ChallengePage />}
+          />
+          <Route
+            path='/challet-service/challenges/:id'
+            element={<ChallengeFeed />}
+          />
+        </Routes>
+        {/* 네비게이션 바 */}
+        <Navbar />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </Router>
   );
 }
 
