@@ -24,6 +24,8 @@ const ChallengeCreatePage: React.FC = () => {
   >([undefined, undefined]); // 시작 및 종료 날짜를 배열로 관리
   const [maxParticipants, setMaxParticipants] = useState<string>('1'); // 기본값 1명
   const [isPublic, setIsPublic] = useState<boolean>(true); // 기본값을 공개로 설정
+  const [showModal, setShowModal] = useState<boolean>(false); // 모달 상태 관리
+  const [modalMessage, setModalMessage] = useState<string>(''); // 모달 메시지 관리
   const [startDate, endDate] = dateRange;
 
   // 카테고리 및 입력 필드의 값 변경 핸들러
@@ -37,8 +39,10 @@ const ChallengeCreatePage: React.FC = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (!startDate || !endDate) {
-      alert('시작 날짜와 종료 날짜를 선택하세요.');
+    // 입력 값 검증
+    if (!category || !roomName || !spendingLimit || !startDate || !endDate) {
+      setModalMessage('모든 값을 입력해주세요!');
+      setShowModal(true);
       return;
     }
 
@@ -54,7 +58,9 @@ const ChallengeCreatePage: React.FC = () => {
 
     console.log('RequestBody:', requestBody);
 
-    // 여기에 서버로 데이터를 보내는 로직 추가 (예: fetch 또는 axios)
+    // 성공적인 데이터 제출 후 모달을 표시
+    setModalMessage('챌린지 생성이 완료되었습니다!');
+    setShowModal(true);
   };
 
   // 오늘 날짜 + 1 (내일) 계산
@@ -188,6 +194,21 @@ const ChallengeCreatePage: React.FC = () => {
           </button>
         </form>
       </div>
+
+      {/* 모달 */}
+      {showModal && (
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+          <div className='bg-white rounded-lg p-6 w-[300px]'>
+            <p className='text-center font-semibold mb-4'>{modalMessage}</p>
+            <button
+              className='w-full py-2 bg-[#00CCCC] text-white rounded-lg hover:bg-teal-600'
+              onClick={() => setShowModal(false)}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
