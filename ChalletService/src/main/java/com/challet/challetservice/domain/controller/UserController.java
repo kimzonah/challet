@@ -47,7 +47,8 @@ public class UserController {
     })
     @PatchMapping("/nicknames")
     public ResponseEntity<String> updateNickname(
-            @RequestHeader(value = "Authorization") String header, @RequestBody UserUpdateNicknameRequestDTO request) {
+            @RequestHeader(value = "Authorization") String header,
+            @RequestBody UserUpdateNicknameRequestDTO request) {
         return null;
     }
 
@@ -59,7 +60,8 @@ public class UserController {
     })
     @PatchMapping("/profileImages")
     public ResponseEntity<String> updateProfileImage(
-        @RequestHeader(value = "Authorization") String header, @RequestBody UserUpdateProfileRequestDTO request) {
+        @RequestHeader(value = "Authorization") String header,
+        @RequestBody UserUpdateProfileRequestDTO request) {
         return null;
     }
 
