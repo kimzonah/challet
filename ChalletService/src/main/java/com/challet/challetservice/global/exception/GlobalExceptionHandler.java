@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errorDetails = new HashMap<>();
         errorDetails.put("errorCode", e.getCustomException().getErrorCode());
         errorDetails.put("errorMessage", e.getCustomException().getErrorMessage());
-        return ResponseEntity.status(HttpStatus.valueOf(e.getCustomException().getStatusNum()))
+        return ResponseEntity.status(HttpStatus.valueOf(e.getCustomException().getStatusNumber()))
             .body(errorDetails);
     }
 }

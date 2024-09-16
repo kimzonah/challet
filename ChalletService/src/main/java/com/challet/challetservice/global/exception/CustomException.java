@@ -14,7 +14,7 @@ public enum CustomException {
 
     INVALID_TOKEN_EXCEPTION(401, "InvalidTokenException","유효하지 않은 토큰입니다.");
 
-    private int statusNum;
+    private int statusNumber;
     private String errorCode;
     private String errorMessage;
 }
