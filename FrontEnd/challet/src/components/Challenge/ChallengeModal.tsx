@@ -124,7 +124,7 @@ const ChallengeModal = ({
             {/* 비공개 챌린지이고 이미 참가한 경우 챌린지 코드 표시 */}
             {selectedChallenge.isIncluded &&
               !selectedChallenge.isPublic &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4 font-bold text-[#00B8B8]'>
                   챌린지코드: {selectedChallenge.inviteCode || 'A1B2C3'}
                 </div>
@@ -133,7 +133,7 @@ const ChallengeModal = ({
             {/* 공개 챌린지이고 이미 참가한 경우 비활성화된 대기중 버튼 */}
             {selectedChallenge.isIncluded &&
               selectedChallenge.isPublic &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4'>
                   <button
                     disabled
@@ -147,7 +147,7 @@ const ChallengeModal = ({
             {/* 참가하지 않은 비공개 챌린지인 경우 초대코드 입력 필드 */}
             {!selectedChallenge.isIncluded &&
               !selectedChallenge.isPublic &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4'>
                   <input
                     type='text'
@@ -162,7 +162,7 @@ const ChallengeModal = ({
 
             {/* 참가하지 않은 경우 참가하기 버튼 */}
             {!selectedChallenge.isIncluded &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4'>
                   <button
                     onClick={handleJoinChallenge}
@@ -177,6 +177,18 @@ const ChallengeModal = ({
                     }`}
                   >
                     도전하기
+                  </button>
+                </div>
+              )}
+            {/* 참가하기 버튼: 공개/비공개 여부 상관 없이 status가 IN_PROGRESS일 때 활성화 */}
+            {selectedChallenge.isIncluded &&
+              selectedChallenge.status === 'PROGRESSING' && (
+                <div className='mt-4'>
+                  <button
+                    onClick={handleJoinChallenge}
+                    className={`py-4 px-4 rounded-lg bg-[#00CCCC] text-white hover:bg-teal-600`}
+                  >
+                    입장하기
                   </button>
                 </div>
               )}
