@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: prod # 로컬(dev) / git(prod)
+    active: dev # 로컬(dev) / git(prod)
 
 ---
 # 로컬(dev) 환경 설정
@@ -11,6 +11,7 @@ spring:
   config:
     activate:
       on-profile: dev
+    import: application-key.yml
 
 eureka:
   instance:
@@ -27,6 +28,7 @@ spring:
   config:
     activate:
       on-profile: prod
+    import: "optional:file:/BankService/src/main/resources/application-key.yml"
 
 eureka:
   client:
@@ -37,10 +39,7 @@ eureka:
 
 ---
 # 공통 설정
-
 spring:
-  config:
-    import: application-key.yml
   application:
     name: bank-service
   datasource:
@@ -52,7 +51,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+    open-in-view: false
 
 springdoc:
   api-docs:
