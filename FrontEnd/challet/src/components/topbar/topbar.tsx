@@ -10,13 +10,15 @@ export const TopBar = ({ title }: TopBarProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className='flex space-x-5 py-5 mb-3 px-3'>
-      <FontAwesomeIcon
-        icon={faAngleLeft}
-        className='mt-1'
-        onClick={() => navigate(-1)}
-      />
-      <p className='text-lg font-semibold'>{title}</p>
+    <div className='fixed top-0 left-0 right-0 bg-white'>
+      <div className='flex space-x-5 py-5 mb-3 px-3 items-center'>
+        <FontAwesomeIcon
+          icon={faAngleLeft}
+          className=''
+          onClick={() => navigate(-1)}
+        />
+        <p className='text-lg font-semibold'>{title}</p>
+      </div>
     </div>
   );
 };
