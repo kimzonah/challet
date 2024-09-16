@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import ChallengeProgressbar from './ChallengeProgressbar'; // Progressbar 임포트
 
 const ChallengeRoom = () => {
   const location = useLocation();
@@ -25,6 +26,16 @@ const ChallengeRoom = () => {
           />
           <p className='text-lg font-semibold'>{challenge.title}</p>
           <FontAwesomeIcon icon={faBars} className='' />
+        </div>
+      </div>
+
+      {/* 프로그래스바 - 지출 한도 정보 표시 */}
+      <div className='mt-16 flex justify-center'>
+        <div className='p-4 bg-white rounded-lg w-[90%]'>
+          <ChallengeProgressbar
+            currentSpending={challenge.currentSpending || 0} // 현재 지출 금액 전달
+            spendingLimit={challenge.spendingLimit} // 지출 한도 전달
+          />
         </div>
       </div>
 
