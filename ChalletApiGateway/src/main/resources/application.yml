@@ -1,12 +1,40 @@
 server:
   port: 8000
 
+spring:
+  profiles:
+    active: prod  #로컬(dev) / git(prod)
+
+---
+# 로컬(dev) 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+---
+# 프로덕션(prod) 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://challet.world:8761/eureka
+
+---
+# 공통 설정
 
 spring:
   application:
