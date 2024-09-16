@@ -1,4 +1,4 @@
-package com.challet.nhbankservicedemo.global.config;
+package com.challet.shbankservice.global.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
