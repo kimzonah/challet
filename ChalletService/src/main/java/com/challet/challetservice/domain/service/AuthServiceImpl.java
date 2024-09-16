@@ -87,9 +87,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenRefreshResponseDTO refreshToken(TokenRefreshRequestDTO request) {
-        System.out.println(secretKey + "t시크릿키");
         String refreshToken = request.refreshToken();
-        System.out.println(refreshToken);
 
         // 리프레시 토큰이 유효한지 먼저 확인
         if(!jwtUtil.validateToken(refreshToken)){
