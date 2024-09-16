@@ -8,7 +8,7 @@ public record UserRegisterRequestDTO(
         @Schema(description = "전화번호")
         String phoneNumber,
 
-        @Schema(description = "간편비밀번호")
+        @Schema(description = "간편비밀번호, 6자리만 입력가능")
         String password,
 
         @Schema(description = "닉네임")
@@ -18,10 +18,10 @@ public record UserRegisterRequestDTO(
         String profileImage,
 
         @Schema(description = "나이")
-        Integer age,
+        int age,
 
         @Schema(description = "성별")
-        String gender,
+        int gender,
 
         @Schema(description = "이름")
         String name

@@ -40,11 +40,17 @@ public class User {
     @Column(name = "age", nullable = false)
     private Integer age;
 
-    @Column(name = "gender", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+    @Column(name = "gender", nullable = false, columnDefinition = "TINYINT")
+    private Integer gender;
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "refresh_token", nullable = true)
+    private String refreshToken;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
 }
