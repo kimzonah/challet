@@ -2,6 +2,7 @@ package com.challet.challetservice.domain.controller;
 
 import com.challet.challetservice.domain.dto.request.CommentRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
+import com.challet.challetservice.domain.dto.request.SharedTransactionUpdateRequestDTO;
 import com.challet.challetservice.domain.dto.response.CommentResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.global.exception.ExceptionDto;
@@ -35,8 +36,9 @@ public class SharedTransactionController {
     })
     @PatchMapping("/{id}")
     public ResponseEntity<String> sharedTransaction(
-        @RequestHeader(value = "Authorization") String header,
-        @PathVariable("id") String id) {
+            @RequestHeader(value = "Authorization") String header,
+            @PathVariable("id") String id,
+            @RequestBody SharedTransactionUpdateRequestDTO request) {
         return null;
     }
 

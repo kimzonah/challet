@@ -1,5 +1,7 @@
 package com.challet.challetservice.domain.controller;
 
+import com.challet.challetservice.domain.dto.request.UserUpdateNicknameRequestDTO;
+import com.challet.challetservice.domain.dto.request.UserUpdateProfileRequestDTO;
 import com.challet.challetservice.domain.dto.response.MyRewadsListResponseDTO;
 import com.challet.challetservice.domain.dto.response.RewardDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.UserInfoResponseDTO;
@@ -45,7 +47,8 @@ public class UserController {
     })
     @PatchMapping("/nicknames")
     public ResponseEntity<String> updateNickname(
-        @RequestHeader(value = "Authorization") String header) {
+            @RequestHeader(value = "Authorization") String header,
+            @RequestBody UserUpdateNicknameRequestDTO request) {
         return null;
     }
 
@@ -57,7 +60,8 @@ public class UserController {
     })
     @PatchMapping("/profileImages")
     public ResponseEntity<String> updateProfileImage(
-        @RequestHeader(value = "Authorization") String header) {
+        @RequestHeader(value = "Authorization") String header,
+        @RequestBody UserUpdateProfileRequestDTO request) {
         return null;
     }
 
