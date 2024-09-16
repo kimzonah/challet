@@ -1,5 +1,7 @@
 package com.challet.challetservice.domain.entity;
 
+import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
+import com.challet.challetservice.global.util.JwtUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -51,6 +53,19 @@ public class User {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public static User createUser(UserRegisterRequestDTO request, JwtUtil jwtUtil) {
+        return User.builder()
+            .phoneNumber(request.phoneNumber())
+            .password(request.password())
+            .nickname(request.nickname())
+            .profileImage(request.profileImage())
+            .age(request.age())
+            .gender(request.gender())
+            .name(request.name())
+            .refreshToken(jwtUtil.generateRefreshToken(request.phoneNumber()))
+            .build();
     }
 
 }

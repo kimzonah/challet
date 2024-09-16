@@ -5,8 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "회원가입, 로그인 응답 access token 정보")
 public record LoginResponseDTO(
 
-        @Schema(description = "access token 정보")
-        String accessToken
+    @Schema(description = "access token 정보")
+    String accessToken
 
 ) {
+
 }

@@ -3,6 +3,8 @@ package com.challet.challetservice.global.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,8 @@ public class JwtUtil {
         byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     // Access Token 발급
     public String generateAccessToken(String phoneNumber) {
@@ -78,21 +82,21 @@ public class JwtUtil {
     public Claims getClaimsFromToken(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(this.getSecretKey())  // secretKey 사용
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+                .setSigningKey(this.getSecretKey())  // secretKey 사용
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
         } catch (ExpiredJwtException e) {
-            System.out.println("Token expired: " + e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         } catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token: " + e.getMessage());
+            logger.error(e.getMessage());
             throw e;
         } catch (SignatureException e) {
-            System.out.println("Invalid signature: " + e.getMessage());
+            logger.error(e.getMessage());
             throw e;
         } catch (JwtException e) {
-            System.out.println("JWT error: " + e.getMessage());
+            logger.error(e.getMessage());
             throw e;
         }
     }

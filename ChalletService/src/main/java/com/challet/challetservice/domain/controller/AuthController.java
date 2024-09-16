@@ -36,7 +36,8 @@ public class AuthController {
         @ApiResponse(responseCode = "400", description = "회원가입 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PostMapping("/signup")
-    public ResponseEntity<LoginResponseDTO> signup(@RequestBody UserRegisterRequestDTO request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponseDTO> signup(@RequestBody UserRegisterRequestDTO request,
+        HttpServletResponse response) {
         LoginResponseDTO result = authService.signup(request, response);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -49,7 +50,8 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "비밀번호 오류로 인한 로그인 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginRequestDTO request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginRequestDTO request,
+        HttpServletResponse response) {
         LoginResponseDTO result = authService.login(request, response);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
