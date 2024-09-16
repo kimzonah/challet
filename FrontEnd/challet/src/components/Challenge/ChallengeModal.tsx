@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Challenge } from './ChallengeForm'; // Challenge 타입을 임포트
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 임포트
 import AllSearch from '../../assets/Challenge/Search.png';
 import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
 import Car from '../../assets/Challenge/Car.png';
@@ -32,6 +33,7 @@ const ChallengeModal = ({
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [isClosing, setIsClosing] = useState(false); // 모달이 닫히는 중인지 추적하는 상태
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   if (!selectedChallenge) return null; // 선택된 챌린지가 없으면 렌더링 안 함
 
@@ -56,6 +58,15 @@ const ChallengeModal = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // 입장하기 버튼 클릭 시 라우팅 처리 함수 (Challenge 정보도 함께 넘김)
+  const handleEnterChallengeRoom = () => {
+    if (selectedChallenge) {
+      navigate(`/challengeRoom/${selectedChallenge.id}`, {
+        state: { challenge: selectedChallenge },
+      });
+    }
+  };
 
   return (
     <div
@@ -180,12 +191,13 @@ const ChallengeModal = ({
                   </button>
                 </div>
               )}
-            {/* 참가하기 버튼: 공개/비공개 여부 상관 없이 status가 IN_PROGRESS일 때 활성화 */}
+
+            {/* 입장하기 버튼: 공개/비공개 여부 상관 없이 status가 IN_PROGRESS일 때 활성화 */}
             {selectedChallenge.isIncluded &&
               selectedChallenge.status === 'PROGRESSING' && (
                 <div className='mt-4'>
                   <button
-                    onClick={handleJoinChallenge}
+                    onClick={handleEnterChallengeRoom} // handleEnterChallengeRoom 호출
                     className={`py-4 px-4 rounded-lg bg-[#00CCCC] text-white hover:bg-teal-600`}
                   >
                     입장하기

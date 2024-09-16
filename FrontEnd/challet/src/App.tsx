@@ -3,10 +3,11 @@ import {
   Routes,
   Route,
   useLocation,
+  useMatch,
 } from 'react-router-dom';
 import 'react-dates/lib/css/_datepicker.css';
 
-import ChallengeFeed from './components/Challenge/ChallengeFeed';
+import ChallengeRoom from './components/Challenge/ChallengeRoom';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
@@ -25,8 +26,12 @@ import './App.css';
 function App() {
   const location = useLocation();
 
-  // Navbar를 숨길 경로들 정의
-  const hideNavbarRoutes = ['/challenge/create'];
+  // 훅을 배열 순회 외부에서 호출하여 순서가 유지되도록 수정
+  const matchChallengeCreate = useMatch('/challenge/create');
+  const matchChallengeRoom = useMatch('/challengeRoom/:id');
+
+  // 두 경로 중 하나와 매칭되는지 확인
+  const shouldHideNavbar = matchChallengeCreate || matchChallengeRoom;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -38,28 +43,20 @@ function App() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
-        <Route
-          path='/challenge/create'
-          element={<ChallengeCreatePage />}
-        />{' '}
-        {/* 새로운 라우트 추가 */}
+        <Route path='/challenge/create' element={<ChallengeCreatePage />} />
         <Route path='/analysis' element={<AnalysisPage />} />
         <Route path='/payment' element={<PaymentPage />} />
         <Route path='/payresult' element={<PayResult />} />
         <Route path='/my' element={<MyPage />} />
         <Route path='/challet-service/users/login' element={<LoginPage />} />
-        <Route path='/challet-service/challenges' element={<ChallengePage />} />
-        <Route
-          path='/challet-service/challenges/:id'
-          element={<ChallengeFeed />}
-        />
+        <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
       </Routes>
 
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
 
       {/* 특정 경로에서는 Navbar 숨김 */}
-      {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
+      {!shouldHideNavbar && <Navbar />}
     </div>
   );
 }
