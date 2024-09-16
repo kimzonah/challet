@@ -5,6 +5,20 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import ChallengeProgressbar from './ChallengeProgressbar'; // Progressbar 임포트
 
+// 남은 일수를 계산하는 함수
+const calculateRemainDays = (endDateString: string): number => {
+  const endDate = new Date(endDateString); // 문자열을 Date 객체로 변환
+  const currentDate = new Date(); // 현재 날짜
+
+  // 종료일과 현재 날짜 사이의 차이를 계산 (밀리초 단위)
+  const remainTime = endDate.getTime() - currentDate.getTime();
+
+  // 밀리초를 일(day) 단위로 변환
+  const remainDays = Math.ceil(remainTime / (1000 * 60 * 60 * 24));
+
+  return remainDays;
+};
+
 const ChallengeRoom = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -13,6 +27,9 @@ const ChallengeRoom = () => {
   if (!challenge) {
     return <div>챌린지 정보가 없습니다.</div>;
   }
+
+  // 남은 일 수 계산
+  const remainDays = calculateRemainDays(challenge.endDate);
 
   return (
     <div className='min-h-screen flex flex-col bg-[#F1F4F6]'>
@@ -31,10 +48,11 @@ const ChallengeRoom = () => {
 
       {/* 프로그래스바 - 지출 한도 정보 표시 */}
       <div className='mt-16 flex justify-center'>
-        <div className='p-4 bg-white rounded-lg w-[90%]'>
+        <div className='px-4 py-2 mt-2 bg-white rounded-lg w-[90%]'>
           <ChallengeProgressbar
             currentSpending={challenge.currentSpending || 0} // 현재 지출 금액 전달
             spendingLimit={challenge.spendingLimit} // 지출 한도 전달
+            remainDays={remainDays} // 남은 일 수 전달
           />
         </div>
       </div>

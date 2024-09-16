@@ -14,8 +14,8 @@ export const useChallengeApi = () => {
       category: 'COFFEE',
       title: '커피 대신 물 마시기',
       spendingLimit: 10000,
-      startDate: '2023-09-20',
-      endDate: '2023-09-30',
+      startDate: '2024-09-20',
+      endDate: '2024-09-30',
       maxParticipants: 10,
       currentParticipants: 5,
       isPublic: true,
@@ -28,8 +28,8 @@ export const useChallengeApi = () => {
       category: 'DELIVERY',
       title: '배달 음식 절반 줄이기',
       spendingLimit: 50000,
-      startDate: '2023-08-15',
-      endDate: '2023-09-15',
+      startDate: '2024-08-15',
+      endDate: '2024-09-20',
       maxParticipants: 20,
       currentParticipants: 18,
       isPublic: false,
@@ -42,8 +42,8 @@ export const useChallengeApi = () => {
       category: 'SHOPPING',
       title: '한달 쇼핑 멈추기 챌린지',
       spendingLimit: 0,
-      startDate: '2023-07-01',
-      endDate: '2023-07-31',
+      startDate: '2024-07-01',
+      endDate: '2024-07-31',
       maxParticipants: 30,
       currentParticipants: 30,
       isPublic: true,
@@ -52,7 +52,11 @@ export const useChallengeApi = () => {
   ];
 
   // 챌린지 참가 API 요청 함수
-  const joinChallenge = async (challengeId: number, isPublic: boolean, inviteCode: string | null) => {
+  const joinChallenge = async (
+    challengeId: number,
+    isPublic: boolean,
+    inviteCode: string | null
+  ) => {
     setIsLoading(true); // 로딩 상태
     try {
       const url = `https://localhost:8000/challet-service/challenges/${challengeId}`;
@@ -98,5 +102,11 @@ export const useChallengeApi = () => {
     }
   };
 
-  return { challenges, isLoading, fetchChallenges, joinChallenge, exampleChallenges };
+  return {
+    challenges,
+    isLoading,
+    fetchChallenges,
+    joinChallenge,
+    exampleChallenges,
+  };
 };
