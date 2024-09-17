@@ -30,8 +30,8 @@ public class ChTransaction {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ch_account_id", nullable = false)
-    private ChAccount chAccount;
+    @JoinColumn(name = "ch_bank_id", nullable = false)
+    private ChBank chBank;
 
     @Column(name = "transaction_amount", nullable = false)
     private Long transactionAmount;
@@ -52,7 +52,7 @@ public class ChTransaction {
     private Category category;
 
 
-    public void assignTransactionChAccount(ChAccount chAccount) {
-        this.chAccount = chAccount;
+    public void assignTransactionChAccount(ChBank chBank) {
+        this.chBank = chBank;
     }
 }
