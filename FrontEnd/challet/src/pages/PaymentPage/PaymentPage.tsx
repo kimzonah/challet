@@ -54,8 +54,8 @@ const PaymentPage = () => {
           style={{
             width: '70vw',
             height: '70vw',
-            maxWidth: '500px',
-            maxHeight: '500px',
+            maxWidth: '600px',
+            maxHeight: '600px',
             border: '4px solid white',
           }}
         >
@@ -65,11 +65,11 @@ const PaymentPage = () => {
               width='100%'
               height='100%'
               autoPlay
-              className='absolute top-0 left-0 w-full h-full'
+              className='absolute top-0 left-0 w-full h-full object-cover' // object-fit: cover로 설정
             ></video>
           )}
         </div>
-        <p className='text-gray-500 text-xs mt-4 text-center'>
+        <p className='text-gray-500 text-sm mt-4 text-center'>
           QR코드를 화면에 비추면 <br />
           자동으로 인식 후 다음 화면으로 전환됩니다.
         </p>
