@@ -11,7 +11,6 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: application-key.yml
 
 
 eureka:
@@ -27,7 +26,6 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "optional:file:/ChalletApiGateway/src/main/resources/application-key.yml"
 
 
 
