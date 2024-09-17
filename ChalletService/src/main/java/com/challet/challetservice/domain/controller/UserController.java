@@ -54,9 +54,10 @@ public class UserController {
     })
     @PatchMapping("/nicknames")
     public ResponseEntity<String> updateNickname(
-            @RequestHeader(value = "Authorization") String header,
+            @RequestHeader(value = "Authorization", required = false) String header,
             @RequestBody UserUpdateNicknameRequestDTO request) {
-        return null;
+        userService.updateNickname(header, request);
+        return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 
     @Operation(summary = "프로필 이미지 수정", description = "새 프로필 이미지를 입력 받아 프로필 이미지 수정")

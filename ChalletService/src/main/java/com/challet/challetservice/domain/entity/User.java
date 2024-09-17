@@ -68,4 +68,8 @@ public class User {
             .build();
     }
 
+    public void updateNickname(String nickname){
+        this.nickname = nickname;
+    }
+
 }
