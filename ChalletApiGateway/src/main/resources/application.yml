@@ -31,7 +31,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://challet.world:8761/eureka
+      defaultZone: "optional:file:/ChalletApiGateway/src/main/resources/application-key.yml"
 
 ---
 # 공통 설정
