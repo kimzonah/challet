@@ -5,14 +5,19 @@ import java.time.LocalDateTime;
 
 @Schema(description = "챌렛계좌 내역 조회 응답 DTO")
 public record TransactionHistoryResponseDTO(
+
     @Schema(description = "거래내역 ID")
-    long id,
+    Long id,
+
     @Schema(description = "거래금액")
-    long transactionAmount,
+    Long transactionAmount,
+
     @Schema(description = "잔액")
-    long balance,
+    Long balance,
+
     @Schema(description = "거래일시")
     LocalDateTime transactionDate,
+
     @Schema(description = "거래카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE",
         "SHOPPING"})
     String category
