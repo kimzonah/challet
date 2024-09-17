@@ -34,7 +34,7 @@ public class ChAccount {
     @Column(name = "account_balance", nullable = false)
     private Long accountBalance;
 
-    @Column(name = "create_date_time", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "create_date_time", nullable = false, columnDefinition = "DATETIME")
     @CreationTimestamp
     private LocalDateTime createDateTime;
 

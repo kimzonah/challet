@@ -36,7 +36,7 @@ public class ChTransaction {
     @Column(name = "transaction_amount", nullable = false)
     private Long transactionAmount;
 
-    @Column(name = "transaction_datetime", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "transaction_datetime", nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime transactionDatetime;
 
     @Column(name = "deposit", nullable = false)
