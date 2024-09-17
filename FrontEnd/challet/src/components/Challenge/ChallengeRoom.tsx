@@ -4,6 +4,7 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import ChallengeProgressbar from './ChallengeProgressbar'; // Progressbar 임포트
+import TransactionList from './SharedTransactionList';
 
 // 남은 일수를 계산하는 함수
 const calculateRemainDays = (endDateString: string): number => {
@@ -31,6 +32,11 @@ const ChallengeRoom = () => {
   // 남은 일 수 계산
   const remainDays = calculateRemainDays(challenge.endDate);
 
+  // 지출 추가하기 버튼 클릭 시 SharedTransactionCreate로 navigate
+  const handleAddTransaction = () => {
+    navigate('/sharedTransactionCreate', { state: { id: challenge.id } });
+  };
+
   return (
     <div className='min-h-screen flex flex-col bg-[#F1F4F6]'>
       {/* 탑바 변경을 위해 다시 만듦 */}
@@ -57,9 +63,17 @@ const ChallengeRoom = () => {
         </div>
       </div>
 
+      {/* 트랜잭션 대화창 */}
+      <div className='pb-8 flex-1 overflow-y-auto'>
+        <TransactionList challengeId={challenge.id} />
+      </div>
+
       {/* 지출 추가하기 버튼 */}
       <div className='w-full fixed bottom-0'>
-        <button className='w-full py-[30px] bg-[#00CCCC] text-white hover:bg-teal-600'>
+        <button
+          className='w-full py-[30px] bg-[#00CCCC] text-white hover:bg-teal-600'
+          onClick={handleAddTransaction} // 버튼 클릭 시 함수 호출
+        >
           지출 추가하기
         </button>
       </div>

@@ -22,6 +22,7 @@ import PayResult from './pages/PayresultPage/PayresultPage';
 import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'; // 챌린지 생성 컴포넌트
 import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
 import './App.css';
+import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
 
 function App() {
   const location = useLocation();
@@ -29,9 +30,11 @@ function App() {
   // 훅을 배열 순회 외부에서 호출하여 순서가 유지되도록 수정
   const matchChallengeCreate = useMatch('/challenge/create');
   const matchChallengeRoom = useMatch('/challengeRoom/:id');
+  const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
 
   // 두 경로 중 하나와 매칭되는지 확인
-  const shouldHideNavbar = matchChallengeCreate || matchChallengeRoom;
+  const shouldHideNavbar =
+    matchChallengeCreate || matchChallengeRoom || sharedTransactionCreate;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -50,6 +53,10 @@ function App() {
         <Route path='/my' element={<MyPage />} />
         <Route path='/challet-service/users/login' element={<LoginPage />} />
         <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
+        <Route
+          path='/sharedTransactionCreate'
+          element={<SharedTransactionCreate />}
+        />
       </Routes>
 
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
