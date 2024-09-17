@@ -1,5 +1,6 @@
 package com.challet.challetservice.domain.entity;
 
+import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -56,5 +57,19 @@ public class Challenge {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ChallengeStatus status;
+
+    public static Challenge createChallenge(ChallengeRegisterRequestDTO request, String code) {
+        return Challenge.builder()
+            .category(Category.valueOf(request.category()))
+            .title(request.title())
+            .spendingLimit(request.spendingLimit())
+            .createDate(LocalDate.now())
+            .startDate(request.startDate())
+            .endDate(request.endDate())
+            .maxPaticipants(request.maxParticipants())
+            .inviteCode(code)
+            .status(ChallengeStatus.RECRUITING)
+            .build();
+    }
 
 }

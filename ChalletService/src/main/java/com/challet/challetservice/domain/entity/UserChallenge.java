@@ -37,4 +37,12 @@ public class UserChallenge {
     @Column(name = "spending_amount", nullable = false)
     private Long spendingAmount;
 
+    public static UserChallenge addUserChallenge(User user, Challenge challenge) {
+        return UserChallenge.builder()
+            .user(user)
+            .challenge(challenge)
+            .spendingAmount(0L)
+            .build();
+    }
+
 }

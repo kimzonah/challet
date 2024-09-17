@@ -5,6 +5,7 @@ import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
+import com.challet.challetservice.domain.service.ChallengeService;
 import com.challet.challetservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/challet-service/challenges")
+@RequiredArgsConstructor
 @Tag(name = "ChallengeController", description = "챌린지 관련 Controller - Authorize 필수")
 public class ChallengeController {
+
+    private final ChallengeService challengeService;
 
     @Operation(summary = "챌린지 생성", description = "챌린지 정보를 입력하여 챌린지 생성")
     @ApiResponses(value = {
@@ -33,9 +38,10 @@ public class ChallengeController {
         @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping()
-    public ResponseEntity<String> createChallenge(
-        @RequestHeader(value = "Authorization") String header,
+    public ResponseEntity<String> registerChallenge(
+        @RequestHeader(value = "Authorization", required = false) String header,
         @RequestBody ChallengeRegisterRequestDTO request) {
+        challengeService.createChallenge(header, request);
         return null;
     }
 

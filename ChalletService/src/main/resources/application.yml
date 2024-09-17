@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: prod # 로컬(dev) / git(prod)
+    active: dev # 로컬(dev) / git(prod)
 
 ---
 # 로컬(dev) 환경 설정
