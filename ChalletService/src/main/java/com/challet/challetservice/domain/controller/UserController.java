@@ -5,6 +5,7 @@ import com.challet.challetservice.domain.dto.request.UserUpdateProfileRequestDTO
 import com.challet.challetservice.domain.dto.response.MyRewadsListResponseDTO;
 import com.challet.challetservice.domain.dto.response.RewardDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.UserInfoResponseDTO;
+import com.challet.challetservice.domain.service.UserService;
 import com.challet.challetservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +26,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/challet-service/users")
+@RequiredArgsConstructor
 @Tag(name = "UserController", description = "회원 관련 컨트롤러 - Authorize 필수")
 public class UserController {
+
+    private final UserService userService;
 
     @Operation(summary = "로그인한 유저 정보 조회", description = "헤더의 토큰을 통해 로그인한 유저 정보를 조회")
     @ApiResponses(value = {
@@ -34,9 +40,10 @@ public class UserController {
     })
 
     @GetMapping()
-    public ResponseEntity<UserInfoResponseDTO> getUser(
-        @RequestHeader(value = "Authorization") String header) {
-        return null;
+    public ResponseEntity<UserInfoResponseDTO> getUserInfo(
+        @RequestHeader(value = "Authorization", required = false) String header) {
+        UserInfoResponseDTO result = userService.getUserInfo(header);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @Operation(summary = "닉네임 수정", description = "새 닉네임을 입력 받아 닉네임 수정")
