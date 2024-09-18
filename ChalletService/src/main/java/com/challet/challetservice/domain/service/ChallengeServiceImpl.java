@@ -1,10 +1,12 @@
 package com.challet.challetservice.domain.service;
 
+import com.challet.challetservice.domain.dto.request.ChallengeJoinRequestDTO;
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.entity.Challenge;
+import com.challet.challetservice.domain.entity.ChallengeStatus;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
@@ -107,6 +109,43 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
         return ChallengeDetailResponseDTO.of(challenge, userChallengeRepository.existsByChallengeAndUser(challenge, user), challenge.getUserChallenges().size());
+    }
+
+    @Override
+    @Transactional
+    public void joinChallenge(String header, Long id, ChallengeJoinRequestDTO request) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        Challenge challenge = challengeRepository.findById(id)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+
+        // 모집중인 챌린지가 아니라면 참여 불가
+        if(!challenge.getStatus().equals(ChallengeStatus.RECRUITING)){
+            throw new ExceptionResponse(CustomException.NOT_RECRUITING_EXCEPTION);
+        }
+
+        // 이미 참여중인 챌린지라면 예외처리
+        if(userChallengeRepository.existsByChallengeAndUser(challenge, user)){
+            throw new ExceptionResponse(CustomException.ALREADY_JOIN_EXCEPTION);
+        }
+
+        // 공개 챌린지면 바로 추가
+        if(request.isPublic()){
+            UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
+            userChallengeRepository.save(userChallenge);
+        }
+        // 비공개 챌린지라면 초대코드 검증
+        else {
+            if (request.inviteCode().equals(challenge.getInviteCode())){
+                UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
+                userChallengeRepository.save(userChallenge);
+            }
+            else {
+                throw new ExceptionResponse(CustomException.CODE_MISMATCH_EXCEPTION);
+            }
+        }
     }
 
     public static String generateCode(int length){

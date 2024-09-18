@@ -115,8 +115,9 @@ public class ChallengeController {
     })
     @PostMapping("/{id}")
     public ResponseEntity<String> joinChallenge(
-        @RequestHeader(value = "Authorization") String header, @PathVariable("id") String id,
+        @RequestHeader(value = "Authorization", required = false) String header, @PathVariable("id") Long id,
         @RequestBody ChallengeJoinRequestDTO request) {
+        challengeService.joinChallenge(header, id, request);
         return null;
     }
 
