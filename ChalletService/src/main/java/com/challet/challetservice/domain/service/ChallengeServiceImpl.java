@@ -1,6 +1,8 @@
 package com.challet.challetservice.domain.service;
 
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.ChallengeInfoResponseDTO;
+import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
@@ -12,6 +14,7 @@ import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +32,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional
     public void createChallenge(String header, ChallengeRegisterRequestDTO request) {
-        String loginUser = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUser)
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         // 비공개 챌린지라면 초대코드 생성
@@ -47,6 +50,31 @@ public class ChallengeServiceImpl implements ChallengeService {
         UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
         userChallengeRepository.save(userChallenge);
 
+    }
+
+    @Override
+    @Transactional
+    public ChallengeListResponseDTO getMyChallenges(String header) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        // 현재 로그인 유저가 참여하는 챌린지 리스트
+        List<UserChallenge> userChallenges = userChallengeRepository.findByUser(user);
+        if(userChallenges.isEmpty()){
+            return null;
+        }
+
+        // 챌린지들 정보를 가공
+        List<ChallengeInfoResponseDTO> challengeInfoList = userChallenges.stream()
+            .map(userChallenge -> {
+                Challenge challenge = userChallenge.getChallenge();
+                int currentParticipants = userChallengeRepository.countByChallenge(challenge);
+                return ChallengeInfoResponseDTO.fromChallenge(challenge, currentParticipants);
+            })
+            .toList();
+
+        return new ChallengeListResponseDTO(challengeInfoList);
     }
 
     public static String generateCode(int length){

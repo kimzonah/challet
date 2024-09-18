@@ -4,6 +4,7 @@ import com.challet.challetservice.domain.dto.request.ChallengeJoinRequestDTO;
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
+import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
 import com.challet.challetservice.global.exception.ExceptionDto;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,13 +50,18 @@ public class ChallengeController {
     @Operation(summary = "내 챌린지 조회", description = "내가 참여한 챌린지 목록 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "내 챌린지 목록 조회 성공"),
+        @ApiResponse(responseCode = "204", description = "내 챌린지 목록이 비어있음"),
         @ApiResponse(responseCode = "400", description = "내 챌린지 목록 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
         @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("/my-challenges")
-    public ResponseEntity<List<ChallengeDetailResponseDTO>> getMyChallenges(
-        @RequestHeader(value = "Authorization") String header) {
-        return null;
+    public ResponseEntity<ChallengeListResponseDTO> getMyChallenges(
+        @RequestHeader(value = "Authorization", required = false) String header) {
+        ChallengeListResponseDTO result = challengeService.getMyChallenges(header);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @Operation(summary = "챌린지 검색", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
