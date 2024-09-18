@@ -7,7 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CustomException {
     NOT_FOUND_USER_EXCEPTION(400,"NotFoundUserException","유저가 존재하지 않습니다."),
-    NOT_CREATE_USER_ACCOUNT_EXCEPTION(400, "NotCreateUserAccountException", "계좌 생성 실패");
+    NOT_CREATE_USER_ACCOUNT_EXCEPTION(400, "NotCreateUserAccountException", "계좌 생성 실패."),
+    NOT_FOUND_USER_ACCOUNT_EXCEPTION(400, "NotCreateUserAccountException", "챌렛 계좌가 존재하지 않습니다.");
 
     private int statusNum;
     private String errorCode;

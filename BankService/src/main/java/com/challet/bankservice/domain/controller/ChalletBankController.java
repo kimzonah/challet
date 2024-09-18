@@ -4,6 +4,7 @@ import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
+import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
 import com.challet.bankservice.domain.service.ChalletBankService;
@@ -39,9 +40,10 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "200", description = "성공"),
         @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    public ResponseEntity<AccountInfoResponseDTO> getAccountInfo() {
-
-        return null;
+    public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
+        @RequestParam String phoneNumber) {
+        AccountInfoResponseListDTO account = challetBankService.findAccount(phoneNumber);
+        return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
 
     @GetMapping("/accounts")

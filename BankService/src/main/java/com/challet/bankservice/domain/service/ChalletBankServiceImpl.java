@@ -1,7 +1,10 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
+import com.challet.bankservice.global.exception.CustomException;
+import com.challet.bankservice.global.exception.ExceptionResponse;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,16 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             }
         }
         throw new RuntimeException("계좌 생성 실패");
+    }
+
+    @Override
+    public AccountInfoResponseListDTO findAccount(String phoneNumber) {
+        AccountInfoResponseListDTO accountInfo = challetBankRepository.findByAccountInfo(
+            phoneNumber);
+        if (accountInfo.accountCount() == 0) {
+            throw new ExceptionResponse(CustomException.NOT_FOUND_USER_ACCOUNT_EXCEPTION);
+        }
+        return accountInfo;
     }
 
     @Transactional
