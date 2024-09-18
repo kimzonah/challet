@@ -45,7 +45,7 @@ const CategoryList = ({
           type='text'
           ref={searchInputRef}
           placeholder='관심 있는 키워드'
-          className='flex-grow border rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-[#F1F4F6]'
+          className='flex-grow border rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00CCCC] bg-[#F1F4F6]'
         />
         <button
           onClick={handleSearchClick}
@@ -68,7 +68,7 @@ const CategoryList = ({
               alt={category.label}
               className={`object-contain w-full h-full rounded-full bg-[#F1F4F6] ${
                 activeCategory === category.class
-                  ? 'border-2 border-teal-500'
+                  ? 'border-2 border-[#00CCCC]'
                   : ''
               }`}
               style={{
@@ -81,7 +81,7 @@ const CategoryList = ({
             />
             <div
               className={`text-sm font-medium tracking-wider text-center ${
-                activeCategory === category.class ? 'text-teal-500' : ''
+                activeCategory === category.class ? 'text-[#00CCCC]' : ''
               }`}
             >
               {category.label}
