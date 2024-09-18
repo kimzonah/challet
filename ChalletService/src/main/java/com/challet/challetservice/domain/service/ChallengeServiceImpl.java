@@ -63,6 +63,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
+        if(user.getUserChallenges()==null || user.getUserChallenges().isEmpty()){
+            return null;
+        }
+
         List<ChallengeInfoResponseDTO> result = user.getUserChallenges().stream()
             .map(userChallenge -> {
                 Challenge challenge = userChallenge.getChallenge();
