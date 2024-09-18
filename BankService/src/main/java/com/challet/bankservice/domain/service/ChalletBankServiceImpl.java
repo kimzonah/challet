@@ -1,10 +1,13 @@
 package com.challet.bankservice.domain.service;
 
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
+import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +46,16 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             throw new ExceptionResponse(CustomException.NOT_FOUND_USER_ACCOUNT_EXCEPTION);
         }
         return accountInfo;
+    }
+
+    @Transactional
+    @Override
+    public TransactionResponseListDTO getAccountTransactionList(Long accountId) {
+        Long accountBalance = challetBankRepository.findAccountBalanceById(accountId).orElse(0L);
+        List<TransactionResponseDTO> transactionList = challetBankRepository.getTransactionByAccountInfo(
+            accountId);
+        return new TransactionResponseListDTO(transactionList.stream().count(), accountBalance,
+            transactionList);
     }
 
     @Transactional

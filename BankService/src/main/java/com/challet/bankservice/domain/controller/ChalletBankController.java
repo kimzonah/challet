@@ -6,6 +6,7 @@ import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
+import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.service.ChalletBankService;
 import com.challet.bankservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,9 +53,11 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "200", description = "성공"),
         @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    public ResponseEntity<List<TransactionHistoryResponseDTO>> getAccountTransactions() {
-
-        return null;
+    public ResponseEntity<TransactionResponseListDTO> getAccountTransactions(
+        @RequestHeader("AccountId") Long accountId) {
+        TransactionResponseListDTO transactionList = challetBankService.getAccountTransactionList(
+            accountId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(transactionList);
     }
 
     @PostMapping()
