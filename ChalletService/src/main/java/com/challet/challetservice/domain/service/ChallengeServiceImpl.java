@@ -7,8 +7,8 @@ import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
+import com.challet.challetservice.domain.repository.ChallengeRepositorySupport;
 import com.challet.challetservice.domain.repository.UserChallengeRepository;
-import com.challet.challetservice.domain.repository.UserChallengeRepositorySupport;
 import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
@@ -16,7 +16,6 @@ import com.challet.challetservice.global.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private static final SecureRandom random = new SecureRandom();
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
-    private final UserChallengeRepositorySupport userChallengeRepositorySupport;
+    private final ChallengeRepositorySupport challengeRepositorySupport;
 
     @Override
     @Transactional
@@ -70,6 +69,24 @@ public class ChallengeServiceImpl implements ChallengeService {
         List<ChallengeInfoResponseDTO> result = user.getUserChallenges().stream()
             .map(userChallenge -> {
                 Challenge challenge = userChallenge.getChallenge();
+                return ChallengeInfoResponseDTO.fromChallenge(challenge, challenge.getUserChallenges().size());
+            })
+            .toList();
+
+        return new ChallengeListResponseDTO(result);
+    }
+
+    @Override
+    @Transactional
+    public ChallengeListResponseDTO searchChallenges(String header, String keyword,
+        String category) {
+
+        List<Challenge> searchChallengesList = challengeRepositorySupport.searchChallengeByKewordAndCategory(keyword, category);
+        if(searchChallengesList==null || searchChallengesList.isEmpty()){
+            return null;
+        }
+        List<ChallengeInfoResponseDTO> result = searchChallengesList.stream()
+            .map(challenge -> {
                 return ChallengeInfoResponseDTO.fromChallenge(challenge, challenge.getUserChallenges().size());
             })
             .toList();

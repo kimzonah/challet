@@ -8,4 +8,6 @@ public interface ChallengeService {
     void createChallenge(String header, ChallengeRegisterRequestDTO request);
 
     ChallengeListResponseDTO getMyChallenges(String header);
+
+    ChallengeListResponseDTO searchChallenges(String header, String keyword, String category);
 }

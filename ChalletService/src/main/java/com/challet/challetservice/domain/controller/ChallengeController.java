@@ -68,6 +68,7 @@ public class ChallengeController {
         "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "챌린지 검색 성공"),
+        @ApiResponse(responseCode = "204", description = "검색 결과 없음"),
         @ApiResponse(responseCode = "400", description = "챌린지 검색 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
         @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
@@ -76,10 +77,14 @@ public class ChallengeController {
         @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
     })
     @GetMapping()
-    public ResponseEntity<List<ChallengeDetailResponseDTO>> searchChallenges(
-        @RequestHeader(value = "Authorization") String header,
-        @Param(value = "keyword") String keyword, @Param(value = "category") String category) {
-        return null;
+    public ResponseEntity<ChallengeListResponseDTO> searchChallenges(
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @RequestParam(value = "keyword", required = false) String keyword, @RequestParam(value = "category", required = false) String category) {
+        ChallengeListResponseDTO result = challengeService.searchChallenges(header, keyword, category);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @Operation(summary = "챌린지 정보 상세 조회", description = "챌린지ID로 챌린지 정보 조회")
