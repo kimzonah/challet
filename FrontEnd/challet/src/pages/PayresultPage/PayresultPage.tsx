@@ -43,7 +43,7 @@ const PayResult = () => {
         {parsedData ? (
           <div className='w-full mb-8 flex flex-col items-center'>
             {/* 결제 내역 상단 선 */}
-            <div className='w-full border-t border-gray-300'></div>
+            <div className='w-full border-t border-gray-200'></div>
             <div className='w-4/5 flex justify-between py-4'>
               <p className='text-gray-500 font-semibold'>결제내역</p>
               <p className='text-gray-500 font-semibold'>{parsedData.name}</p>
@@ -61,7 +61,7 @@ const PayResult = () => {
               </p>
             </div>
             {/* 결제 내역 하단 선 */}
-            <div className='w-full border-b border-gray-300'></div>
+            <div className='w-full border-b border-gray-200'></div>
           </div>
         ) : (
           <p className='text-gray-500 text-xs mt-4 text-center'>
