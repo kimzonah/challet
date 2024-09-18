@@ -44,7 +44,7 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .select(Projections.constructor(TransactionResponseDTO.class,
                 challetBankTransaction.id,
                 challetBankTransaction.transactionDatetime,
-                challetBankTransaction.withdrawal,
+                challetBankTransaction.deposit,
                 challetBankTransaction.transactionBalance,
                 challetBankTransaction.transactionAmount))
             .from(challetBankTransaction)
