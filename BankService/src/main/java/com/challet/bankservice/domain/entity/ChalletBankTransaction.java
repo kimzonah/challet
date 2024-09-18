@@ -23,15 +23,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ch_transaction")
-public class ChTransaction {
+public class ChalletBankTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ch_account_id", nullable = false)
-    private ChAccount chAccount;
+    @JoinColumn(name = "ch_bank_id", nullable = false)
+    private ChalletBank challetBank;
 
     @Column(name = "transaction_amount", nullable = false)
     private Long transactionAmount;
@@ -52,7 +52,7 @@ public class ChTransaction {
     private Category category;
 
 
-    public void assignTransactionChAccount(ChAccount chAccount) {
-        this.chAccount = chAccount;
+    public void assignTransactionChAccount(ChalletBank challetBank) {
+        this.challetBank = challetBank;
     }
 }

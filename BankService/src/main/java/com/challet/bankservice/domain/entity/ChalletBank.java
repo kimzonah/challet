@@ -21,14 +21,14 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ch_account")
-public class ChAccount {
+@Table(name = "ch_bank")
+public class ChalletBank {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "account_number", nullable = false)
+    @Column(name = "account_number", nullable = false, unique = true)
     private String accountNumber;
 
     @Column(name = "account_balance", nullable = false)
@@ -41,12 +41,20 @@ public class ChAccount {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "chAccount")
-    private List<ChTransaction> chTransactions = new ArrayList<>();
+    @OneToMany(mappedBy = "challetBank")
+    private List<ChalletBankTransaction> challetBankTransactions = new ArrayList<>();
 
     // 거래 발생시 처리
-    public void addTransaction(ChTransaction chTransaction) {
-        this.chTransactions.add(chTransaction);
-        chTransaction.assignTransactionChAccount(this);
+    public void addTransaction(ChalletBankTransaction challetBankTransaction) {
+        this.challetBankTransactions.add(challetBankTransaction);
+        challetBankTransaction.assignTransactionChAccount(this);
+    }
+
+    public static ChalletBank createAccount(String phoneNumber, String accountNumber) {
+        return ChalletBank.builder()
+            .phoneNumber(phoneNumber)
+            .accountNumber(accountNumber)
+            .accountBalance(0L)
+            .build();
     }
 }
