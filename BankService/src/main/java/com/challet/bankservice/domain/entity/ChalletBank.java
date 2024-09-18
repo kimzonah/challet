@@ -42,6 +42,7 @@ public class ChalletBank {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "challetBank")
+    @Builder.Default
     private List<ChalletBankTransaction> challetBankTransactions = new ArrayList<>();
 
     // 거래 발생시 처리
