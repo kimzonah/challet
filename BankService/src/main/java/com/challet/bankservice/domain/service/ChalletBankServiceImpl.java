@@ -1,6 +1,6 @@
 package com.challet.bankservice.domain.service;
 
-import com.challet.bankservice.domain.entity.ChBank;
+import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     @Transactional
     protected void saveAccount(String phoneNumber, String accountNum) {
-        ChBank account = ChBank.createAccount(phoneNumber, accountNum);
+        ChalletBank account = ChalletBank.createAccount(phoneNumber, accountNum);
         challetBankRepository.save(account);
     }
 
@@ -56,8 +56,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         long currentTimeInSeconds = currentTimeInMillis / 1000;
 
         // 초 단위로 변환된 시간에서 마지막 6자리 추출
-        String timePart = String.valueOf(currentTimeInSeconds).substring(4);
-        return timePart;
+        return String.valueOf(currentTimeInSeconds).substring(4);
     }
 
     private String generateRandomNumber(int size) {

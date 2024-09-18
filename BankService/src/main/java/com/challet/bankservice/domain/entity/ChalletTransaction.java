@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ch_transaction")
-public class ChTransaction {
+public class ChalletTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class ChTransaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ch_bank_id", nullable = false)
-    private ChBank chBank;
+    private ChalletBank challetBank;
 
     @Column(name = "transaction_amount", nullable = false)
     private Long transactionAmount;
@@ -52,7 +52,7 @@ public class ChTransaction {
     private Category category;
 
 
-    public void assignTransactionChAccount(ChBank chBank) {
-        this.chBank = chBank;
+    public void assignTransactionChAccount(ChalletBank challetBank) {
+        this.challetBank = challetBank;
     }
 }

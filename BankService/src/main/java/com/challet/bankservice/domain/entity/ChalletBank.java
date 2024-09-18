@@ -22,7 +22,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ch_bank")
-public class ChBank {
+public class ChalletBank {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,17 +41,17 @@ public class ChBank {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "chBank")
-    private List<ChTransaction> chTransactions = new ArrayList<>();
+    @OneToMany(mappedBy = "challetBank")
+    private List<ChalletTransaction> challetTransactions = new ArrayList<>();
 
     // 거래 발생시 처리
-    public void addTransaction(ChTransaction chTransaction) {
-        this.chTransactions.add(chTransaction);
-        chTransaction.assignTransactionChAccount(this);
+    public void addTransaction(ChalletTransaction challetTransaction) {
+        this.challetTransactions.add(challetTransaction);
+        challetTransaction.assignTransactionChAccount(this);
     }
 
-    public static ChBank createAccount(String phoneNumber, String accountNumber) {
-        return ChBank.builder()
+    public static ChalletBank createAccount(String phoneNumber, String accountNumber) {
+        return ChalletBank.builder()
             .phoneNumber(phoneNumber)
             .accountNumber(accountNumber)
             .accountBalance(0L)
