@@ -42,12 +42,12 @@ public class ChalletBank {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "challetBank")
-    private List<ChalletTransaction> challetTransactions = new ArrayList<>();
+    private List<ChalletBankTransaction> challetBankTransactions = new ArrayList<>();
 
     // 거래 발생시 처리
-    public void addTransaction(ChalletTransaction challetTransaction) {
-        this.challetTransactions.add(challetTransaction);
-        challetTransaction.assignTransactionChAccount(this);
+    public void addTransaction(ChalletBankTransaction challetBankTransaction) {
+        this.challetBankTransactions.add(challetBankTransaction);
+        challetBankTransaction.assignTransactionChAccount(this);
     }
 
     public static ChalletBank createAccount(String phoneNumber, String accountNumber) {
