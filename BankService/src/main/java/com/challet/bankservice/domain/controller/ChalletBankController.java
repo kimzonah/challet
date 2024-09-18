@@ -3,7 +3,6 @@ package com.challet.bankservice.domain.controller;
 import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
-import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
@@ -64,13 +63,8 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity createAccount(@RequestParam String phoneNumber) {
-        try {
-            challetBankService.createAccount(phoneNumber);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("계좌 생성 실패");
-        }
-
+        challetBankService.createAccount(phoneNumber);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/details")

@@ -32,7 +32,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
                 log.warn("중복된 계좌 번호 발견, 다시 생성합니다. 중복 계좌 번호: " + accountNum);
             }
         }
-        throw new RuntimeException("계좌 생성 실패");
+        throw new ExceptionResponse(CustomException.NOT_CREATE_USER_ACCOUNT_EXCEPTION);
     }
 
     @Override
