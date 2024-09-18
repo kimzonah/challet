@@ -23,6 +23,7 @@ import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'
 import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
 import './App.css';
 import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
+import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
 
 function App() {
   const location = useLocation();
@@ -31,10 +32,14 @@ function App() {
   const matchChallengeCreate = useMatch('/challenge/create');
   const matchChallengeRoom = useMatch('/challengeRoom/:id');
   const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
+  const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
-    matchChallengeCreate || matchChallengeRoom || sharedTransactionCreate;
+    matchChallengeCreate ||
+    matchChallengeRoom ||
+    sharedTransactionCreate ||
+    sharedTransactionDetail;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -56,6 +61,10 @@ function App() {
         <Route
           path='/sharedTransactionCreate'
           element={<SharedTransactionCreate />}
+        />
+        <Route
+          path='/sharedTransactionDetail/:id'
+          element={<SharedTransactionDetail />}
         />
       </Routes>
 

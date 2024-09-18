@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCommentDots, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 hook 추가
 
 // 트랜잭션 타입 정의
 interface Transaction {
@@ -28,6 +29,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     []
   );
   const transactionListRef = useRef<HTMLDivElement>(null); // 스크롤을 조정할 ref
+  const navigate = useNavigate(); // 페이지 이동을 위한 hook
 
   useEffect(() => {
     // 트랜잭션을 시간 오름차순으로 정렬 (가장 오래된 내역이 위, 최신 내역이 아래로)
@@ -57,6 +59,11 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     });
   };
 
+  // 거래 내역 클릭 시 상세 페이지로 이동
+  const handleTransactionClick = (sharedTransactionId: number) => {
+    navigate(`/sharedTransactionDetail/${sharedTransactionId}`);
+  };
+
   return (
     <div
       className='scrollbar-hide overflow-y-auto max-h-[510px]'
@@ -68,6 +75,9 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
           className={`p-4 bg-[#F1F4F6] rounded-lg max-w-[75%] ${
             transaction.isMine ? 'ml-auto' : 'mr-auto'
           }`}
+          onClick={() =>
+            handleTransactionClick(transaction.sharedTransactionId)
+          }
         >
           {/* 내 거래 내역일 경우 */}
           {transaction.isMine ? (
