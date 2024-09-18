@@ -44,7 +44,7 @@ public class ChallengeController {
         @RequestHeader(value = "Authorization", required = false) String header,
         @RequestBody ChallengeRegisterRequestDTO request) {
         challengeService.createChallenge(header, request);
-        return null;
+        return ResponseEntity.status(HttpStatus.CREATED).body("챌린지 생성 성공");
     }
 
     @Operation(summary = "내 챌린지 조회", description = "내가 참여한 챌린지 목록 조회")
@@ -59,7 +59,7 @@ public class ChallengeController {
         @RequestHeader(value = "Authorization", required = false) String header) {
         ChallengeListResponseDTO result = challengeService.getMyChallenges(header);
         if (result == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -79,10 +79,12 @@ public class ChallengeController {
     @GetMapping()
     public ResponseEntity<ChallengeListResponseDTO> searchChallenges(
         @RequestHeader(value = "Authorization", required = false) String header,
-        @RequestParam(value = "keyword", required = false) String keyword, @RequestParam(value = "category", required = false) String category) {
-        ChallengeListResponseDTO result = challengeService.searchChallenges(header, keyword, category);
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @RequestParam(value = "category", required = false) String category) {
+        ChallengeListResponseDTO result = challengeService.searchChallenges(header, keyword,
+            category);
         if (result == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -98,7 +100,8 @@ public class ChallengeController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ChallengeDetailResponseDTO> getChallengeDetail(
-        @RequestHeader(value = "Authorization", required = false) String header, @PathVariable("id") Long id) {
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @PathVariable("id") Long id) {
         ChallengeDetailResponseDTO result = challengeService.getChallengeDetail(header, id);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
@@ -115,10 +118,11 @@ public class ChallengeController {
     })
     @PostMapping("/{id}")
     public ResponseEntity<String> joinChallenge(
-        @RequestHeader(value = "Authorization", required = false) String header, @PathVariable("id") Long id,
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @PathVariable("id") Long id,
         @RequestBody ChallengeJoinRequestDTO request) {
         challengeService.joinChallenge(header, id, request);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body("챌린지 참여 신청 성공");
     }
 
     @Operation(summary = "챌린지 내 공유 거래 내역 조회")

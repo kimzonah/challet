@@ -48,7 +48,8 @@ public record ChallengeDetailResponseDTO(
 
 ) {
 
-    public static ChallengeDetailResponseDTO of(Challenge challenge, boolean existsByChallengeAndUser, int currentParticipants) {
+    public static ChallengeDetailResponseDTO of(Challenge challenge,
+        boolean existsByChallengeAndUser, int currentParticipants) {
         return ChallengeDetailResponseDTO.builder()
             .challengeId(challenge.getId())
             .status(String.valueOf(challenge.getStatus()))
@@ -60,7 +61,7 @@ public record ChallengeDetailResponseDTO(
             .endDate(challenge.getEndDate())
             .maxParticipants(challenge.getMaxParticipants())
             .currentParticipants(currentParticipants)
-            .isPublic(challenge.getInviteCode()==null)
+            .isPublic(challenge.getInviteCode() == null)
             .inviteCode(challenge.getInviteCode())
             .build();
     }

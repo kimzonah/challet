@@ -43,7 +43,8 @@ public record ChallengeInfoResponseDTO(
 ) {
 
 
-    public static ChallengeInfoResponseDTO fromChallenge(Challenge challenge, int currentParticipants) {
+    public static ChallengeInfoResponseDTO fromChallenge(Challenge challenge,
+        int currentParticipants) {
 
         ChallengeInfoResponseDTO challengeInfoResponseDTO = ChallengeInfoResponseDTO.builder()
             .challengeId(challenge.getId())
@@ -55,7 +56,7 @@ public record ChallengeInfoResponseDTO(
             .endDate(challenge.getEndDate())
             .maxParticipants(challenge.getMaxParticipants())
             .currentParticipants(currentParticipants)
-            .isPublic(challenge.getInviteCode()==null)
+            .isPublic(challenge.getInviteCode() == null)
             .build();
 
         return challengeInfoResponseDTO;

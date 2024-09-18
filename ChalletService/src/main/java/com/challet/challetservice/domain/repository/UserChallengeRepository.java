@@ -11,10 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserChallengeRepository extends JpaRepository<UserChallenge, Long> {
 
-    int countByChallenge(Challenge challenge);
-
-    List<UserChallenge> findByUser(User user);
-
     boolean existsByChallengeAndUser(Challenge challenge, User user);
 
 }
