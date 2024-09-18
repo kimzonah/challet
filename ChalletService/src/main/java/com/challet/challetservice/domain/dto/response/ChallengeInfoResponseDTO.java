@@ -1,7 +1,6 @@
 package com.challet.challetservice.domain.dto.response;
 
 import com.challet.challetservice.domain.entity.Challenge;
-import com.challet.challetservice.domain.entity.ChallengeStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import lombok.Builder;
@@ -54,7 +53,7 @@ public record ChallengeInfoResponseDTO(
             .spendingLimit(challenge.getSpendingLimit())
             .startDate(challenge.getStartDate())
             .endDate(challenge.getEndDate())
-            .maxParticipants(challenge.getMaxPaticipants())
+            .maxParticipants(challenge.getMaxParticipants())
             .currentParticipants(currentParticipants)
             .isPublic(challenge.getInviteCode()==null)
             .build();

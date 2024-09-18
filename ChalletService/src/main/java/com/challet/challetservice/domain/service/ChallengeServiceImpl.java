@@ -8,6 +8,7 @@ import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
 import com.challet.challetservice.domain.repository.UserChallengeRepository;
+import com.challet.challetservice.domain.repository.UserChallengeRepositorySupport;
 import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
@@ -15,6 +16,7 @@ import com.challet.challetservice.global.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private static final SecureRandom random = new SecureRandom();
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
+    private final UserChallengeRepositorySupport userChallengeRepositorySupport;
 
     @Override
     @Transactional
@@ -55,26 +58,19 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional
     public ChallengeListResponseDTO getMyChallenges(String header) {
+
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        // 현재 로그인 유저가 참여하는 챌린지 리스트
-        List<UserChallenge> userChallenges = userChallengeRepository.findByUser(user);
-        if(userChallenges.isEmpty()){
-            return null;
-        }
-
-        // 챌린지들 정보를 가공
-        List<ChallengeInfoResponseDTO> challengeInfoList = userChallenges.stream()
+        List<ChallengeInfoResponseDTO> result = user.getUserChallenges().stream()
             .map(userChallenge -> {
                 Challenge challenge = userChallenge.getChallenge();
-                int currentParticipants = userChallengeRepository.countByChallenge(challenge);
-                return ChallengeInfoResponseDTO.fromChallenge(challenge, currentParticipants);
+                return ChallengeInfoResponseDTO.fromChallenge(challenge, challenge.getUserChallenges().size());
             })
             .toList();
 
-        return new ChallengeListResponseDTO(challengeInfoList);
+        return new ChallengeListResponseDTO(result);
     }
 
     public static String generateCode(int length){

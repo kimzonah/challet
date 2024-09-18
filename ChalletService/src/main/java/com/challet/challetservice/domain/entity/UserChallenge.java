@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -38,11 +39,15 @@ public class UserChallenge {
     private Long spendingAmount;
 
     public static UserChallenge addUserChallenge(User user, Challenge challenge) {
-        return UserChallenge.builder()
+        UserChallenge userChallenge = UserChallenge.builder()
             .user(user)
             .challenge(challenge)
             .spendingAmount(0L)
             .build();
+
+        user.getUserChallenges().add(userChallenge);
+        challenge.getUserChallenges().add(userChallenge);
+        return userChallenge;
     }
 
 }
