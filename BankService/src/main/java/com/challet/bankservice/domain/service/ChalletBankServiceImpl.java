@@ -1,13 +1,16 @@
 package com.challet.bankservice.domain.service;
 
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
+import com.querydsl.core.NonUniqueResultException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +59,16 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             accountId);
         return new TransactionResponseListDTO(transactionList.stream().count(), accountBalance,
             transactionList);
+    }
+
+    @Override
+    public TransactionDetailResponseDto getTransactionInfo(Long transactionId) {
+        try{
+            return Optional.ofNullable(challetBankRepository.getTransactionDetailById(transactionId))
+                .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_TRANSACTION_DETAIL_EXCEPTION));
+        }catch (NonUniqueResultException e){
+            throw new ExceptionResponse(CustomException.NOT_GET_TRANSACTION_DETAIL_EXCEPTION);
+        }
     }
 
     @Transactional

@@ -77,8 +77,10 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "201", description = "계좌 상세 거래내역 조회 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 상세 거래내역 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails() {
-        return null;
+    public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails(
+        @RequestHeader("TransactionId") Long transactionId) {
+        TransactionDetailResponseDto transaction = challetBankService.getTransactionInfo(transactionId);
+        return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
     @GetMapping("/search")

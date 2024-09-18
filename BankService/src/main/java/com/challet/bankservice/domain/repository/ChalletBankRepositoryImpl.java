@@ -2,6 +2,7 @@ package com.challet.bankservice.domain.repository;
 
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.entity.QChalletBank;
@@ -52,5 +53,22 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .where(challetBank.id.eq(accountId))
             .orderBy(challetBankTransaction.transactionDatetime.desc())
             .fetch();
+    }
+
+    @Override
+    public TransactionDetailResponseDto getTransactionDetailById(Long transactionId) {
+        QChalletBankTransaction challetBankTransaction = QChalletBankTransaction.challetBankTransaction;
+
+        return query
+            .select(Projections.constructor(TransactionDetailResponseDto.class,
+                challetBankTransaction.transactionAmount,
+                challetBankTransaction.transactionDatetime,
+                challetBankTransaction.deposit,
+                challetBankTransaction.withdrawal,
+                challetBankTransaction.transactionBalance,
+                challetBankTransaction.category))
+            .from(challetBankTransaction)
+            .where(challetBankTransaction.id.eq(transactionId))
+            .fetchOne();
     }
 }
