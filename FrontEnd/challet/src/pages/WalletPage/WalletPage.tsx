@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 사용하여 페이지 이동
+import { useNavigate } from 'react-router-dom';
 import ChalletLogo from '../../assets/wallet/challet-logo.png';
 import MyDataButton from '../../assets/wallet/mydata-button.png';
 import PaymentButton from '../../assets/wallet/payment-button.png';

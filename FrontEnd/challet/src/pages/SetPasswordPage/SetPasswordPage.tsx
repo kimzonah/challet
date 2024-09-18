@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { AxiosResponse, AxiosError } from 'axios';
 import axiosInstance from '../../api/axios';
 import useSignUpStore from '../../store/useSignUpStore';
+import useAuthStore from '../../store/useAuthStore'; // 로그인 상태 저장을 위한 Zustand 스토어
 
 const SetPasswordPage = () => {
   const [password, setPassword] = useState<string>(''); // 비밀번호 상태
   const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false); // 확인 버튼 활성화 상태
   const { name, phoneNumber, age, gender, nickname } = useSignUpStore(); // 저장된 회원가입 데이터 가져오기
+  const { setAuthData } = useAuthStore(); // Zustand에서 상태 관리 함수 가져오기
   const navigate = useNavigate();
 
   // 키패드를 클릭할 때 비밀번호 입력
@@ -29,7 +31,7 @@ const SetPasswordPage = () => {
     }
   };
 
-  // 데이터 전송 및 콘솔 출력 (async-await 방식)
+  // 데이터 전송 및 회원가입 처리
   const handleSubmit = async () => {
     if (password.length === 6) {
       const signUpData = {
@@ -52,10 +54,25 @@ const SetPasswordPage = () => {
           signUpData
         );
 
-        // 요청이 성공하면 메인 페이지로 이동
-        if (response.status === 200) {
-          console.log('회원가입 및 비밀번호 설정 완료!');
+        // 요청이 성공하면 Access Token을 받아와 상태에 저장
+        const { accessToken } = response.data; // 서버에서 Access Token을 반환받는다고 가정
+
+        if (accessToken) {
+          // Access Token 저장 (로그인 상태 유지)
+          setAuthData({
+            accessToken,
+            refreshToken: null, // 필요에 따라 refreshToken도 처리
+          });
+
+          console.log(
+            '회원가입 및 비밀번호 설정 완료 - Access Token:',
+            accessToken
+          );
+
+          // 로그인 후 메인 페이지로 이동
           navigate('/wallet'); // 회원가입 성공 후 메인 페이지로 이동
+        } else {
+          console.error('Access Token을 받지 못했습니다.');
         }
       } catch (error) {
         if (error instanceof AxiosError) {

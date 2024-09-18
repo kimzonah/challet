@@ -1,29 +1,32 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
-// SignUpState 인터페이스 정의
 interface SignUpState {
   name: string;
   phoneNumber: string;
   age: number;
-  gender: 'MALE' | 'FEMALE' | null; // 성별을 직접 인터페이스에서 정의
+  gender: number | null;
   password: string;
   nickname: string;
   setSignUpData: (data: Partial<SignUpState>) => void;
 }
 
-// Zustand로 상태 관리
-const useSignUpStore = create<SignUpState>((set) => ({
-  name: '',
-  phoneNumber: '',
-  age: 0,
-  gender: null, // 초기값은 null
-  password: '',
-  nickname: '',
-  setSignUpData: (data) =>
-    set((state) => ({
-      ...state,
-      ...data, // 새로운 데이터로 상태 업데이트
-    })),
-}));
+const useSignUpStore = create<SignUpState>()(
+  persist(
+    (set) => ({
+      name: '',
+      phoneNumber: '',
+      age: 0,
+      gender: null,
+      password: '',
+      nickname: '',
+      setSignUpData: (data) => set((state) => ({ ...state, ...data })),
+    }),
+    {
+      name: 'signUp-storage', // 로컬 스토리지에 저장될 키 이름
+      storage: createJSONStorage(() => localStorage), // JSON 스토리지를 localStorage로 생성
+    }
+  )
+);
 
 export default useSignUpStore;
