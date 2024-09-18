@@ -1,9 +1,12 @@
 package com.challet.challetservice.domain.dto.response;
 
+import com.challet.challetservice.domain.entity.Challenge;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
+import lombok.Builder;
 
 @Schema(description = "챌린지 상세 정보 응답 DTO")
+@Builder
 public record ChallengeDetailResponseDTO(
 
     @Schema(description = "챌린지ID")
@@ -44,5 +47,22 @@ public record ChallengeDetailResponseDTO(
     String inviteCode
 
 ) {
+
+    public static ChallengeDetailResponseDTO of(Challenge challenge, boolean existsByChallengeAndUser, int currentParticipants) {
+        return ChallengeDetailResponseDTO.builder()
+            .challengeId(challenge.getId())
+            .status(String.valueOf(challenge.getStatus()))
+            .isIncluded(existsByChallengeAndUser)
+            .category(String.valueOf(challenge.getCategory()))
+            .title(challenge.getTitle())
+            .spendingLimit(challenge.getSpendingLimit())
+            .startDate(challenge.getStartDate())
+            .endDate(challenge.getEndDate())
+            .maxParticipants(challenge.getMaxParticipants())
+            .currentParticipants(currentParticipants)
+            .isPublic(challenge.getInviteCode()==null)
+            .inviteCode(challenge.getInviteCode())
+            .build();
+    }
 
 }

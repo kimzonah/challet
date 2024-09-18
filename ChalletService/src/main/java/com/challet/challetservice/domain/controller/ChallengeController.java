@@ -98,8 +98,9 @@ public class ChallengeController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ChallengeDetailResponseDTO> getChallengeDetail(
-        @RequestHeader(value = "Authorization") String header, @PathVariable("id") String id) {
-        return null;
+        @RequestHeader(value = "Authorization", required = false) String header, @PathVariable("id") Long id) {
+        ChallengeDetailResponseDTO result = challengeService.getChallengeDetail(header, id);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @Operation(summary = "챌린지 참여 신청", description = "챌린지 참여 신청하는 요청" +

@@ -1,6 +1,7 @@
 package com.challet.challetservice.domain.service;
 
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.entity.Challenge;
@@ -80,18 +81,32 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Transactional
     public ChallengeListResponseDTO searchChallenges(String header, String keyword,
         String category) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         List<Challenge> searchChallengesList = challengeRepositorySupport.searchChallengeByKewordAndCategory(keyword, category);
         if(searchChallengesList==null || searchChallengesList.isEmpty()){
             return null;
         }
         List<ChallengeInfoResponseDTO> result = searchChallengesList.stream()
-            .map(challenge -> {
-                return ChallengeInfoResponseDTO.fromChallenge(challenge, challenge.getUserChallenges().size());
-            })
+            .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge, challenge.getUserChallenges().size()))
             .toList();
 
         return new ChallengeListResponseDTO(result);
+    }
+
+    @Override
+    @Transactional
+    public ChallengeDetailResponseDTO getChallengeDetail(String header, Long id) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        Challenge challenge = challengeRepository.findById(id)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+
+        return ChallengeDetailResponseDTO.of(challenge, userChallengeRepository.existsByChallengeAndUser(challenge, user), challenge.getUserChallenges().size());
     }
 
     public static String generateCode(int length){

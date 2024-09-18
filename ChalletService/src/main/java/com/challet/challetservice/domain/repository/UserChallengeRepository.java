@@ -15,4 +15,6 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
 
     List<UserChallenge> findByUser(User user);
 
+    boolean existsByChallengeAndUser(Challenge challenge, User user);
+
 }
