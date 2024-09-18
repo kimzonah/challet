@@ -116,7 +116,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                   <div
                     className={`flex items-center mr-2 ${
                       transaction.pushedEmoji === 3
-                        ? 'border-2 border-teal-500 rounded-lg p-1'
+                        ? 'border-2 border-[#00CCCC] rounded-lg p-1'
                         : ''
                     }`}
                   >
@@ -126,7 +126,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                   <div
                     className={`flex items-center mr-2 ${
                       transaction.pushedEmoji === 2
-                        ? 'border-2 border-teal-500 rounded-lg p-1'
+                        ? 'border-2 border-[#00CCCC] rounded-lg p-1'
                         : ''
                     }`}
                   >
@@ -136,7 +136,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                   <div
                     className={`flex items-center mr-2 ${
                       transaction.pushedEmoji === 1
-                        ? 'border-2 border-teal-500 rounded-lg p-1'
+                        ? 'border-2 border-[#00CCCC] rounded-lg p-1'
                         : ''
                     }`}
                   >
@@ -198,7 +198,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <div
                       className={`flex items-center mr-2 ${
                         transaction.pushedEmoji === 3
-                          ? 'border-2 border-teal-500 rounded-lg p-1'
+                          ? 'border-2 border-[#00CCCC] rounded-lg p-1'
                           : ''
                       }`}
                     >
@@ -208,7 +208,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <div
                       className={`flex items-center mr-2 ${
                         transaction.pushedEmoji === 2
-                          ? 'border-2 border-teal-500 rounded-lg p-1'
+                          ? 'border-2 border-[#00CCCC] rounded-lg p-1'
                           : ''
                       }`}
                     >
@@ -218,7 +218,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <div
                       className={`flex items-center mr-2 ${
                         transaction.pushedEmoji === 1
-                          ? 'border-2 border-teal-500 rounded-lg p-1'
+                          ? 'border-2 border-[#00CCCC] rounded-lg p-1'
                           : ''
                       }`}
                     >

@@ -208,7 +208,23 @@ export const useChallengeApi = () => {
   };
 
   // 댓글 조회 API 요청 함수
-  const fetchTransactionComments = async (sharedTransactionId: number) => {
+  // const fetchTransactionComments = async (sharedTransactionId: number) => {
+  //   실제 API 요청 부분은 주석 처리합니다.
+  //   try {
+  //     const url = `https://localhost:8000/challet-service/shared-transactions/${sharedTransactionId}/comments`;
+  //     const response = await axios.get(url);
+  //     return response.data; // 댓글 데이터 반환
+  //   } catch (error) {
+  //     console.error('댓글 조회 중 오류 발생:', error);
+  //     return [];
+  //   }
+
+  //   주석 처리된 API 요청 대신 더미 데이터를 반환합니다.
+  //   return exampleComments;
+  // };
+
+  // 댓글 조회 API 요청 함수
+  const fetchExampleTransactionComments = async () => {
     // 실제 API 요청 부분은 주석 처리합니다.
     // try {
     //   const url = `https://localhost:8000/challet-service/shared-transactions/${sharedTransactionId}/comments`;
@@ -234,6 +250,7 @@ export const useChallengeApi = () => {
     fetchSharedTransactions,
     registTransaction,
     fetchSharedTransactionDetail,
-    fetchTransactionComments,
+    // fetchTransactionComments,
+    fetchExampleTransactionComments,
   };
 };

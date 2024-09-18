@@ -166,7 +166,7 @@ const ChallengeModal = ({
                     onChange={(e) => setInviteCodeInput(e.target.value)}
                     placeholder='초대 코드'
                     maxLength={6} // 초대코드 최대 길이 6자
-                    className='py-4 mr-4 rounded-lg text-center text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500'
+                    className='py-4 mr-4 rounded-lg text-center text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
                   />
                 </div>
               )}

@@ -12,19 +12,18 @@ const SharedTransactionComments = ({
 }: {
   sharedTransactionId: number;
 }) => {
-  const { fetchTransactionComments } = useChallengeApi();
+  const { fetchExampleTransactionComments } = useChallengeApi();
   const [comments, setComments] = useState<Comment[]>([]);
 
   useEffect(() => {
     const fetchComments = async () => {
       // 실제 API 요청 대신 더미 데이터를 가져옵니다.
-      const fetchedComments =
-        await fetchTransactionComments(sharedTransactionId);
+      const fetchedComments = await fetchExampleTransactionComments();
       setComments(fetchedComments);
     };
 
     fetchComments();
-  }, [sharedTransactionId, fetchTransactionComments]);
+  }, [sharedTransactionId, fetchExampleTransactionComments]);
 
   if (comments.length === 0) {
     return <div>댓글이 없습니다.</div>;
