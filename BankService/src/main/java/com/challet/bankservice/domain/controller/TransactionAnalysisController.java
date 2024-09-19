@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bank-service/analysis")
+@RequestMapping("/api/ch-bank")
 @Tag(name = "TransactionAnalysisController", description = "거래 내역 분석 컨트롤러")
 public class TransactionAnalysisController {
 

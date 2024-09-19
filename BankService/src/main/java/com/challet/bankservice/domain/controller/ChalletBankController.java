@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bank-service/challet-banks")
-@Tag(name = "ChalletController", description = "챌렛 은행 컨트롤러")
+@RequestMapping("/api/ch-bank")
+@Tag(name = "ChalletBankController", description = "챌렛 은행 컨트롤러")
 @RequiredArgsConstructor
 public class ChalletBankController {
 
