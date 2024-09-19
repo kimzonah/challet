@@ -41,7 +41,7 @@ spring:
   config:
     import: application-key.yml
   application:
-    name: kbbank-service
+    name: kb-bank
   datasource:
     url: jdbc:mysql://challet.world:${dbport}/kbbank-api?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -56,7 +56,7 @@ springdoc:
   api-docs:
     version: openapi_3_1
     enabled: true
-    path: kb-bank-service/v3/api-docs
+    path: api/kb-bank/v3/api-docs
   enable-spring-security: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json

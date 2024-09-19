@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/challet-service/auth")
+@RequestMapping("/api/challet/auth")
 @Tag(name = "AuthController", description = "인증 컨트롤러 - 토큰 없이 요청 가능")
 public class AuthController {
 
