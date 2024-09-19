@@ -33,7 +33,7 @@ public class ChallengeController {
 
     private final ChallengeService challengeService;
 
-    @Operation(summary = "챌린지 생성", description = "챌린지 정보를 입력하여 챌린지 생성")
+    @Operation(summary = "챌린지 생성 (완료)", description = "챌린지 정보를 입력하여 챌린지 생성")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "챌린지 생성 성공"),
         @ApiResponse(responseCode = "400", description = "챌린지 생성 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -47,7 +47,7 @@ public class ChallengeController {
         return ResponseEntity.status(HttpStatus.CREATED).body("챌린지 생성 성공");
     }
 
-    @Operation(summary = "내 챌린지 조회", description = "내가 참여한 챌린지 목록 조회")
+    @Operation(summary = "내 챌린지 조회 (완료)", description = "내가 참여한 챌린지 목록 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "내 챌린지 목록 조회 성공"),
         @ApiResponse(responseCode = "204", description = "내 챌린지 목록이 비어있음"),
@@ -64,7 +64,7 @@ public class ChallengeController {
         return ResponseEntity.status(HttpStatus.OK).body(myChallenges);
     }
 
-    @Operation(summary = "챌린지 검색", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
+    @Operation(summary = "챌린지 검색 (완료)", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
         "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "챌린지 검색 성공"),
@@ -88,7 +88,7 @@ public class ChallengeController {
         return ResponseEntity.status(HttpStatus.OK).body(searchChallenges);
     }
 
-    @Operation(summary = "챌린지 정보 상세 조회", description = "챌린지ID로 챌린지 정보 조회")
+    @Operation(summary = "챌린지 정보 상세 조회 (완료)", description = "챌린지ID로 챌린지 정보 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "챌린지 상세 조회 성공"),
         @ApiResponse(responseCode = "400", description = "챌린지 상세 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -106,7 +106,7 @@ public class ChallengeController {
         return ResponseEntity.status(HttpStatus.OK).body(challengeDetail);
     }
 
-    @Operation(summary = "챌린지 참여 신청", description = "챌린지 참여 신청하는 요청" +
+    @Operation(summary = "챌린지 참여 신청 (완료)", description = "챌린지 참여 신청하는 요청" +
         "공개 챌린지의 경우 초대코드는 null")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "챌린지 참여 신청 성공"),

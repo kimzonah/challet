@@ -32,7 +32,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "로그인한 유저 정보 조회", description = "헤더의 토큰을 통해 로그인한 유저 정보를 조회")
+    @Operation(summary = "로그인한 유저 정보 조회 (완료)", description = "헤더의 토큰을 통해 로그인한 유저 정보를 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "로그인 유저 정보 조회 성공"),
         @ApiResponse(responseCode = "400", description = "로그인 유저 정보 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -46,7 +46,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @Operation(summary = "닉네임 수정", description = "새 닉네임을 입력 받아 닉네임 수정")
+    @Operation(summary = "닉네임 수정 (완료)", description = "새 닉네임을 입력 받아 닉네임 수정")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "닉네임 수정 성공"),
         @ApiResponse(responseCode = "400", description = "닉네임 수정 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
