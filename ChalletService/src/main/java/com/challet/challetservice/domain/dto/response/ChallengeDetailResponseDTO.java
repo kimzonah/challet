@@ -49,11 +49,11 @@ public record ChallengeDetailResponseDTO(
 ) {
 
     public static ChallengeDetailResponseDTO of(Challenge challenge,
-        boolean existsByChallengeAndUser, int currentParticipants) {
+        boolean isIncluded, int currentParticipants) {
         return ChallengeDetailResponseDTO.builder()
             .challengeId(challenge.getId())
             .status(String.valueOf(challenge.getStatus()))
-            .isIncluded(existsByChallengeAndUser)
+            .isIncluded(isIncluded)
             .category(String.valueOf(challenge.getCategory()))
             .title(challenge.getTitle())
             .spendingLimit(challenge.getSpendingLimit())

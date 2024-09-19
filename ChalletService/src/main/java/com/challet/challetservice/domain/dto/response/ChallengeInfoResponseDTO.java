@@ -46,7 +46,7 @@ public record ChallengeInfoResponseDTO(
     public static ChallengeInfoResponseDTO fromChallenge(Challenge challenge,
         int currentParticipants) {
 
-        ChallengeInfoResponseDTO challengeInfoResponseDTO = ChallengeInfoResponseDTO.builder()
+        return ChallengeInfoResponseDTO.builder()
             .challengeId(challenge.getId())
             .status(String.valueOf(challenge.getStatus()))
             .category(String.valueOf(challenge.getCategory()))
@@ -59,7 +59,6 @@ public record ChallengeInfoResponseDTO(
             .isPublic(challenge.getInviteCode() == null)
             .build();
 
-        return challengeInfoResponseDTO;
     }
 
 }

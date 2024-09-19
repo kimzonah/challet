@@ -56,7 +56,7 @@ public class User {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserChallenge> userChallenges = new ArrayList<>();
 
     public void updateRefreshToken(String refreshToken) {
@@ -76,7 +76,7 @@ public class User {
             .build();
     }
 
-    public void updateNickname(String nickname){
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
 

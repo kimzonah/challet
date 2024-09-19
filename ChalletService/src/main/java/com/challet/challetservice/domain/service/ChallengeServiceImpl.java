@@ -43,7 +43,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         // 비공개 챌린지라면 초대코드 생성
         String code = null;
-        if(!request.isPublic()){
+        if (!request.isPublic()) {
             code = generateCode(6);
         }
 
@@ -65,14 +65,15 @@ public class ChallengeServiceImpl implements ChallengeService {
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        if(user.getUserChallenges()==null || user.getUserChallenges().isEmpty()){
+        if (user.getUserChallenges() == null || user.getUserChallenges().isEmpty()) {
             return null;
         }
 
         List<ChallengeInfoResponseDTO> result = user.getUserChallenges().stream()
             .map(userChallenge -> {
                 Challenge challenge = userChallenge.getChallenge();
-                return ChallengeInfoResponseDTO.fromChallenge(challenge, challenge.getUserChallenges().size());
+                return ChallengeInfoResponseDTO.fromChallenge(challenge,
+                    challenge.getUserChallenges().size());
             })
             .toList();
 
@@ -87,12 +88,14 @@ public class ChallengeServiceImpl implements ChallengeService {
         userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        List<Challenge> searchChallengesList = challengeRepositorySupport.searchChallengeByKewordAndCategory(keyword, category);
-        if(searchChallengesList==null || searchChallengesList.isEmpty()){
+        List<Challenge> searchChallengesList = challengeRepositorySupport.searchChallengeByKewordAndCategory(
+            keyword, category);
+        if (searchChallengesList == null || searchChallengesList.isEmpty()) {
             return null;
         }
         List<ChallengeInfoResponseDTO> result = searchChallengesList.stream()
-            .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge, challenge.getUserChallenges().size()))
+            .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge,
+                challenge.getUserChallenges().size()))
             .toList();
 
         return new ChallengeListResponseDTO(result);
@@ -106,9 +109,12 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+            .orElseThrow(
+                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        return ChallengeDetailResponseDTO.of(challenge, userChallengeRepository.existsByChallengeAndUser(challenge, user), challenge.getUserChallenges().size());
+        return ChallengeDetailResponseDTO.of(challenge,
+            userChallengeRepository.existsByChallengeAndUser(challenge, user),
+            challenge.getUserChallenges().size());
     }
 
     @Override
@@ -119,38 +125,32 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+            .orElseThrow(
+                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
         // 모집중인 챌린지가 아니라면 참여 불가
-        if(!challenge.getStatus().equals(ChallengeStatus.RECRUITING)){
+        if (!challenge.getStatus().equals(ChallengeStatus.RECRUITING)) {
             throw new ExceptionResponse(CustomException.NOT_RECRUITING_EXCEPTION);
         }
 
         // 이미 참여중인 챌린지라면 예외처리
-        if(userChallengeRepository.existsByChallengeAndUser(challenge, user)){
+        if (userChallengeRepository.existsByChallengeAndUser(challenge, user)) {
             throw new ExceptionResponse(CustomException.ALREADY_JOIN_EXCEPTION);
         }
 
         // 공개 챌린지면 바로 추가
-        if(request.isPublic()){
-            UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
-            userChallengeRepository.save(userChallenge);
+        if (!request.isPublic() && !request.inviteCode().equals(challenge.getInviteCode())) {
+            throw new ExceptionResponse(CustomException.CODE_MISMATCH_EXCEPTION);
         }
-        // 비공개 챌린지라면 초대코드 검증
-        else {
-            if (request.inviteCode().equals(challenge.getInviteCode())){
-                UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
-                userChallengeRepository.save(userChallenge);
-            }
-            else {
-                throw new ExceptionResponse(CustomException.CODE_MISMATCH_EXCEPTION);
-            }
-        }
+
+        UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
+        userChallengeRepository.save(userChallenge);
+
     }
 
-    public static String generateCode(int length){
+    public static String generateCode(int length) {
         StringBuilder code = new StringBuilder(length);
-        for(int i = 0; i < length; i++){
+        for (int i = 0; i < length; i++) {
             code.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
         }
         return code.toString();

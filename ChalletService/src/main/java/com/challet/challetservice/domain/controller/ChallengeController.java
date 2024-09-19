@@ -57,11 +57,11 @@ public class ChallengeController {
     @GetMapping("/my-challenges")
     public ResponseEntity<ChallengeListResponseDTO> getMyChallenges(
         @RequestHeader(value = "Authorization", required = false) String header) {
-        ChallengeListResponseDTO result = challengeService.getMyChallenges(header);
-        if (result == null) {
+        ChallengeListResponseDTO myChallenges = challengeService.getMyChallenges(header);
+        if (myChallenges == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(myChallenges);
     }
 
     @Operation(summary = "챌린지 검색", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
@@ -81,12 +81,11 @@ public class ChallengeController {
         @RequestHeader(value = "Authorization", required = false) String header,
         @RequestParam(value = "keyword", required = false) String keyword,
         @RequestParam(value = "category", required = false) String category) {
-        ChallengeListResponseDTO result = challengeService.searchChallenges(header, keyword,
-            category);
-        if (result == null) {
+        ChallengeListResponseDTO searchChallenges = challengeService.searchChallenges(header, keyword, category);
+        if (searchChallenges == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(searchChallenges);
     }
 
     @Operation(summary = "챌린지 정보 상세 조회", description = "챌린지ID로 챌린지 정보 조회")
@@ -102,8 +101,9 @@ public class ChallengeController {
     public ResponseEntity<ChallengeDetailResponseDTO> getChallengeDetail(
         @RequestHeader(value = "Authorization", required = false) String header,
         @PathVariable("id") Long id) {
-        ChallengeDetailResponseDTO result = challengeService.getChallengeDetail(header, id);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        ChallengeDetailResponseDTO challengeDetail = challengeService.getChallengeDetail(header,
+            id);
+        return ResponseEntity.status(HttpStatus.OK).body(challengeDetail);
     }
 
     @Operation(summary = "챌린지 참여 신청", description = "챌린지 참여 신청하는 요청" +

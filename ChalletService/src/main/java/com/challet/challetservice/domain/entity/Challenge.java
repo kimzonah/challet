@@ -41,7 +41,6 @@ public class Challenge {
     private String title;
 
     @Column(name = "create_date", nullable = false, columnDefinition = "DATE")
-    @CreatedDate
     private LocalDate createDate;
 
     @Column(name = "start_date", nullable = false, columnDefinition = "DATE")
@@ -63,7 +62,7 @@ public class Challenge {
     @Enumerated(EnumType.STRING)
     private ChallengeStatus status;
 
-    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserChallenge> userChallenges = new ArrayList<>();
 
     public static Challenge createChallenge(ChallengeRegisterRequestDTO request, String code) {
