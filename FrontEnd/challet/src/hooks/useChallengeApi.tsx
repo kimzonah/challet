@@ -195,6 +195,26 @@ export const useChallengeApi = () => {
     }
   };
 
+  const editTransaction = async (
+    sharedTransactionId: number,
+    transaction: Record<string, any> // transaction의 타입을 Record<string, any>로 변경
+  ) => {
+    try {
+      const url = `https://localhost:8000/challet-service/shared-transactions/${sharedTransactionId}`;
+
+      console.log('transaction:', transaction);
+      const response = await axios.patch(url, transaction, {
+        headers: {
+          'Content-Type': 'application/json', // JSON으로 전송할 때 명시적으로 Content-Type 설정
+        },
+      });
+
+      console.log('트랜잭션 수정 성공:', response.data);
+    } catch (error) {
+      console.error('트랜잭션 수정 중 오류 발생:', error);
+    }
+  };
+
   // 트랜잭션 상세 조회 API 요청 함수
   const fetchSharedTransactionDetail = async (sharedTransactionId: number) => {
     try {
@@ -249,6 +269,7 @@ export const useChallengeApi = () => {
     exampleTransactions,
     fetchSharedTransactions,
     registTransaction,
+    editTransaction,
     fetchSharedTransactionDetail,
     // fetchTransactionComments,
     fetchExampleTransactionComments,

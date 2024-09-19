@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
 import SharedTransactionComments from './SharedTransactionComments';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faSyncAlt,
+  faEdit,
+} from '@fortawesome/free-solid-svg-icons'; // 수정 아이콘 추가
 
 const SharedTransactionDetail = () => {
   const { id } = useParams<{ id: string }>(); // URL에서 sharedTransactionId 가져오기
@@ -29,7 +33,7 @@ const SharedTransactionDetail = () => {
   }
 
   return (
-    <div className='p-4 '>
+    <div className='p-4'>
       {/* 탑바 */}
       <div className='fixed top-0 left-0 right-0 bg-white z-10'>
         <div className='flex justify-between pt-8 px-3 items-center'>
@@ -42,11 +46,24 @@ const SharedTransactionDetail = () => {
             {transactionDetail.withdrawal} |{' '}
             {transactionDetail.transactionAmount.toLocaleString()}원
           </p>
-          <FontAwesomeIcon
-            icon={faSyncAlt}
-            className='cursor-pointer'
-            onClick={() => window.location.reload()} // 새로고침
-          />
+          {transactionDetail.isMine ? (
+            <FontAwesomeIcon
+              icon={faEdit} // 수정 아이콘
+              className='cursor-pointer'
+              onClick={() => {
+                // 수정 페이지로 이동하고, transactionDetail 데이터를 전달
+                navigate('/sharedTransactionEdit', {
+                  state: { transaction: transactionDetail },
+                });
+              }}
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon={faSyncAlt} // 새로고침 아이콘
+              className='cursor-pointer'
+              onClick={() => window.location.reload()} // 새로고침
+            />
+          )}
         </div>
       </div>
 
