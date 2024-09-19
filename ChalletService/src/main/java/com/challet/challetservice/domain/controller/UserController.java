@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/challet-service/users")
+@RequestMapping("/api/challet/users")
 @RequiredArgsConstructor
 @Tag(name = "UserController", description = "회원 관련 컨트롤러 - Authorize 필수")
 public class UserController {
