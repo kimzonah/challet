@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
@@ -32,7 +31,6 @@ public class KbBank {
     private Long accountBalance;
 
     @Column(name = "create_date_time", nullable = false, columnDefinition = "DATETIME")
-    @CreationTimestamp
     private LocalDateTime createDateTime;
 
     @Column(name = "phone_number", nullable = false)

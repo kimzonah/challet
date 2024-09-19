@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ch_transaction")
+@Table(name = "kb_transaction")
 public class KbBankTransaction {
 
     @Id
