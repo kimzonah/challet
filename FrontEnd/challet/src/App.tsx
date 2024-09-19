@@ -14,6 +14,9 @@ import SignUpPage from './pages/SignUpPage/SignUpPage';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
+import HistoryPage from './pages/HistoryPage/HistoryPage';
+import HistoryDetailPage from './pages/HistoryDetailPage/HistoryDetailPage';
+import TransferPage from './pages/TransferPage/TransferPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
 import MyPage from './pages/MyPage/MyPage';
@@ -36,8 +39,11 @@ function App() {
   const matchChallengeRoom = useMatch('/challengeRoom/:id');
   const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
   const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
-  const payment = useMatch('/payment');
-  const payresult = useMatch('/payresult');
+  const matchpayment = useMatch('/payment');
+  const matchpayresult = useMatch('/payresult');
+  const matchHistory = useMatch('/history');
+  const matchHistorydetail = useMatch('/history-detail');
+  const matchTransfer = useMatch('/transfer');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
@@ -45,8 +51,11 @@ function App() {
     matchChallengeRoom ||
     sharedTransactionCreate ||
     sharedTransactionDetail ||
-    payment ||
-    payresult;
+    matchHistory ||
+    matchHistorydetail ||
+    matchpayment ||
+    matchpayresult ||
+    matchTransfer;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -58,6 +67,9 @@ function App() {
         <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
+        <Route path='/history' element={<HistoryPage />} />
+        <Route path='/history-detail' element={<HistoryDetailPage />} />
+        <Route path='/transfer' element={<TransferPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
         <Route path='/challenge/create' element={<ChallengeCreatePage />} />
         <Route path='/analysis' element={<AnalysisPage />} />
