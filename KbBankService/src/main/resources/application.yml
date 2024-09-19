@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: prod # 로컬(dev) / git(prod)
+    active: dev # 로컬(dev) / git(prod)
 
 ---
 # 로컬(dev) 환경 설정
@@ -11,7 +11,6 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: application-key.yml
 
 eureka:
   instance:
@@ -28,7 +27,6 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "optional:file:/KbBankService/src/main/resources/application-key.yml"
 
 eureka:
   client:
@@ -40,8 +38,10 @@ eureka:
 ---
 # 공통 설정
 spring:
+  config:
+    import: application-key.yml
   application:
-    name: kbbank-service
+    name: kb-bank
   datasource:
     url: jdbc:mysql://challet.world:${dbport}/kbbank-api?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -51,13 +51,12 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    open-in-view: false
 
 springdoc:
   api-docs:
     version: openapi_3_1
     enabled: true
-    path: kb-bank-service/v3/api-docs
+    path: api/kb-bank/v3/api-docs
   enable-spring-security: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
