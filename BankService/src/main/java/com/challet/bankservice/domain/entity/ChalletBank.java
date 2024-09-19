@@ -1,5 +1,6 @@
 package com.challet.bankservice.domain.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,11 +42,11 @@ public class ChalletBank {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "challetBank")
+    // 거래 발생시 처리
     @Builder.Default
+    @OneToMany(mappedBy = "challetBank", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChalletBankTransaction> challetBankTransactions = new ArrayList<>();
 
-    // 거래 발생시 처리
     public void addTransaction(ChalletBankTransaction challetBankTransaction) {
         this.challetBankTransactions.add(challetBankTransaction);
         challetBankTransaction.assignTransactionChAccount(this);

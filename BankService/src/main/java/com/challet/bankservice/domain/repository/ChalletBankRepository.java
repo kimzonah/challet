@@ -7,7 +7,4 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ChalletBankRepository extends JpaRepository<ChalletBank, Long>,
     ChalletBankRepositoryCustom {
-
-    @Query("SELECT ch.accountBalance FROM ChalletBank ch WHERE ch.id = :accountId")
-    Optional<Long> findAccountBalanceById(Long accountId);
 }

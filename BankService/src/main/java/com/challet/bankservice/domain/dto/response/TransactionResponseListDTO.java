@@ -2,7 +2,9 @@ package com.challet.bankservice.domain.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import lombok.Builder;
 
+@Builder
 @Schema(description = "거래 내역 조회 DTO")
 public record TransactionResponseListDTO(
 

@@ -10,6 +10,7 @@ import com.challet.bankservice.domain.entity.QChalletBankTransaction;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -69,6 +70,18 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
                 challetBankTransaction.category))
             .from(challetBankTransaction)
             .where(challetBankTransaction.id.eq(transactionId))
+            .fetchOne();
+    }
+
+
+    @Override
+    public Long findAccountBalanceById(Long accountId) {
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        return query
+            .select(challetBank.accountBalance)
+            .from(challetBank)
+            .where(challetBank.id.eq(accountId))
             .fetchOne();
     }
 }

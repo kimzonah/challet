@@ -54,19 +54,25 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     @Transactional
     @Override
     public TransactionResponseListDTO getAccountTransactionList(Long accountId) {
-        Long accountBalance = challetBankRepository.findAccountBalanceById(accountId).orElse(0L);
+        Long accountBalance = challetBankRepository.findAccountBalanceById(accountId);
         List<TransactionResponseDTO> transactionList = challetBankRepository.getTransactionByAccountInfo(
             accountId);
-        return new TransactionResponseListDTO(transactionList.stream().count(), accountBalance,
-            transactionList);
+
+        return TransactionResponseListDTO
+            .builder()
+            .transactionCount(transactionList.stream().count())
+            .accountBalance(accountBalance)
+            .transactionResponseDTO(transactionList).build();
     }
 
     @Override
     public TransactionDetailResponseDto getTransactionInfo(Long transactionId) {
-        try{
-            return Optional.ofNullable(challetBankRepository.getTransactionDetailById(transactionId))
-                .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_TRANSACTION_DETAIL_EXCEPTION));
-        }catch (NonUniqueResultException e){
+        try {
+            return Optional.ofNullable(
+                    challetBankRepository.getTransactionDetailById(transactionId))
+                .orElseThrow(() -> new ExceptionResponse(
+                    CustomException.NOT_FOUND_TRANSACTION_DETAIL_EXCEPTION));
+        } catch (NonUniqueResultException e) {
             throw new ExceptionResponse(CustomException.NOT_GET_TRANSACTION_DETAIL_EXCEPTION);
         }
     }
