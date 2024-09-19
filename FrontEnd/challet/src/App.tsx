@@ -20,7 +20,10 @@ import MyPage2 from './pages/MyPage/MyPage2';
 import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
-import './App.css';
+import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
+import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'; // 챌린지 생성 컴포넌트
+import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
+import './assets/App.css';
 
 function App() {
   const location = useLocation();
@@ -29,33 +32,45 @@ function App() {
   const hideNavbarRoutes = ['/challenge/create', '/payment', '/payresult'];
 
   return (
+    <div className='min-h-screen flex flex-col justify-between'>
+      {/* Routes 설정 */}
+      <Routes>
+        <Route path='/' element={<OnboardingPage />} />
+        <Route path='/phone-auth' element={<PhoneAuthPage />} />
+        <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/set-password' element={<SetPasswordPage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/wallet' element={<WalletPage />} />
+        <Route path='/challenge' element={<ChallengePage />} />
+        <Route
+          path='/challenge/create'
+          element={<ChallengeCreatePage />}
+        />{' '}
+        <Route path='/analysis' element={<AnalysisPage />} />
+        <Route path='/payment' element={<PaymentPage />} />
+        <Route path='/payresult' element={<PayResult />} />
+        <Route path='/mydataselect' element={<MyDataSelectPage />} />
+        <Route path='/my' element={<MyPage />} />
+        <Route path='/mypage' element={<MyPage2 />} />
+        <Route path='/challet-service/users/login' element={<LoginPage />} />
+        <Route path='/challet-service/challenges' element={<ChallengePage />} />
+        <Route
+          path='/challet-service/challenges/:id'
+          element={<ChallengeFeed />}
+        />
+      </Routes>
+      {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
+      {location.pathname === '/challenge' && <ChallengeCreateButton />}
+
+      {/* 특정 경로에서는 Navbar 숨김 */}
+      {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
+    </div>
+  );
+}
+function AppWrapper() {
+  return (
     <Router>
-      <div className='min-h-screen flex flex-col justify-between'>
-        {/* Routes 설정 */}
-        <Routes>
-          <Route path='/' element={<OnboardingPage />} />
-          <Route path='/phone-auth' element={<PhoneAuthPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/wallet' element={<WalletPage />} />
-          <Route path='/challenge' element={<ChallengePage />} />
-          <Route path='/analysis' element={<AnalysisPage />} />
-          <Route path='/payment' element={<PaymentPage />} />
-          <Route path='/payresult' element={<PayResult />} />
-          <Route path='/my' element={<MyPage />} />
-          <Route path='/challet-service/users/login' element={<LoginPage />} />
-          <Route
-            path='/challet-service/challenges'
-            element={<ChallengePage />}
-          />
-          <Route
-            path='/challet-service/challenges/:id'
-            element={<ChallengeFeed />}
-          />
-        </Routes>
-        {/* 네비게이션 바 */}
-        <Navbar />
-      </div>
+      <App />
     </Router>
   );
 }
