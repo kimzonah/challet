@@ -48,4 +48,13 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      '/challet-service': {
+        target: 'http://localhost:8081', // 실제 API 서버 주소
+        changeOrigin: true, // 요청 헤더의 Origin을 백엔드 서버 주소로 변경
+        rewrite: (path) => path.replace(/^\/challet-service/, ''),
+      },
+    },
+  },
 });

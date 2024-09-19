@@ -17,13 +17,16 @@ import WalletPage from './pages/WalletPage/WalletPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
 import MyPage from './pages/MyPage/MyPage';
+import MyPage2 from './pages/MyPage/MyPage2';
+import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
+import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
 import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'; // 챌린지 생성 컴포넌트
 import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
-import './App.css';
 import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
 import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
+import './assets/App.css';
 
 function App() {
   const location = useLocation();
@@ -33,13 +36,17 @@ function App() {
   const matchChallengeRoom = useMatch('/challengeRoom/:id');
   const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
   const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
+  const payment = useMatch('/payment');
+  const payresult = useMatch('/payresult');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
     matchChallengeCreate ||
     matchChallengeRoom ||
     sharedTransactionCreate ||
-    sharedTransactionDetail;
+    sharedTransactionDetail ||
+    payment ||
+    payresult;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -48,6 +55,7 @@ function App() {
         <Route path='/' element={<OnboardingPage />} />
         <Route path='/phone-auth' element={<PhoneAuthPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
@@ -55,7 +63,9 @@ function App() {
         <Route path='/analysis' element={<AnalysisPage />} />
         <Route path='/payment' element={<PaymentPage />} />
         <Route path='/payresult' element={<PayResult />} />
+        <Route path='/mydataselect' element={<MyDataSelectPage />} />
         <Route path='/my' element={<MyPage />} />
+        <Route path='/mypage' element={<MyPage2 />} />
         <Route path='/challet-service/users/login' element={<LoginPage />} />
         <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
         <Route
@@ -67,7 +77,6 @@ function App() {
           element={<SharedTransactionDetail />}
         />
       </Routes>
-
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
 
@@ -76,7 +85,6 @@ function App() {
     </div>
   );
 }
-
 function AppWrapper() {
   return (
     <Router>
