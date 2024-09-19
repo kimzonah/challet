@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sh-bank-service")
+@RequestMapping("/api/sh-bank")
 @Tag(name = "ChalletController", description="SH은행 컨트롤러")
 public class ShBankController {
 
