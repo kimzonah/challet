@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: prod  #로컬(dev) / git(prod)
+    active: prod #로컬(dev) / git(prod)
 
 ---
 # 로컬(dev) 환경 설정
@@ -31,7 +31,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: "optional:file:/ChalletApiGateway/src/main/resources/application-key.yml"
+      defaultZone: http://challet.world:8761/eureka
 
 ---
 # 공통 설정
