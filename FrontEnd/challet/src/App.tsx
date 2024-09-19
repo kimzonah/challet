@@ -15,7 +15,6 @@ import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
-import MyPage from './pages/MyPage/MyPage';
 import MyPage2 from './pages/MyPage/MyPage2';
 import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
@@ -50,7 +49,6 @@ function App() {
         <Route path='/payment' element={<PaymentPage />} />
         <Route path='/payresult' element={<PayResult />} />
         <Route path='/mydataselect' element={<MyDataSelectPage />} />
-        <Route path='/my' element={<MyPage />} />
         <Route path='/mypage' element={<MyPage2 />} />
         <Route path='/challet-service/users/login' element={<LoginPage />} />
         <Route path='/challet-service/challenges' element={<ChallengePage />} />
