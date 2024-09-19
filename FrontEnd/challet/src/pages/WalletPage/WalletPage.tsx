@@ -1,4 +1,3 @@
-// src/pages/WalletPage.tsx
 import React from 'react';
 import ChalletLogo from '../../assets/wallet/challet-logo.png';
 import MyDataConnectButton from '../../components/Wallet/MyDataConnectButton';

@@ -16,6 +16,8 @@ import WalletPage from './pages/WalletPage/WalletPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
 import MyPage from './pages/MyPage/MyPage';
+import MyPage2 from './pages/MyPage/MyPage2';
+import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
 import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
@@ -36,6 +38,7 @@ function App() {
         <Route path='/' element={<OnboardingPage />} />
         <Route path='/phone-auth' element={<PhoneAuthPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
@@ -43,12 +46,12 @@ function App() {
           path='/challenge/create'
           element={<ChallengeCreatePage />}
         />{' '}
-        {/* 새로운 라우트 추가 */}
         <Route path='/analysis' element={<AnalysisPage />} />
         <Route path='/payment' element={<PaymentPage />} />
         <Route path='/payresult' element={<PayResult />} />
         <Route path='/mydataselect' element={<MyDataSelectPage />} />
         <Route path='/my' element={<MyPage />} />
+        <Route path='/mypage' element={<MyPage2 />} />
         <Route path='/challet-service/users/login' element={<LoginPage />} />
         <Route path='/challet-service/challenges' element={<ChallengePage />} />
         <Route
@@ -56,7 +59,6 @@ function App() {
           element={<ChallengeFeed />}
         />
       </Routes>
-
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
 
@@ -65,7 +67,6 @@ function App() {
     </div>
   );
 }
-
 function AppWrapper() {
   return (
     <Router>
