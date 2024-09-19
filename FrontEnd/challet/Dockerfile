@@ -11,8 +11,8 @@ FROM nginx:stable-alpine as production-stage
 # 저장된 경로에서 nginx.conf 파일을 복사
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
-COPY --from=build-stage /dist /usr/share/nginx/html
-COPY --from=build-stage /dev-dist /usr/share/nginx/html
+COPY --from=build-stage /challet/dist /usr/share/nginx/html
+COPY --from=build-stage /challet/dev-dist /usr/share/nginx/html
 
 EXPOSE 4000
 CMD ["nginx", "-g", "daemon off;"]
