@@ -30,7 +30,7 @@ public class NhBankTransaction {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kb_bank_id", nullable = false)
+    @JoinColumn(name = "nh_bank_id", nullable = false)
     private NhBank nhBank;
 
     @Column(name = "transaction_amount", nullable = false)

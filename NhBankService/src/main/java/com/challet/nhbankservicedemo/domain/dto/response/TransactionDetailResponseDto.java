@@ -1,5 +1,6 @@
 package com.challet.nhbankservicedemo.domain.dto.response;
 
+import com.challet.nhbankservicedemo.domain.entity.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
@@ -22,7 +23,7 @@ public record TransactionDetailResponseDTO(
     Long transactionBalance,
 
     @Schema(description = "카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE", "SHOPPING"})
-    String category
+    Category category
 ) {
 
 }
