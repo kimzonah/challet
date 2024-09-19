@@ -1,20 +1,21 @@
-# Use Node.js 20.17.0 for building the React app
-FROM node:20.17.0 as build
-
-# Set the working directory inside the container
+# Step 1: Build React App
+FROM node:20 as build-stage
 WORKDIR /app
 
-# Copy the package.json and package-lock.json to the working directory
+# Install dependencies
 COPY package*.json ./
-
-# Install the dependencies
 RUN npm install
 
-# Copy the rest of the application files
+# Copy all files and build the app
 COPY . .
-
-# Build the React application
 RUN npm run build
 
-# Expose a port (optional, since it's just a build stage)
-EXPOSE 3000
+# Step 2: Serve the build with Nginx
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/build /usr/share/nginx/html
+
+# Nginx 설정 파일이 있다면 이 부분을 추가
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
