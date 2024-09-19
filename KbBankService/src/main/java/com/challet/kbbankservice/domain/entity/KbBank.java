@@ -37,5 +37,7 @@ public class KbBank {
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
-    
+
+    @Column(name = "mydata_status", nullable = false)
+    private boolean myDataStatus;
 }
