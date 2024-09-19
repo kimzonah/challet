@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/challet-service/shared-transactions")
+@RequestMapping("/api/challet/shared-transactions")
 @Tag(name = "SharedTransactionController", description = "공유 거래 내역 컨트롤러 - Authorize 필수")
 public class SharedTransactionController {
 

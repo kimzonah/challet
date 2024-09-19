@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/challet-service/challenges")
+@RequestMapping("/api/challet/challenges")
 @RequiredArgsConstructor
 @Tag(name = "ChallengeController", description = "챌린지 관련 Controller - Authorize 필수")
 public class ChallengeController {
