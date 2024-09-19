@@ -44,7 +44,7 @@ public class ChalletBankController {
     public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
         @RequestParam String phoneNumber) {
         AccountInfoResponseListDTO account = challetBankService.findAccount(phoneNumber);
-        return ResponseEntity.status(HttpStatus.CREATED).body(account);
+        return ResponseEntity.status(HttpStatus.OK).body(account);
     }
 
     @GetMapping("/accounts")
@@ -57,7 +57,7 @@ public class ChalletBankController {
         @RequestHeader("AccountId") Long accountId) {
         TransactionResponseListDTO transactionList = challetBankService.getAccountTransactionList(
             accountId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(transactionList);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionList);
     }
 
     @PostMapping()

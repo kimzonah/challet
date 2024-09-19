@@ -16,10 +16,10 @@ public record TransactionResponseDTO(
     String deposit,
 
     @Schema(description = "거래 후 잔액")
-    Long transaction_balance,
+    Long transactionBalance,
 
     @Schema(description = "거래 금액")
-    Long transaction_amount
+    Long transactionAmount
 ) {
 
 }
