@@ -52,7 +52,7 @@ public class JwtUtil {
     }
 
     // Authorization 헤더로 회원 추출
-    public String getLoginUser(String header){
+    public String getLoginUserPhoneNumber(String header){
         String token = header.substring(7);
         Claims claims = getClaimsFromToken(token);
         return claims.getSubject();

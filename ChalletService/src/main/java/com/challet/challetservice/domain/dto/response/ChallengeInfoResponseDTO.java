@@ -5,18 +5,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import lombok.Builder;
 
-@Schema(description = "챌린지 상세 정보 응답 DTO")
+@Schema(description = "챌린지 정보 DTO")
 @Builder
-public record ChallengeDetailResponseDTO(
+public record ChallengeInfoResponseDTO(
 
     @Schema(description = "챌린지ID")
     Long challengeId,
 
     @Schema(description = "챌린지 진행 상태", allowableValues = {"RECRUITING", "PROGRESSING", "END"})
     String status,
-
-    @Schema(description = "챌린지 참여 여부")
-    Boolean isIncluded,
 
     @Schema(description = "챌린지 카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE",
         "SHOPPING"})
@@ -40,20 +37,18 @@ public record ChallengeDetailResponseDTO(
     @Schema(description = "현재 참여 인원")
     Integer currentParticipants,
 
-    @Schema(description = "공개 여부 (비공개 : 0, 공개 : 1)")
-    Boolean isPublic,
-
-    @Schema(description = "초대코드")
-    String inviteCode
+    @Schema(description = "공개 여부 (비공개 : false, 공개 : true)")
+    Boolean isPublic
 
 ) {
 
-    public static ChallengeDetailResponseDTO of(Challenge challenge,
-        boolean isIncluded, int currentParticipants) {
-        return ChallengeDetailResponseDTO.builder()
+
+    public static ChallengeInfoResponseDTO fromChallenge(Challenge challenge,
+        int currentParticipants) {
+
+        return ChallengeInfoResponseDTO.builder()
             .challengeId(challenge.getId())
             .status(String.valueOf(challenge.getStatus()))
-            .isIncluded(isIncluded)
             .category(String.valueOf(challenge.getCategory()))
             .title(challenge.getTitle())
             .spendingLimit(challenge.getSpendingLimit())
@@ -62,8 +57,8 @@ public record ChallengeDetailResponseDTO(
             .maxParticipants(challenge.getMaxParticipants())
             .currentParticipants(currentParticipants)
             .isPublic(challenge.getInviteCode() == null)
-            .inviteCode(challenge.getInviteCode())
             .build();
+
     }
 
 }

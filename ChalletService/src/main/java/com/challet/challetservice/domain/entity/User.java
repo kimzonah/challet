@@ -2,14 +2,19 @@ package com.challet.challetservice.domain.entity;
 
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
 import com.challet.challetservice.global.util.JwtUtil;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +56,9 @@ public class User {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserChallenge> userChallenges = new ArrayList<>();
+
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
@@ -68,7 +76,7 @@ public class User {
             .build();
     }
 
-    public void updateNickname(String nickname){
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
 

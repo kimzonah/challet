@@ -21,8 +21,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResponseDTO getUserInfo(String header) {
 
-        String loginUser = jwtUtil.getLoginUser(header);
-        User user = userRepository.findByPhoneNumber(loginUser)
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         return UserInfoResponseDTO.fromUser(user);
@@ -31,8 +31,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateNickname(String header, UserUpdateNicknameRequestDTO request) {
-        String loginUser = jwtUtil.getLoginUser(header);
-        User user = userRepository.findByPhoneNumber(loginUser)
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         user.updateNickname(request.nickname());
