@@ -1,119 +1,44 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import AllSearch from '../../assets/Challenge/Search.png';
 import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
 import Car from '../../assets/Challenge/Car.png';
 import Coffee from '../../assets/Challenge/Coffee.png';
 import shopping from '../../assets/Challenge/Shopping.png';
 import SearchBar from '../../assets/Challenge/SearchBar.png';
-import Timefill from '../../assets/Challenge/TimeFill.png'; // Timefill 아이콘 가져오기
 
-interface CategoryProps {
-  icon: string;
-  label: string;
-  class: string;
-  isActive: boolean;
-  onClick: (label: string, className: string) => void;
+interface CategoryListProps {
+  activeCategory: string;
+  onCategoryChange: (category: string) => void;
+  onSearch: (keyword: string) => void;
 }
 
-function Category({
-  icon,
-  label,
-  class: className,
-  isActive,
-  onClick,
-}: CategoryProps) {
-  const borderClass = isActive ? 'border-2 border-teal-500 border-solid' : '';
-  const textColorClass = isActive ? 'text-teal-500' : 'text-zinc-400';
-
-  return (
-    <button
-      onClick={() => onClick(label, className)}
-      className='flex flex-col items-center bg-white'
-    >
-      <div
-        className={`flex justify-center items-center bg-gray-100 rounded-full ${borderClass}`}
-        style={{ width: '60px', height: '60px', boxSizing: 'border-box' }}
-      >
-        <img
-          loading='lazy'
-          src={icon}
-          alt={`${label} icon`}
-          className='object-contain w-full h-full'
-        />
-      </div>
-      <div className='pb-1'></div>
-      <div
-        className={`text-sm font-medium tracking-wider text-center ${textColorClass}`}
-      >
-        {label}
-      </div>
-    </button>
-  );
-}
-
-function CategoryList() {
-  const [activeCategory, setActiveCategory] = useState('전체');
-  const [activeClass, setActiveClass] = useState('');
+const CategoryList = ({
+  activeCategory,
+  onCategoryChange,
+  onSearch,
+}: CategoryListProps) => {
+  console.log('activeCategory:', activeCategory);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const categories = [
-    {
-      icon: AllSearch,
-      label: '전체',
-      class: '',
-      isActive: activeCategory === '전체',
-    },
-    {
-      icon: Delivery,
-      label: '배달',
-      class: 'DELIVERY',
-      isActive: activeCategory === '배달',
-    },
-    {
-      icon: Coffee,
-      label: '커피',
-      class: 'COFFEE',
-      isActive: activeCategory === '커피',
-    },
-    {
-      icon: Car,
-      label: '교통',
-      class: 'TRANSPORT',
-      isActive: activeCategory === '교통',
-    },
-    {
-      icon: shopping,
-      label: '쇼핑',
-      class: 'SHOPPING',
-      isActive: activeCategory === '쇼핑',
-    },
+    { icon: AllSearch, label: '전체', class: '' },
+    { icon: Delivery, label: '배달', class: 'DELIVERY' },
+    { icon: Coffee, label: '커피', class: 'COFFEE' },
+    { icon: Car, label: '교통', class: 'TRANSPORT' },
+    { icon: shopping, label: '쇼핑', class: 'SHOPPING' },
   ];
 
-  const handleCategoryClick = (label: string, className: string) => {
-    setActiveCategory(label);
-    setActiveClass(className);
-    console.log(`${label} 카테고리 선택됨`);
+  const handleCategoryClick = (className: string) => {
+    onCategoryChange(className);
   };
 
   const handleSearchClick = () => {
     const searchTerm = searchInputRef.current?.value || '';
-    if (searchTerm.trim() !== '') {
-      const apiUrl = `/challet-service/challenges?keyword=${searchTerm}&category=${activeClass}`;
-      console.log(`API 호출: ${apiUrl}`);
-
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('API 응답 데이터:', data);
-        })
-        .catch((error) => {
-          console.error('API 호출 중 오류 발생:', error);
-        });
-    }
+    onSearch(searchTerm);
   };
 
   return (
-    <div className='w-full p-4'>
+    <div className='w-full p-4 border-b-2 mb-2'>
       {/* 검색창 */}
       <div className='flex items-center mb-4'>
         <input
@@ -131,40 +56,41 @@ function CategoryList() {
       </div>
 
       {/* 카테고리 리스트 */}
-      <div className='flex overflow-x-auto gap-6 bg-white scrollbar-hide'>
+      <div className='flex overflow-x-auto whitespace-nowrap gap-6 bg-white scrollbar-hide scrollbar-smooth'>
         {categories.map((category, index) => (
-          <Category key={index} {...category} onClick={handleCategoryClick} />
-        ))}
-      </div>
-
-      {/* 챌린지 리스트 예시 */}
-      <div className='mt-6'>
-        <div className='border rounded-md p-4 mb-4'>
-          <div className='flex items-center'>
+          <button
+            key={index}
+            onClick={() => handleCategoryClick(category.class)}
+            className='flex flex-col items-center bg-white'
+          >
             <img
-              src={Coffee} // 예시로 이미지 사용
-              alt='커피 대신 물 마시자'
-              className='w-12 h-12 rounded-full'
+              src={category.icon}
+              alt={category.label}
+              className={`object-contain w-full h-full rounded-full bg-[#F1F4F6] ${
+                activeCategory === category.class
+                  ? 'border-2 border-teal-500'
+                  : ''
+              }`}
+              style={{
+                width: '60px',
+                height: '60px',
+                minWidth: '60px',
+                minHeight: '60px',
+                boxSizing: 'border-box',
+              }}
             />
-            <div className='ml-4'>
-              <div className='font-bold'>커피 대신 물 마시자</div>
-              <div className='text-sm text-gray-500'>5/6명 | 50,000원</div>
-              <div className='flex items-center text-sm text-gray-500'>
-                {/* Timefill 아이콘 추가 */}
-                <img
-                  src={Timefill}
-                  alt='시간 아이콘'
-                  className='w-4 h-4 mr-1'
-                />
-                3일 뒤 시작 | 14일 동안
-              </div>
+            <div
+              className={`text-sm font-medium tracking-wider text-center ${
+                activeCategory === category.class ? 'text-teal-500' : ''
+              }`}
+            >
+              {category.label}
             </div>
-          </div>
-        </div>
-        {/* 더 많은 챌린지들을 여기에 추가할 수 있습니다 */}
+          </button>
+        ))}
       </div>
     </div>
   );
-}
+};
 
 export default CategoryList;

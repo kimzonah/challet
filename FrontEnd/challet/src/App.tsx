@@ -1,4 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
+import 'react-dates/lib/css/_datepicker.css';
+
 import ChallengeFeed from './components/Challenge/ChallengeFeed';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
@@ -13,10 +20,14 @@ import MyPage2 from './pages/MyPage/MyPage2';
 import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
-import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
+  const location = useLocation();
+
+  // Navbar를 숨길 경로들 정의
+  const hideNavbarRoutes = ['/challenge/create', '/payment', '/payresult'];
+
   return (
     <Router>
       <div className='min-h-screen flex flex-col justify-between'>
@@ -25,29 +36,13 @@ function App() {
           <Route path='/' element={<OnboardingPage />} />
           <Route path='/phone-auth' element={<PhoneAuthPage />} />
           <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/set-password' element={<SetPasswordPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/wallet' element={<WalletPage />} />
           <Route path='/challenge' element={<ChallengePage />} />
           <Route path='/analysis' element={<AnalysisPage />} />
           <Route path='/payment' element={<PaymentPage />} />
           <Route path='/payresult' element={<PayResult />} />
-          <Route
-            path='/my'
-            element={
-              <ProtectedRoute>
-                <MyPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/mypage'
-            element={
-              <ProtectedRoute>
-                <MyPage2 />
-              </ProtectedRoute>
-            }
-          />
+          <Route path='/my' element={<MyPage />} />
           <Route path='/challet-service/users/login' element={<LoginPage />} />
           <Route
             path='/challet-service/challenges'
@@ -65,4 +60,4 @@ function App() {
   );
 }
 
-export default App;
+export default AppWrapper;
