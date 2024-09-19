@@ -11,6 +11,7 @@ import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -68,8 +69,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenRefreshResponseDTO refreshToken(TokenRefreshRequestDTO request) {
-        String refreshToken = request.refreshToken();
+    public TokenRefreshResponseDTO refreshToken(HttpServletRequest request) {
+        String refreshToken = getRefreshTokenFromCookie(request);
 
         // 리프레시 토큰이 유효한지 먼저 확인
         if (!jwtUtil.validateToken(refreshToken)) {
@@ -97,6 +98,18 @@ public class AuthServiceImpl implements AuthService {
         cookie.setMaxAge(7 * 24 * 60 * 60);
         cookie.setSecure(true);
         return cookie;
+    }
+
+    public static String getRefreshTokenFromCookie(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("refreshToken")){
+                    return cookie.getValue();
+                }
+            }
+        }
+        throw new ExceptionResponse(CustomException.NOT_FOUND_REFRESH_TOKEN_EXCEPTION);
     }
 
 }
