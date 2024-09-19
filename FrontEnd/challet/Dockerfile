@@ -8,11 +8,8 @@ RUN npm run build
 
 FROM nginx:stable-alpine as production-stage
 
-# default.conf 삭제
-RUN rm /etc/nginx/conf.d/default.conf
-
 # 저장된 경로에서 nginx.conf 파일을 복사
-COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
