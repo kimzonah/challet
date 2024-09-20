@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const chBankAxiosInstance = axios.create({
-  baseURL: 'http://localhost:8082/api/ch-bank',
+  baseURL: 'http://localhost:8000/api/ch-bank',
   headers: {
     'Content-Type': 'application/json',
   },

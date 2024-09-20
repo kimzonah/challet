@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosResponse, AxiosError } from 'axios';
 import axiosInstance from '../../api/challetAxios';
+import chBankAxiosInstance from '../../api/chBankAxios';
 import useSignUpStore from '../../store/useSignUpStore';
 import useAuthStore from '../../store/useAuthStore'; // 로그인 상태 저장을 위한 Zustand 스토어
 
@@ -31,6 +32,22 @@ const SetPasswordPage = () => {
     }
   };
 
+  // 계좌 생성 요청
+  const createAccount = async (phoneNumber: string) => {
+    try {
+      const response = await chBankAxiosInstance.post('', null, {
+        params: { phoneNumber },
+      });
+      console.log('계좌 생성 성공:', response.data);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('계좌 생성 실패:', error.response?.data || error.message);
+      } else {
+        console.error('계좌 생성 실패:', error);
+      }
+    }
+  };
+
   // 데이터 전송 및 회원가입 처리
   const handleSubmit = async () => {
     if (password.length === 6) {
@@ -50,7 +67,7 @@ const SetPasswordPage = () => {
       try {
         // POST 요청을 통해 회원가입 및 비밀번호 설정
         const response: AxiosResponse = await axiosInstance.post(
-          '/challet-service/auth/signup',
+          '/auth/signup',
           signUpData
         );
 
@@ -70,6 +87,8 @@ const SetPasswordPage = () => {
             '회원가입 및 비밀번호 설정 완료 - Access Token:',
             accessToken
           );
+          // 계좌 생성 API 호출
+          await createAccount(phoneNumber);
 
           // 로그인 후 메인 페이지로 이동
           navigate('/wallet'); // 회원가입 성공 후 메인 페이지로 이동
@@ -112,8 +131,17 @@ const SetPasswordPage = () => {
       <h1>간편 비밀번호 설정</h1>
 
       {/* 저장된 회원가입 정보가 유효한지 확인 */}
-      {!name || !phoneNumber || !age || !gender ? (
-        <p style={{ color: 'red' }}>회원가입 정보가 누락되었습니다.</p>
+      {!name || !phoneNumber || !age || gender === null ? (
+        <>
+          <p style={{ color: 'red' }}>회원가입 정보가 누락되었습니다.</p>
+          {/* 누락된 정보 콘솔 출력 */}
+          {console.log('회원가입 정보:', {
+            name: name || '이름 없음',
+            phoneNumber: phoneNumber || '전화번호 없음',
+            age: age || '나이 없음',
+            gender: gender,
+          })}
+        </>
       ) : (
         <>
           {/* 입력된 비밀번호 표시 */}

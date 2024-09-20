@@ -3,7 +3,7 @@ import useAuthStore from '../store/useAuthStore';
 
 // challetAxiosInstance
 const challetAxiosInstance = axios.create({
-  baseURL: 'http://localhost:8081/api/challet', // 백엔드 기본 URL
+  baseURL: 'http://localhost:8000/api/challet', // 백엔드 기본 URL
   headers: {
     'Content-Type': 'application/json',
   },
