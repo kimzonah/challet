@@ -6,7 +6,7 @@ import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
 
 public interface ShBankService {
 
-    AccountInfoResponseListDTO getAccountsByPhoneNumber(String phoneNumber);
+    AccountInfoResponseListDTO getAccountsByPhoneNumber(String tokenHeader);
 
     TransactionResponseListDTO getAccountTransactionList(Long accountId);
 

@@ -61,3 +61,8 @@ springdoc:
   enable-spring-security: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+jwt:
+  secret: ${jwt_secret_key}
+  access-exp: ${jwt_access_exp}
+  refresh-exp: ${jwt_refresh_exp}
