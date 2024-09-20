@@ -1,27 +1,30 @@
 package com.challet.kbbankservice.domain.dto.response;
 
+import com.challet.kbbankservice.domain.entity.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Schema(description = "거래 상세 조회 응답 DTO")
-public class TransactionDetailResponseDto {
+public record TransactionDetailResponseDTO(
+
     @Schema(description = "거래 금액")
-    private Long transactionAmount;
+    Long transactionAmount,
+
     @Schema(description = "거래 일시")
-    private LocalDateTime transactionDatetime;
+    LocalDateTime transactionDatetime,
+
     @Schema(description = "입금처")
-    private String deposit;
+    String deposit,
+
     @Schema(description = "출금처")
-    private String withdrawal;
+    String withdrawal,
+
     @Schema(description = "거래 후 잔액")
-    private Long transactionBalance;
-    @Schema(description = "카테고리", allowableValues = {"DELIVERY","TRANSPORT","COFFEE","SHOPPING"})
-    private String category;
+    Long transactionBalance,
+
+    @Schema(description = "카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE", "SHOPPING"})
+    Category category
+) {
+
 }
