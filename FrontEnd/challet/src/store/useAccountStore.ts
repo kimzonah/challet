@@ -5,6 +5,7 @@ import { persist } from 'zustand/middleware';
 interface AccountInfo {
   id: number;
   accountNumber: string;
+  accountBalance: number;
 }
 
 interface AccountState {

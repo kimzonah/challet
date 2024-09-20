@@ -41,7 +41,7 @@ function App() {
   const matchpayment = useMatch('/payment');
   const matchpayresult = useMatch('/payresult');
   const matchHistory = useMatch('/history');
-  const matchHistorydetail = useMatch('/history-detail');
+  const matchHistorydetail = useMatch('//history-detail/:transactionId');
   const matchTransfer = useMatch('/transfer');
 
   // 두 경로 중 하나와 매칭되는지 확인
@@ -67,7 +67,10 @@ function App() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
         <Route path='/history' element={<HistoryPage />} />
-        <Route path='/history-detail' element={<HistoryDetailPage />} />
+        <Route
+          path='/history-detail/:transactionId'
+          element={<HistoryDetailPage />}
+        />
         <Route path='/transfer' element={<TransferPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
         <Route path='/challenge/create' element={<ChallengeCreatePage />} />

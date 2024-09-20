@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-// import useSignUpStore from '../../store/useSignUpStore';
 import useAccountStore from '../../store/useAccountStore';
+import chBankAxiosInstance from '../../api/chBankAxios'; // 커스텀 Axios 인스턴스 import
 
 interface Account {
   id: number;
@@ -23,16 +22,15 @@ const WalletBalanceSection = () => {
 
   const { setAccountInfo: setStoreAccountInfo } = useAccountStore();
 
-  // const { phoneNumber } = useSignUpStore(); //useSignUpStore 사용
-  const phoneNumber = '01011112226'; // 테스트용 전화번호
+  const phoneNumber = '01047474747'; // 테스트용 전화번호
 
   useEffect(() => {
     const fetchAccountInfo = async () => {
       try {
         console.log(`Requesting account info with phoneNumber: ${phoneNumber}`);
-        const response = await axios.get<AccountResponse>(
-          `http://localhost:8082/api/ch-bank?phoneNumber=${phoneNumber}`
-        );
+        const response = await chBankAxiosInstance.get<AccountResponse>('', {
+          params: { phoneNumber }, // 쿼리 파라미터로 phoneNumber 전달
+        });
 
         console.log('Response data:', response.data);
 
@@ -61,7 +59,9 @@ const WalletBalanceSection = () => {
   }, [phoneNumber, setStoreAccountInfo]);
 
   if (loading) {
-    return <p>로딩 중...</p>;
+    <div className='w-full bg-white p-4 rounded-lg shadow-md mb-8'>
+      <p className='text-xs font-bold mt-2 mb-4'>로딩 중..</p>
+    </div>;
   }
 
   if (error) {
@@ -87,7 +87,9 @@ const WalletBalanceSection = () => {
             </p>
           </>
         ) : (
-          <p>계좌 정보를 불러올 수 없습니다.</p>
+          <h2 className='text-sm font-semibold text-gray-700 mb-4'>
+            계좌가 없습니다.
+          </h2>
         )}
       </div>
       <div className='flex justify-end gap-2'>
