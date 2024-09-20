@@ -8,12 +8,14 @@ import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
+import com.challet.bankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     private final ChalletBankRepository challetBankRepository;
     private final Environment env;
+    private final JwtUtil jwtUtil;
 
     @Override
     public void createAccount(String phoneNumber) {
@@ -42,7 +45,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     @Override
-    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String phoneNumber) {
+    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String header) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         AccountInfoResponseListDTO accountInfo = challetBankRepository.getAccountInfoByPhoneNumber(
             phoneNumber);
         if (accountInfo.accountCount() == 0) {

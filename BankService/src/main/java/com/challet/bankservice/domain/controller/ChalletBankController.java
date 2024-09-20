@@ -35,6 +35,17 @@ public class ChalletBankController {
 
     private final ChalletBankService challetBankService;
 
+    @PostMapping()
+    @Operation(summary = "챌렛은행 계좌 생성", description = "계좌를 생성하며 입력받은 전화번호를 ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
+        @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity createAccount(@RequestParam String phoneNumber) {
+        challetBankService.createAccount(phoneNumber);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @GetMapping()
     @Operation(summary = "챌렛은행 조회", description = "전화번호를 이용하여 계좌를 조회합니다")
     @ApiResponses(value = {
@@ -42,8 +53,8 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
-        @RequestParam String phoneNumber) {
-        AccountInfoResponseListDTO account = challetBankService.getAccountsByPhoneNumber(phoneNumber);
+        @RequestHeader(value = "Authorization", required = false) String header) {
+        AccountInfoResponseListDTO account = challetBankService.getAccountsByPhoneNumber(header);
         return ResponseEntity.status(HttpStatus.OK).body(account);
     }
 
@@ -58,17 +69,6 @@ public class ChalletBankController {
         TransactionResponseListDTO transactionList = challetBankService.getAccountTransactionList(
             accountId);
         return ResponseEntity.status(HttpStatus.OK).body(transactionList);
-    }
-
-    @PostMapping()
-    @Operation(summary = "챌렛은행 계좌 생성", description = "계좌를 생성하며 입력받은 전화번호를 ")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
-        @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
-    })
-    public ResponseEntity createAccount(@RequestParam String phoneNumber) {
-        challetBankService.createAccount(phoneNumber);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/details")
