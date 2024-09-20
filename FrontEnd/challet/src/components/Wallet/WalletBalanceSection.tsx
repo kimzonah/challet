@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import useAignUpStore from '../../store/useSignUpStore';
 import useAccountStore from '../../store/useAccountStore';
 import chBankAxiosInstance from '../../api/chBankAxios'; // 커스텀 Axios 인스턴스 import
 
@@ -22,6 +23,7 @@ const WalletBalanceSection = () => {
 
   const { setAccountInfo: setStoreAccountInfo } = useAccountStore();
 
+  // const { phoneNumber } = useSignUpStore(); //useSignUpStore 사용
   const phoneNumber = '01047474747'; // 테스트용 전화번호
 
   useEffect(() => {

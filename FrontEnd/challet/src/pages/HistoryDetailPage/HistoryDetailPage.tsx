@@ -44,13 +44,7 @@ const HistoryDetailPage = () => {
   }, [transactionId]);
 
   if (loading) {
-    return; /* From Uiverse.io by carlosepcc */
-    <div
-      class='loader border-t-2 rounded-full border-yellow-500 bg-yellow-300 animate-spin
-    aspect-square w-8 flex justify-center items-center text-yellow-700'
-    >
-      $
-    </div>;
+    return <p>로딩 중...</p>;
   }
 
   if (error || !transactionDetail) {
@@ -83,13 +77,12 @@ const HistoryDetailPage = () => {
         </h2>
       </div>
 
-      {/* 상세 정보 카드 */}
-      <div className='p-4 mx-6 bg-white rounded-lg min-h-[350px] flex flex-col justify-center'>
-        <div className='grid grid-cols-2 gap-y-10 gap-x-2 text-sm text-gray-600'>
+      {/* 상세 정보 카드 (상단과 하단에 줄 추가) */}
+      <div className='mx-6 border-t border-b border-gray-300 py-4'>
+        <div className='grid grid-cols-2 gap-y-10 gap-x-2 text-sm text-gray-600 py-4'>
           <div className='text-left font-semibold'>일시</div>
           <div className='text-right font-semibold'>
-            {formatDate(transactionDetail.transactionDatetime)}{' '}
-            {/* 날짜와 시간을 포맷팅하여 표시 */}
+            {formatDate(transactionDetail.transactionDatetime)}
           </div>
           <div className='text-left font-semibold'>입금처</div>
           <div className='text-right font-semibold'>
