@@ -13,7 +13,7 @@ public record AccountInfoResponseDTO(
     String accountNumber,
 
     @Schema(description = "잔액")
-    String accountBalance
+    Long accountBalance
 ) {
 
 }

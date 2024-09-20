@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: prod  #로컬(dev) / git(prod)
+    active: prod #로컬(dev) / git(prod)
 
 ---
 # 로컬(dev) 환경 설정
@@ -31,7 +31,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: "optional:file:/ChalletApiGateway/src/main/resources/application-key.yml"
+      defaultZone: http://challet.world:8761/eureka
 
 ---
 # 공통 설정
@@ -42,30 +42,30 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: challet-service
-          uri: lb://CHALLET-SERVICE
+        - id: Challet
+          uri: lb://CHALLET
           predicates:
-            - Path=/challet-service/**
+            - Path=/api/challet/**
 
-        - id: bank-service
-          uri: lb://BANK-SERVICE
+        - id: Ch-Bank
+          uri: lb://CH-BANK
           predicates:
-            - Path=/bank-service/**
+            - Path=/api/ch-bank/**
 
-        - id: kbbank-service
-          uri: lb://KBBANK-SERVICE
+        - id: Kb-Bank
+          uri: lb://KB-BANK
           predicates:
-            - Path=/kb-bank-service/**
+            - Path=/api/kb-bank/**
 
-        - id: nhbank-service
-          uri: lb://NHBANK-SERVICE
+        - id: Nh-Bank
+          uri: lb://NH-BANK
           predicates:
-            - Path=/nh-bank-service/**
+            - Path=/api/nh-bank/**
 
-        - id: shbank-service
-          uri: lb://SHBANK-SERVICE
+        - id: Sh-Bank
+          uri: lb://SH-BANK
           predicates:
-            - Path=/sh-bank-service/**
+            - Path=/api/sh-bank/**
 
 
 springdoc:
@@ -73,16 +73,16 @@ springdoc:
     use-root-path: true
     urls[0]:
       name: ChalletService
-      url: challet-service/v3/api-docs
+      url: api/challet/v3/api-docs
     urls[1]:
-      name: BankService
-      url: bank-service/v3/api-docs
+      name: ChBank-Service
+      url: api/ch-bank/v3/api-docs
     urls[2]:
-      name: KbBankService
-      url: kb-bank-service/v3/api-docs
+      name: KbBank-Service
+      url: api/kb-bank/v3/api-docs
     urls[3]:
-      name: NhBankService
-      url: nh-bank-service/v3/api-docs
+      name: NhBank-Service
+      url: api/nh-bank/v3/api-docs
     urls[4]:
-      name: ShBankService
-      url: sh-bank-service/v3/api-docs
+      name: ShBank-Service
+      url: api/sh-bank/v3/api-docs

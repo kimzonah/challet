@@ -3,9 +3,10 @@ package com.challet.bankservice.domain.controller;
 import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
-import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
+import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
+import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.service.ChalletBankService;
 import com.challet.bankservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,13 +22,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/bank-service/challet-banks")
-@Tag(name = "ChalletController", description = "챌렛 은행 컨트롤러")
+@RequestMapping("/api/ch-bank")
+@Tag(name = "ChalletBankController", description = "챌렛 은행 컨트롤러")
 @RequiredArgsConstructor
 public class ChalletBankController {
 
@@ -39,9 +41,10 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "200", description = "성공"),
         @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    public ResponseEntity<AccountInfoResponseDTO> getAccountInfo() {
-
-        return null;
+    public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
+        @RequestParam String phoneNumber) {
+        AccountInfoResponseListDTO account = challetBankService.findAccount(phoneNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(account);
     }
 
     @GetMapping("/accounts")
@@ -50,9 +53,11 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "200", description = "성공"),
         @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    public ResponseEntity<List<TransactionHistoryResponseDTO>> getAccountTransactions() {
-
-        return null;
+    public ResponseEntity<TransactionResponseListDTO> getAccountTransactions(
+        @RequestHeader("AccountId") Long accountId) {
+        TransactionResponseListDTO transactionList = challetBankService.getAccountTransactionList(
+            accountId);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionList);
     }
 
     @PostMapping()
@@ -62,13 +67,8 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity createAccount(@RequestParam String phoneNumber) {
-        try {
-            challetBankService.createAccount(phoneNumber);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("계좌 생성 실패");
-        }
-
+        challetBankService.createAccount(phoneNumber);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/details")
@@ -77,8 +77,10 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "201", description = "계좌 상세 거래내역 조회 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 상세 거래내역 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails() {
-        return null;
+    public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails(
+        @RequestHeader("TransactionId") Long transactionId) {
+        TransactionDetailResponseDto transaction = challetBankService.getTransactionInfo(transactionId);
+        return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
     @GetMapping("/search")

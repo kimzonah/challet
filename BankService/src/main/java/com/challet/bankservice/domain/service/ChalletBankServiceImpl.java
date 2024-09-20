@@ -1,7 +1,16 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
+import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
+import com.challet.bankservice.global.exception.CustomException;
+import com.challet.bankservice.global.exception.ExceptionResponse;
+import com.querydsl.core.NonUniqueResultException;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +38,43 @@ public class ChalletBankServiceImpl implements ChalletBankService {
                 log.warn("중복된 계좌 번호 발견, 다시 생성합니다. 중복 계좌 번호: " + accountNum);
             }
         }
-        throw new RuntimeException("계좌 생성 실패");
+        throw new ExceptionResponse(CustomException.NOT_CREATE_USER_ACCOUNT_EXCEPTION);
+    }
+
+    @Override
+    public AccountInfoResponseListDTO findAccount(String phoneNumber) {
+        AccountInfoResponseListDTO accountInfo = challetBankRepository.findByAccountInfo(
+            phoneNumber);
+        if (accountInfo.accountCount() == 0) {
+            throw new ExceptionResponse(CustomException.NOT_FOUND_USER_ACCOUNT_EXCEPTION);
+        }
+        return accountInfo;
+    }
+
+    @Transactional
+    @Override
+    public TransactionResponseListDTO getAccountTransactionList(Long accountId) {
+        Long accountBalance = challetBankRepository.findAccountBalanceById(accountId);
+        List<TransactionResponseDTO> transactionList = challetBankRepository.getTransactionByAccountInfo(
+            accountId);
+
+        return TransactionResponseListDTO
+            .builder()
+            .transactionCount(transactionList.stream().count())
+            .accountBalance(accountBalance)
+            .transactionResponseDTO(transactionList).build();
+    }
+
+    @Override
+    public TransactionDetailResponseDto getTransactionInfo(Long transactionId) {
+        try {
+            return Optional.ofNullable(
+                    challetBankRepository.getTransactionDetailById(transactionId))
+                .orElseThrow(() -> new ExceptionResponse(
+                    CustomException.NOT_FOUND_TRANSACTION_DETAIL_EXCEPTION));
+        } catch (NonUniqueResultException e) {
+            throw new ExceptionResponse(CustomException.NOT_GET_TRANSACTION_DETAIL_EXCEPTION);
+        }
     }
 
     @Transactional
