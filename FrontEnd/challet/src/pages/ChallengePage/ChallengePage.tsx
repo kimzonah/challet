@@ -52,7 +52,7 @@ const ChallengePage = () => {
             onClick={() => handleTabClick(tab)}
             className={`flex-grow w-full px-4 py-2 text-center bg-white ${
               activeTab === tab
-                ? 'border-b-2 border-teal-500'
+                ? 'border-b-2 border-[#00CCCC]'
                 : 'border-b-2 border-inherit'
             }`}
           >
@@ -63,7 +63,7 @@ const ChallengePage = () => {
 
       {isLoading ? (
         <div className='flex justify-center items-center h-64'>
-          <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500'></div>
+          <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00CCCC]'></div>
         </div>
       ) : (
         <div className='w-full'>

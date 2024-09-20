@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Challenge } from './ChallengeForm'; // Challenge 타입을 임포트
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 임포트
 import AllSearch from '../../assets/Challenge/Search.png';
 import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
 import Car from '../../assets/Challenge/Car.png';
@@ -32,6 +33,7 @@ const ChallengeModal = ({
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [isClosing, setIsClosing] = useState(false); // 모달이 닫히는 중인지 추적하는 상태
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   if (!selectedChallenge) return null; // 선택된 챌린지가 없으면 렌더링 안 함
 
@@ -56,6 +58,15 @@ const ChallengeModal = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // 입장하기 버튼 클릭 시 라우팅 처리 함수 (Challenge 정보도 함께 넘김)
+  const handleEnterChallengeRoom = () => {
+    if (selectedChallenge) {
+      navigate(`/challengeRoom/${selectedChallenge.id}`, {
+        state: { challenge: selectedChallenge },
+      });
+    }
+  };
 
   return (
     <div
@@ -124,7 +135,7 @@ const ChallengeModal = ({
             {/* 비공개 챌린지이고 이미 참가한 경우 챌린지 코드 표시 */}
             {selectedChallenge.isIncluded &&
               !selectedChallenge.isPublic &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4 font-bold text-[#00B8B8]'>
                   챌린지코드: {selectedChallenge.inviteCode || 'A1B2C3'}
                 </div>
@@ -133,7 +144,7 @@ const ChallengeModal = ({
             {/* 공개 챌린지이고 이미 참가한 경우 비활성화된 대기중 버튼 */}
             {selectedChallenge.isIncluded &&
               selectedChallenge.isPublic &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4'>
                   <button
                     disabled
@@ -147,7 +158,7 @@ const ChallengeModal = ({
             {/* 참가하지 않은 비공개 챌린지인 경우 초대코드 입력 필드 */}
             {!selectedChallenge.isIncluded &&
               !selectedChallenge.isPublic &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4'>
                   <input
                     type='text'
@@ -155,14 +166,14 @@ const ChallengeModal = ({
                     onChange={(e) => setInviteCodeInput(e.target.value)}
                     placeholder='초대 코드'
                     maxLength={6} // 초대코드 최대 길이 6자
-                    className='py-4 mr-4 rounded-lg text-center text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500'
+                    className='py-4 mr-4 rounded-lg text-center text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
                   />
                 </div>
               )}
 
             {/* 참가하지 않은 경우 참가하기 버튼 */}
             {!selectedChallenge.isIncluded &&
-              selectedChallenge.status !== 'END' && (
+              selectedChallenge.status === 'RECRUITING' && (
                 <div className='mt-4'>
                   <button
                     onClick={handleJoinChallenge}
@@ -177,6 +188,19 @@ const ChallengeModal = ({
                     }`}
                   >
                     도전하기
+                  </button>
+                </div>
+              )}
+
+            {/* 입장하기 버튼: 공개/비공개 여부 상관 없이 status가 IN_PROGRESS일 때 활성화 */}
+            {selectedChallenge.isIncluded &&
+              selectedChallenge.status === 'PROGRESSING' && (
+                <div className='mt-4'>
+                  <button
+                    onClick={handleEnterChallengeRoom} // handleEnterChallengeRoom 호출
+                    className={`py-4 px-4 rounded-lg bg-[#00CCCC] text-white hover:bg-teal-600`}
+                  >
+                    입장하기
                   </button>
                 </div>
               )}

@@ -3,10 +3,11 @@ import {
   Routes,
   Route,
   useLocation,
+  useMatch,
 } from 'react-router-dom';
 import 'react-dates/lib/css/_datepicker.css';
 
-import ChallengeFeed from './components/Challenge/ChallengeFeed';
+import ChallengeRoom from './components/Challenge/ChallengeRoom';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
@@ -22,13 +23,29 @@ import PayResult from './pages/PayresultPage/PayresultPage';
 import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
 import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'; // 챌린지 생성 컴포넌트
 import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
+import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
+import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
 import './assets/App.css';
 
 function App() {
   const location = useLocation();
 
-  // Navbar를 숨길 경로들 정의
-  const hideNavbarRoutes = ['/challenge/create', '/payment', '/payresult'];
+  // 훅을 배열 순회 외부에서 호출하여 순서가 유지되도록 수정
+  const matchChallengeCreate = useMatch('/challenge/create');
+  const matchChallengeRoom = useMatch('/challengeRoom/:id');
+  const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
+  const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
+  const payment = useMatch('/payment');
+  const payresult = useMatch('/payresult');
+
+  // 두 경로 중 하나와 매칭되는지 확인
+  const shouldHideNavbar =
+    matchChallengeCreate ||
+    matchChallengeRoom ||
+    sharedTransactionCreate ||
+    sharedTransactionDetail ||
+    payment ||
+    payresult;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -41,27 +58,28 @@ function App() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
-        <Route
-          path='/challenge/create'
-          element={<ChallengeCreatePage />}
-        />{' '}
+        <Route path='/challenge/create' element={<ChallengeCreatePage />} />
         <Route path='/analysis' element={<AnalysisPage />} />
         <Route path='/payment' element={<PaymentPage />} />
         <Route path='/payresult' element={<PayResult />} />
         <Route path='/mydataselect' element={<MyDataSelectPage />} />
         <Route path='/mypage' element={<MyPage2 />} />
         <Route path='/challet-service/users/login' element={<LoginPage />} />
-        <Route path='/challet-service/challenges' element={<ChallengePage />} />
+        <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
         <Route
-          path='/challet-service/challenges/:id'
-          element={<ChallengeFeed />}
+          path='/sharedTransactionCreate'
+          element={<SharedTransactionCreate />}
+        />
+        <Route
+          path='/sharedTransactionDetail/:id'
+          element={<SharedTransactionDetail />}
         />
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
 
       {/* 특정 경로에서는 Navbar 숨김 */}
-      {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
+      {!shouldHideNavbar && <Navbar />}
     </div>
   );
 }
