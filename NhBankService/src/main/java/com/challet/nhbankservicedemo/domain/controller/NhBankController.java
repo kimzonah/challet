@@ -35,8 +35,8 @@ public class NhBankController {
         @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
-        @RequestHeader String phoneNumber) {
-        AccountInfoResponseListDTO accounts = nhBankService.getAccountsByPhoneNumber(phoneNumber);
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader) {
+        AccountInfoResponseListDTO accounts = nhBankService.getAccountsByPhoneNumber(tokenHeader);
         if (accounts.accountCount() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

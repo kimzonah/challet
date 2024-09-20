@@ -7,6 +7,7 @@ import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseList
 import com.challet.nhbankservicedemo.domain.repository.NhBankRepository;
 import com.challet.nhbankservicedemo.global.exception.CustomException;
 import com.challet.nhbankservicedemo.global.exception.ExceptionResponse;
+import com.challet.nhbankservicedemo.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -19,11 +20,13 @@ import org.springframework.stereotype.Service;
 public class NhBankServiceImpl implements NhBankService {
 
     private final NhBankRepository nhBankRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
-    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String phoneNumber) {
+    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String tokenHeader) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
         return nhBankRepository.getAccountInfoByPhoneNumber(
-            phoneNumber);
+            loginUserPhoneNumber);
     }
 
     @Transactional
