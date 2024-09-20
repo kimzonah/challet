@@ -6,7 +6,7 @@ import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseList
 
 public interface NhBankService {
 
-    AccountInfoResponseListDTO findAccount(String phoneNumber);
+    AccountInfoResponseListDTO getAccountsByPhoneNumber(String phoneNumber);
 
     TransactionResponseListDTO getAccountTransactionList(Long accountId);
 

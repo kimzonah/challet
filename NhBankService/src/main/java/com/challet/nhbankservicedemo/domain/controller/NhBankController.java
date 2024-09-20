@@ -36,7 +36,7 @@ public class NhBankController {
     })
     public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
         @RequestHeader String phoneNumber) {
-        AccountInfoResponseListDTO accounts = nhBankService.findAccount(phoneNumber);
+        AccountInfoResponseListDTO accounts = nhBankService.getAccountsByPhoneNumber(phoneNumber);
         if (accounts.accountCount() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
