@@ -65,8 +65,8 @@ public class AuthController {
     })
     @PostMapping("/refresh")
     public ResponseEntity<TokenRefreshResponseDTO> refreshToken(HttpServletRequest request) {
-        TokenRefreshResponseDTO result = authService.refreshToken(request);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        TokenRefreshResponseDTO token = authService.refreshToken(request);
+        return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 
 }
