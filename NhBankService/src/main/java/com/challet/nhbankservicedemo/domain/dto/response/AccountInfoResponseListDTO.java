@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Builder;
 
-@Schema(description = "KB은행의 계좌 조회 DTO")
+@Schema(description = "농협은행의 계좌 조회 DTO")
 @Builder
 public record AccountInfoResponseListDTO(
 
