@@ -13,6 +13,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +65,7 @@ public class AuthServiceImpl implements AuthService {
         Cookie cookie = createRefreshTokenCookie(user.getRefreshToken());
         response.addCookie(cookie);
 
-        LoginResponseDTO result = new LoginResponseDTO(
-            jwtUtil.generateAccessToken(request.phoneNumber()));
-        return result;
+        return new LoginResponseDTO(jwtUtil.generateAccessToken(request.phoneNumber()));
     }
 
     @Override
@@ -85,9 +86,7 @@ public class AuthServiceImpl implements AuthService {
             throw new ExceptionResponse(CustomException.INVALID_TOKEN_EXCEPTION);
         }
 
-        TokenRefreshResponseDTO result = new TokenRefreshResponseDTO(
-            jwtUtil.generateAccessToken(user.getPhoneNumber()));
-        return result;
+        return new TokenRefreshResponseDTO(jwtUtil.generateAccessToken(user.getPhoneNumber()));
     }
 
     public static Cookie createRefreshTokenCookie(String refreshToken) {
@@ -101,14 +100,14 @@ public class AuthServiceImpl implements AuthService {
 
     public static String getRefreshTokenFromCookie(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("refreshToken")){
-                    return cookie.getValue();
-                }
-            }
-        }
-        throw new ExceptionResponse(CustomException.NOT_FOUND_REFRESH_TOKEN_EXCEPTION);
+        return Optional.ofNullable(cookies)
+            .map(Arrays::stream)
+            .orElseGet(Stream::empty)
+            .filter(cookie -> "refreshToken".equals(cookie.getName()))
+            .map(Cookie::getValue)
+            .findFirst()
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_REFRESH_TOKEN_EXCEPTION));
+
     }
 
 }
