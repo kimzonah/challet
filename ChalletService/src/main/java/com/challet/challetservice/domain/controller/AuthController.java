@@ -1,6 +1,5 @@
 package com.challet.challetservice.domain.controller;
 
-import com.challet.challetservice.domain.dto.request.TokenRefreshRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserLoginRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.LoginResponseDTO;
