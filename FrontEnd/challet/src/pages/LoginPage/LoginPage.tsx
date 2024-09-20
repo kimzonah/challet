@@ -21,10 +21,12 @@ const LoginPage = () => {
       // 서버 응답에서 Access Token 추출
       const { accessToken } = data;
 
-      // 로그인 시 상태 저장 (Access Token만)
+      // 로그인 시 상태 저장 (Access Token, Refresh Token, 닉네임, 프로필 이미지)
       setAuthData({
         accessToken,
         refreshToken: null, // refreshToken을 나중에 필요할 경우 추가 가능
+        nickname: null, // 기본값 설정
+        profileImageUrl: null, // 기본값 설정
       });
 
       // Access Token 출력
