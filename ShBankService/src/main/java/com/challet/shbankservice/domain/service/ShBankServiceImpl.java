@@ -7,6 +7,7 @@ import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.shbankservice.domain.repository.ShBankRepository;
 import com.challet.shbankservice.global.exception.CustomException;
 import com.challet.shbankservice.global.exception.ExceptionResponse;
+import com.challet.shbankservice.global.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +20,13 @@ import org.springframework.stereotype.Service;
 public class ShBankServiceImpl implements ShBankService {
 
     private final ShBankRepository shBankRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
-    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String phoneNumber) {
+    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String tokenHeader) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
         return shBankRepository.getAccountInfoByPhoneNumber(
-            phoneNumber);
+            loginUserPhoneNumber);
     }
 
     @Transactional
