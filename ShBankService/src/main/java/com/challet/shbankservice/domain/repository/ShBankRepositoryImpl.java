@@ -19,7 +19,7 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public AccountInfoResponseListDTO findByAccountInfo(String phoneNumber) {
+    public AccountInfoResponseListDTO getAccountInfoByPhoneNumber(String phoneNumber) {
         QShBank bank = QShBank.shBank;
         List<AccountInfoResponseDTO> accountList = query.select(
                 Projections.constructor(AccountInfoResponseDTO.class,
@@ -39,7 +39,7 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
     }
 
     @Override
-    public List<TransactionResponseDTO> getTransactionByAccountInfo(Long accountId) {
+    public List<TransactionResponseDTO> getTransactionByAccountId(Long accountId) {
         QShBankTransaction bankTransaction = QShBankTransaction.shBankTransaction;
         QShBank bank = QShBank.shBank;
 
@@ -76,7 +76,7 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
 
 
     @Override
-    public Long findAccountBalanceById(Long accountId) {
+    public Long getAccountBalanceById(Long accountId) {
         QShBank bank = QShBank.shBank;
 
         return query

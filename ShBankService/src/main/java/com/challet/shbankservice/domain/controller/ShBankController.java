@@ -36,7 +36,7 @@ public class ShBankController {
     })
     public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
         @RequestHeader String phoneNumber) {
-        AccountInfoResponseListDTO accounts = shBankService.findAccount(phoneNumber);
+        AccountInfoResponseListDTO accounts = shBankService.getAccountsByPhoneNumber(phoneNumber);
         if (accounts.accountCount() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

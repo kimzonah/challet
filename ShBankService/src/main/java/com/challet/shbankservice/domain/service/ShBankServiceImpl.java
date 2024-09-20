@@ -21,16 +21,16 @@ public class ShBankServiceImpl implements ShBankService {
     private final ShBankRepository shBankRepository;
 
     @Override
-    public AccountInfoResponseListDTO findAccount(String phoneNumber) {
-        return shBankRepository.findByAccountInfo(
+    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String phoneNumber) {
+        return shBankRepository.getAccountInfoByPhoneNumber(
             phoneNumber);
     }
 
     @Transactional
     @Override
     public TransactionResponseListDTO getAccountTransactionList(Long accountId) {
-        Long accountBalance = shBankRepository.findAccountBalanceById(accountId);
-        List<TransactionResponseDTO> transactionList = shBankRepository.getTransactionByAccountInfo(
+        Long accountBalance = shBankRepository.getAccountBalanceById(accountId);
+        List<TransactionResponseDTO> transactionList = shBankRepository.getTransactionByAccountId(
             accountId);
 
         return TransactionResponseListDTO

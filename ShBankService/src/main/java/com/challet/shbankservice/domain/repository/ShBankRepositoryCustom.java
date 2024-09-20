@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface ShBankRepositoryCustom {
 
-    AccountInfoResponseListDTO findByAccountInfo(String phoneNumber);
+    AccountInfoResponseListDTO getAccountInfoByPhoneNumber(String phoneNumber);
 
-    List<TransactionResponseDTO> getTransactionByAccountInfo(Long accountId);
+    List<TransactionResponseDTO> getTransactionByAccountId(Long accountId);
 
     TransactionDetailResponseDTO getTransactionDetailById(Long transactionId);
 
-    Long findAccountBalanceById(Long accountId);
+    Long getAccountBalanceById(Long accountId);
 }
