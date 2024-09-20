@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import challetAxiosInstance from '../../api/challetAxios';
 import useAuthStore from '../../store/useAuthStore';
 
 const LoginPage = () => {
@@ -25,7 +25,7 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       // 로그인 API 호출
-      const { data } = await axiosInstance.post('/challet-service/auth/login', {
+      const { data } = await challetAxiosInstance.post('/auth/login', {
         phoneNumber,
         password: enteredDigits, // 키패드로 입력된 비밀번호 사용
       });
