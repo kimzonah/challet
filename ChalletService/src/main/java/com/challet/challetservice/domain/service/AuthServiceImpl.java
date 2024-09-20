@@ -1,6 +1,5 @@
 package com.challet.challetservice.domain.service;
 
-import com.challet.challetservice.domain.dto.request.TokenRefreshRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserLoginRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.LoginResponseDTO;
@@ -11,8 +10,12 @@ import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,14 +65,12 @@ public class AuthServiceImpl implements AuthService {
         Cookie cookie = createRefreshTokenCookie(user.getRefreshToken());
         response.addCookie(cookie);
 
-        LoginResponseDTO result = new LoginResponseDTO(
-            jwtUtil.generateAccessToken(request.phoneNumber()));
-        return result;
+        return new LoginResponseDTO(jwtUtil.generateAccessToken(request.phoneNumber()));
     }
 
     @Override
-    public TokenRefreshResponseDTO refreshToken(TokenRefreshRequestDTO request) {
-        String refreshToken = request.refreshToken();
+    public TokenRefreshResponseDTO refreshToken(HttpServletRequest request) {
+        String refreshToken = getRefreshTokenFromCookie(request);
 
         // 리프레시 토큰이 유효한지 먼저 확인
         if (!jwtUtil.validateToken(refreshToken)) {
@@ -85,9 +86,7 @@ public class AuthServiceImpl implements AuthService {
             throw new ExceptionResponse(CustomException.INVALID_TOKEN_EXCEPTION);
         }
 
-        TokenRefreshResponseDTO result = new TokenRefreshResponseDTO(
-            jwtUtil.generateAccessToken(user.getPhoneNumber()));
-        return result;
+        return new TokenRefreshResponseDTO(jwtUtil.generateAccessToken(user.getPhoneNumber()));
     }
 
     public static Cookie createRefreshTokenCookie(String refreshToken) {
@@ -97,6 +96,18 @@ public class AuthServiceImpl implements AuthService {
         cookie.setMaxAge(7 * 24 * 60 * 60);
         cookie.setSecure(true);
         return cookie;
+    }
+
+    public static String getRefreshTokenFromCookie(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        return Optional.ofNullable(cookies)
+            .map(Arrays::stream)
+            .orElseGet(Stream::empty)
+            .filter(cookie -> "refreshToken".equals(cookie.getName()))
+            .map(Cookie::getValue)
+            .findFirst()
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_REFRESH_TOKEN_EXCEPTION));
+
     }
 
 }

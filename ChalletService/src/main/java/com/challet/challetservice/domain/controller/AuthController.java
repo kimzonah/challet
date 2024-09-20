@@ -1,6 +1,5 @@
 package com.challet.challetservice.domain.controller;
 
-import com.challet.challetservice.domain.dto.request.TokenRefreshRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserLoginRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.LoginResponseDTO;
@@ -13,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -63,10 +63,9 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "유효하지 않은 토큰", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PostMapping("/refresh")
-    public ResponseEntity<TokenRefreshResponseDTO> refreshToken(
-        @RequestBody TokenRefreshRequestDTO request) {
-        TokenRefreshResponseDTO result = authService.refreshToken(request);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<TokenRefreshResponseDTO> refreshToken(HttpServletRequest request) {
+        TokenRefreshResponseDTO token = authService.refreshToken(request);
+        return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 
 }
