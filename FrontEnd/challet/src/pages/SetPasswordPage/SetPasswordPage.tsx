@@ -62,6 +62,8 @@ const SetPasswordPage = () => {
           setAuthData({
             accessToken,
             refreshToken: null, // 필요에 따라 refreshToken도 처리
+            nickname,
+            profileImageUrl: null,
           });
 
           console.log(
