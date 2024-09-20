@@ -7,6 +7,7 @@ import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.kbbankservice.domain.repository.KbBankRepository;
 import com.challet.kbbankservice.global.exception.CustomException;
 import com.challet.kbbankservice.global.exception.ExceptionResponse;
+import com.challet.kbbankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
 import java.util.List;
 import java.util.Optional;
@@ -19,18 +20,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class KbBankServiceImpl implements KbBankService {
 
     private final KbBankRepository kbBankRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
-    public AccountInfoResponseListDTO findAccount(String phoneNumber) {
-        return kbBankRepository.findByAccountInfo(
-            phoneNumber);
+    public AccountInfoResponseListDTO findAccount(String tokenHeader) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        return kbBankRepository.getAccountInfoByPhoneNumber(
+            loginUserPhoneNumber);
     }
 
     @Transactional
     @Override
     public TransactionResponseListDTO getAccountTransactionList(Long accountId) {
         Long accountBalance = kbBankRepository.findAccountBalanceById(accountId);
-        List<TransactionResponseDTO> transactionList = kbBankRepository.getTransactionByAccountInfo(
+        List<TransactionResponseDTO> transactionList = kbBankRepository.getTransactionByAccountId(
             accountId);
 
         return TransactionResponseListDTO
