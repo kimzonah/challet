@@ -155,7 +155,10 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
   };
 
   return (
-    <div className='scrollbar-hide overflow-y-auto max-h-[570px]'>
+    <div
+      className='scrollbar-hide overflow-y-auto'
+      style={{ maxHeight: 'calc(100vh - 160px)' }}
+    >
       {isMyChallenges ? (
         <>
           {/* 진행 중인 챌린지 */}
