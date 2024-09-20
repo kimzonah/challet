@@ -11,6 +11,7 @@ spring:
   config:
     activate:
       on-profile: dev
+    import: application-key.yml
 
 eureka:
   instance:
@@ -27,6 +28,7 @@ spring:
   config:
     activate:
       on-profile: prod
+    import: "optional:file:/KbBankService/src/main/resources/application-key.yml"
 
 eureka:
   client:
@@ -38,8 +40,6 @@ eureka:
 ---
 # 공통 설정
 spring:
-  config:
-    import: application-key.yml
   application:
     name: kb-bank
   datasource:
@@ -51,6 +51,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
 
 springdoc:
   api-docs:
