@@ -22,9 +22,8 @@ public class KbBankServiceImpl implements KbBankService {
 
     @Override
     public AccountInfoResponseListDTO findAccount(String phoneNumber) {
-        AccountInfoResponseListDTO accountInfo = kbBankRepository.findByAccountInfo(
+        return kbBankRepository.findByAccountInfo(
             phoneNumber);
-        return accountInfo;
     }
 
     @Transactional
@@ -36,7 +35,7 @@ public class KbBankServiceImpl implements KbBankService {
 
         return TransactionResponseListDTO
             .builder()
-            .transactionCount(transactionList.stream().count())
+            .transactionCount((long) transactionList.size())
             .accountBalance(accountBalance)
             .transactionResponseDTO(transactionList).build();
     }
