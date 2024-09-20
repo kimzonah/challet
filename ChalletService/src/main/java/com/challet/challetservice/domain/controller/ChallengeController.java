@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class ChallengeController {
     @PostMapping()
     public ResponseEntity<String> registerChallenge(
         @RequestHeader(value = "Authorization", required = false) String header,
-        @RequestBody ChallengeRegisterRequestDTO request) {
+        @Valid @RequestBody ChallengeRegisterRequestDTO request) {
         challengeService.createChallenge(header, request);
         return ResponseEntity.status(HttpStatus.CREATED).body("챌린지 생성 성공");
     }

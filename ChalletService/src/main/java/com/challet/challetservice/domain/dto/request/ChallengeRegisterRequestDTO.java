@@ -1,7 +1,10 @@
 package com.challet.challetservice.domain.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -31,7 +34,8 @@ public record ChallengeRegisterRequestDTO(
 
     @Schema(description = "참여 가능 인원")
     @NotBlank(message = "참여 인원은 필수 입력값 입니다.")
-    @Size(min = 1, max = 10, message = "최소 1명, 최대 10명까지만 가능합니다")
+    @Min(value = 1, message = "1명이상이어야 합니다.")
+    @Max(value = 10, message = "10명 이하여야 합니다.")
     Integer maxParticipants,
 
     @Schema(description = "공개 여부 (비공개 : false, 공개 : true)")
