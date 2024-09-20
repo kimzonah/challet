@@ -1,19 +1,21 @@
 package com.challet.bankservice.domain.service;
 
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
+import com.challet.bankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     private final ChalletBankRepository challetBankRepository;
     private final Environment env;
+    private final JwtUtil jwtUtil;
 
     @Override
     public void createAccount(String phoneNumber) {
@@ -42,8 +45,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     @Override
-    public AccountInfoResponseListDTO findAccount(String phoneNumber) {
-        AccountInfoResponseListDTO accountInfo = challetBankRepository.findByAccountInfo(
+    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String header) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        AccountInfoResponseListDTO accountInfo = challetBankRepository.getAccountInfoByPhoneNumber(
             phoneNumber);
         if (accountInfo.accountCount() == 0) {
             throw new ExceptionResponse(CustomException.NOT_FOUND_USER_ACCOUNT_EXCEPTION);
@@ -55,7 +59,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     @Override
     public TransactionResponseListDTO getAccountTransactionList(Long accountId) {
         Long accountBalance = challetBankRepository.findAccountBalanceById(accountId);
-        List<TransactionResponseDTO> transactionList = challetBankRepository.getTransactionByAccountInfo(
+        List<TransactionResponseDTO> transactionList = challetBankRepository.getTransactionByAccountId(
             accountId);
 
         return TransactionResponseListDTO
@@ -66,7 +70,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     @Override
-    public TransactionDetailResponseDto getTransactionInfo(Long transactionId) {
+    public TransactionDetailResponseDTO getTransactionInfo(Long transactionId) {
         try {
             return Optional.ofNullable(
                     challetBankRepository.getTransactionDetailById(transactionId))

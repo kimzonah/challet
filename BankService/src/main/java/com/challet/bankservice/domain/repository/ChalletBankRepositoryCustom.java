@@ -1,18 +1,17 @@
 package com.challet.bankservice.domain.repository;
 
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import java.util.List;
-import java.util.Optional;
 
 public interface ChalletBankRepositoryCustom {
 
-    AccountInfoResponseListDTO findByAccountInfo(String phoneNumber);
+    AccountInfoResponseListDTO getAccountInfoByPhoneNumber(String phoneNumber);
 
-    List<TransactionResponseDTO> getTransactionByAccountInfo(Long accountId);
+    List<TransactionResponseDTO> getTransactionByAccountId(Long accountId);
 
-    TransactionDetailResponseDto getTransactionDetailById(Long transactionId);
+    TransactionDetailResponseDTO getTransactionDetailById(Long transactionId);
 
     Long findAccountBalanceById(Long accountId);
 }

@@ -4,7 +4,7 @@ import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.service.ChalletBankService;
@@ -35,6 +35,17 @@ public class ChalletBankController {
 
     private final ChalletBankService challetBankService;
 
+    @PostMapping()
+    @Operation(summary = "챌렛은행 계좌 생성", description = "계좌를 생성하며 입력받은 전화번호를 ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
+        @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity createAccount(@RequestParam String phoneNumber) {
+        challetBankService.createAccount(phoneNumber);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @GetMapping()
     @Operation(summary = "챌렛은행 조회", description = "전화번호를 이용하여 계좌를 조회합니다")
     @ApiResponses(value = {
@@ -42,8 +53,8 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
-        @RequestParam String phoneNumber) {
-        AccountInfoResponseListDTO account = challetBankService.findAccount(phoneNumber);
+        @RequestHeader(value = "Authorization", required = false) String header) {
+        AccountInfoResponseListDTO account = challetBankService.getAccountsByPhoneNumber(header);
         return ResponseEntity.status(HttpStatus.OK).body(account);
     }
 
@@ -60,26 +71,15 @@ public class ChalletBankController {
         return ResponseEntity.status(HttpStatus.OK).body(transactionList);
     }
 
-    @PostMapping()
-    @Operation(summary = "챌렛은행 계좌 생성", description = "계좌를 생성하며 입력받은 전화번호를 ")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
-        @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
-    })
-    public ResponseEntity createAccount(@RequestParam String phoneNumber) {
-        challetBankService.createAccount(phoneNumber);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
     @GetMapping("/details")
     @Operation(summary = "챌렛계좌 상세 거래 내역 조회", description = "계좌 상세 거래내역 조회 내역")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "계좌 상세 거래내역 조회 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 상세 거래내역 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity<TransactionDetailResponseDto> getAccountTransactionDetails(
+    public ResponseEntity<TransactionDetailResponseDTO> getAccountTransactionDetails(
         @RequestHeader("TransactionId") Long transactionId) {
-        TransactionDetailResponseDto transaction = challetBankService.getTransactionInfo(transactionId);
+        TransactionDetailResponseDTO transaction = challetBankService.getTransactionInfo(transactionId);
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
