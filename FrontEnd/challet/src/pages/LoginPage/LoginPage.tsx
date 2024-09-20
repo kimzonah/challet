@@ -1,30 +1,44 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import challetAxiosInstance from '../../api/challetAxios';
 import useAuthStore from '../../store/useAuthStore';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const [enteredDigits, setEnteredDigits] = useState(''); // 키패드로 입력한 숫자 상태
   const [errorMessage, setErrorMessage] = useState('');
   const { setAuthData } = useAuthStore(); // Zustand에서 상태 관리 함수 가져오기
+
+  // 키패드 입력 핸들러
+  const handleDigitPress = (digit: string) => {
+    if (enteredDigits.length < 6) {
+      setEnteredDigits((prev) => prev + digit); // 숫자 추가
+    }
+  };
+
+  // 숫자 지우기 핸들러
+  const handleBackspace = () => {
+    setEnteredDigits((prev) => prev.slice(0, -1)); // 마지막 숫자 제거
+  };
 
   const handleLogin = async () => {
     try {
       // 로그인 API 호출
-      const { data } = await axiosInstance.post('/challet-service/auth/login', {
+      const { data } = await challetAxiosInstance.post('/auth/login', {
         phoneNumber,
-        password,
+        password: enteredDigits, // 키패드로 입력된 비밀번호 사용
       });
 
       // 서버 응답에서 Access Token 추출
       const { accessToken } = data;
 
-      // 로그인 시 상태 저장 (Access Token만)
+      // 로그인 시 상태 저장 (Access Token, Refresh Token, 닉네임, 프로필 이미지)
       setAuthData({
         accessToken,
         refreshToken: null, // refreshToken을 나중에 필요할 경우 추가 가능
+        nickname: null, // 기본값 설정
+        profileImageUrl: null, // 기본값 설정
       });
 
       // Access Token 출력
@@ -66,19 +80,49 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* 비밀번호 입력 필드 */}
-          <div className='mb-6'>
+          {/* 비밀번호 입력 필드 (비밀번호 대신 키패드로 입력) */}
+          <div className='mb-4'>
             <label className='block text-sm font-medium text-gray-700'>
-              비밀번호
+              간편 비밀번호 입력
             </label>
-            <input
-              type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder='비밀번호 입력'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-              required
-            />
+            <div className='flex justify-center space-x-2'>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className='w-8 h-8 border-b-2 border-gray-500 text-center'
+                >
+                  {enteredDigits[index] ? '●' : ''}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 키패드 */}
+          <div className='grid grid-cols-3 gap-2'>
+            {[...Array(9).keys()].map((num) => (
+              <button
+                key={num + 1}
+                type='button'
+                className='p-4 text-xl bg-gray-100 rounded'
+                onClick={() => handleDigitPress((num + 1).toString())}
+              >
+                {num + 1}
+              </button>
+            ))}
+            <button
+              type='button'
+              className='p-4 text-xl bg-gray-100 rounded'
+              onClick={handleBackspace}
+            >
+              지우기
+            </button>
+            <button
+              type='button'
+              className='p-4 text-xl bg-gray-100 rounded'
+              onClick={() => handleDigitPress('0')}
+            >
+              0
+            </button>
           </div>
 
           {/* 오류 메시지 표시 */}

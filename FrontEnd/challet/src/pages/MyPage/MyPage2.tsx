@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import useAuthStore from '../../store/useAuthStore';
-import axiosInstance from '../../api/axios';
+import axiosInstance from '../../api/challetAxios';
 import Button from '../../components/Button/Button';
 import defaultProfileImage from '../../assets/mypage/default-profile.png';
 
@@ -45,7 +45,19 @@ const MyPage = () => {
 
   // 닉네임 수정 API 요청
   const handleNicknameChange = async () => {
+    // Zustand에서 상태 가져오기
+    const { accessToken, refreshToken, profileImageUrl, setAuthData } =
+      useAuthStore.getState();
+
+    // accessToken이 없을 경우 에러 처리
+    if (!accessToken) {
+      console.error('Access Token이 없습니다.');
+      setErrorMessage('Access Token이 없어 닉네임을 수정할 수 없습니다.');
+      return;
+    }
+
     try {
+      // 닉네임 수정 API 요청
       const response = await axiosInstance.patch(
         '/challet-service/users/nicknames',
         { nickname: newNickname },
@@ -57,8 +69,18 @@ const MyPage = () => {
       );
       console.log('닉네임 수정 성공:', response.data);
       alert('닉네임이 수정되었습니다.');
-      setNickname(newNickname); // 새로운 닉네임 상태 반영
+
+      // 새로운 닉네임 상태 반영
+      setNickname(newNickname);
       setNewNickname(''); // 수정 완료 후 입력란 초기화
+
+      // 상태에 닉네임 및 토큰 저장
+      setAuthData({
+        accessToken, // 유지된 accessToken
+        refreshToken, // 유지된 refreshToken
+        nickname: newNickname, // 새로 수정된 닉네임
+        profileImageUrl, // 기존 프로필 이미지 유지
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(
@@ -77,35 +99,58 @@ const MyPage = () => {
   const handleProfileImageChange = async () => {
     if (!profileImage) return;
 
-    const formData = new FormData();
-    formData.append('profileImage', profileImage);
+    // Zustand 상태에서 필요한 값들 가져오기
+    const { accessToken, refreshToken, nickname, setAuthData } =
+      useAuthStore.getState();
+
+    // accessToken이 없는 경우 처리
+    if (!accessToken) {
+      console.error('Access token is missing.');
+      return;
+    }
+
+    // 파일을 Base64로 변환하는 함수
+    const fileToBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+      });
+    };
 
     try {
+      const base64Image = await fileToBase64(profileImage); // 이미지 파일을 Base64로 변환
+
+      // 프로필 이미지 수정 API 호출
       const response = await axiosInstance.patch(
         '/challet-service/users/profileImages',
-        formData,
+        {
+          profileImage: base64Image, // Base64 인코딩된 이미지 전송
+        },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json', // JSON 형식으로 전송
           },
         }
       );
+
       console.log('프로필 이미지 수정 성공:', response.data);
       alert('프로필 이미지가 수정되었습니다.');
-      // 성공적으로 수정되면 새로운 프로필 이미지 URL로 업데이트
-      setProfileImageUrl(URL.createObjectURL(profileImage));
+
+      // Zustand 상태에 새 이미지 저장
+      setAuthData({
+        accessToken, // 유지된 accessToken
+        refreshToken: refreshToken || '', // 유지된 refreshToken
+        nickname: nickname || '', // 기존 닉네임 유지
+        profileImageUrl: base64Image, // 새로운 프로필 이미지 저장
+      });
+
+      // UI 업데이트를 위해 프로필 이미지 URL을 상태에 반영
+      setProfileImageUrl(base64Image);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error(
-          '프로필 이미지 수정 실패:',
-          error.response?.data || error.message
-        );
-        setErrorMessage('프로필 이미지 수정 실패');
-      } else {
-        console.error('프로필 이미지 수정 실패: 알 수 없는 오류');
-        setErrorMessage('프로필 이미지 수정 실패');
-      }
+      console.error('프로필 이미지 수정 실패:', error);
     }
   };
 
