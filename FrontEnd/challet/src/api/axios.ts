@@ -7,6 +7,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // 요청 인터셉터: 모든 요청에 accessToken을 헤더에 추가

@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { useChallengeApi } from '../../hooks/useChallengeApi';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
@@ -15,6 +16,8 @@ interface RequestBody {
 }
 
 const ChallengeCreatePage: React.FC = () => {
+  const { createChallenge } = useChallengeApi();
+
   // 각 입력 필드의 상태를 관리
   const [category, setCategory] = useState<string>('');
   const [roomName, setRoomName] = useState<string>('');
@@ -36,7 +39,7 @@ const ChallengeCreatePage: React.FC = () => {
     };
 
   // 폼 제출 시 데이터 처리
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     // 입력 값 검증
@@ -58,9 +61,17 @@ const ChallengeCreatePage: React.FC = () => {
 
     console.log('RequestBody:', requestBody);
 
-    // 성공적인 데이터 제출 후 모달을 표시
-    setModalMessage('챌린지 생성이 완료되었습니다!');
-    setShowModal(true);
+    // 챌린지 생성 API 호출
+    try {
+      await createChallenge(requestBody); // createChallenge API 함수 호출
+      // 성공적인 데이터 제출 후 모달을 표시
+      setModalMessage('챌린지 생성이 완료되었습니다!');
+      setShowModal(true);
+    } catch (error) {
+      console.error('챌린지 생성 중 오류 발생:', error);
+      setModalMessage('챌린지 생성 중 오류가 발생했습니다.');
+      setShowModal(true);
+    }
   };
 
   // 오늘 날짜 + 1 (내일) 계산

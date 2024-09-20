@@ -5,8 +5,8 @@ import { useChallengeApi } from '../../hooks/useChallengeApi';
 
 const ChallengePage = () => {
   const [activeTab, setActiveTab] = useState('챌린지 찾기'); // 기본 활성화된 탭
-  // const { challenges, isLoading, fetchChallenges, exampleChallenges } = useChallengeApi();
-  const { isLoading, fetchChallenges, exampleChallenges } = useChallengeApi();
+  const { challenges, isLoading, fetchChallenges } = useChallengeApi();
+  // const { isLoading, fetchChallenges, exampleChallenges } = useChallengeApi();
   const [keyword, setKeyword] = useState(''); // 검색 키워드
   const [category, setCategory] = useState(''); // 선택된 카테고리
 
@@ -36,12 +36,6 @@ const ChallengePage = () => {
       fetchChallenges('', ''); // 페이지 로드 시 한 번만 호출
     }
   }, [activeTab]);
-
-  // 챌린지 찾기 탭에서는 isIncluded가 false인 챌린지만 필터링
-  const filteredChallenges =
-    activeTab === '챌린지 찾기'
-      ? exampleChallenges.filter((challenge) => !challenge.isIncluded)
-      : exampleChallenges;
 
   return (
     <div className='min-h-screen flex flex-col items-center p-2'>
@@ -75,7 +69,7 @@ const ChallengePage = () => {
             />
           )}
           <ChallengeForm
-            challenges={filteredChallenges} // 필터링된 챌린지 목록 전달
+            challenges={challenges}
             isMyChallenges={activeTab === '나의 챌린지'}
           />
         </div>
