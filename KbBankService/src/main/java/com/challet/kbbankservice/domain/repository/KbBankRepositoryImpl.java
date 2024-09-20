@@ -19,7 +19,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public AccountInfoResponseListDTO findByAccountInfo(String phoneNumber) {
+    public AccountInfoResponseListDTO getAccountInfoByPhoneNumber(String phoneNumber) {
         QKbBank bank = QKbBank.kbBank;
         List<AccountInfoResponseDTO> accountList = query.select(
                 Projections.constructor(AccountInfoResponseDTO.class,
@@ -39,7 +39,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
     }
 
     @Override
-    public List<TransactionResponseDTO> getTransactionByAccountInfo(Long accountId) {
+    public List<TransactionResponseDTO> getTransactionByAccountId(Long accountId) {
         QKbBankTransaction bankTransaction = QKbBankTransaction.kbBankTransaction;
         QKbBank bank = QKbBank.kbBank;
 

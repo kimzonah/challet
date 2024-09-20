@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface KbBankRepositoryCustom {
 
-    AccountInfoResponseListDTO findByAccountInfo(String phoneNumber);
+    AccountInfoResponseListDTO getAccountInfoByPhoneNumber(String phoneNumber);
 
-    List<TransactionResponseDTO> getTransactionByAccountInfo(Long accountId);
+    List<TransactionResponseDTO> getTransactionByAccountId(Long accountId);
 
     TransactionDetailResponseDTO getTransactionDetailById(Long transactionId);
 

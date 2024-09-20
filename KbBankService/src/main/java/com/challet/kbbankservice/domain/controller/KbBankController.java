@@ -35,8 +35,8 @@ public class KbBankController {
         @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     public ResponseEntity<AccountInfoResponseListDTO> getAccountInfo(
-        @RequestHeader String phoneNumber) {
-        AccountInfoResponseListDTO accounts = kbBankService.findAccount(phoneNumber);
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader) {
+        AccountInfoResponseListDTO accounts = kbBankService.findAccount(tokenHeader);
         if (accounts.accountCount() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
