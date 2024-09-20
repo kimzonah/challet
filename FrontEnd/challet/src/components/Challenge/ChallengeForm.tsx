@@ -143,7 +143,8 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
               {Math.floor(
                 (new Date(challenge.endDate).getTime() -
                   new Date(challenge.startDate).getTime()) /
-                  (1000 * 60 * 60 * 24)
+                  (1000 * 60 * 60 * 24) +
+                  1
               )}
               일 동안
             </div>
@@ -154,7 +155,7 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
   };
 
   return (
-    <div>
+    <div className='scrollbar-hide overflow-y-auto max-h-[570px]'>
       {isMyChallenges ? (
         <>
           {/* 진행 중인 챌린지 */}
@@ -200,7 +201,9 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
           )}
         </>
       ) : (
-        <div>{renderChallenges(validChallenges)}</div>
+        <div className='scrollbar-hide overflow-y-auto max-h-[400px]'>
+          {renderChallenges(validChallenges)}
+        </div>
       )}
 
       {/* 모달 컴포넌트 */}

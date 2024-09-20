@@ -12,6 +12,14 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+
+.sticky-category {
+  position: sticky;
+  top: 0; /* 원하는 위치 */
+  z-index: 10; /* 다른 요소 위에 위치하도록 설정 */
+  background-color: white; /* 스크롤 시 배경색을 유지 */
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
