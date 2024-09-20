@@ -28,7 +28,7 @@ public class NhBankController {
 
     private final NhBankService nhBankService;
 
-    @GetMapping("")
+    @GetMapping()
     @Operation(summary = "농협은행 조회", description = "전화번호를 이용하여 농협은행 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "조회 성공"),

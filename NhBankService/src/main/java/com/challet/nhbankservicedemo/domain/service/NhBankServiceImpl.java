@@ -22,9 +22,8 @@ public class NhBankServiceImpl implements NhBankService {
 
     @Override
     public AccountInfoResponseListDTO findAccount(String phoneNumber) {
-        AccountInfoResponseListDTO accountInfo = nhBankRepository.findByAccountInfo(
+        return nhBankRepository.findByAccountInfo(
             phoneNumber);
-        return accountInfo;
     }
 
     @Transactional
@@ -36,7 +35,7 @@ public class NhBankServiceImpl implements NhBankService {
 
         return TransactionResponseListDTO
             .builder()
-            .transactionCount(transactionList.stream().count())
+            .transactionCount((long) transactionList.size())
             .accountBalance(accountBalance)
             .transactionResponseDTO(transactionList).build();
     }
