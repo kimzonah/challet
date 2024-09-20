@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import useAuthStore from '../../store/useAuthStore';
-import axiosInstance from '../../api/axios';
+import axiosInstance from '../../api/challetAxios';
 import Button from '../../components/Button/Button';
 import defaultProfileImage from '../../assets/mypage/default-profile.png';
 
