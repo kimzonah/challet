@@ -2,15 +2,13 @@ package com.challet.bankservice.domain.repository;
 
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDto;
+import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
-import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.entity.QChalletBank;
 import com.challet.bankservice.domain.entity.QChalletBankTransaction;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +19,7 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
     private final JPAQueryFactory query;
 
     @Override
-    public AccountInfoResponseListDTO findByAccountInfo(String phoneNumber) {
+    public AccountInfoResponseListDTO getAccountInfoByPhoneNumber(String phoneNumber) {
         QChalletBank challetBank = QChalletBank.challetBank;
 
         List<AccountInfoResponseDTO> accountList = query
@@ -34,11 +32,15 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .where(challetBank.phoneNumber.eq(phoneNumber))
             .fetch();
 
-        return new AccountInfoResponseListDTO(accountList.size(), accountList);
+        return AccountInfoResponseListDTO
+            .builder()
+            .accountCount(accountList.size())
+            .accounts(accountList)
+            .build();
     }
 
     @Override
-    public List<TransactionResponseDTO> getTransactionByAccountInfo(Long accountId) {
+    public List<TransactionResponseDTO> getTransactionByAccountId(Long accountId) {
         QChalletBankTransaction challetBankTransaction = QChalletBankTransaction.challetBankTransaction;
         QChalletBank challetBank = QChalletBank.challetBank;
 
@@ -57,11 +59,11 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
     }
 
     @Override
-    public TransactionDetailResponseDto getTransactionDetailById(Long transactionId) {
+    public TransactionDetailResponseDTO getTransactionDetailById(Long transactionId) {
         QChalletBankTransaction challetBankTransaction = QChalletBankTransaction.challetBankTransaction;
 
         return query
-            .select(Projections.constructor(TransactionDetailResponseDto.class,
+            .select(Projections.constructor(TransactionDetailResponseDTO.class,
                 challetBankTransaction.transactionAmount,
                 challetBankTransaction.transactionDatetime,
                 challetBankTransaction.deposit,

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 
 @Schema(description = "거래 상세 조회 응답 DTO")
-public record TransactionDetailResponseDto(
+public record TransactionDetailResponseDTO(
 
     @Schema(description = "거래 금액")
     Long transactionAmount,
