@@ -1,21 +1,25 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.bankservice.domain.entity.Category;
 import com.challet.bankservice.domain.entity.ChalletBank;
+import com.challet.bankservice.domain.entity.ChalletBankTransaction;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
 import com.challet.bankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -115,5 +119,54 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             sb.append(random.nextInt(10));
         }
         return sb.toString();
+    }
+
+    @Transactional
+    @Override
+    public synchronized PaymentResponseDTO qrPayment(Long accountId,
+        PaymentRequestDTO paymentRequestDTO) {
+        ChalletBank challetBank = getChalletBank(accountId);
+
+        long transactionBalance = calculateTransactionBalance(challetBank,
+            paymentRequestDTO.transactionAmount());
+
+        ChalletBankTransaction paymentTransaction = createTransaction(challetBank,
+            paymentRequestDTO, transactionBalance);
+
+        challetBank.addTransaction(paymentTransaction);
+
+        return createPaymentResponse(paymentRequestDTO);
+    }
+
+    private ChalletBank getChalletBank(Long accountId) {
+        return challetBankRepository.findByIdWithLock(accountId);
+    }
+
+    private long calculateTransactionBalance(ChalletBank challetBank, long transactionAmount) {
+        long transactionBalance = challetBank.getAccountBalance() - transactionAmount;
+        if (transactionBalance < 0) {
+            throw new ExceptionResponse(CustomException.NOT_ENOUGH_FUNDS_EXCEPTION);
+        }
+        return transactionBalance;
+    }
+
+    private ChalletBankTransaction createTransaction(ChalletBank challetBank,
+        PaymentRequestDTO paymentRequestDTO, long transactionBalance) {
+        return ChalletBankTransaction.builder()
+            .transactionAmount(paymentRequestDTO.transactionAmount())
+            .transactionDatetime(LocalDateTime.now())
+            .deposit(paymentRequestDTO.accountNumber())
+            .withdrawal(paymentRequestDTO.withdrawal())
+            .transactionBalance(transactionBalance)
+            .category(Category.valueOf(paymentRequestDTO.category()))
+            .build();
+    }
+
+    private PaymentResponseDTO createPaymentResponse(PaymentRequestDTO paymentRequestDTO) {
+        return PaymentResponseDTO.builder()
+            .transactionAmount(paymentRequestDTO.transactionAmount())
+            .withdrawal(paymentRequestDTO.withdrawal())
+            .category(paymentRequestDTO.category())
+            .build();
     }
 }

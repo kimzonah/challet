@@ -4,10 +4,12 @@ import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.QChalletBank;
 import com.challet.bankservice.domain.entity.QChalletBankTransaction;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -84,6 +86,17 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .select(challetBank.accountBalance)
             .from(challetBank)
             .where(challetBank.id.eq(accountId))
+            .fetchOne();
+    }
+
+    @Override
+    public ChalletBank findByIdWithLock(Long accountId) {
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        return query
+            .selectFrom(challetBank)
+            .where(challetBank.id.eq(accountId))
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .fetchOne();
     }
 }

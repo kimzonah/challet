@@ -48,6 +48,7 @@ public class ChalletBank {
     private List<ChalletBankTransaction> challetBankTransactions = new ArrayList<>();
 
     public void addTransaction(ChalletBankTransaction challetBankTransaction) {
+        this.accountBalance -= challetBankTransaction.getTransactionAmount();
         this.challetBankTransactions.add(challetBankTransaction);
         challetBankTransaction.assignTransactionChAccount(this);
     }
