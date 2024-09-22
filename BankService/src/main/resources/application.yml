@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: prod # 로컬(dev) / git(prod)
+    active: dev # 로컬(dev) / git(prod)
 
 ---
 # 로컬(dev) 환경 설정
@@ -47,10 +47,16 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: challet
     password: ${mysqlpassword}
+    p6spy:
+      enabled: true
+      appender: com.p6spy.engine.spy.appender.Slf4JLogger
+      logMessageFormat:
+        p6spy: "%(currentTime)|%(executionTime)|%(category)|%(sqlSingleLine)"
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    format_sql: true
     open-in-view: false
 
 springdoc:
