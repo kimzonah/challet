@@ -85,4 +85,14 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
             .where(bank.id.eq(accountId))
             .fetchOne();
     }
+
+    @Override
+    public void connectMyDataAccount(String phoneNumber) {
+        QShBank shBank = QShBank.shBank;
+        query
+            .update(shBank)
+            .set(shBank.myDataStatus, true)
+            .where(shBank.phoneNumber.eq(phoneNumber))
+            .execute();
+    }
 }
