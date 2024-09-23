@@ -15,5 +15,5 @@ public interface KbBankRepositoryCustom {
 
     Long findAccountBalanceById(Long accountId);
 
-    void myDataConnectionAccount(String phoneNumber);
+    void connectMyDataAccount(String phoneNumber);
 }

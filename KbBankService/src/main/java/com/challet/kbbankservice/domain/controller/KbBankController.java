@@ -74,8 +74,8 @@ public class KbBankController {
         @ApiResponse(responseCode = "200", description = "계좌 연결 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity connectMyData(@RequestHeader("PhoneNumber") String phoneNumber){
-        kbBankService.myDataConnectionAccount(phoneNumber);
+    public ResponseEntity connectMyDataAccount(@RequestHeader("PhoneNumber") String phoneNumber){
+        kbBankService.connectMyDataAccount(phoneNumber);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

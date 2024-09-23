@@ -12,5 +12,5 @@ public interface KbBankService {
 
     TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
 
-    void myDataConnectionAccount(String phoneNumber);
+    void connectMyDataAccount(String phoneNumber);
 }

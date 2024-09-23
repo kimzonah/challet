@@ -87,7 +87,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
     }
 
     @Override
-    public void myDataConnectionAccount(String phoneNumber) {
+    public void connectMyDataAccount(String phoneNumber) {
         QKbBank bank = QKbBank.kbBank;
         query
             .update(bank)
