@@ -91,7 +91,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
         QKbBank bank = QKbBank.kbBank;
         query
             .update(bank)
-            .set(bank.myDataStatus, false)
+            .set(bank.myDataStatus, true)
             .where(bank.phoneNumber.eq(phoneNumber))
             .execute();
     }
