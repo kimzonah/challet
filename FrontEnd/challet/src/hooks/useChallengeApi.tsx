@@ -67,7 +67,7 @@ export const useChallengeApi = () => {
   ) => {
     setIsLoading(true); // 로딩 상태
     try {
-      const url = `http://localhost:8081/challet-service/challenges/${challengeId}`;
+      const url = `http://localhost:8000/api/challet/challenges/${challengeId}`;
       const requestBody = {
         isPublic,
         inviteCode,
@@ -87,7 +87,7 @@ export const useChallengeApi = () => {
   // 챌린지 생성
   const createChallenge = async (requestBody: Record<string, any>) => {
     try {
-      const url = 'http://localhost:8081/challet-service/challenges';
+      const url = 'http://localhost:8000/api/challet/challenges';
       const response = await axiosInstance.post(url, requestBody);
 
       console.log('챌린지 생성 성공:', response.data);
@@ -99,7 +99,7 @@ export const useChallengeApi = () => {
   // 챌린지 상세조회 API 요청 함수
   const fetchChallengeDetail = async (challengeId: number) => {
     try {
-      const url = `http://localhost:8081/challet-service/challenges/${challengeId}`;
+      const url = `http://localhost:8000/api/challet/challenges/${challengeId}`;
       const response = await axiosInstance.get(url);
       return response.data; // 상세 내역 데이터 반환
     } catch (error) {
@@ -120,10 +120,10 @@ export const useChallengeApi = () => {
 
       if (isMyChallenges) {
         // 'my-challenges'일 경우 키워드와 카테고리가 필요하지 않음
-        url = 'http://localhost:8081/challet-service/challenges/my-challenges';
+        url = 'http://localhost:8000/api/challet/challenges/my-challenges';
       } else {
         // 일반 챌린지 조회의 경우 키워드와 카테고리 필요
-        url = 'http://localhost:8081/challet-service/challenges';
+        url = 'http://localhost:8000/api/challet/challenges';
         params = { keyword, category }; // 파라미터 설정
       }
 
@@ -144,7 +144,7 @@ export const useChallengeApi = () => {
   const fetchSharedTransactions = async (challengeId: number) => {
     setIsLoading(true); // 로딩 시작
     try {
-      const url = `http://localhost:8081/challet-service/challenges/${challengeId}/shared-transactions`;
+      const url = `http://localhost:8000/api/challet/challenges/${challengeId}/shared-transactions`;
 
       const response = await axiosInstance.get(url);
 
@@ -165,7 +165,7 @@ export const useChallengeApi = () => {
     transaction: Record<string, any> // transaction의 타입을 Record<string, any>로 변경
   ) => {
     try {
-      const url = `http://localhost:8081/challet-service/challenges/${challengeId}/shared-transactions`;
+      const url = `http://localhost:8000/api/challet/challenges/${challengeId}/shared-transactions`;
 
       console.log('transaction:', transaction);
       const response = await axiosInstance.post(url, transaction, {
@@ -185,7 +185,7 @@ export const useChallengeApi = () => {
     transaction: Record<string, any> // transaction의 타입을 Record<string, any>로 변경
   ) => {
     try {
-      const url = `http://localhost:8081/challet-service/shared-transactions/${sharedTransactionId}`;
+      const url = `http://localhost:8000/api/challet/shared-transactions/${sharedTransactionId}`;
 
       console.log('transaction:', transaction);
       const response = await axiosInstance.patch(url, transaction, {
@@ -203,7 +203,7 @@ export const useChallengeApi = () => {
   // 트랜잭션 상세 조회 API 요청 함수
   const fetchSharedTransactionDetail = async (sharedTransactionId: number) => {
     try {
-      const url = `http://localhost:8081/challet-service/shared-transactions/${sharedTransactionId}`;
+      const url = `http://localhost:8000/api/challet/shared-transactions/${sharedTransactionId}`;
       const response = await axiosInstance.get(url);
       return response.data; // 상세 내역 데이터 반환
     } catch (error) {
@@ -216,7 +216,7 @@ export const useChallengeApi = () => {
   // const fetchTransactionComments = async (sharedTransactionId: number) => {
   //   실제 API 요청 부분은 주석 처리합니다.
   //   try {
-  //     const url = `http://localhost:8081/challet-service/shared-transactions/${sharedTransactionId}/comments`;
+  //     const url = `http://localhost:8000/api/challet/shared-transactions/${sharedTransactionId}/comments`;
   //     const response = await axiosInstance.get(url);
   //     return response.data; // 댓글 데이터 반환
   //   } catch (error) {
