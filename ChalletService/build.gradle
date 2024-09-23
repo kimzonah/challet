@@ -41,6 +41,9 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' // 엑츄에이터
+    implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
