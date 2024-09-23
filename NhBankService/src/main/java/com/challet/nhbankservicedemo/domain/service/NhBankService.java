@@ -12,5 +12,5 @@ public interface NhBankService {
 
     TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
 
-    void connectMyDataAccount(String phoneNumber);
+    void connectMyDataAccount(String tokenHeader);
 }

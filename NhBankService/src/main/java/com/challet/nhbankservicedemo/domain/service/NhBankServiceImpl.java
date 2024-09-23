@@ -57,7 +57,7 @@ public class NhBankServiceImpl implements NhBankService {
 
     @Transactional
     @Override
-    public void connectMyDataAccount(String phoneNumber) {
-        nhBankRepository.connectMyDataAccount(phoneNumber);
+    public void connectMyDataAccount(String tokenHeader) {
+        nhBankRepository.connectMyDataAccount(tokenHeader);
     }
 }
