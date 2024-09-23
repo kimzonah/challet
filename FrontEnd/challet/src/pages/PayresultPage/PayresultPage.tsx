@@ -45,26 +45,26 @@ const PayResult = () => {
             {/* 결제 내역 상단 선 */}
             <div className='w-full border-t border-gray-200'></div>
             <div className='w-4/5 flex justify-between py-4'>
-              <p className='text-gray-500 font-semibold'>결제내역</p>
-              <p className='text-gray-500 font-semibold'>{parsedData.name}</p>
+              <p className=' text-[#585962] font-medium'>결제내역</p>
+              <p className='text-[#585962] font-medium'>{parsedData.name}</p>
             </div>
             <div className='w-4/5 flex justify-between py-4'>
-              <p className='text-gray-500 font-semibold'>카테고리</p>
-              <p className='text-gray-500 font-semibold'>
+              <p className='text-[#585962] font-medium'>카테고리</p>
+              <p className='text-[#585962] font-medium'>
                 {parsedData.category}
               </p>
             </div>
             <div className='w-4/5 flex justify-between py-4'>
-              <p className='text-gray-500 font-semibold'>결제 금액</p>
-              <p className='text-gray-500 font-semibold'>
+              <p className='text-[#585962] font-medium'>결제 금액</p>
+              <p className='text-[#585962] font-medium'>
                 {parsedData.amount}원
               </p>
             </div>
             {/* 결제 내역 하단 선 */}
-            <div className='w-full border-b border-gray-200'></div>
+            <div className='w-full border-b border-gray-300'></div>
           </div>
         ) : (
-          <p className='text-gray-500 text-xs mt-4 text-center'>
+          <p className='text-[#585962] text-xs mt-4 text-center'>
             No QR data found.
           </p>
         )}
@@ -73,7 +73,7 @@ const PayResult = () => {
       {/* 하단 버튼 */}
       <button
         onClick={() => console.log('결제 확인')}
-        className='fixed bottom-0 left-0 right-0 w-full py-5 bg-[#00CCCC] text-white font-bold text-lg'
+        className='fixed bottom-0 left-0 right-0 w-full py-5 bg-[#00CCCC] text-white font-medium text-lg'
       >
         확인
       </button>

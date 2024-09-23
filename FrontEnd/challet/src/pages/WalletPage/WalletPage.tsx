@@ -7,7 +7,6 @@ import PaymentButton from '../../components/Wallet/PaymentButton'; // PaymentBut
 const WalletPage: React.FC = () => {
   return (
     <div className='min-h-screen bg-white flex flex-col items-center p-6 mt-12'>
-      {/* Header */}
       <div className='w-full flex flex-col items-center mb-8'>
         {/* 로고 이미지 */}
         <div className='w-full flex justify-start'>
