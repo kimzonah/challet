@@ -61,7 +61,7 @@ const ChallengePage = () => {
       ) : (
         <div className='w-full overflow-y-auto'>
           {/* CategoryList가 스크롤될 때 상단에 고정되도록 설정 */}
-          <div className='sticky-category'>
+          <div>
             {activeTab === '챌린지 찾기' && (
               <CategoryList
                 activeCategory={category}

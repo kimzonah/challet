@@ -1,4 +1,4 @@
-import axiosInstance from '../api/axios';
+import axiosInstance from '../api/challetAxios';
 import { useState } from 'react';
 
 // API 요청 공통 함수
