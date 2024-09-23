@@ -54,4 +54,10 @@ public class NhBankServiceImpl implements NhBankService {
             throw new ExceptionResponse(CustomException.NOT_GET_TRANSACTION_DETAIL_EXCEPTION);
         }
     }
+
+    @Transactional
+    @Override
+    public void connectMyDataAccount(String phoneNumber) {
+        nhBankRepository.connectMyDataAccount(phoneNumber);
+    }
 }

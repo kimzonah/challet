@@ -68,6 +68,17 @@ public class NhBankController {
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
+    @GetMapping("/mydata")
+    @Operation(summary = "농협은행 계좌 마이데이터 연결", description = "전화번호를 통해 계좌 연결")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "계좌 연결 성공"),
+        @ApiResponse(responseCode = "400", description = "계좌 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity connectMyDataAccount(@RequestHeader("PhoneNumber") String phoneNumber){
+        nhBankService.connectMyDataAccount(phoneNumber);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 
     @GetMapping("/search")
     @Operation(summary = "농협은행 계좌 거래 내역 검색", description = "keyword, category를 통해 거래 내역 검색")

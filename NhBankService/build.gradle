@@ -53,6 +53,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator' // 엑츄에이터
     implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스
 
+    /** p6spy **/
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.2'
 }
 
 dependencyManagement {
