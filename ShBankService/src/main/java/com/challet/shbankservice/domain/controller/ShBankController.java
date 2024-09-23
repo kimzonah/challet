@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,14 +71,14 @@ public class ShBankController {
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
-    @GetMapping("/mydata")
+    @PostMapping("/mydata")
     @Operation(summary = "신한은행 계좌 마이데이터 연결", description = "전화번호를 통해 계좌 연결")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "계좌 연결 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity connectMyDataAccount(@RequestHeader("PhoneNumber") String phoneNumber){
-        shBankService.connectMyDataAccount(phoneNumber);
+    public ResponseEntity connectMyDataAccount(@RequestHeader("Authorization") String tokenHeader){
+        shBankService.connectMyDataAccount(tokenHeader);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

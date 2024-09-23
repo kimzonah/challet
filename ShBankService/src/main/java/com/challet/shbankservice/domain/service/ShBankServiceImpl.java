@@ -57,7 +57,7 @@ public class ShBankServiceImpl implements ShBankService {
 
     @Transactional
     @Override
-    public void connectMyDataAccount(String phoneNumber) {
-        shBankRepository.connectMyDataAccount(phoneNumber);
+    public void connectMyDataAccount(String tokenHeader) {
+        shBankRepository.connectMyDataAccount(tokenHeader);
     }
 }
