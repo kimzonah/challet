@@ -1,5 +1,6 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
@@ -17,4 +18,6 @@ public interface ChalletBankService {
     TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
 
     PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
+
+    void connectMyDataBanks(String tokenHeder, BankSelectionRequestDTO bankSelectionRequestDTO);
 }

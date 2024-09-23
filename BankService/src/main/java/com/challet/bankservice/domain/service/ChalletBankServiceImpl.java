@@ -1,5 +1,7 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.request.BankSelectionDTO;
+import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
@@ -10,6 +12,9 @@ import com.challet.bankservice.domain.entity.Category;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.ChalletBankTransaction;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
+import com.challet.bankservice.global.client.KbBankFeignClient;
+import com.challet.bankservice.global.client.NhBankFeignClient;
+import com.challet.bankservice.global.client.ShBankFeignClient;
 import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
 import com.challet.bankservice.global.util.JwtUtil;
@@ -33,6 +38,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private final ChalletBankRepository challetBankRepository;
     private final Environment env;
     private final JwtUtil jwtUtil;
+    private final KbBankFeignClient kbBankFeignClient;
+    private final NhBankFeignClient nhBankFeignClient;
+    private final ShBankFeignClient shBankFeignClient;
 
     @Override
     public void createAccount(String phoneNumber) {
@@ -168,5 +176,22 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             .withdrawal(paymentRequestDTO.withdrawal())
             .category(paymentRequestDTO.category())
             .build();
+    }
+
+    @Override
+    public void connectMyDataBanks(String tokenHeder,
+        BankSelectionRequestDTO bankSelectionRequestDTO) {
+
+        for(BankSelectionDTO bank : bankSelectionRequestDTO.selectedBanks()){
+            if(bank.bankCode().equals("8083") && bank.isSelected()){
+                kbBankFeignClient.connectMyDataKbBank(tokenHeder);
+            }
+            if(bank.bankCode().equals("8084") && bank.isSelected()){
+                nhBankFeignClient.connectMyDataKbBank(tokenHeder);
+            }
+            if(bank.bankCode().equals("8085") && bank.isSelected()){
+                shBankFeignClient.connectMyDataKbBank(tokenHeder);
+            }
+        }
     }
 }
