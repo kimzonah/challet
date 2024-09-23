@@ -1,5 +1,5 @@
-server:
-  port: 8081
+#server:
+#  port: 8081
 
 spring:
   profiles:
@@ -66,3 +66,16 @@ jwt:
   secret: ${jwt_secret_key}
   access-exp: ${jwt_access_exp}
   refresh-exp: ${jwt_refresh_exp}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

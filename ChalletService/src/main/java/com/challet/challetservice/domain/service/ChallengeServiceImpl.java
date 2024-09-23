@@ -20,6 +20,7 @@ import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
@@ -133,9 +134,9 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(
                 () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        // 모집중인 챌린지가 아니라면 참여 불가
-        if (!challenge.getStatus().equals(ChallengeStatus.RECRUITING)) {
-            throw new ExceptionResponse(CustomException.NOT_RECRUITING_EXCEPTION);
+        // 비공개 챌린지라면 코드 검증
+        if (!request.isPublic() && !request.inviteCode().equals(challenge.getInviteCode())) {
+            throw new ExceptionResponse(CustomException.CODE_MISMATCH_EXCEPTION);
         }
 
         // 이미 참여중인 챌린지라면 예외처리
@@ -143,10 +144,16 @@ public class ChallengeServiceImpl implements ChallengeService {
             throw new ExceptionResponse(CustomException.ALREADY_JOIN_EXCEPTION);
         }
 
-        // 공개 챌린지면 바로 추가
-        if (!request.isPublic() && !request.inviteCode().equals(challenge.getInviteCode())) {
-            throw new ExceptionResponse(CustomException.CODE_MISMATCH_EXCEPTION);
+        // 모집중인 챌린지가 아니라면 참여 불가
+        if (!challenge.getStatus().equals(ChallengeStatus.RECRUITING)) {
+            throw new ExceptionResponse(CustomException.NOT_RECRUITING_EXCEPTION);
         }
+
+        // 참여인원 초과면 참여 불가
+        if(challenge.getUserChallenges().size() >= challenge.getMaxParticipants()){
+            throw new ExceptionResponse(CustomException.MAX_PARTICIPANTS_EXCEEDED_EXCEPTION);
+        }
+
 
         UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
         userChallengeRepository.save(userChallenge);
