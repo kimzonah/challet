@@ -162,7 +162,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public SharedTransactionRegisterResponseDTO registerTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request) {
-        System.out.println("서비스 들어왔느냐");
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));

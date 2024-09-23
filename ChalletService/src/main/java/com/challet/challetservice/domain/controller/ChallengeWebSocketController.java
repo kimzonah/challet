@@ -1,8 +1,11 @@
 package com.challet.challetservice.domain.controller;
 
+import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.EmojiResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
+import com.challet.challetservice.domain.service.SharedTransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Controller;
 public class ChallengeWebSocketController {
 
     private final ChallengeService challengeService;
+    private final SharedTransactionService sharedTransactionService;
 
     @Operation(summary = "챌린지에 공유 거래 내역 등록", description = ""
         + "연결 경로 : /ws"
@@ -27,5 +31,14 @@ public class ChallengeWebSocketController {
     @SendTo("/topic/challenges/{id}/shared-transactions")
     public SharedTransactionRegisterResponseDTO registerTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long id, SharedTransactionRegisterRequestDTO request) {
         return challengeService.registerTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
+    }
+
+    @Operation(summary = "공유 거래 내역에 이모지 등록,수정,삭제", description = ""
+        + "메시지 전송 경로 : /app/shared-transactions/{id}"
+        + "메시지 구독 경로 : /topic/shared-transactions/{id}")
+    @MessageMapping("/shared-transactions/{id}")
+    @SendTo("/topic/shared-transactions/{id}")
+    public EmojiResponseDTO handleEmoji (StompHeaderAccessor headerAccessor, @DestinationVariable Long id, EmojiRequestDTO request) {
+        return sharedTransactionService.handleEmoji(headerAccessor.getFirstNativeHeader("Authorization"), id, request);
     }
 }
