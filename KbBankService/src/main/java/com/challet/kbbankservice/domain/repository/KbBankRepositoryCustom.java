@@ -14,4 +14,6 @@ public interface KbBankRepositoryCustom {
     TransactionDetailResponseDTO getTransactionDetailById(Long transactionId);
 
     Long findAccountBalanceById(Long accountId);
+
+    void connectMyDataAccount(String phoneNumber);
 }

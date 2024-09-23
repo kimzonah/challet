@@ -54,4 +54,10 @@ public class KbBankServiceImpl implements KbBankService {
             throw new ExceptionResponse(CustomException.NOT_GET_TRANSACTION_DETAIL_EXCEPTION);
         }
     }
+
+    @Transactional
+    @Override
+    public void connectMyDataAccount(String phoneNumber) {
+        kbBankRepository.connectMyDataAccount(phoneNumber);
+    }
 }
