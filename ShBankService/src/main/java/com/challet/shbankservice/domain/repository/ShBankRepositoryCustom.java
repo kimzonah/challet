@@ -14,4 +14,6 @@ public interface ShBankRepositoryCustom {
     TransactionDetailResponseDTO getTransactionDetailById(Long transactionId);
 
     Long getAccountBalanceById(Long accountId);
+
+    void connectMyDataAccount(String phoneNumber);
 }
