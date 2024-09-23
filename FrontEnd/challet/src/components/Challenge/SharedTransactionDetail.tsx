@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
 import SharedTransactionComments from './SharedTransactionComments';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faSyncAlt,
+  faEdit,
+} from '@fortawesome/free-solid-svg-icons'; // 수정 아이콘 추가
 
 const SharedTransactionDetail = () => {
   const { id } = useParams<{ id: string }>(); // URL에서 sharedTransactionId 가져오기
@@ -42,15 +46,28 @@ const SharedTransactionDetail = () => {
             {transactionDetail.withdrawal} |{' '}
             {transactionDetail.transactionAmount.toLocaleString()}원
           </p>
-          <FontAwesomeIcon
-            icon={faSyncAlt}
-            className='cursor-pointer'
-            onClick={() => window.location.reload()} // 새로고침
-          />
+          {transactionDetail.isMine ? (
+            <FontAwesomeIcon
+              icon={faEdit} // 수정 아이콘
+              className='cursor-pointer'
+              onClick={() => {
+                // 수정 페이지로 이동하고, transactionDetail 데이터를 전달
+                navigate('/sharedTransactionEdit', {
+                  state: { transaction: transactionDetail },
+                });
+              }}
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon={faSyncAlt} // 새로고침 아이콘
+              className='cursor-pointer'
+              onClick={() => window.location.reload()} // 새로고침
+            />
+          )}
         </div>
       </div>
 
-      <div className='mt-16'>
+      <div className='mt-16 scrollbar-hide overflow-y-auto max-h-[580px]'>
         <div className='flex items-center'>
           <img
             src={transactionDetail.profileImage || '/default_profile.png'}
@@ -73,7 +90,7 @@ const SharedTransactionDetail = () => {
         <p className='mb-4 text-lg'>{transactionDetail.content}</p>
 
         {/* 이모티콘 및 댓글 개수 */}
-        <div className='flex space-x-4'>
+        <div className='flex space-x-4 py-2 border-b-2 border-dashed'>
           <div className='flex items-center'>
             <span className='text-purple-500 mr-1'>😍</span>
             <span>{transactionDetail.threeEmojiNum}</span>
@@ -99,7 +116,7 @@ const SharedTransactionDetail = () => {
       </div>
 
       {/* 댓글 입력창 */}
-      <div className='fixed bottom-0 left-0 right-0 bg-white p-4'>
+      <div className='fixed bottom-0 left-0 right-0 bg-white p-4 border-t-2'>
         <div className='flex items-center'>
           <input
             type='text'

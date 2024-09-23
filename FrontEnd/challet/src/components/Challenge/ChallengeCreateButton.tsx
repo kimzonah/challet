@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ChallengeCreateButton = () => {
   const navigate = useNavigate();
+
   const handleCreateChallenge = () => {
     // 챌린지 생성하기 버튼 클릭 시 처리할 로직
     console.log('챌린지 생성하기 클릭됨');
@@ -13,13 +14,15 @@ const ChallengeCreateButton = () => {
     <div className='fixed bottom-16 left-0 right-12 flex justify-end w-full mb-4'>
       <button
         onClick={handleCreateChallenge}
-        className='bg-white transform transition-transform duration-300 ease-in-out hover:scale-110'
+        className='transform transition-transform duration-300 ease-in-out hover:scale-110'
+        style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }} // 불필요한 배경과 여백 제거
       >
         {/* 이미지 버튼으로 사용 */}
         <img
           src={ChallengePlus}
           alt='챌린지 생성하기'
-          className='w-16 h-16 object-contain mr-4 mb-4 bg-white'
+          className='w-16 h-16 object-contain mr-4 mb-4'
+          style={{ display: 'block' }} // 이미지가 있는 부분만 나타나도록 설정
         />
       </button>
     </div>

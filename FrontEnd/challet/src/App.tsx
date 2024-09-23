@@ -28,6 +28,7 @@ import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'
 import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
 import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
 import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
+import SharedTransactionEdit from './components/Challenge/SharedTransactionEdit';
 import './assets/App.css';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
   const matchChallengeRoom = useMatch('/challengeRoom/:id');
   const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
   const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
+  const sharedTransactionEdit = useMatch('/sharedTransactionEdit');
   const matchpayment = useMatch('/payment');
   const matchpayresult = useMatch('/payresult');
   const matchHistory = useMatch('/history');
@@ -50,7 +52,8 @@ function App() {
     matchChallengeRoom ||
     sharedTransactionCreate ||
     sharedTransactionDetail ||
-    matchHistory ||
+    sharedTransactionEdit;
+  matchHistory ||
     matchHistorydetail ||
     matchpayment ||
     matchpayresult ||
@@ -88,6 +91,10 @@ function App() {
         <Route
           path='/sharedTransactionDetail/:id'
           element={<SharedTransactionDetail />}
+        />
+        <Route
+          path='/sharedTransactionEdit'
+          element={<SharedTransactionEdit />}
         />
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
