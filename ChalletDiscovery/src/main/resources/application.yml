@@ -6,3 +6,16 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
