@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: challetdiscovery
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
