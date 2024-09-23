@@ -86,3 +86,16 @@ springdoc:
     urls[4]:
       name: ShBank-Service
       url: api/sh-bank/v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
