@@ -1,4 +1,4 @@
-# server:
+#server:
 #  port: 8082
 
 spring:
@@ -85,3 +85,7 @@ management:
     metrics:
       export:
         enabled: true
+
+logging:
+  level:
+    com.challet.bankservice.global.client: DEBUG
