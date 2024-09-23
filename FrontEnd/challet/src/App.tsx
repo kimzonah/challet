@@ -29,6 +29,7 @@ import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; //
 import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
 import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
 import SharedTransactionEdit from './components/Challenge/SharedTransactionEdit';
+import ImageUpload from './pages/TestPage/ImageUpload';
 import './assets/App.css';
 
 function App() {
@@ -96,6 +97,8 @@ function App() {
           path='/sharedTransactionEdit'
           element={<SharedTransactionEdit />}
         />
+
+        <Route path='/test' element={<ImageUpload />} />
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
