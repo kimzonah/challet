@@ -54,6 +54,8 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스
 
 
+    /** p6spy **/
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.2'
 }
 
 dependencyManagement {
