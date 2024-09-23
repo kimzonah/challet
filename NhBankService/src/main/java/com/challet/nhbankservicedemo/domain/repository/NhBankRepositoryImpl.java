@@ -85,4 +85,14 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
             .where(bank.id.eq(accountId))
             .fetchOne();
     }
+
+    @Override
+    public void connectMyDataAccount(String phoneNumber) {
+        QNhBank nhBank = QNhBank.nhBank;
+        query
+            .update(nhBank)
+            .set(nhBank.myDataStatus, true)
+            .where(nhBank.phoneNumber.eq(phoneNumber))
+            .execute();
+    }
 }

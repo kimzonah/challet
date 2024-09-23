@@ -11,4 +11,6 @@ public interface NhBankService {
     TransactionResponseListDTO getAccountTransactionList(Long accountId);
 
     TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
+
+    void connectMyDataAccount(String phoneNumber);
 }
