@@ -123,7 +123,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     @Transactional
     @Override
-    public synchronized PaymentResponseDTO qrPayment(Long accountId,
+    public PaymentResponseDTO qrPayment(Long accountId,
         PaymentRequestDTO paymentRequestDTO) {
         ChalletBank challetBank = getChalletBank(accountId);
 
