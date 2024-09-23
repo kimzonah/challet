@@ -1,7 +1,9 @@
 package com.challet.bankservice.domain.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
+@Builder
 @Schema(description = "결제 요청 데이터 DTO")
 public record PaymentRequestDTO(
 

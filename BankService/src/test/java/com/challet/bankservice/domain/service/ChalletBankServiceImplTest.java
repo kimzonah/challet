@@ -53,8 +53,13 @@ class ChalletBankServiceImplTest {
         // 자동 생성된 ID 확인
         Long accountId = testAccount.getId();
 
-        PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO(1L, "01012345678", "test1",
-            "DELIVERY");
+        PaymentRequestDTO paymentRequestDTO = PaymentRequestDTO
+            .builder()
+            .transactionAmount(1L)
+            .accountNumber("01012345678")
+            .withdrawal("test1")
+            .category("DELIVERY")
+            .build();
 
         int threadCount = 100;
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
@@ -86,8 +91,14 @@ class ChalletBankServiceImplTest {
         Long accountId = testAccount.getId();
 
         // 결제 금액이 잔액보다 큼 (잔액 100보다 큰 금액 설정)
-        PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO(1000L, "01012345678", "test1",
-            "DELIVERY");
+        PaymentRequestDTO paymentRequestDTO = PaymentRequestDTO
+            .builder()
+            .transactionAmount(1000L)
+            .accountNumber("01012345678")
+            .withdrawal("test1")
+            .category("DELIVERY")
+            .build();
+
 
         // 예외가 발생하는지 확인
         Exception exception = assertThrows(ExceptionResponse.class, () -> {
