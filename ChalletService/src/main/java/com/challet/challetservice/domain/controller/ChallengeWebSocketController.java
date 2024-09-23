@@ -1,6 +1,7 @@
 package com.challet.challetservice.domain.controller;
 
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +25,7 @@ public class ChallengeWebSocketController {
         + "메시지 구독 경로 : /topic/challenges/{id}/shared-transactions")
     @MessageMapping("/challenges/{id}/shared-transactions")
     @SendTo("/topic/challenges/{id}/shared-transactions")
-    public SharedTransactionRegisterRequestDTO registerTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long id, SharedTransactionRegisterRequestDTO request) {
-        challengeService.registerTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
-        return request;
+    public SharedTransactionRegisterResponseDTO registerTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long id, SharedTransactionRegisterRequestDTO request) {
+        return challengeService.registerTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
     }
 }
