@@ -71,7 +71,7 @@ public class ShBankController {
     }
 
     @GetMapping("/mydata")
-    @Operation(summary = "농협은행 계좌 마이데이터 연결", description = "전화번호를 통해 계좌 연결")
+    @Operation(summary = "신한은행 계좌 마이데이터 연결", description = "전화번호를 통해 계좌 연결")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "계좌 연결 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
