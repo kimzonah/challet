@@ -4,6 +4,7 @@ import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
@@ -79,7 +80,8 @@ public class ChalletBankController {
     })
     public ResponseEntity<TransactionDetailResponseDTO> getAccountTransactionDetails(
         @RequestHeader("TransactionId") Long transactionId) {
-        TransactionDetailResponseDTO transaction = challetBankService.getTransactionInfo(transactionId);
+        TransactionDetailResponseDTO transaction = challetBankService.getTransactionInfo(
+            transactionId);
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
@@ -102,8 +104,12 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "200", description = "결제 성공"),
         @ApiResponse(responseCode = "400", description = "결제 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity processPayment(@RequestBody PaymentRequestDTO paymentRequestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<PaymentResponseDTO> processPayment(
+        @RequestHeader("AccountId") Long accountId
+        , @RequestBody PaymentRequestDTO paymentRequestDTO) {
+        PaymentResponseDTO paymentResponseDTO = challetBankService.qrPayment(accountId,
+            paymentRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponseDTO);
     }
 
     @PostMapping("/account-transfers")
