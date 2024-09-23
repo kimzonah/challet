@@ -85,4 +85,14 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .where(bank.id.eq(accountId))
             .fetchOne();
     }
+
+    @Override
+    public void myDataConnectionAccount(String phoneNumber) {
+        QKbBank bank = QKbBank.kbBank;
+        query
+            .update(bank)
+            .set(bank.myDataStatus, false)
+            .where(bank.phoneNumber.eq(phoneNumber))
+            .execute();
+    }
 }
