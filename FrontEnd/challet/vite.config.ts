@@ -17,6 +17,10 @@ export default defineConfig({
         'apple-touch-icon.png',
         'assets/icons/*',
       ], // 캐싱할 자산 목록
+
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB 이하 파일 캐싱
+      },
       manifest: {
         name: 'Challet',
         short_name: 'Challet',
