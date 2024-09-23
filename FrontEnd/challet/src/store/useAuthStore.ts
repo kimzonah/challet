@@ -5,9 +5,14 @@ import { persist } from 'zustand/middleware';
 interface AuthState {
   accessToken: string | null; // Access Token 상태
   refreshToken: string | null; // Refresh Token 상태 (string | null로 변경)
+  nickname: string | null; // 닉네임 상태
+  profileImageUrl: string | null; // 프로필 이미지 상태
+
   setAuthData: (data: {
     accessToken: string;
     refreshToken: string | null;
+    nickname: string | null;
+    profileImageUrl: string | null;
   }) => void; // Access Token과 Refresh Token을 저장
   setTokens: (newAccessToken: string, refreshToken: string | null) => void; // 새로운 Access Token 설정
   clearTokens: () => void; // Access Token 및 Refresh Token 초기화 (로그아웃 시 사용)
@@ -20,10 +25,12 @@ const useAuthStore = create<AuthState>()(
     (set) => ({
       accessToken: null,
       refreshToken: null,
+      nickname: null,
+      profileImageUrl: null,
 
       // 상태 저장
-      setAuthData: ({ accessToken, refreshToken }) =>
-        set({ accessToken, refreshToken }),
+      setAuthData: ({ accessToken, refreshToken, nickname, profileImageUrl }) =>
+        set({ accessToken, refreshToken, nickname, profileImageUrl }),
 
       // 새로운 토큰 저장
       setTokens: (newAccessToken: string, refreshToken: string | null) => {

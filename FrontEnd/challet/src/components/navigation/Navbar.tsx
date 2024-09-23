@@ -32,7 +32,7 @@ const Navbar = () => {
       icon: AnalysisIcon,
       activeIcon: AnalysisIconActive,
     },
-    { path: '/my', label: '마이', icon: MyIcon, activeIcon: MyIconActive },
+    { path: '/mypage', label: '마이', icon: MyIcon, activeIcon: MyIconActive },
   ];
 
   // 현재 경로에 따라 아이콘과 텍스트 스타일 결정

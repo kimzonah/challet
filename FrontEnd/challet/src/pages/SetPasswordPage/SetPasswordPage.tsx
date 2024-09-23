@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosResponse, AxiosError } from 'axios';
-import axiosInstance from '../../api/axios';
+import axiosInstance from '../../api/challetAxios';
 import useSignUpStore from '../../store/useSignUpStore';
 import useAuthStore from '../../store/useAuthStore'; // 로그인 상태 저장을 위한 Zustand 스토어
 
@@ -62,6 +62,8 @@ const SetPasswordPage = () => {
           setAuthData({
             accessToken,
             refreshToken: null, // 필요에 따라 refreshToken도 처리
+            nickname,
+            profileImageUrl: null,
           });
 
           console.log(
