@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import chBankAxiosInstance from '../../api/chBankAxios';
+import AxiosInstance from '../../api/axiosInstance';
 import useAccountStore from '../../store/useAccountStore';
 import { TopBar } from '../../components/topbar/topbar';
 
@@ -36,8 +36,8 @@ const HistoryPage = () => {
       }
 
       try {
-        const response = await chBankAxiosInstance.get<TransactionResponse>(
-          `/accounts`,
+        const response = await AxiosInstance.get<TransactionResponse>(
+          `api/ch-bank/accounts`,
           {
             headers: { AccountId: accountInfo.id.toString() },
           }

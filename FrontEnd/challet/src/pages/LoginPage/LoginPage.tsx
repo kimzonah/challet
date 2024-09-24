@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import challetAxiosInstance from '../../api/challetAxios';
+import AxiosInstance from '../../api/axiosInstance';
 import useAuthStore from '../../store/useAuthStore';
 
 const LoginPage = () => {
@@ -25,20 +25,18 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       // 로그인 API 호출
-      const { data } = await challetAxiosInstance.post('/auth/login', {
+      const { data } = await AxiosInstance.post('api/challet/auth/login', {
         phoneNumber,
         password: enteredDigits, // 키패드로 입력된 비밀번호 사용
       });
 
       // 서버 응답에서 Access Token 추출
-      const { accessToken } = data;
+      const { accessToken, id } = data;
 
-      // 로그인 시 상태 저장 (Access Token, Refresh Token, 닉네임, 프로필 이미지)
+      // 로그인 시 상태 저장
       setAuthData({
         accessToken,
-        refreshToken: null, // refreshToken을 나중에 필요할 경우 추가 가능
-        nickname: null, // 기본값 설정
-        profileImageUrl: null, // 기본값 설정
+        id,
       });
 
       // Access Token 출력
