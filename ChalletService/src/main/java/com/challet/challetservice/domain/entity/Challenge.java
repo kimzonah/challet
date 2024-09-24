@@ -67,7 +67,7 @@ public class Challenge {
 
     public static Challenge createChallenge(ChallengeRegisterRequestDTO request, String code) {
         return Challenge.builder()
-            .category(Category.valueOf(request.category()))
+            .category(request.category())
             .title(request.title())
             .spendingLimit(request.spendingLimit())
             .createDate(LocalDate.now())

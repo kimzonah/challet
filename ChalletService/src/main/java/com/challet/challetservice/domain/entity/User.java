@@ -80,4 +80,8 @@ public class User {
         this.nickname = nickname;
     }
 
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
 }
