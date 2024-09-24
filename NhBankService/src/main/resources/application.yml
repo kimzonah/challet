@@ -28,7 +28,7 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "optional:file:/NhBankService/src/main/resources/application-key.yml"
+    import: "file:/var/jenkins_home/workspace/nh-bank/NhBankService/src/main/resources/application-key.yml"
 
 eureka:
   client:
