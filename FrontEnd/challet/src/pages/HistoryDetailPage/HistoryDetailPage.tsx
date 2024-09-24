@@ -69,9 +69,9 @@ const HistoryDetailPage = () => {
 
       {/* 거래 내역 정보 */}
       <div className='p-4 mt-20 text-left ml-2 mb-12'>
-        <p className='text-base text-gray-500'>{transactionDetail.deposit}</p>
+        <p className='text-sm text-[#6C6C6C]'>{transactionDetail.deposit}</p>
         <h2
-          className={`text-3xl font-semibold ${transactionDetail.transactionAmount < 0 ? 'text-gray-800' : 'text-gray-800'}`}
+          className={`text-3xl font-semibold ${transactionDetail.transactionAmount < 0 ? 'text-[#373A3F]' : 'text-[#373A3F]'}`}
         >
           -{Math.abs(transactionDetail.transactionAmount).toLocaleString()}원
         </h2>
@@ -79,25 +79,25 @@ const HistoryDetailPage = () => {
 
       {/* 상세 정보 카드 (상단과 하단에 줄 추가) */}
       <div className='mx-6 border-t border-b border-gray-300 py-4'>
-        <div className='grid grid-cols-2 gap-y-10 gap-x-2 text-sm text-gray-600 py-4'>
-          <div className='text-left font-semibold'>일시</div>
-          <div className='text-right font-semibold'>
+        <div className='grid grid-cols-2 gap-y-10 gap-x-2 text-base text-[#585962] py-4'>
+          <div className='text-left font-medium'>일시</div>
+          <div className='text-right font-medium'>
             {formatDate(transactionDetail.transactionDatetime)}
           </div>
-          <div className='text-left font-semibold'>입금처</div>
-          <div className='text-right font-semibold'>
+          <div className='text-left font-medium'>입금처</div>
+          <div className='text-right font-medium'>
             {transactionDetail.deposit}
           </div>
-          <div className='text-left font-semibold'>카테고리</div>
-          <div className='text-right font-semibold'>
+          <div className='text-left font-medium'>카테고리</div>
+          <div className='text-right font-medium'>
             {transactionDetail.category}
           </div>
-          <div className='text-left font-semibold'>출금처</div>
-          <div className='text-right font-semibold'>
+          <div className='text-left font-medium'>출금처</div>
+          <div className='text-right font-medium'>
             {transactionDetail.withdrawal}
           </div>
-          <div className='text-left font-semibold'>거래 후 잔액</div>
-          <div className='text-right font-semibold'>
+          <div className='text-left font-medium'>거래 후 잔액</div>
+          <div className='text-right font-medium'>
             {transactionDetail.transactionBalance.toLocaleString()}원
           </div>
         </div>

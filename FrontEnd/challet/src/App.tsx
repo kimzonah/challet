@@ -48,6 +48,7 @@ function App() {
   const matchHistory = useMatch('/history');
   const matchHistorydetail = useMatch('//history-detail/:transactionId');
   const matchTransfer = useMatch('/transfer');
+  const matchmydataselect = useMatch('/mydataselect');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
@@ -60,7 +61,8 @@ function App() {
     matchHistorydetail ||
     matchpayment ||
     matchpayresult ||
-    matchTransfer;
+    matchTransfer ||
+    matchmydataselect;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>

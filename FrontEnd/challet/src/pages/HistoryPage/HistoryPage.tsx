@@ -75,8 +75,8 @@ const HistoryPage = () => {
 
       {/* 잔액 표시 */}
       <div className='p-4 mt-16 ml-2 text-left'>
-        <p className='text-base text-gray-500'>챌렛계좌</p>
-        <h2 className='text-3xl font-semibold'>
+        <p className='text-sm font-medium text-[#6C6C6C]'>챌렛계좌</p>
+        <h2 className='text-3xl font-bold'>
           {accountInfo
             ? `${accountInfo.accountBalance.toLocaleString()}원`
             : '잔액 정보 없음'}
@@ -124,22 +124,22 @@ const HistoryPage = () => {
               >
                 <div className='flex items-center'>
                   {' '}
-                  <p className='text-sm font-semibold text-gray-800 mr-1'>
+                  <p className='text-sm font-medium text-gray-800 mr-1'>
                     {date}
                   </p>
                   <p className='mx-2 text-sm font-semibold text-gray-400'>|</p>
-                  <p className='text-sm font-semibold text-gray-500'>{time}</p>
+                  <p className='text-sm font-medium text-[#6C6C6C]'>{time}</p>
                 </div>
                 <div className='flex justify-between items-start mt-4'>
                   {' '}
-                  <p className='text-base font-semibold text-gray-700'>
+                  <p className='text-base font-medium text-[#373A3F]'>
                     {transaction.deposit}
                   </p>
                   <div className='text-right'>
-                    <p className='text-base font-semibold text-gray-700'>
+                    <p className='text-base font-medium text-[#373A3F]'>
                       -{transaction.transactionAmount.toLocaleString()}원
                     </p>
-                    <p className='text-sm font-semibold text-gray-400'>
+                    <p className='text-sm font-medium text-[#6C6C6C]'>
                       잔액 {transaction.transactionBalance.toLocaleString()}원
                     </p>
                   </div>

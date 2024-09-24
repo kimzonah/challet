@@ -66,7 +66,7 @@ const SetPasswordPage = () => {
       try {
         // POST 요청을 통해 회원가입 및 비밀번호 설정
         const response: AxiosResponse = await axiosInstance.post(
-          '/auth/signup',
+          '/api/challet/auth/signup',
           signUpData
         );
 
