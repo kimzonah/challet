@@ -4,12 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons'; // 카메라 아이콘 추가
 import { useChallengeApi } from '../../hooks/useChallengeApi'; // useChallengeApi 임포트
+import useFile2URL from '../../hooks/useFile2URL'; // useFile2URL 임포트
+import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 임포트
 
 const SharedTransactionCreate = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = location.state || {}; // ChallengeRoom에서 전달된 id 가져오기
   const { registTransaction } = useChallengeApi(); // useChallengeApi에서 registTransaction 메소드 사용
+  const { file2URL } = useFile2URL(); // AWS S3 업로드 함수 사용
 
   const [image, setImage] = useState<File | null>(null); // 이미지 파일
   const [withdrawal, setWithdrawal] = useState(''); // 출금처
@@ -29,18 +32,39 @@ const SharedTransactionCreate = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // JSON 형태로 보낼 데이터 구조 생성
-    const formData = {
-      image: image ? URL.createObjectURL(image) : '', // 이미지가 없으면 빈 문자열
-      withdrawal, // 출금처
-      transactionAmount: Number(transactionAmount), // 거래 금액
-      content, // 내용
-    };
-
     try {
       setIsLoading(true); // API 호출 전 로딩 상태로 전환
+
+      let imageUrl = '';
+      if (image) {
+        // 이미지가 있는 경우 AWS S3에 업로드하고 URL을 반환받음
+        imageUrl = await file2URL(image);
+      }
+
+      // JSON 형태로 보낼 데이터 구조 생성
+      const formData = {
+        image: imageUrl, // 이미지 URL을 서버로 전달
+        withdrawal, // 출금처
+        transactionAmount: Number(transactionAmount), // 거래 금액
+        content, // 내용
+      };
+
       // registTransaction API 호출
       await registTransaction(id, formData); // JSON 데이터를 전달
+
+      // 웹소켓을 통해 서버로 데이터 전송
+      const webSocketMessage = {
+        action: 'ADD', // DTO에서 요구하는 ActionType
+        image: imageUrl, // 업로드된 이미지 URL
+        withdrawal, // 출금처
+        transactionAmount: Number(transactionAmount), // 거래 금액
+        content, // 결제 내용
+      };
+
+      webSocketService.sendMessage(
+        `/app/challenges/1/shared-transactions`,
+        webSocketMessage
+      );
 
       // 성공 메시지 설정
       setIsSuccess(true);
@@ -48,7 +72,6 @@ const SharedTransactionCreate = () => {
       console.error('거래 내역 등록 중 오류 발생:', error);
     } finally {
       setIsLoading(false); // API 응답 후 로딩 상태 해제
-      // 성공 여부에 따른 추가 처리 가능
     }
   };
 

@@ -32,7 +32,7 @@ const ChallengeRoom = () => {
   }
 
   useEffect(() => {
-    // webSocketService.connect();
+    webSocketService.connect();
 
     return () => {};
   });

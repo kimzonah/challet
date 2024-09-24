@@ -2,15 +2,10 @@ import React, { useState, useEffect } from 'react';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
-// 브라우저 환경에서 global을 정의
-if (typeof global === 'undefined') {
-  (window as any).global = window;
-}
-
 // WebSocket 연결을 위한 URL (서버 엔드포인트에 맞게 수정)
-const SOCKET_URL = 'http://localhost:8081/ws';
+const SOCKET_URL = 'http://localhost:8000/api/challet/ws';
 const token =
-  'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImlhdCI6MTcyNzA2NjkwMCwiZXhwIjoxNzI3MTUzMzAwLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.6vaY9heBNiW0BEmAJkAZTSCByYV0irSf1W19MroiNV5ESZa8HPRh71GbnFeAvjuG3HWmwOfdQNmrrn7ThvypGw'; // JWT 토큰 값
+  'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTA3MTA1NzY0MiIsImlhdCI6MTcyNzE3Mjk5MSwiZXhwIjoxNzI3MjU5MzkxLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.94oU6D2Y2P5IF76R_2f2Y1UJqo2JaM-bWCmWZanOo532Pk-QcKKt9e1Dfou1aQkMxxvB0ZNE90yUVeFJBUP7_w';
 
 const WebSocketTest: React.FC = () => {
   const [stompClient, setStompClient] = useState<any>(null);

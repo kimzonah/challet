@@ -12,12 +12,24 @@ class WebSocketService {
 
   // 웹소켓 연결 설정
   connect() {
+    if (this.stompClient && this.stompClient.connected) {
+      console.log('WebSocket 이미 연결되어 있습니다.');
+      return; // 이미 연결되어 있으면 아무 작업도 하지 않음
+    }
     const socket = new SockJS(this.socketUrl);
+    const token =
+      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTA3MTA1NzY0MiIsImlhdCI6MTcyNzE3Mjk5MSwiZXhwIjoxNzI3MjU5MzkxLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.94oU6D2Y2P5IF76R_2f2Y1UJqo2JaM-bWCmWZanOo532Pk-QcKKt9e1Dfou1aQkMxxvB0ZNE90yUVeFJBUP7_w';
+    const headers = { Authorization: `Bearer ${token}` };
     this.stompClient = new Client({
+      // brokerURL: webSocketUrl, // SockJS 대신 brokerURL 사용
       webSocketFactory: () => socket as WebSocket,
-      reconnectDelay: 5000, // 재연결 딜레이 (5초)
-      heartbeatIncoming: 4000, // 서버로부터 heartbeat 수신 간격
-      heartbeatOutgoing: 4000, // 클라이언트에서 heartbeat 전송 간격
+      connectHeaders: headers,
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      debug: (str) => {
+        console.log('STOMP debug:', str);
+      },
     });
 
     this.stompClient.onConnect = (frame) => {
@@ -33,13 +45,14 @@ class WebSocketService {
       console.log('WebSocket 연결 종료:', frame);
     };
 
+    console.log('WebSocket 연결 시도:', this.stompClient);
     this.stompClient.activate(); // 연결 시작
   }
 
   // 웹소켓 연결 성공 시 호출
   onConnected() {
     // 필요한 채널 구독 예시
-    this.subscribe('/topic/transactions', (message) => {
+    this.subscribe('/topic/challenges/1/shared-transactions', (message) => {
       console.log('받은 거래 메시지:', message.body);
       const transaction = JSON.parse(message.body);
       // 받은 메시지 처리 로직 추가
@@ -59,8 +72,15 @@ class WebSocketService {
 
   // 서버로 메시지 전송
   sendMessage(destination: string, payload: any) {
+    const token =
+      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTA3MTA1NzY0MiIsImlhdCI6MTcyNzE3Mjk5MSwiZXhwIjoxNzI3MjU5MzkxLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.94oU6D2Y2P5IF76R_2f2Y1UJqo2JaM-bWCmWZanOo532Pk-QcKKt9e1Dfou1aQkMxxvB0ZNE90yUVeFJBUP7_w';
+
     if (this.stompClient && this.stompClient.connected) {
-      this.stompClient.publish({ destination, body: JSON.stringify(payload) });
+      this.stompClient.publish({
+        destination,
+        body: JSON.stringify(payload),
+        headers: { Authorization: `Bearer ${token}` },
+      });
     } else {
       console.error('WebSocket 연결되지 않았습니다.');
     }
