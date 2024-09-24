@@ -5,6 +5,7 @@ import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
@@ -133,7 +134,8 @@ public class ChalletBankController {
     public ResponseEntity connectMyDataBanks(
         @RequestHeader(value = "Authorization") String tokenHeader,
         @RequestBody BankSelectionRequestDTO bankSelectionRequestDTO) {
-        challetBankService.connectMyDataBanks(tokenHeader, bankSelectionRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        MyDataBankAccountInfoResponseDTO myDataAccounts = challetBankService.connectMyDataBanks(
+            tokenHeader, bankSelectionRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(myDataAccounts);
     }
 }

@@ -4,6 +4,7 @@ import com.challet.bankservice.domain.dto.request.BankSelectionDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
@@ -173,25 +174,37 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private PaymentResponseDTO createPaymentResponse(PaymentRequestDTO paymentRequestDTO) {
         return PaymentResponseDTO.builder()
             .transactionAmount(paymentRequestDTO.transactionAmount())
-            .withdrawal(paymentRequestDTO.withdrawal())
+            .deposit(paymentRequestDTO.withdrawal())
             .category(paymentRequestDTO.category())
             .build();
     }
 
     @Override
-    public void connectMyDataBanks(String tokenHeder,
+    public MyDataBankAccountInfoResponseDTO connectMyDataBanks(String tokenHeder,
         BankSelectionRequestDTO bankSelectionRequestDTO) {
+
+        AccountInfoResponseListDTO kbBanks = null;
+        AccountInfoResponseListDTO nhBanks = null;
+        AccountInfoResponseListDTO shBanks = null;
 
         for(BankSelectionDTO bank : bankSelectionRequestDTO.selectedBanks()){
             if(bank.bankCode().equals("8083") && bank.isSelected()){
-                kbBankFeignClient.connectMyDataKbBank(tokenHeder);
+                kbBanks = kbBankFeignClient.connectMyDataKbBank(
+                    tokenHeder);
             }
             if(bank.bankCode().equals("8084") && bank.isSelected()){
-                nhBankFeignClient.connectMyDataKbBank(tokenHeder);
+                nhBanks = nhBankFeignClient.connectMyDataKbBank(tokenHeder);
             }
             if(bank.bankCode().equals("8085") && bank.isSelected()){
-                shBankFeignClient.connectMyDataKbBank(tokenHeder);
+                shBanks = shBankFeignClient.connectMyDataKbBank(tokenHeder);
             }
         }
+
+        return MyDataBankAccountInfoResponseDTO
+            .builder()
+            .kbBanks(kbBanks)
+            .nhBanks(nhBanks)
+            .shBanks(shBanks)
+            .build();
     }
 }

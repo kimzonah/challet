@@ -1,12 +1,15 @@
 package com.challet.bankservice.global.client;
 
+import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name= "nh-bank")
+@FeignClient(name = "nh-bank")
 public interface NhBankFeignClient {
 
     @PostMapping("/api/nh-bank/mydata")
-    void connectMyDataKbBank(@RequestHeader(value = "Authorization") String tokenHeader);
+    AccountInfoResponseListDTO connectMyDataKbBank(
+        @RequestHeader(value = "Authorization") String tokenHeader);
+
 }
