@@ -3,19 +3,10 @@ import { persist } from 'zustand/middleware';
 
 // Auth 상태 인터페이스
 interface AuthState {
-  accessToken: string | null; // Access Token 상태
-  refreshToken: string | null; // Refresh Token 상태 (string | null로 변경)
-  nickname: string | null; // 닉네임 상태
-  profileImageUrl: string | null; // 프로필 이미지 상태
+  accessToken: string | null;
+  id: string | null; // 임시로 id
 
-  setAuthData: (data: {
-    accessToken: string;
-    refreshToken: string | null;
-    nickname: string | null;
-    profileImageUrl: string | null;
-  }) => void; // Access Token과 Refresh Token을 저장
-  setTokens: (newAccessToken: string, refreshToken: string | null) => void; // 새로운 Access Token 설정
-  clearTokens: () => void; // Access Token 및 Refresh Token 초기화 (로그아웃 시 사용)
+  setAuthData: (data: { accessToken: string; id: string }) => void; // Access Token과 Refresh Token을 저장
   clearAuthData: () => void; // 전체 Auth 데이터를 초기화
 }
 
@@ -24,27 +15,20 @@ const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       accessToken: null,
-      refreshToken: null,
-      nickname: null,
-      profileImageUrl: null,
+      id: null,
 
-      // 상태 저장
-      setAuthData: ({ accessToken, refreshToken, nickname, profileImageUrl }) =>
-        set({ accessToken, refreshToken, nickname, profileImageUrl }),
-
-      // 새로운 토큰 저장
-      setTokens: (newAccessToken: string, refreshToken: string | null) => {
-        set({ accessToken: newAccessToken, refreshToken });
-      },
-
-      // 토큰 초기화 (로그아웃 시)
-      clearTokens: () => set({ accessToken: null, refreshToken: null }),
+      // accessToken, id 상태 저장
+      setAuthData: ({ accessToken, id }) =>
+        set(() => ({
+          accessToken,
+          id,
+        })),
 
       // 전체 Auth 데이터 초기화 (로그아웃 시)
-      clearAuthData: () => set({ accessToken: null, refreshToken: null }),
+      clearAuthData: () => set({ accessToken: null, id: null }),
     }),
     {
-      name: 'auth-storage', // 로컬 스토리지에 저장될 키
+      name: 'auth-storage',
     }
   )
 );

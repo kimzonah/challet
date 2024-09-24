@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosResponse, AxiosError } from 'axios';
-import axiosInstance from '../../api/challetAxios';
-import chBankAxiosInstance from '../../api/chBankAxios';
+import axiosInstance from '../../api/axiosInstance';
 import useSignUpStore from '../../store/useSignUpStore';
 import useAuthStore from '../../store/useAuthStore'; // 로그인 상태 저장을 위한 Zustand 스토어
 
@@ -35,7 +34,7 @@ const SetPasswordPage = () => {
   // 계좌 생성 요청
   const createAccount = async (phoneNumber: string) => {
     try {
-      const response = await chBankAxiosInstance.post('', null, {
+      const response = await axiosInstance.post('/api/ch-bank', null, {
         params: { phoneNumber },
       });
       console.log('계좌 생성 성공:', response.data);
