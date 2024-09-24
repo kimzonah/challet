@@ -1,6 +1,7 @@
 package com.challet.challetservice.domain.service;
 
 import com.challet.challetservice.domain.dto.request.UserUpdateNicknameRequestDTO;
+import com.challet.challetservice.domain.dto.request.UserUpdateProfileRequestDTO;
 import com.challet.challetservice.domain.dto.response.UserInfoResponseDTO;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.repository.UserRepository;
@@ -37,5 +38,15 @@ public class UserServiceImpl implements UserService {
 
         user.updateNickname(request.nickname());
         userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void updateProfileImage(String header, UserUpdateProfileRequestDTO request) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        user.updateProfileImage(request.profileImage());
     }
 }

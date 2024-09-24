@@ -60,7 +60,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 
-    @Operation(summary = "프로필 이미지 수정", description = "새 프로필 이미지를 입력 받아 프로필 이미지 수정")
+    @Operation(summary = "프로필 이미지 수정 (완료)", description = "새 프로필 이미지를 입력 받아 프로필 이미지 수정")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "프로필 이미지 수정 성공"),
         @ApiResponse(responseCode = "400", description = "프로필 이미지 수정 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -68,8 +68,9 @@ public class UserController {
     })
     @PatchMapping("/profileImages")
     public ResponseEntity<String> updateProfileImage(
-        @RequestHeader(value = "Authorization") String header,
+        @RequestHeader(value = "Authorization", required = false) String header,
         @RequestBody UserUpdateProfileRequestDTO request) {
+        userService.updateProfileImage(header, request);
         return null;
     }
 
