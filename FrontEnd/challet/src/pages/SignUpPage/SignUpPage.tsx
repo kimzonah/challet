@@ -33,10 +33,10 @@ const SignUpPage = () => {
     return currentYear - (yearPrefix + birthYear);
   };
 
-  // 성별 판별 함수 ('MALE' 또는 'FEMALE' 반환)
+  // 성별 판별 함수 ('0' 또는 '1' 반환)
   const determineGender = (idBackFirst: string): number | null => {
-    if (['1', '3'].includes(idBackFirst)) return 1; // 남성
-    if (['2', '4'].includes(idBackFirst)) return 2; // 여성
+    if (['1', '3'].includes(idBackFirst)) return 0; // 남성
+    if (['2', '4'].includes(idBackFirst)) return 1; // 여성
     return null; // 오류 처리
   };
 
@@ -72,133 +72,98 @@ const SignUpPage = () => {
     }
   };
 
-  // 주민등록번호 앞자리 입력 핸들러
-  const handleIdNumberFrontChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { value } = e.target;
-    setIdNumberFront(value);
-    if (value.length === 6 && idNumberBackFirstRef.current) {
-      idNumberBackFirstRef.current.focus(); // 앞자리 입력 후 뒷자리로 포커스 이동
-    }
-  };
-
-  // 주민등록번호 뒷자리 입력 핸들러
-  const handleIdNumberBackFirstChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { value } = e.target;
-    setIdNumberBackFirst(value);
-    if (value.length === 1 && phoneNumberRef.current) {
-      phoneNumberRef.current.focus(); // 뒷자리 입력 후 전화번호로 포커스 이동
-    }
-  };
-
   // 폼 제출 및 상태 저장
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     const age = calculateAge(idNumberFront);
     const gender = determineGender(idNumberBackFirst);
-
-    if (!gender) {
+    if (gender == null) {
       alert('잘못된 주민등록번호 뒷자리입니다.');
       return;
     }
-
-    // 상태에 저장할 데이터
-    const signUpData = {
-      phoneNumber,
-      nickname,
-      age,
-      gender,
-      name,
-    };
-
-    // Zustand 상태 저장
+    const signUpData = { phoneNumber, nickname, age, gender, name };
     setSignUpData(signUpData);
-    navigate('/set-password'); // 비밀번호 설정 페이지로 이동
+    navigate('/set-password');
   };
 
   return (
-    <div className='signup-container'>
-      <h1>회원가입</h1>
+    <div className='min-h-screen flex flex-col justify-center px-6'>
       <form onSubmit={handleSubmit}>
         {/* 주민등록번호 입력 필드 */}
         {showIdInput ? (
           <>
-            <div className='input-section animate-up'>
-              <label>주민등록번호</label>
-              <div className='id-input-container'>
+            <div className='mb-6'>
+              <label className='block text-lg font-bold text-gray-700'>
+                주민등록번호
+              </label>
+              <div className='flex items-center'>
                 <input
                   type='text'
                   value={idNumberFront}
-                  onChange={handleIdNumberFrontChange}
+                  onChange={(e) => setIdNumberFront(e.target.value)}
                   placeholder='앞자리 (예: 990101)'
                   maxLength={6}
                   required
+                  className='border border-gray-300 rounded-md py-2 px-3 mr-2 w-24'
                   ref={idNumberFrontRef}
                 />
                 <span>-</span>
                 <input
                   type='text'
                   value={idNumberBackFirst}
-                  onChange={handleIdNumberBackFirstChange}
+                  onChange={(e) => setIdNumberBackFirst(e.target.value)}
                   placeholder='뒷자리 첫 숫자'
                   maxLength={1}
                   required
+                  className='border border-gray-300 rounded-md py-2 px-3 ml-2 w-16'
                   ref={idNumberBackFirstRef}
                 />
-                <span>●●●●●●</span>
+                <span className='ml-2'>●●●●●●</span>
               </div>
             </div>
 
-            {/* 전화번호 입력 */}
-            <div className='input-section'>
-              <label>전화번호</label>
+            <div className='mb-6'>
+              <label className='block text-lg font-bold text-gray-700'>
+                전화번호
+              </label>
               <input
                 type='text'
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder='전화번호를 입력하세요'
                 maxLength={11}
-                pattern='\d{11}' // 정확히 11자리 숫자만 허용
                 required
+                className='border border-gray-300 rounded-md py-2 px-3 w-full'
                 ref={phoneNumberRef}
               />
             </div>
 
-            {/* 가입 완료 버튼 */}
-            <Button
-              text='가입 완료'
-              disabled={!isFormValid}
-              className='fixed-bottom-button'
-            />
+            <Button text='가입 완료' disabled={!isFormValid} />
           </>
         ) : (
           <>
-            {/* 이름 입력 필드 */}
-            <div className='input-section animate-down'>
-              <label>이름</label>
+            <div className='mb-6'>
+              <label className='block text-lg font-bold text-gray-700'>
+                이름
+              </label>
               <input
                 type='text'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder='이름을 입력하세요'
                 required
+                className='border border-gray-300 rounded-md py-2 px-3 w-full'
               />
               <Button
                 text='확인'
-                onClick={handleNameSubmit} // 이름 입력 완료 버튼
+                onClick={handleNameSubmit}
                 disabled={name.length === 0}
-                className='fixed-bottom-button'
               />
             </div>
           </>
         )}
 
-        {/* 오류 메시지 */}
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+        {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
       </form>
     </div>
   );

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import useAignUpStore from '../../store/useSignUpStore';
+// import useSignUpStore from '../../store/useSignUpStore';
 import useAccountStore from '../../store/useAccountStore';
-import chBankAxiosInstance from '../../api/chBankAxios'; // 커스텀 Axios 인스턴스 import
+import AxiosInstance from '../../api/axiosInstance';
 
 interface Account {
   id: number;
@@ -30,9 +30,8 @@ const WalletBalanceSection = () => {
     const fetchAccountInfo = async () => {
       try {
         console.log(`Requesting account info with phoneNumber: ${phoneNumber}`);
-        const response = await chBankAxiosInstance.get<AccountResponse>('', {
-          params: { phoneNumber }, // 쿼리 파라미터로 phoneNumber 전달
-        });
+        const response =
+          await AxiosInstance.get<AccountResponse>('/api/ch-bank');
 
         console.log('Response data:', response.data);
 

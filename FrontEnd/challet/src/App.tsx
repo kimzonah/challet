@@ -10,7 +10,9 @@ import 'react-dates/lib/css/_datepicker.css';
 import ChallengeRoom from './components/Challenge/ChallengeRoom';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
+import PhoneCheckPage from './pages/PhoneCheckPage/PhoneCheckPage';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
+import SignUpPage2 from './pages/SignUpPage/SignUpPage2';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
@@ -66,7 +68,9 @@ function App() {
       <Routes>
         <Route path='/' element={<OnboardingPage />} />
         <Route path='/phone-auth' element={<PhoneAuthPage />} />
+        <Route path='/phone-check' element={<PhoneCheckPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/signup2' element={<SignUpPage2 />} />
         <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
