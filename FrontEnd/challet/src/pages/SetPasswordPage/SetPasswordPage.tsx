@@ -77,9 +77,7 @@ const SetPasswordPage = () => {
           // Access Token 저장 (로그인 상태 유지)
           setAuthData({
             accessToken,
-            refreshToken: null, // 필요에 따라 refreshToken도 처리
-            nickname,
-            profileImageUrl: null,
+            id: '',
           });
 
           console.log(

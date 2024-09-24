@@ -39,6 +39,9 @@ const LoginPage = () => {
         id,
       });
 
+      // Access Token 출력
+      console.log('로그인 성공 - Access Token:', accessToken);
+
       // 로그인 성공 후 메인 페이지로 이동
       navigate('/wallet');
     } catch (error) {
