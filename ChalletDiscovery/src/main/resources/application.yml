@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: challetdiscovery
+    name: challet-discovery
 
 eureka:
   client:
