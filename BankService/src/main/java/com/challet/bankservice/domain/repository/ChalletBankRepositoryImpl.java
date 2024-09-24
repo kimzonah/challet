@@ -99,4 +99,15 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .fetchOne();
     }
+
+    @Override
+    public void setMyDataAuthorization(String phoneNumber) {
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        query
+            .update(challetBank)
+            .set(challetBank.myDataStatus, true)
+            .where(challetBank.phoneNumber.eq(phoneNumber))
+            .execute();
+    }
 }

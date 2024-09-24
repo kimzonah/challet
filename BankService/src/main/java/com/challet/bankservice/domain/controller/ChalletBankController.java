@@ -131,11 +131,13 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "201", description = "마이데이터 연결 성공"),
         @ApiResponse(responseCode = "400", description = "마이데이터 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity connectMyDataBanks(
+    public ResponseEntity<MyDataBankAccountInfoResponseDTO> connectMyDataBanks(
         @RequestHeader(value = "Authorization") String tokenHeader,
         @RequestBody BankSelectionRequestDTO bankSelectionRequestDTO) {
         MyDataBankAccountInfoResponseDTO myDataAccounts = challetBankService.connectMyDataBanks(
             tokenHeader, bankSelectionRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(myDataAccounts);
     }
+
+    
 }
