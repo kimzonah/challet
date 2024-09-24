@@ -1,10 +1,12 @@
 import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import ChallengeProgressbar from './ChallengeProgressbar'; // Progressbar 임포트
 import TransactionList from './SharedTransactionList';
+import webSocketService from '../../hooks/websocket';
 
 // 남은 일수를 계산하는 함수
 const calculateRemainDays = (endDateString: string): number => {
@@ -28,6 +30,12 @@ const ChallengeRoom = () => {
   if (!challenge) {
     return <div>챌린지 정보가 없습니다.</div>;
   }
+
+  useEffect(() => {
+    // webSocketService.connect();
+
+    return () => {};
+  });
 
   // 남은 일 수 계산
   const remainDays = calculateRemainDays(challenge.endDate);
