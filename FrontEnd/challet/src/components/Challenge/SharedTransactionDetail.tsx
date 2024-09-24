@@ -8,6 +8,10 @@ import {
   faSyncAlt,
   faEdit,
 } from '@fortawesome/free-solid-svg-icons'; // 수정 아이콘 추가
+import Emoji_1 from '../../assets/Challenge/Emoji-1.png'; // 이모티콘 이미지 import
+import Emoji_2 from '../../assets/Challenge/Emoji-2.png';
+import Emoji_3 from '../../assets/Challenge/Emoji-3.png';
+import Comment from '../../assets/Challenge/Comment.png';
 
 const SharedTransactionDetail = () => {
   const { id } = useParams<{ id: string }>(); // URL에서 sharedTransactionId 가져오기
@@ -92,24 +96,24 @@ const SharedTransactionDetail = () => {
         {/* 이모티콘 및 댓글 개수 */}
         <div className='flex space-x-4 py-2 border-b-2 border-dashed'>
           <div className='flex items-center'>
-            <span className='text-purple-500 mr-1'>😍</span>
+            <img src={Emoji_3} alt='Emoji 3' className='w-5 h-5 mr-1' />
             <span>{transactionDetail.threeEmojiNum}</span>
           </div>
           <div className='flex items-center'>
-            <span className='text-yellow-500 mr-1'>😲</span>
+            <img src={Emoji_2} alt='Emoji 2' className='w-5 h-5 mr-1' />
             <span>{transactionDetail.twoEmojiNum}</span>
           </div>
           <div className='flex items-center'>
-            <span className='text-red-500 mr-1'>😡</span>
+            <img src={Emoji_1} alt='Emoji 1' className='w-5 h-5 mr-1' />
             <span>{transactionDetail.oneEmojiNum}</span>
           </div>
           <div className='flex items-center'>
-            <span className='mr-1'>💬</span>
+            <img src={Comment} alt='comment' className='w-5 h-5 mr-1' />
             <span>{transactionDetail.commentNum}</span>
           </div>
         </div>
 
-        {/* 댓글 컴포넌트 추가 */}
+        {/* 댓글 컴포넌트에 refreshComments 상태 전달 */}
         <SharedTransactionComments
           sharedTransactionId={transactionDetail.sharedTransactionId}
         />

@@ -57,6 +57,11 @@ export const useChallengeApi = () => {
       profileImage: 'https://example.com/rabbit_profile.png',
       content: '이건 좀 별로인 것 같아요...',
     },
+    {
+      nickname: '배고픈 토끼',
+      profileImage: 'https://example.com/rabbit_profile.png',
+      content: '이건 좀 별로인 것 같아요...',
+    },
   ];
 
   // 챌린지 참가 API 요청 함수
