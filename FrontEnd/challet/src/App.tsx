@@ -10,7 +10,9 @@ import 'react-dates/lib/css/_datepicker.css';
 import ChallengeRoom from './components/Challenge/ChallengeRoom';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
+import PhoneCheckPage from './pages/PhoneCheckPage/PhoneCheckPage';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
+import SignUpPage2 from './pages/SignUpPage/SignUpPage2';
 import LoginPage from './pages/LoginPage/LoginPage';
 import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
@@ -28,6 +30,8 @@ import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'
 import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
 import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
 import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
+import SharedTransactionEdit from './components/Challenge/SharedTransactionEdit';
+import ImageUpload from './pages/TestPage/ImageUpload';
 import './assets/App.css';
 
 function App() {
@@ -38,6 +42,7 @@ function App() {
   const matchChallengeRoom = useMatch('/challengeRoom/:id');
   const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
   const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
+  const sharedTransactionEdit = useMatch('/sharedTransactionEdit');
   const matchpayment = useMatch('/payment');
   const matchpayresult = useMatch('/payresult');
   const matchHistory = useMatch('/history');
@@ -51,7 +56,8 @@ function App() {
     matchChallengeRoom ||
     sharedTransactionCreate ||
     sharedTransactionDetail ||
-    matchHistory ||
+    sharedTransactionEdit;
+  matchHistory ||
     matchHistorydetail ||
     matchpayment ||
     matchpayresult ||
@@ -64,7 +70,9 @@ function App() {
       <Routes>
         <Route path='/' element={<OnboardingPage />} />
         <Route path='/phone-auth' element={<PhoneAuthPage />} />
+        <Route path='/phone-check' element={<PhoneCheckPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/signup2' element={<SignUpPage2 />} />
         <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
@@ -91,6 +99,12 @@ function App() {
           path='/sharedTransactionDetail/:id'
           element={<SharedTransactionDetail />}
         />
+        <Route
+          path='/sharedTransactionEdit'
+          element={<SharedTransactionEdit />}
+        />
+
+        <Route path='/test' element={<ImageUpload />} />
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}

@@ -1,20 +1,18 @@
-# Use Node.js 20.17.0 for building the React app
-FROM node:20.17.0 as build
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Copy the package.json and package-lock.json to the working directory
+FROM node:20 as build-stage
+WORKDIR /challet
 COPY package*.json ./
 
-# Install the dependencies
-RUN npm install
-
-# Copy the rest of the application files
+RUN npm install --legacy-peer-deps
 COPY . .
-
-# Build the React application
 RUN npm run build
 
-# Expose a port (optional, since it's just a build stage)
-EXPOSE 3000
+FROM nginx:stable-alpine as production-stage
+
+# 저장된 경로에서 nginx.conf 파일을 복사
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+
+COPY --from=build-stage /challet/dist /usr/share/nginx/html
+COPY --from=build-stage /challet/dev-dist /usr/share/nginx/html
+
+EXPOSE 4000
+CMD ["nginx", "-g", "daemon off;"]

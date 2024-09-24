@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-// import useAuthStore from '../../store/useAuthStore';
+import useAuthStore from '../../store/useAuthStore';
 import useAccountStore from '../../store/useAccountStore';
-import chBankAxiosInstance from '../../api/chBankAxios';
+import AxiosInstance from '../../api/axiosInstance';
+import axios from 'axios';
 
 interface Account {
   id: number;
@@ -27,13 +27,13 @@ const WalletBalanceSection = () => {
 
   const { setAccountInfo: setStoreAccountInfo } = useAccountStore();
 
-  // const { refreshToken } = useAuthStore();
+  const { accessToken } = useAuthStore();
   // 테스트용 refreshToken
-  const refreshToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImlhdCI6MTcyNzEzOTcwNSwiZXhwIjoxNzI3NzQ0NTA1LCJ0eXBlIjoicmVmcmVzaF90b2tlbiJ9.030UDcf6ZNCzI3DMZ121lwciYqfaW3B373ntOmgg8v3mtWP4uaPRDzHmA1LILW5BiHEoE7U2-8SqgveLxSksSQ';
+  // const AccessToken =
+  // 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImlhdCI6MTcyNzEzOTcwNSwiZXhwIjoxNzI3NzQ0NTA1LCJ0eXBlIjoicmVmcmVzaF90b2tlbiJ9.030UDcf6ZNCzI3DMZ121lwciYqfaW3B373ntOmgg8v3mtWP4uaPRDzHmA1LILW5BiHEoE7U2-8SqgveLxSksSQ';
 
   const fetchAccountInfo = useCallback(async () => {
-    if (!refreshToken) {
+    if (!accessToken) {
       setStatus({
         loading: false,
         error: true,
@@ -44,14 +44,10 @@ const WalletBalanceSection = () => {
 
     try {
       console.log(
-        `리프레시 토큰으로 계좌 정보를 요청 중입니다: ${refreshToken}`
+        `리프레시 토큰으로 계좌 정보를 요청 중입니다: ${accessToken}`
       );
 
-      const response = await chBankAxiosInstance.get<AccountResponse>('', {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`, // Authorization 헤더에 refreshToken 추가
-        },
-      });
+      const response = await AxiosInstance.get<AccountResponse>('/api/ch-bank');
 
       if (response.data.accounts.length > 0) {
         const account = response.data.accounts[0];
@@ -66,35 +62,36 @@ const WalletBalanceSection = () => {
         });
       }
     } catch (error) {
-      handleError(error);
+      // handleError(error)
+      console.log(error);
     } finally {
       setStatus((prevState) => ({ ...prevState, loading: false }));
     }
-  }, [refreshToken, setStoreAccountInfo]); // useCallback으로 함수 메모이제이션 및 의존성 배열 추가
+  }, [accessToken, setStoreAccountInfo]); // useCallback으로 함수 메모이제이션 및 의존성 배열 추가
 
-  const handleError = (error: unknown) => {
-    if (axios.isAxiosError(error)) {
-      const message =
-        error.response?.data?.errorMessage || '알 수 없는 오류가 발생했습니다.';
-      console.error('Axios error:', message); // Axios 오류 로그
-      setStatus({
-        loading: false,
-        error: true,
-        errorMessage:
-          error.response?.status === 400 &&
-          error.response?.data?.errorCode === 'NotFoundUserAccountException'
-            ? '계좌가 존재하지 않습니다.'
-            : `오류: ${message}`,
-      });
-    } else {
-      console.error('Non-Axios error:', error); // 일반 오류 로그
-      setStatus({
-        loading: false,
-        error: true,
-        errorMessage: '요청을 보내는 중 오류가 발생했습니다.',
-      });
-    }
-  };
+  // const handleError = (error: unknown) => {
+  //   if (axios.isAxiosError(error)) {
+  //     const message =
+  //       error.response?.data?.errorMessage || '알 수 없는 오류가 발생했습니다.';
+  //     console.error('Axios error:', message); // Axios 오류 로그
+  //     setStatus({
+  //       loading: false,
+  //       error: true,
+  //       errorMessage:
+  //         error.response?.status === 400 &&
+  //         error.response?.data?.errorCode === 'NotFoundUserAccountException'
+  //           ? '계좌가 존재하지 않습니다.'
+  //           : `오류: ${message}`,
+  //     });
+  //   } else {
+  //     console.error('Non-Axios error:', error); // 일반 오류 로그
+  //     setStatus({
+  //       loading: false,
+  //       error: true,
+  //       errorMessage: '요청을 보내는 중 오류가 발생했습니다.',
+  //     });
+  //   }
+  // };
 
   useEffect(() => {
     console.log('WalletBalanceSection mounted, starting data fetch...'); // 컴포넌트 마운트 시 로그

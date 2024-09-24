@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import chBankAxiosInstance from '../../api/chBankAxios';
+import AxiosInstance from '../../api/axiosInstance';
 import { TopBar } from '../../components/topbar/topbar';
 
 interface TransactionDetail {
@@ -24,8 +24,8 @@ const HistoryDetailPage = () => {
       if (!transactionId) return;
 
       try {
-        const response = await chBankAxiosInstance.get<TransactionDetail>(
-          `/details`,
+        const response = await AxiosInstance.get<TransactionDetail>(
+          `api/ch-bank/details`,
           {
             headers: { TransactionId: transactionId },
           }

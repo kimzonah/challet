@@ -5,8 +5,7 @@ import { useChallengeApi } from '../../hooks/useChallengeApi';
 
 const ChallengePage = () => {
   const [activeTab, setActiveTab] = useState('챌린지 찾기'); // 기본 활성화된 탭
-  // const { challenges, isLoading, fetchChallenges, exampleChallenges } = useChallengeApi();
-  const { isLoading, fetchChallenges, exampleChallenges } = useChallengeApi();
+  const { challenges, isLoading, fetchChallenges } = useChallengeApi();
   const [keyword, setKeyword] = useState(''); // 검색 키워드
   const [category, setCategory] = useState(''); // 선택된 카테고리
 
@@ -37,12 +36,6 @@ const ChallengePage = () => {
     }
   }, [activeTab]);
 
-  // 챌린지 찾기 탭에서는 isIncluded가 false인 챌린지만 필터링
-  const filteredChallenges =
-    activeTab === '챌린지 찾기'
-      ? exampleChallenges.filter((challenge) => !challenge.isIncluded)
-      : exampleChallenges;
-
   return (
     <div className='min-h-screen flex flex-col items-center p-2'>
       <div className='flex justify-center w-full mb-2 mt-8'>
@@ -66,16 +59,20 @@ const ChallengePage = () => {
           <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00CCCC]'></div>
         </div>
       ) : (
-        <div className='w-full'>
-          {activeTab === '챌린지 찾기' && (
-            <CategoryList
-              activeCategory={category}
-              onCategoryChange={handleCategoryChange}
-              onSearch={handleSearch}
-            />
-          )}
+        <div className='w-full overflow-y-auto'>
+          {/* CategoryList가 스크롤될 때 상단에 고정되도록 설정 */}
+          <div>
+            {activeTab === '챌린지 찾기' && (
+              <CategoryList
+                activeCategory={category}
+                onCategoryChange={handleCategoryChange}
+                onSearch={handleSearch}
+              />
+            )}
+          </div>
+
           <ChallengeForm
-            challenges={filteredChallenges} // 필터링된 챌린지 목록 전달
+            challenges={challenges}
             isMyChallenges={activeTab === '나의 챌린지'}
           />
         </div>
