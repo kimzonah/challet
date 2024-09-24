@@ -28,7 +28,7 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "file:/var/jenkins_home/workspace/challet/ChalletService/src/main/resources/application-key.yml"
+#    import: "file:/var/jenkins_home/workspace/challet/ChalletService/src/main/resources/application-key.yml"
 
 eureka:
   client:
