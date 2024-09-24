@@ -28,7 +28,7 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "file:/var/jenkins_home/workspace/ch-bank/BankService/src/main/resources/application-key.yml"
+    import: "classpath:/application-key.yml"
 
 eureka:
   client:
@@ -54,13 +54,10 @@ spring:
         p6spy: "%(currentTime)|%(executionTime)|%(category)|%(sqlSingleLine)"
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    format_sql: true
+      ddl-auto: validate
+      dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+
 
 springdoc:
   api-docs:
