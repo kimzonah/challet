@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         user.updateNickname(request.nickname());
-        userRepository.save(user);
     }
 
     @Override
