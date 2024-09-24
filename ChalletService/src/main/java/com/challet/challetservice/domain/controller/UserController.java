@@ -71,7 +71,7 @@ public class UserController {
         @RequestHeader(value = "Authorization", required = false) String header,
         @RequestBody UserUpdateProfileRequestDTO request) {
         userService.updateProfileImage(header, request);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 
     @Operation(summary = "내 리워드 조회", description = "내가 받은 리워드 리스트 조회(최근 획득한 리워드가 가장 앞순서에 오도록 정렬)")
