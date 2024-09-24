@@ -25,7 +25,7 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "optional:file:/KbBankService/src/main/resources/application-key.yml"
+    import: "file:/var/jenkins_home/workspace/ch-bank/KbBankService/src/main/resources/application-key.yml"
 
 eureka:
   client:
