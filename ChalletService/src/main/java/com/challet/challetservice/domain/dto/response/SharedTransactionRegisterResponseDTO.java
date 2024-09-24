@@ -1,6 +1,7 @@
 package com.challet.challetservice.domain.dto.response;
 
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
+import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -8,6 +9,10 @@ import lombok.Builder;
 @Builder
 @Schema(description = "공유 거래 내역 수동 등록 웹소켓 응답 DTO")
 public record SharedTransactionRegisterResponseDTO(
+
+    @Schema(description = "등록된 거래 내역 ID")
+    Long id,
+
     @Schema(description = "이미지")
     String image,
 
@@ -30,12 +35,13 @@ public record SharedTransactionRegisterResponseDTO(
     String profileImage
 ) {
 
-    public static SharedTransactionRegisterResponseDTO from(SharedTransactionRegisterRequestDTO request, User user) {
+    public static SharedTransactionRegisterResponseDTO from(SharedTransaction savedSharedTransaction, User user) {
         return SharedTransactionRegisterResponseDTO.builder()
-            .image(request.image())
-            .withdrawal(request.withdrawal())
-            .transactionAmount(request.transactionAmount())
-            .content(request.content())
+            .id(savedSharedTransaction.getId())
+            .image(savedSharedTransaction.getImage())
+            .withdrawal(savedSharedTransaction.getWithdrawal())
+            .transactionAmount(savedSharedTransaction.getTransactionAmount())
+            .content(savedSharedTransaction.getContent())
             .userId(user.getId())
             .nickname(user.getNickname())
             .profileImage(user.getProfileImage())

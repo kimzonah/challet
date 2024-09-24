@@ -174,9 +174,10 @@ public class ChallengeServiceImpl implements ChallengeService {
             throw new ExceptionResponse(CustomException.ACCESS_DENIED_EXCEPTION);
         }
 
-        sharedTransactionRepository.save(SharedTransaction.from(request, userChallengeRepository.findByChallengeAndUser(challenge, user)));
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user);
+        SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.from(request, userChallenge));
 
-        return SharedTransactionRegisterResponseDTO.from(request, user);
+        return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
     }
 
     public static String generateCode(int length) {
