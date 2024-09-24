@@ -31,7 +31,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: https://challet.world/eureka
+      defaultZone: http://challet-discovery-spring:8761/eureka
 
 ---
 # 공통 설정
