@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+// import useAuthStore from '../../store/useAuthStore';
 import useAccountStore from '../../store/useAccountStore';
 import chBankAxiosInstance from '../../api/chBankAxios';
 
@@ -26,9 +27,10 @@ const WalletBalanceSection = () => {
 
   const { setAccountInfo: setStoreAccountInfo } = useAccountStore();
 
+  // const { refreshToken } = useAuthStore();
   // 테스트용 refreshToken
   const refreshToken =
-    'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImlhdCI6MTcyNzAyNDUwMSwiZXhwIjoxNzI3NjI5MzAxLCJ0eXBlIjoicmVmcmVzaF90b2tlbiJ9.JrHv5jNwJKwZm2KifUza8ORCJK1K9OAUF_d4-pD1p9oBEJu_VilPEO2AqZ7oVHqSSibv2Wg5GTcgpAbyIvBp_w';
+    'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTAxMjM0NTY3OCIsImlhdCI6MTcyNzEzOTcwNSwiZXhwIjoxNzI3NzQ0NTA1LCJ0eXBlIjoicmVmcmVzaF90b2tlbiJ9.030UDcf6ZNCzI3DMZ121lwciYqfaW3B373ntOmgg8v3mtWP4uaPRDzHmA1LILW5BiHEoE7U2-8SqgveLxSksSQ';
 
   const fetchAccountInfo = useCallback(async () => {
     if (!refreshToken) {
