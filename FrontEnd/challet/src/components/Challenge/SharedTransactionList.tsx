@@ -83,9 +83,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
       {sharedTransactions.map((transaction: Transaction) => (
         <div
           key={transaction.sharedTransactionId}
-          className={`p-4 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px] ${
-            transaction.isMine ? 'ml-auto ml-4' : 'mr-auto mr-4'
-          }`} // 내 거래는 오른쪽에 정렬, 다른 사람의 거래는 왼쪽에 정렬
+          className={'p-4 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px]'}
         >
           {/* 내 거래 내역일 경우 */}
           {transaction.isMine ? (
@@ -113,7 +111,14 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     }
                   >
                     <div className='flex items-center justify-between'>
-                      <div className='font-semibold'>
+                      <div
+                        className='font-semibold overflow-hidden'
+                        style={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
                         {transaction.withdrawal}
                         <span className='ml-2'>
                           {transaction.transactionAmount.toLocaleString()}원
@@ -124,7 +129,16 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         className='text-gray-400'
                       />
                     </div>
-                    <p className='text-gray-500'>{transaction.content}</p>
+                    <p
+                      className='text-gray-500 text-sm overflow-hidden'
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {transaction.content}
+                    </p>
                   </div>
                 </div>
                 <div className='flex justify-end items-center'>
@@ -201,7 +215,14 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                 className='w-10 h-10 rounded-full mr-3'
               />
               <div className='max-w-[85%] w-full'>
-                <span className='font-semibold flex'>
+                <span
+                  className='font-semibold flex overflow-hidden'
+                  style={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
                   {transaction.nickname}
                 </span>
 
@@ -223,7 +244,14 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     }
                   >
                     <div className='flex items-center justify-between'>
-                      <div className='font-semibold'>
+                      <div
+                        className='font-semibold overflow-hidden'
+                        style={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
                         {transaction.withdrawal}
                         <span className='ml-2'>
                           {transaction.transactionAmount.toLocaleString()}원
@@ -234,7 +262,16 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         className='text-gray-400'
                       />
                     </div>
-                    <p className='text-gray-500'>{transaction.content}</p>
+                    <p
+                      className='text-gray-500 text-sm overflow-hidden'
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {transaction.content}
+                    </p>
                   </div>
                   <div className='text-sm text-gray-400 ml-1'>
                     {formatTime(transaction.transactionDateTime)}
