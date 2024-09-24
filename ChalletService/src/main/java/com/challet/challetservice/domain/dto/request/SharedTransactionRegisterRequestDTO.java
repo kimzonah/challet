@@ -5,6 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "공유 거래 내역 수동 등록 요청 DTO")
 public record SharedTransactionRegisterRequestDTO(
 
+    @Schema(description = "유저 행위")
+    ActionType action,
+
     @Schema(description = "이미지")
     String image,
 

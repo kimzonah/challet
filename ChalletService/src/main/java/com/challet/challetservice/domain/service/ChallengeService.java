@@ -19,5 +19,5 @@ public interface ChallengeService {
 
     void joinChallenge(String header, Long id, ChallengeJoinRequestDTO request);
 
-    SharedTransactionRegisterResponseDTO registerTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request);
+    SharedTransactionRegisterResponseDTO handleSharedTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request);
 }

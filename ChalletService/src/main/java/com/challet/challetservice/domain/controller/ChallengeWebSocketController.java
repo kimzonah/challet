@@ -30,7 +30,7 @@ public class ChallengeWebSocketController {
     @MessageMapping("/challenges/{id}/shared-transactions")
     @SendTo("/topic/challenges/{id}/shared-transactions")
     public SharedTransactionRegisterResponseDTO registerTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long id, SharedTransactionRegisterRequestDTO request) {
-        return challengeService.registerTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
+        return challengeService.handleSharedTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
     }
 
 

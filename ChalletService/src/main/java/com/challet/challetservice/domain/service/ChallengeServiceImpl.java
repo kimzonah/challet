@@ -1,5 +1,6 @@
 package com.challet.challetservice.domain.service;
 
+import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.ChallengeJoinRequestDTO;
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
@@ -161,7 +162,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public SharedTransactionRegisterResponseDTO registerTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request) {
+    public SharedTransactionRegisterResponseDTO handleSharedTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
@@ -174,10 +175,16 @@ public class ChallengeServiceImpl implements ChallengeService {
             throw new ExceptionResponse(CustomException.ACCESS_DENIED_EXCEPTION);
         }
 
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user);
-        SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.from(request, userChallenge));
+        // action이 ADD일때
+        if (request.action().equals(ActionType.ADD)){
 
-        return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
+            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user);
+            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.from(request, userChallenge));
+
+            return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
+        }
+        
+        return null;
     }
 
     public static String generateCode(int length) {
