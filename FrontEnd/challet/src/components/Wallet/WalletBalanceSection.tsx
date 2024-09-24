@@ -62,36 +62,35 @@ const WalletBalanceSection = () => {
         });
       }
     } catch (error) {
-      // handleError(error)
-      console.log(error);
+      handleError(error);
     } finally {
       setStatus((prevState) => ({ ...prevState, loading: false }));
     }
   }, [accessToken, setStoreAccountInfo]); // useCallback으로 함수 메모이제이션 및 의존성 배열 추가
 
-  // const handleError = (error: unknown) => {
-  //   if (axios.isAxiosError(error)) {
-  //     const message =
-  //       error.response?.data?.errorMessage || '알 수 없는 오류가 발생했습니다.';
-  //     console.error('Axios error:', message); // Axios 오류 로그
-  //     setStatus({
-  //       loading: false,
-  //       error: true,
-  //       errorMessage:
-  //         error.response?.status === 400 &&
-  //         error.response?.data?.errorCode === 'NotFoundUserAccountException'
-  //           ? '계좌가 존재하지 않습니다.'
-  //           : `오류: ${message}`,
-  //     });
-  //   } else {
-  //     console.error('Non-Axios error:', error); // 일반 오류 로그
-  //     setStatus({
-  //       loading: false,
-  //       error: true,
-  //       errorMessage: '요청을 보내는 중 오류가 발생했습니다.',
-  //     });
-  //   }
-  // };
+  const handleError = (error: unknown) => {
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.errorMessage || '알 수 없는 오류가 발생했습니다.';
+      console.error('Axios error:', message); // Axios 오류 로그
+      setStatus({
+        loading: false,
+        error: true,
+        errorMessage:
+          error.response?.status === 400 &&
+          error.response?.data?.errorCode === 'NotFoundUserAccountException'
+            ? '계좌가 존재하지 않습니다.'
+            : `오류: ${message}`,
+      });
+    } else {
+      console.error('Non-Axios error:', error); // 일반 오류 로그
+      setStatus({
+        loading: false,
+        error: true,
+        errorMessage: '요청을 보내는 중 오류가 발생했습니다.',
+      });
+    }
+  };
 
   useEffect(() => {
     console.log('WalletBalanceSection mounted, starting data fetch...'); // 컴포넌트 마운트 시 로그

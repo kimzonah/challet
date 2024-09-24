@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import chBankAxiosInstance from '../../api/chBankAxios'; // Axios 인스턴스 가져오기
+import AxiosInstance from '../../api/axiosInstance'; // Axios 인스턴스 가져오기
 import useAccountStore from '../../store/useAccountStore'; // AccountStore 가져오기
 
 // QR 데이터의 형식을 정의하는 인터페이스
@@ -41,7 +41,7 @@ const PayResult = () => {
           category: parsedData.category,
         };
 
-        await chBankAxiosInstance.post('/payments', data, {
+        await AxiosInstance.post('api/ch-bank/payments', data, {
           headers: { AccountId: accountInfo.id.toString() },
         });
 
@@ -135,7 +135,7 @@ const PayResult = () => {
             <h2 className='text-xl text-[#373A3F] font-bold mt-6 mb-32'>
               결제 실패
             </h2>
-            <p className='text-[#585962] text-lg mb-28 text-center'>
+            <p className='text-[#585962] text-lg font-medium mb-28 text-center'>
               잔액이 부족합니다.
             </p>
           </div>
