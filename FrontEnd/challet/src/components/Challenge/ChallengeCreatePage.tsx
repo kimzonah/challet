@@ -1,4 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useChallengeApi } from '../../hooks/useChallengeApi';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
@@ -15,6 +17,9 @@ interface RequestBody {
 }
 
 const ChallengeCreatePage: React.FC = () => {
+  const { createChallenge } = useChallengeApi();
+  const navigate = useNavigate();
+
   // 각 입력 필드의 상태를 관리
   const [category, setCategory] = useState<string>('');
   const [roomName, setRoomName] = useState<string>('');
@@ -35,8 +40,16 @@ const ChallengeCreatePage: React.FC = () => {
       setter(e.target.value);
     };
 
+  // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
+  const formatDateToLocal = (date: Date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // 폼 제출 시 데이터 처리
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     // 입력 값 검증
@@ -50,22 +63,31 @@ const ChallengeCreatePage: React.FC = () => {
       category,
       title: roomName,
       spendingLimit: Number(spendingLimit),
-      startDate: startDate.toISOString().split('T')[0], // ISO 문자열을 YYYY-MM-DD로 변환
-      endDate: endDate.toISOString().split('T')[0],
+      startDate: formatDateToLocal(startDate),
+      endDate: formatDateToLocal(endDate),
       maxParticipants: Number(maxParticipants),
       isPublic,
     };
 
     console.log('RequestBody:', requestBody);
 
-    // 성공적인 데이터 제출 후 모달을 표시
-    setModalMessage('챌린지 생성이 완료되었습니다!');
-    setShowModal(true);
+    // 챌린지 생성 API 호출
+    try {
+      await createChallenge(requestBody); // createChallenge API 함수 호출
+      // 성공적인 데이터 제출 후 모달을 표시
+      console.log('requestBody:', requestBody);
+      setModalMessage('챌린지 생성이 완료되었습니다!');
+      setShowModal(true);
+    } catch (error) {
+      console.error('챌린지 생성 중 오류 발생:', error);
+      setModalMessage('챌린지 생성 중 오류가 발생했습니다.');
+      setShowModal(true);
+    }
   };
 
-  // 오늘 날짜 + 1 (내일) 계산
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  // 오늘 날짜 + 6 (내일) 계산
+  const startDateLimit = new Date();
+  startDateLimit.setDate(startDateLimit.getDate() + 6);
 
   return (
     <div>
@@ -76,7 +98,7 @@ const ChallengeCreatePage: React.FC = () => {
           <div>
             <label className='flex text-sm font-semibold mb-2 ml-2'>주제</label>
             <select
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2'
+              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               value={category}
               onChange={handleInputChange(setCategory)}
             >
@@ -100,7 +122,7 @@ const ChallengeCreatePage: React.FC = () => {
               value={roomName}
               maxLength={15}
               onChange={handleInputChange(setRoomName)}
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2'
+              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               placeholder='방 이름 (최대 15자)'
             />
           </div>
@@ -114,7 +136,7 @@ const ChallengeCreatePage: React.FC = () => {
               type='number'
               value={spendingLimit}
               onChange={handleInputChange(setSpendingLimit)}
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2'
+              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               placeholder='지출 한도를 입력하세요'
             />
           </div>
@@ -132,11 +154,11 @@ const ChallengeCreatePage: React.FC = () => {
               startDate={startDate}
               endDate={endDate}
               selectsRange={true} // 시작 날짜와 종료 날짜를 동시에 선택
-              minDate={tomorrow} // 시작 날짜를 내일부터 선택 가능
+              minDate={startDateLimit} // 시작 날짜를 내일부터 선택 가능
               locale={ko}
               dateFormat='yyyy년 MM월 dd일'
               placeholderText='시작 날짜 ~ 종료 날짜'
-              className='w-[300px] py-2 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500'
+              className='w-[300px] py-2 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
             />
           </div>
 
@@ -148,9 +170,9 @@ const ChallengeCreatePage: React.FC = () => {
             <select
               value={maxParticipants}
               onChange={handleInputChange(setMaxParticipants)}
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2'
+              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
             >
-              {[...Array(30).keys()].map((num) => (
+              {[...Array(10).keys()].map((num) => (
                 <option key={num + 1} value={num + 1}>
                   {num + 1}명
                 </option>
@@ -202,7 +224,10 @@ const ChallengeCreatePage: React.FC = () => {
             <p className='text-center font-semibold mb-4'>{modalMessage}</p>
             <button
               className='w-full py-2 bg-[#00CCCC] text-white rounded-lg hover:bg-teal-600'
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setShowModal(false);
+                navigate(-1); // 모달을 닫을 때 뒤로가기
+              }}
             >
               닫기
             </button>
