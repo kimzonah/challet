@@ -56,8 +56,8 @@ function App() {
     matchChallengeRoom ||
     sharedTransactionCreate ||
     sharedTransactionDetail ||
-    sharedTransactionEdit;
-  matchHistory ||
+    sharedTransactionEdit ||
+    matchHistory ||
     matchHistorydetail ||
     matchpayment ||
     matchpayresult ||
