@@ -1,16 +1,21 @@
 package com.challet.challetservice.domain.service;
 
+import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.ChallengeJoinRequestDTO;
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
+import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
 import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.ChallengeStatus;
+import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
 import com.challet.challetservice.domain.repository.ChallengeRepositorySupport;
+import com.challet.challetservice.domain.repository.SharedTransactionRepository;
 import com.challet.challetservice.domain.repository.UserChallengeRepository;
 import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
@@ -34,6 +39,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepositorySupport challengeRepositorySupport;
+    private final SharedTransactionRepository sharedTransactionRepository;
 
     @Override
     @Transactional
@@ -153,6 +159,32 @@ public class ChallengeServiceImpl implements ChallengeService {
         UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
         userChallengeRepository.save(userChallenge);
 
+    }
+
+    @Override
+    public SharedTransactionRegisterResponseDTO handleSharedTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        Challenge challenge = challengeRepository.findById(id)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+
+        // 챌린지 참여자가 아니라면
+        if(!userChallengeRepository.existsByChallengeAndUser(challenge, user)){
+            throw new ExceptionResponse(CustomException.ACCESS_DENIED_EXCEPTION);
+        }
+
+        // action이 ADD일때
+        if (request.action().equals(ActionType.ADD)){
+
+            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user);
+            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.from(request, userChallenge));
+
+            return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
+        }
+        
+        return null;
     }
 
     public static String generateCode(int length) {

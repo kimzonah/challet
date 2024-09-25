@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserChallengeRepository extends JpaRepository<UserChallenge, Long> {
 
-    boolean existsByChallengeAndUser(Challenge challenge, User user);
+    Boolean existsByChallengeAndUser(Challenge challenge, User user);
+
+    UserChallenge findByChallengeAndUser(Challenge challenge, User user);
 
 }

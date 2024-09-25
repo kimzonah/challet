@@ -16,7 +16,9 @@ public enum CustomException {
     ALREADY_JOIN_EXCEPTION(403, "AlreadyJoinException","이미 참여중인 챌린지 입니다." ),
     NOT_RECRUITING_EXCEPTION(403, "NotRecruitingException", "모집이 끝난 챌린지 입니다."),
     NOT_FOUND_REFRESH_TOKEN_EXCEPTION(401, "NotFoundRefreshTokenException","리프레시 토큰이 없습니다." ),
-    MAX_PARTICIPANTS_EXCEEDED_EXCEPTION(403, "MaxParticipantsExceededException", "이미 다 찬 챌린지 입니다.");
+    ACCESS_DENIED_EXCEPTION(403, "AccessDeniedException", "접근 불가한 요청입니다."),
+    MAX_PARTICIPANTS_EXCEEDED_EXCEPTION(403, "MaxParticipantsExceededException", "이미 다 찬 챌린지 입니다."),
+    NOT_FOUND_SHARED_TRANSACTION_EXCEPTION(400, "NotFountSharedTransationException","공유 거래 내역이 존재하지 않습니다." );
 
     private int statusNumber;
     private String errorCode;

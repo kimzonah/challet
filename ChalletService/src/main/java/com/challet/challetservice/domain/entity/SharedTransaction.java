@@ -1,5 +1,7 @@
 package com.challet.challetservice.domain.entity;
 
+import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,8 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,7 +42,7 @@ public class SharedTransaction {
     @Column(nullable = false)
     private Long transactionAmount;
 
-    @Column(name = "transaction_datetime", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "transaction_datetime", nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime transactionDateTime;
 
     @Column(name = "content", nullable = true, columnDefinition = "TEXT")
@@ -45,4 +50,16 @@ public class SharedTransaction {
 
     @Column(name = "image", nullable = true)
     private String image;
+
+    public static SharedTransaction from(SharedTransactionRegisterRequestDTO request, UserChallenge userChallenge) {
+        return SharedTransaction.builder()
+            .userChallenge(userChallenge)
+            .withdrawal(request.withdrawal())
+            .transactionAmount(request.transactionAmount())
+            .transactionDateTime(LocalDateTime.now())
+            .content(request.content())
+            .image(request.image())
+            .build();
+    }
+
 }

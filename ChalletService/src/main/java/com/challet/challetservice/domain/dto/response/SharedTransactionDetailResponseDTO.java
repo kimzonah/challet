@@ -6,9 +6,6 @@ import java.time.LocalDateTime;
 @Schema(description = "공유 거래 내역 목록 조회 응답 DTO")
 public record SharedTransactionDetailResponseDTO(
 
-    @Schema(description = "내가 공유한 거래 내역인지 여부")
-    Boolean isMine,
-
     @Schema(description = "공유자 ID")
     Long userId,
 
@@ -36,20 +33,20 @@ public record SharedTransactionDetailResponseDTO(
     @Schema(description = "이미지")
     String image,
 
-    @Schema(description = "3점 이모지 갯수")
-    Integer threeEmojiNum,
+    @Schema(description = "GOOD 이모지 개수")
+    Integer goodCount,
 
-    @Schema(description = "2점 이모지 갯수")
-    Integer twoEmojiNum,
+    @Schema(description = "SOSO 이모지 개수")
+    Integer sosoCount,
 
-    @Schema(description = "1점 이모지 갯수")
-    Integer oneEmojiNum,
+    @Schema(description = "BAD 이모지 개수")
+    Integer badCount,
 
-    @Schema(description = "댓글 갯수")
-    Integer commentNum,
+    @Schema(description = "댓글 개수")
+    Integer commentCount,
 
     @Schema(description = "내가 누른 이모지")
-    Integer pushedEmoji
+    String userEmoji
 
 ) {
 
