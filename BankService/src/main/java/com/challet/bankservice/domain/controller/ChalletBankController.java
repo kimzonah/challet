@@ -43,8 +43,9 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity createAccount(@RequestParam String phoneNumber) {
-        challetBankService.createAccount(phoneNumber);
+    public ResponseEntity createAccount(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader) {
+        challetBankService.createAccount(tokenHeader);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -131,7 +132,7 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "마이데이터 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity<MyDataBankAccountInfoResponseDTO> connectMyDataBanks(
-        @RequestHeader(value = "Authorization") String tokenHeader,
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
         @RequestBody BankSelectionRequestDTO bankSelectionRequestDTO) {
         MyDataBankAccountInfoResponseDTO myDataAccounts = challetBankService.connectMyDataBanks(
             tokenHeader, bankSelectionRequestDTO);
@@ -146,7 +147,7 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "마이데이터 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity<MyDataBankAccountInfoResponseDTO> getMyDataBanks(
-        @RequestHeader(value = "Authorization") String tokenHeader) {
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader) {
         MyDataBankAccountInfoResponseDTO myDataAccounts = challetBankService.getMyDataAccounts(
             tokenHeader);
         return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
