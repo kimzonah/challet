@@ -42,6 +42,7 @@ public class ChalletBank {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
+    @Builder.Default
     @Column(name = "mydata_status", nullable = false)
     private boolean myDataStatus = false;
 
