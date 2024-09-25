@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmojiRepository extends JpaRepository<Emoji, Long> {
 
-    long countBySharedTransactionAndType(SharedTransaction sharedTransaction, EmojiType type);
+    Long countBySharedTransactionAndType(SharedTransaction sharedTransaction, EmojiType type);
 
     Emoji findByUserAndSharedTransaction(User user, SharedTransaction sharedTransaction);
 }

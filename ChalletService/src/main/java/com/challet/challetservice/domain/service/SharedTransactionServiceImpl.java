@@ -39,32 +39,34 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
                 request.sharedTransactionId())
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
 
-        // action이 ADD일때
+        EmojiResponseDTO response = null;
+
         if(request.action().equals(ActionType.ADD)){
             addEmoji(user, sharedTransaction, request);
             Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
-            return EmojiResponseDTO.of(request, emojiCount);
+            response = EmojiResponseDTO.of(request, emojiCount);
         }
-        // action이 DELETE일때
-        else if(request.action().equals(ActionType.DELETE)){
+
+        if(request.action().equals(ActionType.DELETE)){
             deleteEmoji(user, sharedTransaction);
             Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
-            return EmojiResponseDTO.of(request, emojiCount);
+            response = EmojiResponseDTO.of(request, emojiCount);
         }
-        // action이 UPDATE
-        else {
+
+        if (request.action().equals(ActionType.UPDATE)) {
             Emoji emoji = emojiRepository.findByUserAndSharedTransaction(user, sharedTransaction);
             emoji.updateEmoji(request.type());
             Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
             Long beforeEmojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.beforeType());
-            return EmojiResponseDTO.of(request, emojiCount, beforeEmojiCount);
+            response = EmojiResponseDTO.of(request, emojiCount, beforeEmojiCount);
         }
 
+        return response;
     }
 
     @Transactional
     public void addEmoji(User user, SharedTransaction sharedTransaction, EmojiRequestDTO request){
-        Emoji emoji = Emoji.addEmoji(user, sharedTransaction, request.type());
+        Emoji emoji = Emoji.createEmoji(user, sharedTransaction, request.type());
         emojiRepository.save(emoji);
     }
 

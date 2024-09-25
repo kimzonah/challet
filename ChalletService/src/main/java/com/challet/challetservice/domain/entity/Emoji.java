@@ -38,7 +38,7 @@ public class Emoji {
     @Enumerated(EnumType.STRING)
     private EmojiType type;
 
-    public static Emoji addEmoji(User user, SharedTransaction sharedTransaction, EmojiType type) {
+    public static Emoji createEmoji(User user, SharedTransaction sharedTransaction, EmojiType type) {
         Emoji emoji = Emoji.builder()
             .user(user)
             .sharedTransaction(sharedTransaction)
