@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -130,7 +131,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return sb.toString();
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public PaymentResponseDTO qrPayment(Long accountId,
         PaymentRequestDTO paymentRequestDTO) {

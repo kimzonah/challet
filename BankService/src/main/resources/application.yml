@@ -28,14 +28,14 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "optional:file:/BankService/src/main/resources/application-key.yml"
+    import: "classpath:/application-key.yml"
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://challet.world:8761/eureka
+      defaultZone: http://challet-discovery-spring:8761/eureka
 
 ---
 # 공통 설정
@@ -54,10 +54,10 @@ spring:
         p6spy: "%(currentTime)|%(executionTime)|%(category)|%(sqlSingleLine)"
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    format_sql: true
+      ddl-auto: validate
+      dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+
 
 springdoc:
   api-docs:
