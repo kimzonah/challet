@@ -20,5 +20,8 @@ public interface ChalletBankService {
 
     PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
 
-    MyDataBankAccountInfoResponseDTO connectMyDataBanks(String tokenHeder, BankSelectionRequestDTO bankSelectionRequestDTO);
+    MyDataBankAccountInfoResponseDTO connectMyDataBanks(String tokenHeader,
+        BankSelectionRequestDTO bankSelectionRequestDTO);
+
+    MyDataBankAccountInfoResponseDTO getMyDataAccounts(String tokenHeader);
 }

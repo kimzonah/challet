@@ -13,6 +13,7 @@ import jakarta.persistence.LockModeType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
@@ -100,6 +101,7 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .fetchOne();
     }
 
+    @Transactional
     @Override
     public void setMyDataAuthorization(String phoneNumber) {
         QChalletBank challetBank = QChalletBank.challetBank;
