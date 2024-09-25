@@ -28,7 +28,7 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "optional:file:/ChalletService/src/main/resources/application-key.yml"
+    import: "classpath:/application-key.yml"
 
 eureka:
   client:
@@ -47,11 +47,17 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: challet
     password: ${mysqlpassword}
+    p6spy:
+      enabled: true
+      appender: com.p6spy.engine.spy.appender.Slf4JLogger
+      logMessageFormat:
+        p6spy: "%(currentTime)|%(executionTime)|%(category)|%(sqlSingleLine)"
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: validate
+      dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+
 
 springdoc:
   api-docs:
