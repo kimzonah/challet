@@ -131,7 +131,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return sb.toString();
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     @Override
     public PaymentResponseDTO qrPayment(Long accountId,
         PaymentRequestDTO paymentRequestDTO) {
