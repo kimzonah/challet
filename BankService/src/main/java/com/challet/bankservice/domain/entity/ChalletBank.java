@@ -42,6 +42,9 @@ public class ChalletBank {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
+    @Column(name = "mydata_status")
+    private boolean myDataStatus;
+
     // 거래 발생시 처리
     @Builder.Default
     @OneToMany(mappedBy = "challetBank", cascade = CascadeType.ALL, orphanRemoval = true)

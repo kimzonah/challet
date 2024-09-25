@@ -13,6 +13,7 @@ import jakarta.persistence.LockModeType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
@@ -98,5 +99,17 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .where(challetBank.id.eq(accountId))
             .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .fetchOne();
+    }
+
+    @Transactional
+    @Override
+    public void setMyDataAuthorization(String phoneNumber) {
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        query
+            .update(challetBank)
+            .set(challetBank.myDataStatus, true)
+            .where(challetBank.phoneNumber.eq(phoneNumber))
+            .execute();
     }
 }

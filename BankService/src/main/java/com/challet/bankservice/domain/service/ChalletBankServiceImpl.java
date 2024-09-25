@@ -1,7 +1,10 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.request.BankSelectionDTO;
+import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
@@ -10,6 +13,9 @@ import com.challet.bankservice.domain.entity.Category;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.ChalletBankTransaction;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
+import com.challet.bankservice.global.client.KbBankFeignClient;
+import com.challet.bankservice.global.client.NhBankFeignClient;
+import com.challet.bankservice.global.client.ShBankFeignClient;
 import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
 import com.challet.bankservice.global.util.JwtUtil;
@@ -34,6 +40,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private final ChalletBankRepository challetBankRepository;
     private final Environment env;
     private final JwtUtil jwtUtil;
+    private final KbBankFeignClient kbBankFeignClient;
+    private final NhBankFeignClient nhBankFeignClient;
+    private final ShBankFeignClient shBankFeignClient;
 
     @Override
     public void createAccount(String phoneNumber) {
@@ -122,7 +131,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return sb.toString();
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     @Override
     public PaymentResponseDTO qrPayment(Long accountId,
         PaymentRequestDTO paymentRequestDTO) {
@@ -166,8 +175,77 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private PaymentResponseDTO createPaymentResponse(PaymentRequestDTO paymentRequestDTO) {
         return PaymentResponseDTO.builder()
             .transactionAmount(paymentRequestDTO.transactionAmount())
-            .withdrawal(paymentRequestDTO.withdrawal())
+            .deposit(paymentRequestDTO.withdrawal())
             .category(paymentRequestDTO.category())
             .build();
+    }
+
+    @Override
+    public MyDataBankAccountInfoResponseDTO connectMyDataBanks(String tokenHeader,
+        BankSelectionRequestDTO bankSelectionRequestDTO) {
+
+        setMyDataAuth(tokenHeader);
+
+        AccountInfoResponseListDTO kbBanks = null;
+        AccountInfoResponseListDTO nhBanks = null;
+        AccountInfoResponseListDTO shBanks = null;
+
+        for (BankSelectionDTO bank : bankSelectionRequestDTO.selectedBanks()) {
+            kbBanks = getKbBankAccounts(tokenHeader, bank, kbBanks);
+            nhBanks = getNhBankAccounts(tokenHeader, bank, nhBanks);
+            shBanks = getShBankAccounts(tokenHeader, bank, shBanks);
+        }
+
+        return getMyDataAccounts(kbBanks, nhBanks, shBanks);
+    }
+
+    private void setMyDataAuth(String tokenHeder) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeder);
+        challetBankRepository.setMyDataAuthorization(phoneNumber);
+    }
+
+    private AccountInfoResponseListDTO getKbBankAccounts(String tokenHeader,
+        BankSelectionDTO bank, AccountInfoResponseListDTO kbBanks) {
+        if (bank.bankCode().equals("8083") && bank.isSelected()) {
+            kbBanks = kbBankFeignClient.connectMyDataKbBank(
+                tokenHeader);
+        }
+        return kbBanks;
+    }
+
+    private AccountInfoResponseListDTO getNhBankAccounts(String tokenHeder,
+        BankSelectionDTO bank, AccountInfoResponseListDTO nhBanks) {
+        if (bank.bankCode().equals("8084") && bank.isSelected()) {
+            nhBanks = nhBankFeignClient.connectMyDataKbBank(tokenHeder);
+        }
+        return nhBanks;
+    }
+
+    private AccountInfoResponseListDTO getShBankAccounts(String tokenHeder,
+        BankSelectionDTO bank, AccountInfoResponseListDTO shBanks) {
+        if (bank.bankCode().equals("8085") && bank.isSelected()) {
+            shBanks = shBankFeignClient.connectMyDataKbBank(tokenHeder);
+        }
+        return shBanks;
+    }
+
+    private MyDataBankAccountInfoResponseDTO getMyDataAccounts(AccountInfoResponseListDTO kbBanks,
+        AccountInfoResponseListDTO nhBanks, AccountInfoResponseListDTO shBanks) {
+        return MyDataBankAccountInfoResponseDTO
+            .builder()
+            .kbBanks(kbBanks)
+            .nhBanks(nhBanks)
+            .shBanks(shBanks)
+            .build();
+    }
+
+    @Override
+    public MyDataBankAccountInfoResponseDTO getMyDataAccounts(String tokenHeader) {
+
+        AccountInfoResponseListDTO kbBanks = kbBankFeignClient.getMyDataKbBank(tokenHeader);
+        AccountInfoResponseListDTO nhBanks = nhBankFeignClient.getMyDataKbBank(tokenHeader);
+        AccountInfoResponseListDTO shBanks = shBankFeignClient.getMyDataKbBank(tokenHeader);
+
+        return getMyDataAccounts(kbBanks, nhBanks, shBanks);
     }
 }

@@ -1,9 +1,10 @@
 package com.challet.bankservice.domain.controller;
 
 import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
-import com.challet.bankservice.domain.dto.request.MyDataConnectionRequestDTO;
+import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
@@ -123,14 +124,31 @@ public class ChalletBankController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/mydatas")
+    @PostMapping("/mydata-connect")
     @Operation(summary = "마이데이터 연결", description = "선택한 은행 기반 마이 데이터 연결")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "마이데이터 연결 성공"),
         @ApiResponse(responseCode = "400", description = "마이데이터 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity connectMyData(
-        @RequestBody MyDataConnectionRequestDTO myDataConnectionRequestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<MyDataBankAccountInfoResponseDTO> connectMyDataBanks(
+        @RequestHeader(value = "Authorization") String tokenHeader,
+        @RequestBody BankSelectionRequestDTO bankSelectionRequestDTO) {
+        MyDataBankAccountInfoResponseDTO myDataAccounts = challetBankService.connectMyDataBanks(
+            tokenHeader, bankSelectionRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(myDataAccounts);
+    }
+
+
+    @GetMapping("/mydatas")
+    @Operation(summary = "마이데이터 조회", description = "마이 데이터 조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "마이데이터 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "마이데이터 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<MyDataBankAccountInfoResponseDTO> getMyDataBanks(
+        @RequestHeader(value = "Authorization") String tokenHeader) {
+        MyDataBankAccountInfoResponseDTO myDataAccounts = challetBankService.getMyDataAccounts(
+            tokenHeader);
+        return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
     }
 }

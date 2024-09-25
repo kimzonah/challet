@@ -11,7 +11,7 @@ public record PaymentResponseDTO(
     Long transactionAmount,
 
     @Schema(description = "결제 장소")
-    String withdrawal,
+    String deposit,
 
     @Schema(description = "결제 카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE",
         "SHOPPING"})
