@@ -35,7 +35,7 @@ class ChalletBankServiceImplTest {
         testAccount = ChalletBank.builder()
             .accountBalance(100L)
             .phoneNumber("01012345678")
-            .accountNumber("12312312123")
+            .accountNumber("999999999999")
             .build();
 
         challetBankRepository.save(testAccount);
@@ -43,7 +43,10 @@ class ChalletBankServiceImplTest {
 
     @AfterEach
     public void after() {
-        challetBankRepository.delete(testAccount);
+        testAccount = challetBankRepository.findById(testAccount.getId()).orElse(null);
+        if (testAccount != null) {
+            challetBankRepository.delete(testAccount);
+        }
     }
 
 
