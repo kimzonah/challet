@@ -33,16 +33,16 @@ public record SharedTransactionDetailResponseDTO(
     @Schema(description = "이미지")
     String image,
 
-    @Schema(description = "3점 이모지 갯수")
+    @Schema(description = "GOOD 이모지 개수")
     Integer goodCount,
 
-    @Schema(description = "2점 이모지 갯수")
+    @Schema(description = "SOSO 이모지 개수")
     Integer sosoCount,
 
-    @Schema(description = "1점 이모지 갯수")
+    @Schema(description = "BAD 이모지 개수")
     Integer badCount,
 
-    @Schema(description = "댓글 갯수")
+    @Schema(description = "댓글 개수")
     Integer commentCount,
 
     @Schema(description = "내가 누른 이모지")
