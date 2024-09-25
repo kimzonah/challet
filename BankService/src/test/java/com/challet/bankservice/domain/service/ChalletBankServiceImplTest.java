@@ -43,7 +43,7 @@ class ChalletBankServiceImplTest {
 
     @AfterEach
     public void after() {
-        challetBankRepository.deleteAll();
+        challetBankRepository.delete(testAccount);
     }
 
 
