@@ -1,7 +1,9 @@
 package com.challet.challetservice.domain.controller;
 
+import com.challet.challetservice.domain.dto.request.CheckDuplicateRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserLoginRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.CheckDuplicateResponseDTO;
 import com.challet.challetservice.domain.dto.response.LoginResponseDTO;
 import com.challet.challetservice.domain.dto.response.TokenRefreshResponseDTO;
 import com.challet.challetservice.domain.service.AuthService;
@@ -66,6 +68,17 @@ public class AuthController {
     public ResponseEntity<TokenRefreshResponseDTO> refreshToken(HttpServletRequest request) {
         TokenRefreshResponseDTO token = authService.refreshToken(request);
         return ResponseEntity.status(HttpStatus.OK).body(token);
+    }
+
+    @Operation(summary = "회원 중복 검사 (완료)", description = "전화번호를 입력받아 이미 가입한 회원인지 검사")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "요청 성공"),
+        @ApiResponse(responseCode = "400", description = "요청 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+    })
+    @PostMapping("/check-duplicate")
+    public ResponseEntity<CheckDuplicateResponseDTO> checkDuplicate(@RequestBody CheckDuplicateRequestDTO request){
+        CheckDuplicateResponseDTO result = authService.checkDuplicate(request);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 }

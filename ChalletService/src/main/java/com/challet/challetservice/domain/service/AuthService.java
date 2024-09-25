@@ -1,7 +1,9 @@
 package com.challet.challetservice.domain.service;
 
+import com.challet.challetservice.domain.dto.request.CheckDuplicateRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserLoginRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.CheckDuplicateResponseDTO;
 import com.challet.challetservice.domain.dto.response.LoginResponseDTO;
 import com.challet.challetservice.domain.dto.response.TokenRefreshResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,4 +16,6 @@ public interface AuthService {
     TokenRefreshResponseDTO refreshToken(HttpServletRequest request);
 
     LoginResponseDTO login(UserLoginRequestDTO request, HttpServletResponse response);
+
+    CheckDuplicateResponseDTO checkDuplicate(CheckDuplicateRequestDTO request);
 }

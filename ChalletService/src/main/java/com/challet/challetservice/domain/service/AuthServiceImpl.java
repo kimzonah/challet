@@ -1,7 +1,9 @@
 package com.challet.challetservice.domain.service;
 
+import com.challet.challetservice.domain.dto.request.CheckDuplicateRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserLoginRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.CheckDuplicateResponseDTO;
 import com.challet.challetservice.domain.dto.response.LoginResponseDTO;
 import com.challet.challetservice.domain.dto.response.TokenRefreshResponseDTO;
 import com.challet.challetservice.domain.entity.User;
@@ -68,6 +70,12 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtil.generateAccessToken(request.phoneNumber());
         Long userId = user.getId();
         return new LoginResponseDTO(accessToken, userId);
+    }
+
+    @Override
+    public CheckDuplicateResponseDTO checkDuplicate(CheckDuplicateRequestDTO request) {
+        Boolean result = userRepository.existsByPhoneNumber(request.phoneNumber());
+        return new CheckDuplicateResponseDTO(result);
     }
 
     @Override
