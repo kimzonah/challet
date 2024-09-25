@@ -2,6 +2,7 @@ package com.challet.challetservice.domain.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "회원가입 요청 DTO")
@@ -24,11 +25,11 @@ public record UserRegisterRequestDTO(
     String profileImage,
 
     @Schema(description = "나이")
-    @NotBlank(message = "나이는 필수 입력값 입니다.")
+    @NotNull(message = "나이는 필수 입력값 입니다.")
     Integer age,
 
     @Schema(description = "성별")
-    @NotBlank(message = "성별은 필수 입력값 입니다.")
+    @NotNull(message = "성별은 필수 입력값 입니다.")
     Boolean gender,
 
     @Schema(description = "이름")
