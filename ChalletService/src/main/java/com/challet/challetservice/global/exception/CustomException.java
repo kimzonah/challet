@@ -18,7 +18,9 @@ public enum CustomException {
     NOT_FOUND_REFRESH_TOKEN_EXCEPTION(401, "NotFoundRefreshTokenException","리프레시 토큰이 없습니다." ),
     ACCESS_DENIED_EXCEPTION(403, "AccessDeniedException", "접근 불가한 요청입니다."),
     MAX_PARTICIPANTS_EXCEEDED_EXCEPTION(403, "MaxParticipantsExceededException", "이미 다 찬 챌린지 입니다."),
-    NOT_FOUND_SHARED_TRANSACTION_EXCEPTION(400, "NotFountSharedTransationException","공유 거래 내역이 존재하지 않습니다." );
+    NOT_FOUND_SHARED_TRANSACTION_EXCEPTION(400, "NotFountSharedTransationException","공유 거래 내역이 존재하지 않습니다." ),
+    Fail_ACCOUNT_CREATION_FAILED(400, "AccountCreationFailedException", "계좌 생성을 실패했습니다.");
+
 
     private int statusNumber;
     private String errorCode;

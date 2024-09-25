@@ -8,6 +8,7 @@ import com.challet.challetservice.domain.dto.response.LoginResponseDTO;
 import com.challet.challetservice.domain.dto.response.TokenRefreshResponseDTO;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.repository.UserRepository;
+import com.challet.challetservice.global.client.ChBankFeignClient;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
@@ -19,6 +20,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final ChBankFeignClient chBankFeignClient;
 
     @Override
     @Transactional
@@ -39,7 +43,12 @@ public class AuthServiceImpl implements AuthService {
         User user = User.createUser(request, jwtUtil);
         User savedUser = userRepository.save(user);
 
-        // 계좌번호 생성해서 ch-bank에 전달하는 로직 필요
+        // 전화번호 token을 ch-bank에 전달하여 계좌 생성
+        ResponseEntity<String> responseAccount = chBankFeignClient.requestCreateChBankAccount(
+            request.phoneNumber());
+        if(responseAccount.getStatusCode() != HttpStatus.CREATED){
+            throw new ExceptionResponse(CustomException.Fail_ACCOUNT_CREATION_FAILED);
+        }
 
         Cookie cookie = createRefreshTokenCookie(user.getRefreshToken());
         response.addCookie(cookie);
