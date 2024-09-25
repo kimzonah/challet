@@ -62,7 +62,7 @@ const SharedTransactionCreate = () => {
       };
 
       webSocketService.sendMessage(
-        `/app/challenges/1/shared-transactions`,
+        `/app/challenges/${id}/shared-transactions`,
         webSocketMessage
       );
 

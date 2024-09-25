@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import { useChallengeApi } from '../../hooks/useChallengeApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
@@ -7,10 +6,11 @@ import Comment from '../../assets/Challenge/Comment.png';
 import Emoji_1 from '../../assets/Challenge/Emoji-1.png';
 import Emoji_2 from '../../assets/Challenge/Emoji-2.png';
 import Emoji_3 from '../../assets/Challenge/Emoji-3.png';
+import useAuthStore from '../../store/useAuthStore';
+import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 추가
 
 // 트랜잭션 타입 정의
 interface Transaction {
-  isMine: boolean;
   userId: number;
   nickname: string;
   profileImage: string;
@@ -20,29 +20,61 @@ interface Transaction {
   transactionDateTime: string;
   content: string;
   image: string;
-  threeEmojiNum: number;
-  twoEmojiNum: number;
-  oneEmojiNum: number;
-  commentNum: number;
-  pushedEmoji: number; // 내가 누른 이모티콘
+  goodCount: number;
+  sosoCount: number;
+  badCount: number;
+  commentCount: number;
+  userEmoji: string | null; // GOOD, SOSO, BAD
 }
 
 const TransactionList = ({ challengeId }: { challengeId: number }) => {
-  const { exampleTransactions } = useChallengeApi(); // 더미 데이터를 가져옴
   const [sharedTransactions, setSharedTransactions] = useState<Transaction[]>(
     []
   );
   const transactionListRef = useRef<HTMLDivElement>(null); // 스크롤을 조정할 ref
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
+  const userId = useAuthStore.getState().id;
 
   useEffect(() => {
-    // 트랜잭션을 시간 오름차순으로 정렬 (가장 오래된 내역이 위, 최신 내역이 아래로)
-    const sortedTransactions = [...exampleTransactions].sort(
-      (a, b) =>
-        new Date(a.transactionDateTime).getTime() -
-        new Date(b.transactionDateTime).getTime()
-    );
-    setSharedTransactions(sortedTransactions);
+    const connectAndSubscribe = async () => {
+      try {
+        // 웹소켓이 이미 연결되어 있는지 확인
+        if (!webSocketService.isConnected()) {
+          // 웹소켓 연결이 완료된 후 구독
+          await webSocketService.connect();
+          console.log('WebSocket 연결 완료 후 구독 시작');
+        } else {
+          console.log('이미 WebSocket이 연결되어 있습니다.');
+        }
+
+        // 구독 진행
+        webSocketService.subscribe(challengeId.toString(), (message) => {
+          console.log('받은 거래 메시지:', message.body);
+
+          // 메시지를 Transaction 타입으로 변환
+          const transaction: Transaction = JSON.parse(message.body);
+
+          console.log('거래 내역:', transaction);
+
+          // 트랜잭션을 sharedTransactions에 추가하고 정렬
+          setSharedTransactions((prevTransactions) => {
+            // 새 트랜잭션을 포함하여 배열을 업데이트하고, 시간순으로 정렬
+            const updatedTransactions = [...prevTransactions, transaction];
+            return updatedTransactions.sort(
+              (a, b) =>
+                new Date(a.transactionDateTime).getTime() -
+                new Date(b.transactionDateTime).getTime()
+            );
+          });
+        });
+      } catch (error) {
+        console.error('WebSocket 연결 실패:', error);
+      }
+    };
+
+    connectAndSubscribe();
+
+    return () => {};
   }, [challengeId]);
 
   useEffect(() => {
@@ -86,7 +118,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
           className={'p-4 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px]'}
         >
           {/* 내 거래 내역일 경우 */}
-          {transaction.isMine ? (
+          {transaction.userId === userId ? (
             <div className='text-right flex items-center'>
               <div className='text-sm text-gray-400 mr-2'>
                 {formatTime(transaction.transactionDateTime)}
@@ -145,7 +177,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                   <div className='flex items-center ml-4'>
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
-                        transaction.pushedEmoji === 3
+                        transaction.userEmoji === 'GOOD'
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
@@ -158,11 +190,11 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='Emoji 3'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.threeEmojiNum}</span>
+                      <span>{transaction.goodCount}</span>
                     </button>
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
-                        transaction.pushedEmoji === 2
+                        transaction.userEmoji === 'SOSO'
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
@@ -175,11 +207,11 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='Emoji 2'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.twoEmojiNum}</span>
+                      <span>{transaction.sosoCount}</span>
                     </button>
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
-                        transaction.pushedEmoji === 1
+                        transaction.userEmoji === 'BAD'
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
@@ -192,7 +224,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='Emoji 1'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.oneEmojiNum}</span>
+                      <span>{transaction.badCount}</span>
                     </button>
                     <div className='flex items-center mr-2 bg-white p-2 rounded-lg shadow-md'>
                       <img
@@ -200,7 +232,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='comment'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.commentNum}</span>
+                      <span>{transaction.commentCount}</span>
                     </div>
                   </div>
                 </div>
@@ -282,7 +314,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                   <div className='flex items-center'>
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
-                        transaction.pushedEmoji === 3
+                        transaction.userEmoji === 'GOOD'
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
@@ -295,11 +327,11 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='Emoji 3'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.threeEmojiNum}</span>
+                      <span>{transaction.goodCount}</span>
                     </button>
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
-                        transaction.pushedEmoji === 2
+                        transaction.userEmoji === 'SOSO'
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
@@ -312,11 +344,11 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='Emoji 2'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.twoEmojiNum}</span>
+                      <span>{transaction.sosoCount}</span>
                     </button>
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
-                        transaction.pushedEmoji === 1
+                        transaction.userEmoji === 'BAD'
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
@@ -329,7 +361,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='Emoji 1'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.oneEmojiNum}</span>
+                      <span>{transaction.badCount}</span>
                     </button>
                     <div className='flex items-center mr-2 bg-white p-2 rounded-lg shadow-md'>
                       <img
@@ -337,7 +369,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                         alt='comment'
                         className='w-5 h-5 mr-1'
                       />
-                      <span>{transaction.commentNum}</span>
+                      <span>{transaction.commentCount}</span>
                     </div>
                   </div>
                 </div>

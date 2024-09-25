@@ -4,9 +4,9 @@ import { persist } from 'zustand/middleware';
 // Auth 상태 인터페이스
 interface AuthState {
   accessToken: string | null;
-  id: string | null; // 임시로 id
+  id: number | null; // 임시로 id
 
-  setAuthData: (data: { accessToken: string; id: string }) => void; // Access Token과 Refresh Token을 저장
+  setAuthData: (data: { accessToken: string; id: number }) => void; // Access Token과 Refresh Token을 저장
   clearAuthData: () => void; // 전체 Auth 데이터를 초기화
 }
 

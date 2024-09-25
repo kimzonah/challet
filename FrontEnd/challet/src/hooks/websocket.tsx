@@ -1,5 +1,6 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import useAuthStore from '../store/useAuthStore';
 
 class WebSocketService {
   private stompClient: Client | null = null;
@@ -11,57 +12,51 @@ class WebSocketService {
   }
 
   // 웹소켓 연결 설정
-  connect() {
-    if (this.stompClient && this.stompClient.connected) {
-      console.log('WebSocket 이미 연결되어 있습니다.');
-      return; // 이미 연결되어 있으면 아무 작업도 하지 않음
-    }
-    const socket = new SockJS(this.socketUrl);
-    const token =
-      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTA3MTA1NzY0MiIsImlhdCI6MTcyNzE3Mjk5MSwiZXhwIjoxNzI3MjU5MzkxLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.94oU6D2Y2P5IF76R_2f2Y1UJqo2JaM-bWCmWZanOo532Pk-QcKKt9e1Dfou1aQkMxxvB0ZNE90yUVeFJBUP7_w';
-    const headers = { Authorization: `Bearer ${token}` };
-    this.stompClient = new Client({
-      // brokerURL: webSocketUrl, // SockJS 대신 brokerURL 사용
-      webSocketFactory: () => socket as WebSocket,
-      connectHeaders: headers,
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-      debug: (str) => {
-        console.log('STOMP debug:', str);
-      },
+  connect(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.stompClient && this.stompClient.connected) {
+        console.log('WebSocket 이미 연결되어 있습니다.');
+        resolve(); // 이미 연결된 상태면 바로 resolve
+        return;
+      }
+      const socket = new SockJS(this.socketUrl);
+      const token = useAuthStore.getState().accessToken;
+      const headers = { Authorization: `Bearer ${token}` };
+      this.stompClient = new Client({
+        webSocketFactory: () => socket as WebSocket,
+        connectHeaders: headers,
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+      });
+
+      this.stompClient.onConnect = (frame) => {
+        console.log('WebSocket 연결 성공:', frame);
+        resolve(); // 연결 성공 시 resolve 호출
+      };
+
+      this.stompClient.onStompError = (frame) => {
+        console.error('STOMP 오류:', frame.headers['message']);
+        reject(new Error('WebSocket 연결 중 오류 발생'));
+      };
+
+      this.stompClient.onDisconnect = (frame) => {
+        console.log('WebSocket 연결 종료:', frame);
+      };
+
+      console.log('WebSocket 연결 시도:', this.stompClient);
+      this.stompClient.activate(); // 연결 시작
     });
-
-    this.stompClient.onConnect = (frame) => {
-      console.log('WebSocket 연결 성공:', frame);
-      this.onConnected();
-    };
-
-    this.stompClient.onStompError = (frame) => {
-      console.error('STOMP 오류:', frame.headers['message']);
-    };
-
-    this.stompClient.onDisconnect = (frame) => {
-      console.log('WebSocket 연결 종료:', frame);
-    };
-
-    console.log('WebSocket 연결 시도:', this.stompClient);
-    this.stompClient.activate(); // 연결 시작
   }
 
-  // 웹소켓 연결 성공 시 호출
-  onConnected() {
-    // 필요한 채널 구독 예시
-    this.subscribe('/topic/challenges/1/shared-transactions', (message) => {
-      console.log('받은 거래 메시지:', message.body);
-      const transaction = JSON.parse(message.body);
-      // 받은 메시지 처리 로직 추가
-      console.log('거래 내역:', transaction);
-    });
+  // 웹소켓이 연결되어 있는지 확인하는 메서드 추가
+  isConnected(): boolean {
+    return this.stompClient !== null && this.stompClient.connected;
   }
 
   // 특정 채널 구독
-  subscribe(destination: string, callback: (message: any) => void) {
+  subscribe(challengeId: string, callback: (message: any) => void) {
+    const destination = `/topic/challenges/${challengeId}/shared-transactions`;
     if (this.stompClient && this.stompClient.connected) {
       const subscription = this.stompClient.subscribe(destination, callback);
       this.subscriptions[destination] = () => subscription.unsubscribe();
@@ -72,8 +67,7 @@ class WebSocketService {
 
   // 서버로 메시지 전송
   sendMessage(destination: string, payload: any) {
-    const token =
-      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMTA3MTA1NzY0MiIsImlhdCI6MTcyNzE3Mjk5MSwiZXhwIjoxNzI3MjU5MzkxLCJ0eXBlIjoiYWNjZXNzX3Rva2VuIn0.94oU6D2Y2P5IF76R_2f2Y1UJqo2JaM-bWCmWZanOo532Pk-QcKKt9e1Dfou1aQkMxxvB0ZNE90yUVeFJBUP7_w';
+    const token = useAuthStore.getState().accessToken;
 
     if (this.stompClient && this.stompClient.connected) {
       this.stompClient.publish({
