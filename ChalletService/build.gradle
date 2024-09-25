@@ -61,6 +61,9 @@ dependencies {
 
     /** p6spy **/
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.2'
+
+    // openfeign
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.0'
 }
 
 dependencyManagement {
