@@ -69,15 +69,18 @@ public class NhBankController {
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
-    @PostMapping("/mydata")
+    @PostMapping("/mydata-connect")
     @Operation(summary = "농협은행 계좌 마이데이터 연결", description = "전화번호를 통해 계좌 연결")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "계좌 연결 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 연결 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity connectMyDataAccount(@RequestHeader("Authorization") String tokenHeader){
+    public ResponseEntity<AccountInfoResponseListDTO> connectMyDataAccount(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader) {
         nhBankService.connectMyDataAccount(tokenHeader);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        AccountInfoResponseListDTO myDataAccounts = nhBankService.getAccountsByPhoneNumber(
+            tokenHeader);
+        return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
     }
 
 

@@ -58,6 +58,7 @@ public class NhBankServiceImpl implements NhBankService {
     @Transactional
     @Override
     public void connectMyDataAccount(String tokenHeader) {
-        nhBankRepository.connectMyDataAccount(tokenHeader);
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        nhBankRepository.connectMyDataAccount(phoneNumber);
     }
 }
