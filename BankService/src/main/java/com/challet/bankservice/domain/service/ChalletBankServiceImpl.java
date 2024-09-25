@@ -45,8 +45,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private final ShBankFeignClient shBankFeignClient;
 
     @Override
-    public void createAccount(String tokenHeader) {
-        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+    public void createAccount(String phoneNumber) {
         for (int retry = 0; retry < 6; retry++) {
             String accountNum = createAccountNum();
             try {

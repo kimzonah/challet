@@ -44,8 +44,8 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity createAccount(
-        @RequestHeader(value = "Authorization", required = false) String tokenHeader) {
-        challetBankService.createAccount(tokenHeader);
+        @RequestHeader("phoneNumber") String phoneNumber) {
+        challetBankService.createAccount(phoneNumber);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
