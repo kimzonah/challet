@@ -23,7 +23,7 @@ public class KbBankServiceImpl implements KbBankService {
     private final JwtUtil jwtUtil;
 
     @Override
-    public AccountInfoResponseListDTO findAccount(String tokenHeader) {
+    public AccountInfoResponseListDTO getAccountsByPhoneNumber(String tokenHeader) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
         return kbBankRepository.getAccountInfoByPhoneNumber(
             loginUserPhoneNumber);
@@ -58,6 +58,7 @@ public class KbBankServiceImpl implements KbBankService {
     @Transactional
     @Override
     public void connectMyDataAccount(String tokenHeader) {
-        kbBankRepository.connectMyDataAccount(tokenHeader);
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        kbBankRepository.connectMyDataAccount(phoneNumber);
     }
 }

@@ -6,7 +6,7 @@ import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
 
 public interface KbBankService {
 
-    AccountInfoResponseListDTO findAccount(String tokenHeader);
+    AccountInfoResponseListDTO getAccountsByPhoneNumber(String tokenHeader);
 
     TransactionResponseListDTO getAccountTransactionList(Long accountId);
 
