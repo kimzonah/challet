@@ -47,8 +47,8 @@ public class User {
     @Column(name = "age", nullable = false)
     private Integer age;
 
-    @Column(name = "gender", nullable = false, columnDefinition = "TINYINT")
-    private Integer gender;
+    @Column(name = "gender", nullable = false)
+    private Boolean gender;
 
     @Column(name = "name", nullable = false)
     private String name;

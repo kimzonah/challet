@@ -25,11 +25,11 @@ public record UserRegisterRequestDTO(
 
     @Schema(description = "나이")
     @NotBlank(message = "나이는 필수 입력값 입니다.")
-    int age,
+    Integer age,
 
     @Schema(description = "성별")
     @NotBlank(message = "성별은 필수 입력값 입니다.")
-    int gender,
+    Boolean gender,
 
     @Schema(description = "이름")
     @NotBlank(message = "이름은 필수 입력값 입니다.")
