@@ -13,8 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/api/challet/ws")
-            .setAllowedOrigins("http://localhost:3000")
-            .setAllowedOriginPatterns("*")
+            .setAllowedOriginPatterns("http://localhost:5173")
             .withSockJS();
     }
 
