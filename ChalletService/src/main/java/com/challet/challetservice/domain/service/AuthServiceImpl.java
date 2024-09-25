@@ -35,16 +35,16 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = User.createUser(request, jwtUtil);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
         // 계좌번호 생성해서 ch-bank에 전달하는 로직 필요
 
         Cookie cookie = createRefreshTokenCookie(user.getRefreshToken());
         response.addCookie(cookie);
 
-        LoginResponseDTO result = new LoginResponseDTO(
-            jwtUtil.generateAccessToken(request.phoneNumber()));
-        return result;
+        String accessToken = jwtUtil.generateAccessToken(request.phoneNumber());
+        Long userId = savedUser.getId();
+        return new LoginResponseDTO(accessToken, userId);
     }
 
     @Override
@@ -65,7 +65,9 @@ public class AuthServiceImpl implements AuthService {
         Cookie cookie = createRefreshTokenCookie(user.getRefreshToken());
         response.addCookie(cookie);
 
-        return new LoginResponseDTO(jwtUtil.generateAccessToken(request.phoneNumber()));
+        String accessToken = jwtUtil.generateAccessToken(request.phoneNumber());
+        Long userId = user.getId();
+        return new LoginResponseDTO(accessToken, userId);
     }
 
     @Override
@@ -100,9 +102,7 @@ public class AuthServiceImpl implements AuthService {
 
     public static String getRefreshTokenFromCookie(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
-        return Optional.ofNullable(cookies)
-            .map(Arrays::stream)
-            .orElseGet(Stream::empty)
+        return Optional.ofNullable(cookies).stream().flatMap(Arrays::stream)
             .filter(cookie -> "refreshToken".equals(cookie.getName()))
             .map(Cookie::getValue)
             .findFirst()
