@@ -44,13 +44,13 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
         if(request.action().equals(ActionType.ADD)){
             addEmoji(user, sharedTransaction, request);
             Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
-            response = EmojiResponseDTO.of(request, emojiCount);
+            response = EmojiResponseDTO.fromRequest(request, emojiCount);
         }
 
         if(request.action().equals(ActionType.DELETE)){
             deleteEmoji(user, sharedTransaction);
             Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
-            response = EmojiResponseDTO.of(request, emojiCount);
+            response = EmojiResponseDTO.fromRequest(request, emojiCount);
         }
 
         if (request.action().equals(ActionType.UPDATE)) {
@@ -58,7 +58,7 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
             emoji.updateEmoji(request.type());
             Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
             Long beforeEmojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.beforeType());
-            response = EmojiResponseDTO.of(request, emojiCount, beforeEmojiCount);
+            response = EmojiResponseDTO.fromRequestWithBefore(request, emojiCount, beforeEmojiCount);
         }
 
         return response;

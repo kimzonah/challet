@@ -1,6 +1,5 @@
 package com.challet.challetservice.domain.dto.response;
 
-import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.entity.EmojiType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,7 +26,7 @@ public record EmojiResponseDTO(
 
 ) {
 
-    public static EmojiResponseDTO of(EmojiRequestDTO request, Long count) {
+    public static EmojiResponseDTO fromRequest(EmojiRequestDTO request, Long count) {
         return EmojiResponseDTO.builder()
             .sharedTransactionId(request.sharedTransactionId())
             .type(request.type())
@@ -36,7 +35,7 @@ public record EmojiResponseDTO(
 
     }
 
-    public static EmojiResponseDTO of(EmojiRequestDTO request, Long count, Long beforeCount) {
+    public static EmojiResponseDTO fromRequestWithBefore(EmojiRequestDTO request, Long count, Long beforeCount) {
         return EmojiResponseDTO.builder()
             .sharedTransactionId(request.sharedTransactionId())
             .type(request.type())
