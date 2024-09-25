@@ -58,6 +58,7 @@ public class ShBankServiceImpl implements ShBankService {
     @Transactional
     @Override
     public void connectMyDataAccount(String tokenHeader) {
-        shBankRepository.connectMyDataAccount(tokenHeader);
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        shBankRepository.connectMyDataAccount(phoneNumber);
     }
 }
