@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record LoginResponseDTO(
 
     @Schema(description = "access token 정보")
-    String accessToken
+    String accessToken,
+
+    @Schema(description = "유저ID")
+    Long userId
 
 ) {
 
