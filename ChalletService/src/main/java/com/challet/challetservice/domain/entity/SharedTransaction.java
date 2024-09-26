@@ -52,11 +52,11 @@ public class SharedTransaction {
     private String image;
 
     @Builder.Default
-    @OneToMany(mappedBy = "sharedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sharedTransaction", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Emoji> emojis = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "sharedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sharedTransaction", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public static SharedTransaction fromRequest(SharedTransactionRegisterRequestDTO request, UserChallenge userChallenge) {
