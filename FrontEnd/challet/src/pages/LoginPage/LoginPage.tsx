@@ -5,10 +5,10 @@ import useAuthStore from '../../store/useAuthStore';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { setAuthData } = useAuthStore();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [enteredDigits, setEnteredDigits] = useState(''); // 키패드로 입력한 숫자 상태
   const [errorMessage, setErrorMessage] = useState('');
-  const { setAuthData } = useAuthStore(); // Zustand에서 상태 관리 함수 가져오기
 
   // 키패드 입력 핸들러
   const handleDigitPress = (digit: string) => {
@@ -31,13 +31,19 @@ const LoginPage = () => {
       });
 
       // 서버 응답에서 Access Token 추출
-      const { accessToken, id } = data;
+      const { accessToken, userId } = data;
 
       // 로그인 시 상태 저장
       setAuthData({
         accessToken,
-        id,
+        userId,
       });
+
+      // 상태에 저장된 accessToken 확인
+      console.log(
+        '현재 저장된 accessToken:',
+        useAuthStore.getState().accessToken
+      );
 
       // Access Token 출력
       console.log('로그인 성공 - Access Token:', accessToken);

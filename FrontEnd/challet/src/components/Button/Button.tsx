@@ -17,7 +17,7 @@ const Button = ({
     <button
       className={`custom-button ${className} ${disabled ? 'disabled' : ''}`}
       disabled={disabled}
-      onClick={onClick} // onClick 속성 추가
+      onClick={onClick}
     >
       {text}
     </button>

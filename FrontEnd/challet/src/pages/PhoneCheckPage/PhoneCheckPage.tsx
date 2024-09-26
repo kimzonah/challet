@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axiosInstance'; // Axios instance 가져오기
-import useSignUpStore from '../../store/useSignUpStore'; // Zustand 스토어 가져오기
+import axiosInstance from '../../api/axiosInstance';
+import useSignUpStore from '../../store/useSignUpStore';
+import Button from '../../components/Button/Button';
 
 const PhoneCheckPage = () => {
   const [phoneNumber, setPhoneNumber] = useState(''); // 실제 입력된 전화번호
   const [formattedPhoneNumber, setFormattedPhoneNumber] = useState(''); // 포맷팅된 전화번호
   const [errorMessage, setErrorMessage] = useState(''); // 중복 검사 결과 메시지
   const [isValid, setIsValid] = useState(false); // 유효성 여부
+  const [isDuplicate, setIsDuplicate] = useState(false); // 중복 여부
 
   const navigate = useNavigate();
   const { setSignUpData } = useSignUpStore(); // Zustand에서 상태 업데이트 함수 가져오기
@@ -35,20 +37,23 @@ const PhoneCheckPage = () => {
   const checkPhoneNumber = async (number: string) => {
     try {
       const response = await axiosInstance.post(
-        '/api/challet/auth/check-phone',
+        '/api/challet/auth/check-duplicate',
         { phoneNumber: number }
       );
-      if (response.data.isDuplicate) {
+      if (response.data.isDuplicated) {
         setErrorMessage('이미 사용중인 전화번호입니다.');
         setIsValid(false);
+        setIsDuplicate(true); // 중복된 상태로 설정
       } else {
         setErrorMessage('사용 가능한 전화번호입니다.');
         setIsValid(true);
+        setIsDuplicate(false); // 중복되지 않음
       }
     } catch (error) {
-      console.error('중복 검사 오류:', error); // 콘솔에 오류 출력
+      console.error('중복 검사 오류:', error);
       setErrorMessage('중복 검사 중 오류가 발생했습니다.');
-      setIsValid(false);
+      setIsValid(false); // 오류 발생 시 비유효 처리
+      setIsDuplicate(false); // 중복 상태 초기화
     }
   };
 
@@ -59,13 +64,14 @@ const PhoneCheckPage = () => {
       checkPhoneNumber(onlyNumbers); // 중복 검사 실행
     } else {
       setErrorMessage('');
-      setIsValid(false);
+      setIsValid(false); // 전화번호가 11자리가 아닐 경우 비활성화
+      setIsDuplicate(false); // 중복 상태 초기화
     }
   }, [phoneNumber]);
 
   // 확인 버튼 클릭 핸들러
   const handleConfirm = () => {
-    if (isValid) {
+    if (isValid && !isDuplicate) {
       // 전화번호를 Zustand에 저장
       setSignUpData({ phoneNumber: phoneNumber.replace(/\D/g, '') });
       console.log('전화번호가 저장되었습니다:', phoneNumber.replace(/\D/g, ''));
@@ -94,9 +100,7 @@ const PhoneCheckPage = () => {
           <p style={{ color: isValid ? 'green' : 'red' }}>{errorMessage}</p>
         )}
       </div>
-      <button onClick={handleConfirm} disabled={!isValid}>
-        확인
-      </button>
+      <Button text='확인' onClick={handleConfirm} disabled={!isValid} />
     </div>
   );
 };
