@@ -58,7 +58,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         challengeRepository.save(challenge);
 
         // 생성한 유저는 참여 멤버로 추가
-        UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
+        UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
         userChallengeRepository.save(userChallenge);
 
     }
@@ -155,7 +155,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
 
-        UserChallenge userChallenge = UserChallenge.addUserChallenge(user, challenge);
+        UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
         userChallengeRepository.save(userChallenge);
 
     }

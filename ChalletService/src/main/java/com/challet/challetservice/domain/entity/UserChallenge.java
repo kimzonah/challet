@@ -7,7 +7,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -46,7 +45,7 @@ public class UserChallenge {
     @OneToMany(mappedBy = "userChallenge", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedTransaction> sharedTransactions = new ArrayList<>();
 
-    public static UserChallenge addUserChallenge(User user, Challenge challenge) {
+    public static UserChallenge fromUserAndChallenge(User user, Challenge challenge) {
         UserChallenge userChallenge = UserChallenge.builder()
             .user(user)
             .challenge(challenge)

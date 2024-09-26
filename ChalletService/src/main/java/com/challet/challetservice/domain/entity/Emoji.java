@@ -39,10 +39,13 @@ public class Emoji {
     private EmojiType type;
 
     public static Emoji createEmoji(User user, SharedTransaction sharedTransaction, EmojiType type) {
-        return Emoji.builder()
+        Emoji emoji = Emoji.builder()
             .user(user)
             .sharedTransaction(sharedTransaction)
-            .type(type).build();
+            .type(type)
+            .build();
+        user.getEmojis().add(emoji);
+        return emoji;
     }
 
     public void updateEmoji(EmojiType newEmojiType) {
