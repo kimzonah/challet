@@ -1,5 +1,6 @@
 package com.challet.challetservice.domain.dto.response;
 
+import com.challet.challetservice.domain.entity.Category;
 import com.challet.challetservice.domain.entity.Reward;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,7 +13,10 @@ public record MyRewardInfoResponseDTO(
     Long rewardId,
 
     @Schema(description = "리워드 종류 (실패 : 0, 성공 : 1)")
-    Boolean type
+    Boolean type,
+
+    @Schema(description = "챌린지 카테고리")
+    Category category
 
 ) {
 
@@ -20,6 +24,7 @@ public record MyRewardInfoResponseDTO(
         return MyRewardInfoResponseDTO.builder()
             .rewardId(reward.getId())
             .type(reward.getType())
+            .category(reward.getChallenge().getCategory())
             .build();
     }
 
