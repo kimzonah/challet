@@ -14,7 +14,7 @@ interface Transaction {
   userId: number;
   nickname: string;
   profileImage: string;
-  sharedTransactionId: number; // 여기서 sharedTransactionId로 변경됨
+  sharedTransactionId: number;
   withdrawal: string;
   transactionAmount: number;
   transactionDateTime: string;
@@ -38,7 +38,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
   useEffect(() => {
     const connectAndSubscribe = async () => {
       try {
-        // 웹소켓이 이미 연결되어 있는지 확인
         if (!webSocketService.isConnected()) {
           // 웹소켓 연결이 완료된 후 구독
           await webSocketService.connect();
@@ -51,10 +50,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
         webSocketService.subscribeTransaction(
           challengeId.toString(),
           (message) => {
-            console.log('받은 거래 메시지:', message.body);
-
-            // 메시지를 Transaction 타입으로 변환하면서 기본값을 설정하고
-            // 웹소켓으로 오는 id를 sharedTransactionId로 변경
             const receivedTransaction = JSON.parse(message.body);
 
             const transaction: Transaction = {
@@ -68,11 +63,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
               userEmoji: null, // 기본값
             };
 
-            console.log('거래 내역:', transaction);
-
-            // 트랜잭션을 sharedTransactions에 추가하고 정렬
             setSharedTransactions((prevTransactions) => {
-              // 새 트랜잭션을 포함하여 배열을 업데이트하고, 시간순으로 정렬
               const updatedTransactions = [...prevTransactions, transaction];
               return updatedTransactions.sort(
                 (a, b) =>
@@ -85,7 +76,32 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
         webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
           console.log('받은 이모지 메시지:', message.body);
-          // 받은 이모지 메시지 처리 로직 추가
+          const emojiUpdate = JSON.parse(message.body);
+
+          // 이모지 업데이트 처리 로직
+          setSharedTransactions((prevTransactions) =>
+            prevTransactions.map((transaction) =>
+              transaction.sharedTransactionId ===
+              emojiUpdate.sharedTransactionId
+                ? {
+                    ...transaction,
+                    goodCount:
+                      emojiUpdate.type === 'GOOD'
+                        ? emojiUpdate.count
+                        : transaction.goodCount,
+                    sosoCount:
+                      emojiUpdate.type === 'SOSO'
+                        ? emojiUpdate.count
+                        : transaction.sosoCount,
+                    badCount:
+                      emojiUpdate.type === 'BAD'
+                        ? emojiUpdate.count
+                        : transaction.badCount,
+                    userEmoji: emojiUpdate.type, // 사용자 이모지를 업데이트
+                  }
+                : transaction
+            )
+          );
         });
       } catch (error) {
         console.error('WebSocket 연결 실패:', error);
@@ -97,34 +113,30 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     return () => {};
   }, [challengeId]);
 
-  useEffect(() => {
-    // 거래 내역이 변경될 때마다 스크롤을 맨 아래로 이동
-    if (transactionListRef.current) {
-      transactionListRef.current.scrollTop =
-        transactionListRef.current.scrollHeight;
-    }
-  }, [sharedTransactions]);
-
-  // 시간 형식 변경 함수
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('ko-KR', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true, // 12시간 형식
-    });
-  };
-
-  // 거래 내역 클릭 시 상세 페이지로 이동
-  const handleTransactionClick = (sharedTransactionId: number) => {
-    navigate(`/sharedTransactionDetail/${sharedTransactionId}`);
-  };
-
   // 이모지 버튼 클릭 핸들러
   const handleEmojiClick = (transaction: Transaction, emojiType: string) => {
-    // API 호출 예시
-    console.log(`Transaction: ${transaction}, Emoji Type: ${emojiType}`);
-    // 실제 API 호출 로직 추가 필요
+    let action = 'ADD';
+    let beforeType = transaction.userEmoji;
+
+    if (beforeType === emojiType) {
+      action = 'DELETE';
+    } else if (beforeType) {
+      action = 'UPDATE';
+    }
+
+    const emojiRequest = {
+      sharedTransactionId: transaction.sharedTransactionId,
+      action: action,
+      type: emojiType,
+      beforeType: beforeType,
+    };
+
+    console.log(`이모지 전송:`, emojiRequest);
+
+    webSocketService.sendMessage(
+      `/app/challenges/${challengeId}/emoji`,
+      emojiRequest
+    ); // 웹소켓으로 메시지 전송
   };
 
   return (
@@ -141,7 +153,14 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
           {transaction.userId === userId ? (
             <div className='text-right flex items-center'>
               <div className='text-sm text-gray-400 mr-2'>
-                {formatTime(transaction.transactionDateTime)}
+                {new Date(transaction.transactionDateTime).toLocaleTimeString(
+                  'ko-KR',
+                  {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                  }
+                )}
               </div>
               <div className='w-full'>
                 {transaction.image && (
@@ -153,13 +172,13 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     />
                   </div>
                 )}
-
                 <div className='flex items-center w-full'>
-                  {/* 거래 내역의 이름, 가격, 내용을 포함하는 칸에만 onClick 이벤트를 적용 */}
                   <div
                     className='bg-white p-3 rounded-xl shadow-md mb-2 w-full cursor-pointer'
                     onClick={() =>
-                      handleTransactionClick(transaction.sharedTransactionId)
+                      navigate(
+                        `/sharedTransactionDetail/${transaction.sharedTransactionId}`
+                      )
                     }
                   >
                     <div className='flex items-center justify-between'>
@@ -271,7 +290,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                 >
                   {transaction.nickname}
                 </span>
-
                 {transaction.image && (
                   <div className='my-2'>
                     <img
@@ -282,11 +300,12 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                   </div>
                 )}
                 <div className='flex items-center'>
-                  {/* 거래 내역의 이름, 가격, 내용을 포함하는 칸에만 onClick 이벤트를 적용 */}
                   <div
                     className='bg-white p-3 rounded-xl shadow-md mb-2 w-full cursor-pointer'
                     onClick={() =>
-                      handleTransactionClick(transaction.sharedTransactionId)
+                      navigate(
+                        `/sharedTransactionDetail/${transaction.sharedTransactionId}`
+                      )
                     }
                   >
                     <div className='flex items-center justify-between'>
@@ -320,10 +339,15 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     </p>
                   </div>
                   <div className='text-sm text-gray-400 ml-1'>
-                    {formatTime(transaction.transactionDateTime)}
+                    {new Date(
+                      transaction.transactionDateTime
+                    ).toLocaleTimeString('ko-KR', {
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true,
+                    })}
                   </div>
                 </div>
-
                 <div className='flex justify-start items-center'>
                   <div className='flex items-center'>
                     <button

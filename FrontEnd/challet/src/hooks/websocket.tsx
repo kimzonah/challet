@@ -66,11 +66,8 @@ class WebSocketService {
   }
 
   // 이모지 채널 구독
-  subscribeEmoji(
-    sharedTransactionId: string,
-    callback: (message: any) => void
-  ) {
-    const destination = `/topic/challenges/${sharedTransactionId}/emoji`;
+  subscribeEmoji(challengeId: string, callback: (message: any) => void) {
+    const destination = `/topic/challenges/${challengeId}/emoji`;
     if (this.stompClient && this.stompClient.connected) {
       const subscription = this.stompClient.subscribe(destination, callback);
       this.subscriptions[destination] = () => subscription.unsubscribe();
