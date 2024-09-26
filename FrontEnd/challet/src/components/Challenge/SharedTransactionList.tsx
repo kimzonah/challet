@@ -14,7 +14,7 @@ interface Transaction {
   userId: number;
   nickname: string;
   profileImage: string;
-  sharedTransactionId: number;
+  sharedTransactionId: number; // 여기서 sharedTransactionId로 변경됨
   withdrawal: string;
   transactionAmount: number;
   transactionDateTime: string;
@@ -33,7 +33,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
   );
   const transactionListRef = useRef<HTMLDivElement>(null); // 스크롤을 조정할 ref
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
-  const userId = useAuthStore.getState().id;
+  const userId = Number(useAuthStore.getState().userId);
 
   useEffect(() => {
     const connectAndSubscribe = async () => {
@@ -51,8 +51,20 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
         webSocketService.subscribe(challengeId.toString(), (message) => {
           console.log('받은 거래 메시지:', message.body);
 
-          // 메시지를 Transaction 타입으로 변환
-          const transaction: Transaction = JSON.parse(message.body);
+          // 메시지를 Transaction 타입으로 변환하면서 기본값을 설정하고
+          // 웹소켓으로 오는 id를 sharedTransactionId로 변경
+          const receivedTransaction = JSON.parse(message.body);
+
+          const transaction: Transaction = {
+            ...receivedTransaction, // 받은 데이터
+            sharedTransactionId: receivedTransaction.id, // id를 sharedTransactionId로 매핑
+            transactionDateTime: new Date().toISOString(), // 받은 시간
+            goodCount: 0, // 기본값
+            sosoCount: 0, // 기본값
+            badCount: 0, // 기본값
+            commentCount: 0, // 기본값
+            userEmoji: null, // 기본값
+          };
 
           console.log('거래 내역:', transaction);
 
