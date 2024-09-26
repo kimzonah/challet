@@ -51,8 +51,16 @@ public class SharedTransaction {
     @Column(name = "image", nullable = true)
     private String image;
 
-    public static SharedTransaction from(SharedTransactionRegisterRequestDTO request, UserChallenge userChallenge) {
-        return SharedTransaction.builder()
+    @Builder.Default
+    @OneToMany(mappedBy = "sharedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Emoji> emojis = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "sharedTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    public static SharedTransaction fromRequest(SharedTransactionRegisterRequestDTO request, UserChallenge userChallenge) {
+        SharedTransaction sharedTransaction = SharedTransaction.builder()
             .userChallenge(userChallenge)
             .withdrawal(request.withdrawal())
             .transactionAmount(request.transactionAmount())
@@ -60,6 +68,9 @@ public class SharedTransaction {
             .content(request.content())
             .image(request.image())
             .build();
+
+        userChallenge.getSharedTransactions().add(sharedTransaction);
+        return sharedTransaction;
     }
 
 }

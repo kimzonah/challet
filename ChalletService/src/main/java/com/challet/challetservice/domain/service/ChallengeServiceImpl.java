@@ -21,7 +21,6 @@ import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
@@ -179,7 +178,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         if (request.action().equals(ActionType.ADD)){
 
             UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user);
-            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.from(request, userChallenge));
+            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.fromRequest(request, userChallenge));
 
             return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
         }
