@@ -1,22 +1,17 @@
-import React from 'react';
-
-interface Transaction {
+type Transaction = {
   id: number;
   transactionDate: string;
   deposit: string;
   transactionBalance: number;
   transactionAmount: number;
-}
+};
 
-interface TransactionItemProps {
+type TransactionItemProps = {
   transaction: Transaction;
   onClick: (transactionId: number) => void;
-}
+};
 
-const TransactionItem: React.FC<TransactionItemProps> = ({
-  transaction,
-  onClick,
-}) => {
+const TransactionItem = ({ transaction, onClick }: TransactionItemProps) => {
   const dateObject = new Date(transaction.transactionDate);
   const date = `${dateObject.getMonth() + 1}.${dateObject.getDate()}`;
   const time = dateObject.toTimeString().slice(0, 5);
