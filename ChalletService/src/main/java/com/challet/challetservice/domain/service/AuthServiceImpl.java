@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
         ResponseEntity<String> responseAccount = chBankFeignClient.requestCreateChBankAccount(
             request.phoneNumber());
         if(responseAccount.getStatusCode() != HttpStatus.CREATED){
-            throw new ExceptionResponse(CustomException.FAIl_ACCOUNT_CREATION_FAILED);
+            throw new ExceptionResponse(CustomException.FAIL_ACCOUNT_CREATION_FAILED);
         }
 
         Cookie cookie = createRefreshTokenCookie(user.getRefreshToken());
