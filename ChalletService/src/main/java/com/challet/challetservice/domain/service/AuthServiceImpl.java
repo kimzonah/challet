@@ -81,12 +81,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public CheckDuplicateResponseDTO checkDuplicate(CheckDuplicateRequestDTO request) {
         Boolean result = userRepository.existsByPhoneNumber(request.phoneNumber());
         return new CheckDuplicateResponseDTO(result);
     }
 
     @Override
+    @Transactional
     public TokenRefreshResponseDTO refreshToken(HttpServletRequest request) {
         String refreshToken = getRefreshTokenFromCookie(request);
 
