@@ -1,6 +1,6 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { useNavigate } from 'react-router-dom';
+import axios, { AxiosInstance } from 'axios';
 import useAuthStore from '../store/useAuthStore';
+import { isTokenExpired } from '../utils/tokenUtils'; // 토큰 만료 여부 확인 함수
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
@@ -22,53 +22,79 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default axiosInstance;
-
 // 액세스 토큰 재발급 함수
-const refreshAccessToken = (): Promise<string> => {
-  return axios
-    .post('/api/challet/auth/refresh', {}, { withCredentials: true })
-    .then((response) => {
-      const newAccessToken: string = response.data.accessToken;
-      useAuthStore.getState().setAuthData({
-        accessToken: newAccessToken,
-        userId: useAuthStore.getState().userId || '',
-      });
-      return newAccessToken;
-    })
-    .catch((error) => {
-      console.error('토큰 재발급 실패:', error);
-      throw error;
+const refreshAccessToken = async (): Promise<string> => {
+  console.log('토큰 재발급 시도 중...');
+  try {
+    // axiosInstance 사용
+    const response = await axiosInstance.post(
+      '/api/challet/auth/refresh',
+      {},
+      { withCredentials: true }
+    );
+    const newAccessToken: string = response.data.accessToken;
+
+    // 상태 업데이트
+    useAuthStore.getState().setAuthData({
+      accessToken: newAccessToken,
+      userId: useAuthStore.getState().userId || '',
     });
+
+    console.log('토큰 재발급 성공:', newAccessToken);
+    return newAccessToken;
+  } catch (error) {
+    console.error('토큰 재발급 실패:', error);
+    throw error;
+  }
 };
 
-// 응답 인터셉터: 401 응답을 받으면 토큰 재발급 시도
-axiosInstance.interceptors.response.use(
-  (response) => response, // 응답이 정상일 때 그대로 반환
-  async (error) => {
-    const originalRequest = error.config as AxiosRequestConfig & {
-      _retry?: boolean;
-    }; // 원래 요청 정보 저장
-    const navigate = useNavigate(); // 리다이렉트를 위한 네비게이트
+// 요청 인터셉터: 모든 요청에 accessToken을 헤더에 추가하기 전 만료 여부 확인
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    const { accessToken } = useAuthStore.getState();
 
-    // 401 에러가 발생하면 (토큰 만료 시)
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // 무한 재시도를 방지
-      try {
-        const newAccessToken = await refreshAccessToken(); // 새로운 액세스 토큰 발급
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`; // 새로운 액세스 토큰으로 Authorization 헤더 업데이트
+    // 토큰 검증이 필요 없는 엔드포인트 리스트
+    const publicEndpoints = [
+      '/api/challet/auth/signup',
+      '/api/challet/auth/login',
+      '/api/challet/auth/refresh',
+      '/api/challet/auth/check-duplicate',
+    ];
+
+    // 요청 URL이 토큰 검증이 필요 없는 엔드포인트라면 토큰 검사를 건너뜀
+    if (publicEndpoints.some((endpoint) => config.url?.startsWith(endpoint))) {
+      return config;
+    }
+
+    // 액세스 토큰이 있는지 확인
+    if (accessToken) {
+      // 토큰이 만료된 경우 재발급 시도
+      if (isTokenExpired(accessToken)) {
+        try {
+          console.log('토큰이 만료되어 재발급 시도 중...');
+          const newAccessToken = await refreshAccessToken();
+
+          // 재발급 받은 토큰을 Authorization 헤더에 추가
+          config.headers.Authorization = `Bearer ${newAccessToken}`;
+
+          // 재발급 성공 메시지와 토큰 출력
+          console.log('토큰 재발급 완료:', newAccessToken);
+        } catch (error) {
+          console.error('토큰 재발급 실패:', error);
+
+          // 재발급 실패 시 사용자 로그아웃 등의 추가 처리 필요할 수 있음
+          useAuthStore.getState().clearAuthData();
+          return Promise.reject(error); // 재발급 실패 시 요청을 취소
         }
-        return axiosInstance(originalRequest); // 원래 요청을 다시 보냄
-      } catch (err) {
-        // 재발급 실패 시 로그아웃 처리 및 리다이렉트
-        console.error('재발급 실패 후 로그아웃 처리:', err);
-        useAuthStore.getState().clearAuthData(); // 상태에서 인증 데이터 삭제 (로그아웃 처리)
-        navigate('/login'); // 로그아웃 후 로그인 페이지로 리다이렉트
-        return Promise.reject(err); // 에러를 그대로 반환
+      } else {
+        // 토큰이 만료되지 않았을 경우, 기존 토큰을 Authorization 헤더에 추가
+        config.headers.Authorization = `Bearer ${accessToken}`;
       }
     }
 
-    return Promise.reject(error); // 다른 모든 에러는 그대로 반환
-  }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
+
+export default axiosInstance;
