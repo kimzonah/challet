@@ -26,8 +26,8 @@ import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
 import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
-import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'; // 챌린지 생성 컴포넌트
-import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
+import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton';
+import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage';
 import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
 import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
 import SharedTransactionEdit from './components/Challenge/SharedTransactionEdit';
@@ -49,6 +49,7 @@ function App() {
   const matchHistory = useMatch('/history');
   const matchHistorydetail = useMatch('//history-detail/:transactionId');
   const matchTransfer = useMatch('/transfer');
+  const matchmydataselect = useMatch('/mydataselect');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
@@ -56,12 +57,13 @@ function App() {
     matchChallengeRoom ||
     sharedTransactionCreate ||
     sharedTransactionDetail ||
-    sharedTransactionEdit;
-  matchHistory ||
+    sharedTransactionEdit ||
+    matchHistory ||
     matchHistorydetail ||
     matchpayment ||
     matchpayresult ||
-    matchTransfer;
+    matchTransfer ||
+    matchmydataselect;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
