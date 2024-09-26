@@ -177,7 +177,8 @@ public class ChallengeServiceImpl implements ChallengeService {
         // action이 ADD일때
         if (request.action().equals(ActionType.ADD)){
 
-            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user);
+            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user)
+                .orElseThrow(()-> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
             SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.fromRequest(request, userChallenge));
 
             return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);

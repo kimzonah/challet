@@ -2,7 +2,8 @@ package com.challet.challetservice.domain.controller;
 
 import com.challet.challetservice.domain.dto.request.UserUpdateNicknameRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserUpdateProfileRequestDTO;
-import com.challet.challetservice.domain.dto.response.MyRewadsListResponseDTO;
+import com.challet.challetservice.domain.dto.response.MyRewadInfoResponseDTO;
+import com.challet.challetservice.domain.dto.response.MyRewardListResponseDTO;
 import com.challet.challetservice.domain.dto.response.RewardDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.UserInfoResponseDTO;
 import com.challet.challetservice.domain.service.UserService;
@@ -17,7 +18,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,16 +74,17 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 
-    @Operation(summary = "내 리워드 조회", description = "내가 받은 리워드 리스트 조회(최근 획득한 리워드가 가장 앞순서에 오도록 정렬)")
+    @Operation(summary = "내 리워드 조회 (완료)", description = "내가 받은 리워드 리스트 조회(최근 획득한 리워드가 가장 앞순서에 오도록 정렬)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "내 리워드 조회 성공"),
         @ApiResponse(responseCode = "400", description = "내 리워드 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
         @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("/rewards")
-    public ResponseEntity<List<MyRewadsListResponseDTO>> getRewards(
-        @RequestHeader(value = "Authorization") String header) {
-        return null;
+    public ResponseEntity<MyRewardListResponseDTO> getRewards(
+        @RequestHeader(value = "Authorization", required = false) String header) {
+        MyRewardListResponseDTO myRewards = userService.getMyRewards(header);
+        return ResponseEntity.status(HttpStatus.OK).body(myRewards);
     }
 
     @Operation(summary = "리워드 상세 정보 조회", description = "리워드ID로 해당 리워드 상세 정보 조회")
@@ -97,8 +98,9 @@ public class UserController {
     })
     @GetMapping("/rewards/{id}")
     public ResponseEntity<RewardDetailResponseDTO> getRewardById(
-        @RequestHeader(value = "Authorization") String header, @PathVariable("id") String id) {
-        return null;
+        @RequestHeader(value = "Authorization", required = false) String header, @PathVariable("id") Long id) {
+        RewardDetailResponseDTO rewardDetail = userService.getRewardDetail(header, id);
+        return ResponseEntity.status(HttpStatus.OK).body(rewardDetail);
     }
 
 
