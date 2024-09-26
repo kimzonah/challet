@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class AuthController {
         @ApiResponse(responseCode = "400", description = "회원가입 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
     @PostMapping("/signup")
-    public ResponseEntity<LoginResponseDTO> signup(@RequestBody UserRegisterRequestDTO request,
+    public ResponseEntity<LoginResponseDTO> signup(@Valid @RequestBody UserRegisterRequestDTO request,
         HttpServletResponse response) {
         LoginResponseDTO result = authService.signup(request, response);
         return ResponseEntity.status(HttpStatus.OK).body(result);

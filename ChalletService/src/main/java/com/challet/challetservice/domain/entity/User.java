@@ -48,7 +48,7 @@ public class User {
     private Integer age;
 
     @Column(name = "gender", nullable = false, columnDefinition = "TINYINT")
-    private Integer gender;
+    private Boolean gender;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -56,8 +56,21 @@ public class User {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserChallenge> userChallenges = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reward> rewards = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Emoji> emojis = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

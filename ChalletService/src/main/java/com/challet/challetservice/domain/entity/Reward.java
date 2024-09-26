@@ -37,7 +37,7 @@ public class Reward {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    @Column(name = "type", columnDefinition = "TINYINT")
-    private Integer type;
+    @Column(name = "type", nullable = false, columnDefinition = "TINYINT")
+    private Boolean type;
 
 }

@@ -42,7 +42,9 @@ public class Emoji {
         Emoji emoji = Emoji.builder()
             .user(user)
             .sharedTransaction(sharedTransaction)
-            .type(type).build();
+            .type(type)
+            .build();
+        user.getEmojis().add(emoji);
         return emoji;
     }
 

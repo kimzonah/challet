@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -62,6 +63,7 @@ public class Challenge {
     @Enumerated(EnumType.STRING)
     private ChallengeStatus status;
 
+    @Builder.Default
     @OneToMany(mappedBy = "challenge", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserChallenge> userChallenges = new ArrayList<>();
 
@@ -76,7 +78,6 @@ public class Challenge {
             .maxParticipants(request.maxParticipants())
             .inviteCode(code)
             .status(ChallengeStatus.RECRUITING)
-            .userChallenges(new ArrayList<>())
             .build();
     }
 
