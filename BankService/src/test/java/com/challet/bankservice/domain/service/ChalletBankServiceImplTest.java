@@ -60,7 +60,7 @@ class ChalletBankServiceImplTest {
             .builder()
             .transactionAmount(1L)
             .accountNumber("01012345678")
-            .withdrawal("test1")
+            .deposit("test1")
             .category("DELIVERY")
             .build();
 
@@ -98,7 +98,7 @@ class ChalletBankServiceImplTest {
             .builder()
             .transactionAmount(1000L)
             .accountNumber("01012345678")
-            .withdrawal("test1")
+            .deposit("test1")
             .category("DELIVERY")
             .build();
 

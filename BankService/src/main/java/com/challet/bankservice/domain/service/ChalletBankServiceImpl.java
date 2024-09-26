@@ -166,7 +166,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             .transactionAmount(paymentRequestDTO.transactionAmount())
             .transactionDatetime(LocalDateTime.now())
             .deposit(paymentRequestDTO.accountNumber())
-            .withdrawal(paymentRequestDTO.withdrawal())
+            .withdrawal(paymentRequestDTO.deposit())
             .transactionBalance(transactionBalance)
             .category(Category.valueOf(paymentRequestDTO.category()))
             .build();
@@ -175,7 +175,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private PaymentResponseDTO createPaymentResponse(PaymentRequestDTO paymentRequestDTO) {
         return PaymentResponseDTO.builder()
             .transactionAmount(paymentRequestDTO.transactionAmount())
-            .deposit(paymentRequestDTO.withdrawal())
+            .deposit(paymentRequestDTO.deposit())
             .category(paymentRequestDTO.category())
             .build();
     }
