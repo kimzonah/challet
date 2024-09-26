@@ -27,7 +27,7 @@ const PaymentPage = () => {
           if (result) {
             const text = result.getText();
             controls.stop(); // 스캔 완료 후 스캐너 중지
-            navigate('/payresult', { state: { qrData: text } });
+            navigate('/payreview', { state: { qrData: text } });
           } else if (err && err.name !== 'NotFoundException') {
             console.error('Error during scanning:', err);
           }

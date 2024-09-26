@@ -248,8 +248,8 @@ const MyDataSelectPage = () => {
       {/* 모달 */}
       {isModalOpen && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50'>
-          <div className='bg-white rounded-t-3xl w-full max-w-md shadow-lg pb-20 relative'>
-            <div className='p-6'>
+          <div className='bg-white rounded-t-3xl w-full pb-20 relative'>
+            <div className=' p-6'>
               <div className='flex justify-center items-center mb-6'>
                 <h2 className='text-lg font-medium text-[#373A3F]'>
                   오픈뱅킹 이용동의

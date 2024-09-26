@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AxiosInstance from '../../api/axiosInstance'; // Axios 인스턴스 가져오기
 import useAccountStore from '../../store/useAccountStore'; // AccountStore 가져오기
+import { AxiosError } from 'axios'; // AxiosError 임포트
 
 // QR 데이터의 형식을 정의하는 인터페이스
 interface ParsedData {
@@ -18,6 +19,7 @@ const PayResult = () => {
   const [hasSentRequest, setHasSentRequest] = useState(false);
 
   const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null); // 결제 성공 여부를 관리하는 상태
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 결제 실패 메시지 상태
 
   // qrData가 JSON 형식일 경우 파싱
   const parsedData: ParsedData | null = (() => {
@@ -50,7 +52,16 @@ const PayResult = () => {
         console.log('결제 성공');
         console.log(parsedData);
         console.log(data);
-      } catch (error) {
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          if (error.response && error.response.status === 400) {
+            setErrorMessage('잔액이 부족합니다.'); // 400 에러일 때 메시지 설정
+          } else {
+            setErrorMessage('결제 실패');
+          }
+        } else {
+          setErrorMessage('결제 실패');
+        }
         setPaymentSuccess(false); // 결제 실패
         console.error('결제 실패:', error);
       } finally {
@@ -141,7 +152,7 @@ const PayResult = () => {
               결제 실패
             </h2>
             <p className='text-[#585962] text-lg font-medium mb-28 text-center'>
-              잔액이 부족합니다.
+              {errorMessage}
             </p>
           </div>
         </div>
