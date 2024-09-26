@@ -20,11 +20,7 @@ const MyPage = () => {
   // 로그인한 유저 정보 조회 API 호출
   const fetchUserData = useCallback(async () => {
     try {
-      const response = await axiosInstance.get('/api/challet/users', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axiosInstance.get('/api/challet/users');
       setNickname(response.data.nickname || ''); // 닉네임 상태에 저장
       setProfileImageUrl(response.data.profileImage || defaultProfileImage); // 프로필 이미지 URL 상태에 저장, 없으면 기본 이미지 사용
     } catch (error) {
@@ -39,7 +35,7 @@ const MyPage = () => {
         console.error('유저 정보 조회 실패:', error.message);
       }
     }
-  }, [accessToken]); // accessToken을 의존성으로 설정
+  }, []); // accessToken을 의존성으로 설정
 
   useEffect(() => {
     fetchUserData(); // 마이페이지 접근 시 유저 정보 조회
@@ -47,13 +43,8 @@ const MyPage = () => {
 
   // 닉네임 수정 API 요청
   const handleNicknameChange = async () => {
-    // Zustand에서 상태 가져오기
-    const { accessToken } = useAuthStore.getState();
-
-    // accessToken이 없을 경우 에러 처리
-    if (!accessToken) {
-      console.error('Access Token이 없습니다.');
-      setErrorMessage('Access Token이 없어 닉네임을 수정할 수 없습니다.');
+    if (!newNickname.trim()) {
+      setErrorMessage('닉네임을 입력하세요.');
       return;
     }
 
@@ -61,11 +52,8 @@ const MyPage = () => {
       // 닉네임 수정 API 요청
       const response = await axiosInstance.patch(
         '/api/challet/users/nicknames',
-        { nickname: newNickname },
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          nickname: newNickname,
         }
       );
       console.log('닉네임 수정 성공:', response.data);
@@ -116,14 +104,6 @@ const MyPage = () => {
 
       console.log('프로필 이미지 수정 성공:', response.data);
       alert('프로필 이미지가 수정되었습니다.');
-
-      // Zustand 상태에 새 이미지 저장
-      // setAuthData({
-      //   accessToken, // 유지된 accessToken
-      //   refreshToken: refreshToken || '', // 유지된 refreshToken
-      //   nickname: nickname || '', // 기존 닉네임 유지
-      //   profileImageUrl: base64Image, // 새로운 프로필 이미지 저장
-      // });
     } catch (error) {
       console.error('프로필 이미지 수정 실패:', error);
     }

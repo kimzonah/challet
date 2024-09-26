@@ -6,7 +6,6 @@ import {
   useMatch,
 } from 'react-router-dom';
 import 'react-dates/lib/css/_datepicker.css';
-
 import ChallengeRoom from './components/Challenge/ChallengeRoom';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
