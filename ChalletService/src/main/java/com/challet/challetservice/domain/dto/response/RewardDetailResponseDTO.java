@@ -1,16 +1,23 @@
 package com.challet.challetservice.domain.dto.response;
 
+import com.challet.challetservice.domain.entity.Category;
+import com.challet.challetservice.domain.entity.Challenge;
+import com.challet.challetservice.domain.entity.Reward;
+import com.challet.challetservice.domain.entity.User;
+import com.challet.challetservice.domain.entity.UserChallenge;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
+import lombok.Builder;
 
 @Schema(description = "리워드 상세 조회 응답 DTO")
+@Builder
 public record RewardDetailResponseDTO(
 
     @Schema(description = "챌린지 제목")
     String title,
 
     @Schema(description = "챌린지 카테고리")
-    String category,
+    Category category,
 
     @Schema(description = "챌린지 소비한도")
     Long spendingLimit,
@@ -28,5 +35,18 @@ public record RewardDetailResponseDTO(
     Boolean type
 
 ) {
+
+    public static RewardDetailResponseDTO from(Reward reward, UserChallenge userChallenge) {
+        Challenge challenge = userChallenge.getChallenge();
+        return RewardDetailResponseDTO.builder()
+            .title(challenge.getTitle())
+            .category(challenge.getCategory())
+            .spendingLimit(challenge.getSpendingLimit())
+            .startDate(challenge.getStartDate())
+            .endDate(challenge.getEndDate())
+            .spendingAmount(userChallenge.getSpendingAmount())
+            .type(reward.getType())
+            .build();
+    }
 
 }

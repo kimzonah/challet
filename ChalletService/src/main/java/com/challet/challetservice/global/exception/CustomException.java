@@ -19,7 +19,9 @@ public enum CustomException {
     ACCESS_DENIED_EXCEPTION(403, "AccessDeniedException", "접근 불가한 요청입니다."),
     MAX_PARTICIPANTS_EXCEEDED_EXCEPTION(403, "MaxParticipantsExceededException", "이미 다 찬 챌린지 입니다."),
     NOT_FOUND_SHARED_TRANSACTION_EXCEPTION(400, "NotFountSharedTransationException","공유 거래 내역이 존재하지 않습니다." ),
-    Fail_ACCOUNT_CREATION_FAILED(400, "AccountCreationFailedException", "계좌 생성을 실패했습니다.");
+    FAIL_ACCOUNT_CREATION_FAILED(400, "AccountCreationFailedException", "계좌 생성을 실패했습니다."),
+    NOT_FOUND_REWARD_EXCEPTION(400, "NotFoundRewardException","리워드가 존재하지 않습니다." ),
+    NOT_FOUND_JOIN_EXCEPTION(400,"NotFoundJoinException" ,"참여 목록에 존재하지 않습니다." );
 
 
     private int statusNumber;

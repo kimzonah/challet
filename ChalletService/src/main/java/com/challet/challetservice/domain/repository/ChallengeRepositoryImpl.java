@@ -12,10 +12,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class ChallengeRepositorySupport {
+public class ChallengeRepositoryImpl implements ChallengeRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public List<Challenge> searchChallengeByKewordAndCategory(String keword, String category) {
         QChallenge qChallenge = QChallenge.challenge;
         BooleanBuilder builder = new BooleanBuilder();

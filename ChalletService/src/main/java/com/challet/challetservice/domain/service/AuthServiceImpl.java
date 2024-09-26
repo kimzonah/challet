@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
         ResponseEntity<String> responseAccount = chBankFeignClient.requestCreateChBankAccount(
             request.phoneNumber());
         if(responseAccount.getStatusCode() != HttpStatus.CREATED){
-            throw new ExceptionResponse(CustomException.Fail_ACCOUNT_CREATION_FAILED);
+            throw new ExceptionResponse(CustomException.FAIL_ACCOUNT_CREATION_FAILED);
         }
 
         Cookie cookie = createRefreshTokenCookie(user.getRefreshToken());

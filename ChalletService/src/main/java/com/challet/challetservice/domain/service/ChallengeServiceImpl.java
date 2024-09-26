@@ -14,7 +14,7 @@ import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
-import com.challet.challetservice.domain.repository.ChallengeRepositorySupport;
+import com.challet.challetservice.domain.repository.ChallengeRepositoryImpl;
 import com.challet.challetservice.domain.repository.SharedTransactionRepository;
 import com.challet.challetservice.domain.repository.UserChallengeRepository;
 import com.challet.challetservice.domain.repository.UserRepository;
@@ -37,7 +37,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private static final SecureRandom random = new SecureRandom();
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
-    private final ChallengeRepositorySupport challengeRepositorySupport;
+    private final ChallengeRepositoryImpl challengeRepositoryImpl;
     private final SharedTransactionRepository sharedTransactionRepository;
 
     @Override
@@ -94,7 +94,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        List<Challenge> searchChallengesList = challengeRepositorySupport.searchChallengeByKewordAndCategory(
+        List<Challenge> searchChallengesList = challengeRepositoryImpl.searchChallengeByKewordAndCategory(
             keyword, category);
         if (searchChallengesList == null || searchChallengesList.isEmpty()) {
             return null;
@@ -177,7 +177,8 @@ public class ChallengeServiceImpl implements ChallengeService {
         // action이 ADD일때
         if (request.action().equals(ActionType.ADD)){
 
-            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user);
+            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user)
+                .orElseThrow(()-> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
             SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.fromRequest(request, userChallenge));
 
             return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
