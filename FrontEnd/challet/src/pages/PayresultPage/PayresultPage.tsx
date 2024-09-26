@@ -15,6 +15,7 @@ const PayResult = () => {
   const navigate = useNavigate();
   const { accountInfo } = useAccountStore();
   const { qrData } = location.state || {};
+  const [hasSentRequest, setHasSentRequest] = useState(false);
 
   const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null); // 결제 성공 여부를 관리하는 상태
 
@@ -29,7 +30,7 @@ const PayResult = () => {
   })();
 
   useEffect(() => {
-    if (!accountInfo || !parsedData) return;
+    if (!accountInfo || !parsedData || hasSentRequest) return;
 
     // 결제 요청 함수
     const sendPaymentRequest = async () => {
@@ -50,11 +51,13 @@ const PayResult = () => {
       } catch (error) {
         setPaymentSuccess(false); // 결제 실패
         console.error('결제 실패:', error);
+      } finally {
+        setHasSentRequest(true); // 요청이 한 번만 보내지도록 설정
       }
     };
 
     sendPaymentRequest();
-  }, [accountInfo, parsedData]);
+  }, [accountInfo, parsedData, hasSentRequest]);
 
   const handleNavigate = () => navigate('/wallet');
 

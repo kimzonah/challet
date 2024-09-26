@@ -53,6 +53,7 @@ const ChallengeModal = ({
   // 외부 클릭 리스너 추가
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
+    console.log(challengeDetail);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -61,7 +62,7 @@ const ChallengeModal = ({
   // 입장하기 버튼 클릭 시 라우팅 처리 함수 (Challenge 정보도 함께 넘김)
   const handleEnterChallengeRoom = () => {
     if (challengeDetail) {
-      navigate(`/challengeRoom/${challengeDetail.id}`, {
+      navigate(`/challengeRoom/${challengeDetail.challengeId}`, {
         state: { challenge: challengeDetail },
       });
     }

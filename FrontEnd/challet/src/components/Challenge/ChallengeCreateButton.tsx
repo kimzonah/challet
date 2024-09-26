@@ -11,7 +11,7 @@ const ChallengeCreateButton = () => {
   };
 
   return (
-    <div className='fixed bottom-16 left-0 right-12 flex justify-end w-full mb-4'>
+    <div className='fixed bottom-16 right-4 flex justify-end mb-4'>
       <button
         onClick={handleCreateChallenge}
         className='transform transition-transform duration-300 ease-in-out hover:scale-110'
@@ -21,7 +21,7 @@ const ChallengeCreateButton = () => {
         <img
           src={ChallengePlus}
           alt='챌린지 생성하기'
-          className='w-16 h-16 object-contain mr-4 mb-4'
+          className='w-16 h-16 object-contain'
           style={{ display: 'block' }} // 이미지가 있는 부분만 나타나도록 설정
         />
       </button>
