@@ -2,7 +2,6 @@ package com.challet.challetservice.domain.controller;
 
 import com.challet.challetservice.domain.dto.request.UserUpdateNicknameRequestDTO;
 import com.challet.challetservice.domain.dto.request.UserUpdateProfileRequestDTO;
-import com.challet.challetservice.domain.dto.response.MyRewadInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.MyRewardListResponseDTO;
 import com.challet.challetservice.domain.dto.response.RewardDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.UserInfoResponseDTO;
@@ -21,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/challet/users")

@@ -7,7 +7,7 @@ import java.util.List;
 public record MyRewardListResponseDTO(
 
     @Schema(description = "내가 획득한 리워드 리스트")
-    List<MyRewadInfoResponseDTO> rewardList
+    List<MyRewardInfoResponseDTO> rewardList
 
 ) {
 

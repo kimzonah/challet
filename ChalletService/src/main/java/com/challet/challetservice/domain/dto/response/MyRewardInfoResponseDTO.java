@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Schema(description = "내 리워드 정보 DTO")
 @Builder
-public record MyRewadInfoResponseDTO(
+public record MyRewardInfoResponseDTO(
 
     @Schema(description = "리워드ID")
     Long rewardId,
@@ -16,8 +16,8 @@ public record MyRewadInfoResponseDTO(
 
 ) {
 
-    public static MyRewadInfoResponseDTO fromReward(Reward reward) {
-        return MyRewadInfoResponseDTO.builder()
+    public static MyRewardInfoResponseDTO fromReward(Reward reward) {
+        return MyRewardInfoResponseDTO.builder()
             .rewardId(reward.getId())
             .type(reward.getType())
             .build();
