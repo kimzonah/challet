@@ -1,18 +1,23 @@
 FROM node:20 as build-stage
 WORKDIR /challet
-COPY package*.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm install -g pnpm
+
+COPY package*.json pnpm-lock.yaml ./
+
+RUN pnpm install --legacy-peer-deps
+
 COPY . .
-RUN npm run build
+
+RUN pnpm run build
 
 FROM nginx:stable-alpine as production-stage
 
-# 저장된 경로에서 nginx.conf 파일을 복사
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=build-stage /challet/dist /usr/share/nginx/html
 COPY --from=build-stage /challet/dev-dist /usr/share/nginx/html
 
 EXPOSE 4000
+
 CMD ["nginx", "-g", "daemon off;"]
