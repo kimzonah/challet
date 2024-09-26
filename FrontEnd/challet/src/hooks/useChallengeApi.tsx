@@ -73,7 +73,7 @@ export const useChallengeApi = () => {
   ) => {
     setIsLoading(true); // 로딩 상태
     try {
-      const url = `${API_BASE_URL}/challet/challenges/${challengeId}`;
+      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}`;
       const requestBody = {
         isPublic,
         inviteCode,
