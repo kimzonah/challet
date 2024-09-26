@@ -48,36 +48,44 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
         }
 
         // 구독 진행
-        webSocketService.subscribe(challengeId.toString(), (message) => {
-          console.log('받은 거래 메시지:', message.body);
+        webSocketService.subscribeTransaction(
+          challengeId.toString(),
+          (message) => {
+            console.log('받은 거래 메시지:', message.body);
 
-          // 메시지를 Transaction 타입으로 변환하면서 기본값을 설정하고
-          // 웹소켓으로 오는 id를 sharedTransactionId로 변경
-          const receivedTransaction = JSON.parse(message.body);
+            // 메시지를 Transaction 타입으로 변환하면서 기본값을 설정하고
+            // 웹소켓으로 오는 id를 sharedTransactionId로 변경
+            const receivedTransaction = JSON.parse(message.body);
 
-          const transaction: Transaction = {
-            ...receivedTransaction, // 받은 데이터
-            sharedTransactionId: receivedTransaction.id, // id를 sharedTransactionId로 매핑
-            transactionDateTime: new Date().toISOString(), // 받은 시간
-            goodCount: 0, // 기본값
-            sosoCount: 0, // 기본값
-            badCount: 0, // 기본값
-            commentCount: 0, // 기본값
-            userEmoji: null, // 기본값
-          };
+            const transaction: Transaction = {
+              ...receivedTransaction, // 받은 데이터
+              sharedTransactionId: receivedTransaction.id, // id를 sharedTransactionId로 매핑
+              transactionDateTime: new Date().toISOString(), // 받은 시간
+              goodCount: 0, // 기본값
+              sosoCount: 0, // 기본값
+              badCount: 0, // 기본값
+              commentCount: 0, // 기본값
+              userEmoji: null, // 기본값
+            };
 
-          console.log('거래 내역:', transaction);
+            console.log('거래 내역:', transaction);
 
-          // 트랜잭션을 sharedTransactions에 추가하고 정렬
-          setSharedTransactions((prevTransactions) => {
-            // 새 트랜잭션을 포함하여 배열을 업데이트하고, 시간순으로 정렬
-            const updatedTransactions = [...prevTransactions, transaction];
-            return updatedTransactions.sort(
-              (a, b) =>
-                new Date(a.transactionDateTime).getTime() -
-                new Date(b.transactionDateTime).getTime()
-            );
-          });
+            // 트랜잭션을 sharedTransactions에 추가하고 정렬
+            setSharedTransactions((prevTransactions) => {
+              // 새 트랜잭션을 포함하여 배열을 업데이트하고, 시간순으로 정렬
+              const updatedTransactions = [...prevTransactions, transaction];
+              return updatedTransactions.sort(
+                (a, b) =>
+                  new Date(a.transactionDateTime).getTime() -
+                  new Date(b.transactionDateTime).getTime()
+              );
+            });
+          }
+        );
+
+        webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
+          console.log('받은 이모지 메시지:', message.body);
+          // 받은 이모지 메시지 처리 로직 추가
         });
       } catch (error) {
         console.error('WebSocket 연결 실패:', error);
@@ -113,9 +121,9 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
   };
 
   // 이모지 버튼 클릭 핸들러
-  const handleEmojiClick = (transactionId: number, emojiType: number) => {
+  const handleEmojiClick = (transaction: Transaction, emojiType: string) => {
     // API 호출 예시
-    console.log(`Transaction ID: ${transactionId}, Emoji Type: ${emojiType}`);
+    console.log(`Transaction: ${transaction}, Emoji Type: ${emojiType}`);
     // 실제 API 호출 로직 추가 필요
   };
 
@@ -193,9 +201,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
-                      onClick={() =>
-                        handleEmojiClick(transaction.sharedTransactionId, 3)
-                      }
+                      onClick={() => handleEmojiClick(transaction, 'GOOD')}
                     >
                       <img
                         src={Emoji_3}
@@ -210,9 +216,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
-                      onClick={() =>
-                        handleEmojiClick(transaction.sharedTransactionId, 2)
-                      }
+                      onClick={() => handleEmojiClick(transaction, 'SOSO')}
                     >
                       <img
                         src={Emoji_2}
@@ -227,9 +231,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
-                      onClick={() =>
-                        handleEmojiClick(transaction.sharedTransactionId, 1)
-                      }
+                      onClick={() => handleEmojiClick(transaction, 'BAD')}
                     >
                       <img
                         src={Emoji_1}
@@ -330,9 +332,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
-                      onClick={() =>
-                        handleEmojiClick(transaction.sharedTransactionId, 3)
-                      }
+                      onClick={() => handleEmojiClick(transaction, 'GOOD')}
                     >
                       <img
                         src={Emoji_3}
@@ -347,9 +347,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
-                      onClick={() =>
-                        handleEmojiClick(transaction.sharedTransactionId, 2)
-                      }
+                      onClick={() => handleEmojiClick(transaction, 'SOSO')}
                     >
                       <img
                         src={Emoji_2}
@@ -364,9 +362,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                           ? 'border-2 border-[#00CCCC]'
                           : ''
                       }`}
-                      onClick={() =>
-                        handleEmojiClick(transaction.sharedTransactionId, 1)
-                      }
+                      onClick={() => handleEmojiClick(transaction, 'BAD')}
                     >
                       <img
                         src={Emoji_1}

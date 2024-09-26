@@ -54,9 +54,23 @@ class WebSocketService {
     return this.stompClient !== null && this.stompClient.connected;
   }
 
-  // 특정 채널 구독
-  subscribe(challengeId: string, callback: (message: any) => void) {
+  // 거래내역 채널 구독
+  subscribeTransaction(challengeId: string, callback: (message: any) => void) {
     const destination = `/topic/challenges/${challengeId}/shared-transactions`;
+    if (this.stompClient && this.stompClient.connected) {
+      const subscription = this.stompClient.subscribe(destination, callback);
+      this.subscriptions[destination] = () => subscription.unsubscribe();
+    } else {
+      console.warn('WebSocket 연결이 되지 않았습니다.');
+    }
+  }
+
+  // 이모지 채널 구독
+  subscribeEmoji(
+    sharedTransactionId: string,
+    callback: (message: any) => void
+  ) {
+    const destination = `/topic/challenges/${sharedTransactionId}/emoji`;
     if (this.stompClient && this.stompClient.connected) {
       const subscription = this.stompClient.subscribe(destination, callback);
       this.subscriptions[destination] = () => subscription.unsubscribe();
