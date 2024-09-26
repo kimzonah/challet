@@ -1,6 +1,8 @@
 package com.challet.kbbankservice.domain.service;
 
+import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
@@ -60,5 +62,10 @@ public class KbBankServiceImpl implements KbBankService {
     public void connectMyDataAccount(String tokenHeader) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
         kbBankRepository.connectMyDataAccount(phoneNumber);
+    }
+
+    @Override
+    public AccountTransferResponseDTO getAccountTransferInfo(String accountNumber) {
+        return kbBankRepository.getAccountForTransfer(accountNumber);
     }
 }

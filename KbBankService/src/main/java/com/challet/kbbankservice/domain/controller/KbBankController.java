@@ -1,6 +1,7 @@
 package com.challet.kbbankservice.domain.controller;
 
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.kbbankservice.domain.service.KbBankService;
@@ -81,6 +82,18 @@ public class KbBankController {
         AccountInfoResponseListDTO myDataAccounts = kbBankService.getAccountsByPhoneNumber(
             tokenHeader);
         return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
+    }
+
+    @GetMapping("/account-transfer")
+    @Operation(summary = "계좌 이체시 계좌 번호로 계좌 조회", description = "계좌 번호로 계좌 조회, 계좌 번호와 전화번호 반환")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "계좌 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })public ResponseEntity<AccountTransferResponseDTO> searchAccountByAccountNumber(
+        @RequestHeader("AccountNumber") String accountNumber) {
+        AccountTransferResponseDTO accountTransferInfo = kbBankService.getAccountTransferInfo(
+            accountNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(accountTransferInfo);
     }
 
     @GetMapping("/search")

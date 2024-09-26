@@ -2,6 +2,7 @@ package com.challet.kbbankservice.domain.repository;
 
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.entity.QKbBank;
@@ -94,5 +95,18 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .set(bank.myDataStatus, true)
             .where(bank.phoneNumber.eq(phoneNumber))
             .execute();
+    }
+
+    @Override
+    public AccountTransferResponseDTO getAccountForTransfer(String accountNumber) {
+        QKbBank kbBank = QKbBank.kbBank;
+
+        return query
+            .select(Projections.constructor(AccountTransferResponseDTO.class,
+                kbBank.phoneNumber,
+                kbBank.accountNumber))
+            .from(kbBank)
+            .where(kbBank.accountNumber.eq(accountNumber))
+            .fetchOne();
     }
 }

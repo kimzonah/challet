@@ -1,6 +1,7 @@
 package com.challet.kbbankservice.domain.repository;
 
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import java.util.List;
@@ -16,4 +17,6 @@ public interface KbBankRepositoryCustom {
     Long findAccountBalanceById(Long accountId);
 
     void connectMyDataAccount(String phoneNumber);
+
+    AccountTransferResponseDTO getAccountForTransfer(String accountNumber);
 }
