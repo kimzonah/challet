@@ -147,16 +147,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
         challetBank.addTransaction(paymentTransaction);
 
-        PaymentHttpMessageResponseDTO paymentHttpMessageResponseDTO = PaymentHttpMessageResponseDTO
-            .ofPaymentMessage(challetBank.getPhoneNumber(), paymentRequestDTO);
-
-        challetFeignClient.sendPaymentMessage(paymentHttpMessageResponseDTO);
-
         return createPaymentResponse(paymentRequestDTO);
-    }
-
-    private ChalletBank getChalletBank(Long accountId) {
-        return challetBankRepository.findByIdWithLock(accountId);
     }
 
     private long calculateTransactionBalance(ChalletBank challetBank, long transactionAmount) {
@@ -185,6 +176,25 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             .deposit(paymentRequestDTO.deposit())
             .category(paymentRequestDTO.category())
             .build();
+    }
+
+    @Transactional
+    @Override
+    public int sendPaymentInfoToChallet(Long accountId, PaymentRequestDTO paymentRequestDTO) {
+        try{
+            ChalletBank challetBank = getChalletBank(accountId);
+            PaymentHttpMessageResponseDTO paymentHttpMessageResponseDTO = PaymentHttpMessageResponseDTO
+                .ofPaymentMessage(challetBank.getPhoneNumber(), paymentRequestDTO);
+            challetFeignClient.sendPaymentMessage(paymentHttpMessageResponseDTO);
+            System.out.println(111);
+            return 1;
+        }catch(Exception e){
+            return 0;
+        }
+    }
+
+    private ChalletBank getChalletBank(Long accountId) {
+        return challetBankRepository.findByIdWithLock(accountId);
     }
 
     @Override

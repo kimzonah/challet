@@ -111,6 +111,7 @@ public class ChalletBankController {
         , @RequestBody PaymentRequestDTO paymentRequestDTO) {
         PaymentResponseDTO paymentResponseDTO = challetBankService.qrPayment(accountId,
             paymentRequestDTO);
+        challetBankService.sendPaymentInfoToChallet(accountId, paymentRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponseDTO);
     }
 
