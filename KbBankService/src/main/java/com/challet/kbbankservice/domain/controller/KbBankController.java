@@ -1,5 +1,7 @@
 package com.challet.kbbankservice.domain.controller;
 
+import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -84,17 +87,31 @@ public class KbBankController {
         return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
     }
 
-    @GetMapping("/account-transfer")
+    @GetMapping("/accounts/accountNumber")
     @Operation(summary = "계좌 이체시 계좌 번호로 계좌 조회", description = "계좌 번호로 계좌 조회, 계좌 번호와 전화번호 반환")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "계좌 조회 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
-    })public ResponseEntity<AccountTransferResponseDTO> searchAccountByAccountNumber(
+    })
+    public ResponseEntity<AccountTransferResponseDTO> searchAccountByAccountNumber(
         @RequestHeader("AccountNumber") String accountNumber) {
         AccountTransferResponseDTO accountTransferInfo = kbBankService.getAccountTransferInfo(
             accountNumber);
         return ResponseEntity.status(HttpStatus.OK).body(accountTransferInfo);
     }
+
+    @PostMapping("/accounts/transfer")
+    @Operation(summary = "계좌 이체시 계좌 입금", description = "계좌 번호, 입금금액, 사용자 정보를 받아 계좌 입금")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "계좌 입금 성공"),
+        @ApiResponse(responseCode = "400", description = "계좌 입금 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<AccountInfoResponseDTO> addAccountFromTransfer(
+        @RequestBody AccountTransferRequestDTO requestDTO) {
+        AccountInfoResponseDTO accountTransferInfo = kbBankService.addFundsToAccount(requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(accountTransferInfo);
+    }
+
 
     @GetMapping("/search")
     @Operation(summary = "극민은행 계좌 거래 내역 검색", description = "keyword, category를 통해 거래 내역 검색")

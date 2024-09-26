@@ -4,6 +4,7 @@ import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.kbbankservice.domain.entity.KbBank;
 import java.util.List;
 
 public interface KbBankRepositoryCustom {
@@ -19,4 +20,6 @@ public interface KbBankRepositoryCustom {
     void connectMyDataAccount(String phoneNumber);
 
     AccountTransferResponseDTO getAccountForTransfer(String accountNumber);
+
+    KbBank findByAccountNumber(String accountNumber);
 }

@@ -50,4 +50,8 @@ public class KbBankTransaction {
 
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    public void assignTransactionKbAccount(KbBank kbBank) {
+        this.kbBank = kbBank;
+    }
 }

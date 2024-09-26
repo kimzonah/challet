@@ -1,12 +1,16 @@
 package com.challet.kbbankservice.domain.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,4 +42,15 @@ public class KbBank {
 
     @Column(name = "mydata_status", nullable = false)
     private boolean myDataStatus;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "kbBank", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<KbBankTransaction> kbBankTransactions = new ArrayList<>();
+
+    public void addTransaction(KbBankTransaction kbBankTransaction) {
+        this.accountBalance += kbBankTransaction.getTransactionAmount();
+        this.kbBankTransactions.add(kbBankTransaction);
+        kbBankTransaction.assignTransactionKbAccount(this);
+    }
+
 }

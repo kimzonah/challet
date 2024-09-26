@@ -5,6 +5,7 @@ import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.kbbankservice.domain.entity.KbBank;
 import com.challet.kbbankservice.domain.entity.QKbBank;
 import com.challet.kbbankservice.domain.entity.QKbBankTransaction;
 import com.querydsl.core.types.Projections;
@@ -106,6 +107,15 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
                 kbBank.phoneNumber,
                 kbBank.accountNumber))
             .from(kbBank)
+            .where(kbBank.accountNumber.eq(accountNumber))
+            .fetchOne();
+    }
+
+    @Override
+    public KbBank findByAccountNumber(String accountNumber) {
+        QKbBank kbBank = QKbBank.kbBank;
+        return query
+            .selectFrom(kbBank)
             .where(kbBank.accountNumber.eq(accountNumber))
             .fetchOne();
     }
