@@ -145,7 +145,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         ChalletBankTransaction paymentTransaction = createTransaction(challetBank,
             paymentRequestDTO, transactionBalance);
 
-        challetBank.addTransaction(paymentTransaction);
+        challetBank.decreaseBalance(paymentTransaction);
 
         return createPaymentResponse(paymentRequestDTO);
     }
@@ -161,7 +161,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private ChalletBankTransaction createTransaction(ChalletBank challetBank,
         PaymentRequestDTO paymentRequestDTO, long transactionBalance) {
         return ChalletBankTransaction.builder()
-            .transactionAmount(paymentRequestDTO.transactionAmount())
+            .transactionAmount(-1 * paymentRequestDTO.transactionAmount())
             .transactionDatetime(LocalDateTime.now())
             .deposit(paymentRequestDTO.accountNumber())
             .withdrawal(paymentRequestDTO.deposit())
@@ -181,14 +181,13 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     @Transactional
     @Override
     public int sendPaymentInfoToChallet(Long accountId, PaymentRequestDTO paymentRequestDTO) {
-        try{
+        try {
             ChalletBank challetBank = getChalletBank(accountId);
             PaymentHttpMessageResponseDTO paymentHttpMessageResponseDTO = PaymentHttpMessageResponseDTO
                 .ofPaymentMessage(challetBank.getPhoneNumber(), paymentRequestDTO);
             challetFeignClient.sendPaymentMessage(paymentHttpMessageResponseDTO);
-            System.out.println(111);
             return 1;
-        }catch(Exception e){
+        } catch (Exception e) {
             return 0;
         }
     }

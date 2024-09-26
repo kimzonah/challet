@@ -51,7 +51,7 @@ public class ChalletBank {
     @OneToMany(mappedBy = "challetBank", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChalletBankTransaction> challetBankTransactions = new ArrayList<>();
 
-    public void addTransaction(ChalletBankTransaction challetBankTransaction) {
+    public void decreaseBalance(ChalletBankTransaction challetBankTransaction) {
         this.accountBalance -= challetBankTransaction.getTransactionAmount();
         this.challetBankTransactions.add(challetBankTransaction);
         challetBankTransaction.assignTransactionChAccount(this);
