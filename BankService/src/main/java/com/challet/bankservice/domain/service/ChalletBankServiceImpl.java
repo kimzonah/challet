@@ -5,6 +5,7 @@ import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
+import com.challet.bankservice.domain.dto.response.PaymentHttpMessageResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
@@ -13,6 +14,7 @@ import com.challet.bankservice.domain.entity.Category;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.ChalletBankTransaction;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
+import com.challet.bankservice.global.client.ChalletFeignClient;
 import com.challet.bankservice.global.client.KbBankFeignClient;
 import com.challet.bankservice.global.client.NhBankFeignClient;
 import com.challet.bankservice.global.client.ShBankFeignClient;
@@ -29,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -43,6 +44,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private final KbBankFeignClient kbBankFeignClient;
     private final NhBankFeignClient nhBankFeignClient;
     private final ShBankFeignClient shBankFeignClient;
+    private final ChalletFeignClient challetFeignClient;
 
     @Override
     public void createAccount(String phoneNumber) {
@@ -144,6 +146,11 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             paymentRequestDTO, transactionBalance);
 
         challetBank.addTransaction(paymentTransaction);
+
+        PaymentHttpMessageResponseDTO paymentHttpMessageResponseDTO = PaymentHttpMessageResponseDTO
+            .ofPaymentMessage(challetBank.getPhoneNumber(), paymentRequestDTO);
+
+        challetFeignClient.sendPaymentMessage(paymentHttpMessageResponseDTO);
 
         return createPaymentResponse(paymentRequestDTO);
     }
