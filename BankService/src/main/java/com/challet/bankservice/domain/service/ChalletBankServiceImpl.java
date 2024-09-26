@@ -145,7 +145,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         ChalletBankTransaction paymentTransaction = createTransaction(challetBank,
             paymentRequestDTO, transactionBalance);
 
-        challetBank.decreaseBalance(paymentTransaction);
+        challetBank.addTransaction(paymentTransaction);
 
         return createPaymentResponse(paymentRequestDTO);
     }
@@ -161,7 +161,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private ChalletBankTransaction createTransaction(ChalletBank challetBank,
         PaymentRequestDTO paymentRequestDTO, long transactionBalance) {
         return ChalletBankTransaction.builder()
-            .transactionAmount(-1 * paymentRequestDTO.transactionAmount())
+            .transactionAmount(-1*paymentRequestDTO.transactionAmount())
             .transactionDatetime(LocalDateTime.now())
             .deposit(paymentRequestDTO.accountNumber())
             .withdrawal(paymentRequestDTO.deposit())
