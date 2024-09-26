@@ -6,7 +6,6 @@ import {
   useMatch,
 } from 'react-router-dom';
 import 'react-dates/lib/css/_datepicker.css';
-
 import ChallengeRoom from './components/Challenge/ChallengeRoom';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
@@ -26,12 +25,13 @@ import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
 import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
-import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton'; // 챌린지 생성 컴포넌트
-import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage'; // 새로운 챌린지 생성 페이지 컴포넌트
+import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton';
+import ChallengeCreatePage from './components/Challenge/ChallengeCreatePage';
 import SharedTransactionCreate from './components/Challenge/SharedTransactionCreate';
 import SharedTransactionDetail from './components/Challenge/SharedTransactionDetail';
 import SharedTransactionEdit from './components/Challenge/SharedTransactionEdit';
 import ImageUpload from './pages/TestPage/ImageUpload';
+import WebSocketTest from './pages/TestPage/WebSocketTest';
 import './assets/App.css';
 
 function App() {
@@ -105,6 +105,7 @@ function App() {
         />
 
         <Route path='/test' element={<ImageUpload />} />
+        <Route path='/websocket-test' element={<WebSocketTest />}></Route>
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}

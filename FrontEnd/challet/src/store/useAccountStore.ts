@@ -21,7 +21,6 @@ const useAccountStore = create<AccountState>()(
     }),
     {
       name: 'account-storage', // 로컬 스토리지에 저장될 키 이름
-      getStorage: () => localStorage, // 로컬 스토리지에 저장
     }
   )
 );

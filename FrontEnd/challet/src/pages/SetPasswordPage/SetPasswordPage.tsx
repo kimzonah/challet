@@ -4,6 +4,7 @@ import { AxiosResponse, AxiosError } from 'axios';
 import axiosInstance from '../../api/axiosInstance';
 import useSignUpStore from '../../store/useSignUpStore';
 import useAuthStore from '../../store/useAuthStore'; // 로그인 상태 저장을 위한 Zustand 스토어
+import Keypad from '../../components/Keypad/Keypad';
 
 const SetPasswordPage = () => {
   const [password, setPassword] = useState<string>(''); // 비밀번호 상태
@@ -12,10 +13,22 @@ const SetPasswordPage = () => {
   const { setAuthData } = useAuthStore(); // Zustand에서 상태 관리 함수 가져오기
   const navigate = useNavigate();
 
-  // 키패드를 클릭할 때 비밀번호 입력
+  // 비밀번호 입력
   const handleKeyPress = (digit: string) => {
     if (password.length < 6) {
       setPassword((prev) => prev + digit); // 비밀번호 입력 추가
+    }
+  };
+
+  // 전체 삭제
+  const handleClear = () => {
+    setPassword('');
+  };
+
+  // 한 글자 삭제
+  const handleBackspace = () => {
+    if (password.length > 0) {
+      setPassword((prev) => prev.slice(0, -1));
     }
   };
 
@@ -23,29 +36,6 @@ const SetPasswordPage = () => {
   useEffect(() => {
     setIsButtonEnabled(password.length === 6); // 비밀번호 6자리가 되면 버튼 활성화
   }, [password]);
-
-  // 비밀번호 지우기
-  const handleBackspace = () => {
-    if (password.length > 0) {
-      setPassword((prev) => prev.slice(0, -1)); // 마지막 숫자 지우기
-    }
-  };
-
-  // 계좌 생성 요청
-  const createAccount = async (phoneNumber: string) => {
-    try {
-      const response = await axiosInstance.post('/api/ch-bank', null, {
-        params: { phoneNumber },
-      });
-      console.log('계좌 생성 성공:', response.data);
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error('계좌 생성 실패:', error.response?.data || error.message);
-      } else {
-        console.error('계좌 생성 실패:', error);
-      }
-    }
-  };
 
   // 데이터 전송 및 회원가입 처리
   const handleSubmit = async () => {
@@ -71,21 +61,16 @@ const SetPasswordPage = () => {
         );
 
         // 요청이 성공하면 Access Token을 받아와 상태에 저장
-        const { accessToken } = response.data; // 서버에서 Access Token을 반환받는다고 가정
+        const { accessToken, userId } = response.data;
 
         if (accessToken) {
           // Access Token 저장 (로그인 상태 유지)
           setAuthData({
             accessToken,
-            id: '',
+            userId,
           });
 
-          console.log(
-            '회원가입 및 비밀번호 설정 완료 - Access Token:',
-            accessToken
-          );
-          // 계좌 생성 API 호출
-          await createAccount(phoneNumber);
+          console.log('Access Token:', accessToken, 'userId', userId);
 
           // 로그인 후 메인 페이지로 이동
           navigate('/wallet'); // 회원가입 성공 후 메인 페이지로 이동
@@ -107,22 +92,6 @@ const SetPasswordPage = () => {
     }
   };
 
-  // 가상 키패드
-  const renderKeypad = () => {
-    const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-    return (
-      <div>
-        {digits.map((digit) => (
-          <button key={digit} onClick={() => handleKeyPress(digit)}>
-            {digit}
-          </button>
-        ))}
-        <button onClick={handleBackspace}>지우기</button>{' '}
-        {/* 지우기 버튼 추가 */}
-      </div>
-    );
-  };
-
   return (
     <div>
       <h1>간편 비밀번호 설정</h1>
@@ -141,18 +110,30 @@ const SetPasswordPage = () => {
         </>
       ) : (
         <>
-          {/* 입력된 비밀번호 표시 */}
-          <div>
-            {password
-              .split('')
-              .map(() => '●')
-              .join('')}{' '}
-            {/* 비밀번호는 ●로 마스킹 */}
+          {/* 비밀번호 입력 점 표시 */}
+          <div className='flex justify-center space-x-3 mb-6'>
+            {password.split('').map((_, index) => (
+              <div
+                key={index}
+                className='w-4 h-4 bg-gray-800 rounded-full'
+              ></div>
+            ))}
+            {Array(6 - password.length)
+              .fill(null)
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className='w-4 h-4 bg-gray-300 rounded-full'
+                ></div>
+              ))}
           </div>
 
           {/* 키패드 */}
-          <div>{renderKeypad()}</div>
-
+          <Keypad
+            onKeyPress={handleKeyPress}
+            onClear={handleClear}
+            onBackspace={handleBackspace}
+          />
           {/* 비밀번호 제출 버튼 */}
           <button onClick={handleSubmit} disabled={!isButtonEnabled}>
             비밀번호 설정
