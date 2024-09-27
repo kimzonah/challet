@@ -25,6 +25,7 @@ export interface Challenge {
 interface ChallengeFormProps {
   challenges: Challenge[];
   isMyChallenges: boolean; // 나의 챌린지 여부를 나타내는 플래그
+  isLoading: boolean;
 }
 
 const categoryIcons: Record<string, string> = {
@@ -48,7 +49,11 @@ const getRandomBackgroundColor = () => {
   return backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
 };
 
-const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
+const ChallengeForm = ({
+  challenges,
+  isMyChallenges,
+  isLoading,
+}: ChallengeFormProps) => {
   // challenges가 배열이 아닌 경우 빈 배열로 처리
   const validChallenges = Array.isArray(challenges) ? challenges : [];
   const { joinChallenge, fetchChallengeDetail } = useChallengeApi();
@@ -73,6 +78,14 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
       setChallengeColors((prevColors) => ({ ...prevColors, ...newColors }));
     }
   }, [validChallenges]); // 챌린지 목록이 변경될 때만 실행
+
+  if (isLoading) {
+    return (
+      <div className='flex justify-center items-center h-64'>
+        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00CCCC]'></div>
+      </div>
+    );
+  }
 
   if (!Array.isArray(validChallenges) || validChallenges.length === 0) {
     return <div>챌린지가 없습니다.</div>;
@@ -155,56 +168,59 @@ const ChallengeForm = ({ challenges, isMyChallenges }: ChallengeFormProps) => {
   };
 
   return (
-    <div
-      className='scrollbar-hide overflow-y-auto'
-      style={{ maxHeight: 'calc(100vh - 160px)' }}
-    >
+    <div className='scrollbar-hide overflow-y-auto'>
       {isMyChallenges ? (
         <>
-          {/* 진행 중인 챌린지 */}
-          {validChallenges.filter(
-            (challenge) => challenge.status === 'PROGRESSING'
-          ).length > 0 && (
-            <div className='mb-6 border-b-2 border-dashed'>
-              <h2 className='flex text-lg font-bold mb-2'>진행 중인 챌린지</h2>
-              {renderChallenges(
-                validChallenges.filter(
-                  (challenge) => challenge.status === 'PROGRESSING'
-                )
-              )}
-            </div>
-          )}
+          <div className='scrollbar-hide overflow-y-auto max-h-[80vh] mb-4'>
+            {/* 진행 중인 챌린지 */}
+            {validChallenges.filter(
+              (challenge) => challenge.status === 'PROGRESSING'
+            ).length > 0 && (
+              <div className='mb-6 border-b-2 border-dashed'>
+                <h2 className='flex text-lg font-bold mb-2'>
+                  진행 중인 챌린지
+                </h2>
+                {renderChallenges(
+                  validChallenges.filter(
+                    (challenge) => challenge.status === 'PROGRESSING'
+                  )
+                )}
+              </div>
+            )}
 
-          {/* 대기 중인 챌린지 */}
-          {validChallenges.filter(
-            (challenge) => challenge.status === 'RECRUITING'
-          ).length > 0 && (
-            <div className='mb-6 border-b-2 border-dashed'>
-              <h2 className='flex text-lg font-bold mb-2'>대기 중인 챌린지</h2>
-              {renderChallenges(
-                validChallenges.filter(
-                  (challenge) => challenge.status === 'RECRUITING'
-                )
-              )}
-            </div>
-          )}
+            {/* 대기 중인 챌린지 */}
+            {validChallenges.filter(
+              (challenge) => challenge.status === 'RECRUITING'
+            ).length > 0 && (
+              <div className='mb-6 border-b-2 border-dashed'>
+                <h2 className='flex text-lg font-bold mb-2'>
+                  대기 중인 챌린지
+                </h2>
+                {renderChallenges(
+                  validChallenges.filter(
+                    (challenge) => challenge.status === 'RECRUITING'
+                  )
+                )}
+              </div>
+            )}
 
-          {/* 완료된 챌린지 */}
-          {validChallenges.filter((challenge) => challenge.status === 'END')
-            .length > 0 && (
-            <div className='mb-6'>
-              <h2 className='flex text-lg font-bold mb-2'>완료된 챌린지</h2>
-              {renderChallenges(
-                validChallenges.filter(
-                  (challenge) => challenge.status === 'END'
-                ),
-                true
-              )}
-            </div>
-          )}
+            {/* 완료된 챌린지 */}
+            {validChallenges.filter((challenge) => challenge.status === 'END')
+              .length > 0 && (
+              <div className='mb-6'>
+                <h2 className='flex text-lg font-bold mb-2'>완료된 챌린지</h2>
+                {renderChallenges(
+                  validChallenges.filter(
+                    (challenge) => challenge.status === 'END'
+                  ),
+                  true
+                )}
+              </div>
+            )}
+          </div>
         </>
       ) : (
-        <div className='scrollbar-hide overflow-y-auto max-h-[400px]'>
+        <div className='scrollbar-hide overflow-y-auto max-h-[60vh] mb-4'>
           {renderChallenges(validChallenges)}
         </div>
       )}
