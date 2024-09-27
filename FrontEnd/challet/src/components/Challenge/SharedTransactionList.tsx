@@ -8,6 +8,7 @@ import Emoji_2 from '../../assets/Challenge/Emoji-2.png';
 import Emoji_3 from '../../assets/Challenge/Emoji-3.png';
 import useAuthStore from '../../store/useAuthStore';
 import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 추가
+import { useChallengeApi } from '../../hooks/useChallengeApi'; // API 함수 추가
 
 // 트랜잭션 타입 정의
 interface Transaction {
@@ -30,10 +31,14 @@ interface Transaction {
 const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const [sharedTransactions, setSharedTransactions] = useState<Transaction[]>(
     []
-  );
+  ); // 거래 내역 상태
+  const [hasNextPage, setHasNextPage] = useState(true); // 다음 페이지 여부
+  const [cursor, setCursor] = useState<number | null>(null); // 다음 페이지의 커서
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
   const transactionListRef = useRef<HTMLDivElement>(null); // 스크롤을 조정할 ref
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
   const userId = Number(useAuthStore.getState().userId);
+  const { fetchSharedTransactions } = useChallengeApi(); // API 함수 사용
 
   useEffect(() => {
     const connectAndSubscribe = async () => {
@@ -112,6 +117,53 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
     return () => {};
   }, [challengeId]);
+
+  // 거래내역을 API로부터 가져오는 함수
+  const fetchTransactions = async () => {
+    if (!hasNextPage || isLoading) return; // 더 가져올 페이지가 없거나 로딩 중이면 중단
+    setIsLoading(true);
+
+    const response = await fetchSharedTransactions(challengeId, cursor); // API 호출
+
+    if (response && response.history) {
+      setSharedTransactions((prev) => [...response.history, ...prev]); // 새로운 데이터 추가
+      setHasNextPage(response.hasNextPage); // 다음 페이지 여부 업데이트
+
+      // 커서를 마지막 거래내역의 sharedTransactionId로 업데이트
+      const lastTransaction = response.history[response.history.length - 1];
+      if (lastTransaction) {
+        setCursor(lastTransaction.sharedTransactionId);
+      }
+    }
+
+    setIsLoading(false);
+  };
+
+  // 스크롤 이벤트 처리: 상단에 도달 시 새로운 데이터를 가져옴
+  const handleScroll = () => {
+    if (
+      transactionListRef.current &&
+      transactionListRef.current.scrollTop === 0
+    ) {
+      fetchTransactions(); // 스크롤 상단에 도달 시 새로운 데이터 가져오기
+    }
+  };
+
+  // 초기 로딩 및 무한 스크롤을 위한 이벤트 추가
+  useEffect(() => {
+    fetchTransactions(); // 초기 로딩 시 첫 페이지 가져오기
+
+    const ref = transactionListRef.current;
+    if (ref) {
+      ref.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (ref) {
+        ref.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [cursor, hasNextPage]);
 
   // 이모지 버튼 클릭 핸들러
   const handleEmojiClick = (transaction: Transaction, emojiType: string) => {

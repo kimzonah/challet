@@ -5,7 +5,6 @@ import { useState } from 'react';
 export const useChallengeApi = () => {
   const [challenges, setChallenges] = useState<any[]>([]); // 초기값을 빈 배열로 설정
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
-  const [sharedTransactions, setSharedTransactions] = useState([]); // 트랜잭션 데이터 저장
   const API_BASE_URL = import.meta.env.VITE_API_URL as string;
 
   const exampleTransactions = [
@@ -117,6 +116,18 @@ export const useChallengeApi = () => {
     }
   };
 
+  // 챌린지 내 현재 소비 금액 조회 API 요청 함수
+  const fetchCurrentSpending = async (challengeId: number) => {
+    try {
+      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/spending-amount`;
+      const response = await AxiosInstance.get(url);
+      return response.data.spendingAmount; // 소비 금액 데이터 반환
+    } catch (error) {
+      console.error('소비 금액 조회 중 오류 발생:', error);
+      return null;
+    }
+  };
+
   const fetchChallenges = async (
     keyword: string,
     category: string,
@@ -150,19 +161,24 @@ export const useChallengeApi = () => {
   };
 
   // 트랜잭션 조회 API 요청 함수
-  const fetchSharedTransactions = async (challengeId: number) => {
+  const fetchSharedTransactions = async (
+    challengeId: number,
+    cursor: number | null
+  ) => {
     setIsLoading(true); // 로딩 시작
     try {
-      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/shared-transactions`;
+      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/history`;
+      const param = cursor ? { cursor } : {}; // 커서 값이 있으면 파라미터에 추가
 
-      const response = await AxiosInstance.get(url);
+      const response = await AxiosInstance.get(url, { params: param });
 
       // API 응답 성공 시 로그 및 상태 업데이트
       console.log('트랜잭션 조회 성공:', response.data);
-      setSharedTransactions(response.data);
+      return response.data; // 트랜잭션 데이터 반환
     } catch (error) {
       // API 호출 중 오류 발생 시 로그
       console.error('트랜잭션 조회 중 오류 발생:', error);
+      return null; // 오류 발생 시 null 반환
     } finally {
       setIsLoading(false); // 로딩 완료
     }
@@ -256,13 +272,13 @@ export const useChallengeApi = () => {
   return {
     challenges,
     isLoading,
-    sharedTransactions,
     fetchChallenges,
     fetchChallengeDetail,
     createChallenge,
     joinChallenge,
     exampleTransactions,
     fetchSharedTransactions,
+    fetchCurrentSpending,
     registTransaction,
     editTransaction,
     fetchSharedTransactionDetail,
