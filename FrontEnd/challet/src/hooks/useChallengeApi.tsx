@@ -70,7 +70,7 @@ export const useChallengeApi = () => {
     challengeId: number,
     isPublic: boolean,
     inviteCode: string | null
-  ) => {
+  ): Promise<boolean> => {
     setIsLoading(true); // 로딩 상태
     try {
       const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}`;
@@ -83,8 +83,11 @@ export const useChallengeApi = () => {
       const response = await AxiosInstance.post(url, requestBody);
 
       console.log('챌린지 참가 성공:', response.data);
+
+      return true; // 성공 시 true 반환
     } catch (error) {
       console.error('챌린지 참가 중 오류 발생:', error);
+      return false; // 실패 시 false 반환
     } finally {
       setIsLoading(false); // 로딩 완료
     }
