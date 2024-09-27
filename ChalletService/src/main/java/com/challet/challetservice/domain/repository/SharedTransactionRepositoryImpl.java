@@ -5,6 +5,8 @@ import com.challet.challetservice.domain.dto.response.SharedTransactionDetailRes
 import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.Emoji;
 import com.challet.challetservice.domain.entity.EmojiType;
+import com.challet.challetservice.domain.entity.QComment;
+import com.challet.challetservice.domain.entity.QEmoji;
 import com.challet.challetservice.domain.entity.QSharedTransaction;
 import com.challet.challetservice.domain.entity.QUser;
 import com.challet.challetservice.domain.entity.QUserChallenge;
@@ -13,12 +15,15 @@ import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,9 +32,10 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
     private final JPAQueryFactory queryFactory;
     private final EmojiRepository emojiRepository;
     private final CommentRepository commentRepository;
+    private static final int PAGE_SIZE = 7;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ChallengeRoomHistoryResponseDTO findByChallenge(Challenge challenge, User user, Long cursor) {
         QSharedTransaction qSharedTransaction = QSharedTransaction.sharedTransaction;
 
@@ -43,10 +49,10 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
             .selectFrom(qSharedTransaction)
             .where(builder)
             .orderBy(qSharedTransaction.id.desc())
-            .limit(8)
+            .limit(PAGE_SIZE+1)
             .fetch();
 
-        boolean hasNextPage = sharedTransactions.size() > 7;
+        boolean hasNextPage = sharedTransactions.size() > PAGE_SIZE;
         if (hasNextPage) {
             sharedTransactions.removeLast();
         }
@@ -70,7 +76,9 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
         return new ChallengeRoomHistoryResponseDTO(hasNextPage, history);
     }
 
+
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findUserBySharedTransaction(SharedTransaction sharedTransaction) {
 
         QSharedTransaction qSharedTransaction = QSharedTransaction.sharedTransaction;
