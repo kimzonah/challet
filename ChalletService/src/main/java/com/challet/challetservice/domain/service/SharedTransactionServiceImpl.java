@@ -3,6 +3,7 @@ package com.challet.challetservice.domain.service;
 import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.dto.response.EmojiResponseDTO;
+import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.entity.Emoji;
 import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
@@ -62,6 +63,19 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
         }
 
         return response;
+    }
+
+    @Override
+    public SharedTransactionDetailResponseDTO getDatail(String header, Long id) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        SharedTransaction sharedTransaction = sharedTransactionRepository.findById(id)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
+
+
+        return null;
     }
 
     @Transactional
