@@ -2,8 +2,10 @@ package com.challet.challetservice.domain.dto.response;
 
 import com.challet.challetservice.domain.entity.EmojiType;
 import com.challet.challetservice.domain.entity.SharedTransaction;
+import com.challet.challetservice.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.Builder;
 
 @Schema(description = "공유 거래 내역 조회 상세 DTO")
@@ -54,13 +56,13 @@ public record SharedTransactionDetailResponseDTO(
 
 ) {
 
-    public static SharedTransactionDetailResponseDTO fromHistory(SharedTransaction sharedTransaction,
+    public static SharedTransactionDetailResponseDTO fromHistory(SharedTransaction sharedTransaction, User sharedUser,
         Long goodCount, Long sosoCount, Long badCount, Long commentCount, EmojiType userEmoji) {
 
         return SharedTransactionDetailResponseDTO.builder()
-            .userId(sharedTransaction.getUserChallenge().getUser().getId())
-            .nickname(sharedTransaction.getUserChallenge().getUser().getNickname())
-            .profileImage(sharedTransaction.getUserChallenge().getUser().getProfileImage())
+            .userId(sharedUser.getId())
+            .nickname(sharedUser.getNickname())
+            .profileImage(sharedUser.getProfileImage())
             .sharedTransactionId(sharedTransaction.getId())
             .withdrawal(sharedTransaction.getWithdrawal())
             .transactionAmount(sharedTransaction.getTransactionAmount())
