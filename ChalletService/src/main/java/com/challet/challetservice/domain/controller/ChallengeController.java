@@ -139,9 +139,7 @@ public class ChallengeController {
         @RequestHeader(value = "Authorization", required = false) String header,
         @PathVariable("id") Long id,
         @RequestParam(required = false) Long cursor) {
-        ChallengeRoomHistoryResponseDTO history = challengeService.getChallengeRoomHistory(header,
-            id,
-            cursor);
+        ChallengeRoomHistoryResponseDTO history = challengeService.getChallengeRoomHistory(header, id, cursor);
         return ResponseEntity.status(HttpStatus.OK).body(history);
     }
 }
