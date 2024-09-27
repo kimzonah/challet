@@ -13,8 +13,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -40,10 +38,10 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
             .selectFrom(qSharedTransaction)
             .where(builder)
             .orderBy(qSharedTransaction.id.desc())
-            .limit(6)
+            .limit(8)
             .fetch();
 
-        boolean hasNextPage = sharedTransactions.size() > 5;
+        boolean hasNextPage = sharedTransactions.size() > 7;
         if (hasNextPage) {
             sharedTransactions.removeLast();
         }
@@ -56,7 +54,7 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
                 Long commentCount = commentRepository.countBySharedTransaction(sharedTransaction);
                 EmojiType userEmoji = emojiRepository.findByUserAndSharedTransaction(user, sharedTransaction)
                     .map((Emoji::getType)).orElse(null);
-                return SharedTransactionDetailResponseDTO.fromHistoru(sharedTransaction,goodCount,sosoCount,badCount,commentCount,userEmoji);
+                return SharedTransactionDetailResponseDTO.fromHistory(sharedTransaction,goodCount,sosoCount,badCount,commentCount,userEmoji);
             }))
             .toList();
 

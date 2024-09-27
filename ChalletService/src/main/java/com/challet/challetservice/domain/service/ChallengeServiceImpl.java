@@ -8,8 +8,8 @@ import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO
 import com.challet.challetservice.domain.dto.response.ChallengeInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
-import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
+import com.challet.challetservice.domain.dto.response.SpendingAmountResponseDTO;
 import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.ChallengeStatus;
 import com.challet.challetservice.domain.entity.SharedTransaction;
@@ -28,7 +28,6 @@ import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -189,6 +188,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                 .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
             SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
                 SharedTransaction.fromRequest(request, userChallenge));
+            userChallenge.addSpendingAmount(request.transactionAmount());
 
             return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
         }
@@ -208,6 +208,22 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         return sharedTransactionRepositoryImpl.findByChallenge(challenge, user, cursor);
 
+    }
+
+    @Override
+    public SpendingAmountResponseDTO getSpendingAmount(String header, Long id) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        Challenge challenge = challengeRepository.findById(id)
+            .orElseThrow(
+                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
+
+        return new SpendingAmountResponseDTO(userChallenge.getSpendingAmount());
     }
 
     public static String generateCode(int length) {

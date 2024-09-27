@@ -5,6 +5,7 @@ import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
+import com.challet.challetservice.domain.dto.response.SpendingAmountResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
 import com.challet.challetservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -141,5 +142,22 @@ public class ChallengeController {
         @RequestParam(required = false) Long cursor) {
         ChallengeRoomHistoryResponseDTO history = challengeService.getChallengeRoomHistory(header, id, cursor);
         return ResponseEntity.status(HttpStatus.OK).body(history);
+    }
+
+    @Operation(summary = "챌린지 내 현재 소비 금액 조회 (완료)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "공유 거래 내역 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "공유 거래 내역 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @Parameters(value = {
+        @Parameter(name = "id", description = "챌린지ID", in = ParameterIn.PATH),
+    })
+    @GetMapping("/{id}/spending-amount")
+    public ResponseEntity<SpendingAmountResponseDTO> getSpendingAmount(
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @PathVariable("id") Long id) {
+        SpendingAmountResponseDTO spendingAmount = challengeService.getSpendingAmount(header, id);
+        return ResponseEntity.status(HttpStatus.OK).body(spendingAmount);
     }
 }

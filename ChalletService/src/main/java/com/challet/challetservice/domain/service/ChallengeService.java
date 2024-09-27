@@ -7,6 +7,7 @@ import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
+import com.challet.challetservice.domain.dto.response.SpendingAmountResponseDTO;
 import org.springframework.data.domain.Pageable;
 
 public interface ChallengeService {
@@ -24,4 +25,6 @@ public interface ChallengeService {
     SharedTransactionRegisterResponseDTO handleSharedTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request);
 
     ChallengeRoomHistoryResponseDTO getChallengeRoomHistory(String header, Long id, Long cursor);
+
+    SpendingAmountResponseDTO getSpendingAmount(String header, Long id);
 }

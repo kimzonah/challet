@@ -54,7 +54,7 @@ public record SharedTransactionDetailResponseDTO(
 
 ) {
 
-    public static SharedTransactionDetailResponseDTO fromHistoru(SharedTransaction sharedTransaction,
+    public static SharedTransactionDetailResponseDTO fromHistory(SharedTransaction sharedTransaction,
         Long goodCount, Long sosoCount, Long badCount, Long commentCount, EmojiType userEmoji) {
 
         return SharedTransactionDetailResponseDTO.builder()
