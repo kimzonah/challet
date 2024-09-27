@@ -15,7 +15,7 @@ type AgreementType = {
 };
 
 type Account = {
-  id: number;
+  id: number | string;
   accountNumber: string;
   accountBalance: number;
 };
@@ -34,7 +34,6 @@ const bankDetails = [
 
 const MyDataSelectPage = () => {
   const navigate = useNavigate();
-
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [agreements, setAgreements] = useState<AgreementType>({
     serviceAgreement: false,
@@ -49,8 +48,11 @@ const MyDataSelectPage = () => {
     kb: false,
     nh: false,
   });
-  const [connectedAccounts, setConnectedAccounts] = useState<Account[]>([]); // 연결된 계좌 정보를 저장할 상태
-  const [connectionComplete, setConnectionComplete] = useState(false); // 계좌 연결 완료 상태
+  const [connectedAccounts, setConnectedAccounts] = useState<
+    { account: Account; bankKey: string }[]
+  >([]);
+  const [connectionComplete, setConnectionComplete] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // 전체 동의 상태 변경
   const handleAllChecked = () => {
@@ -95,6 +97,7 @@ const MyDataSelectPage = () => {
   const connectToBanks = async () => {
     const payload = { selectedBanks: getSelectedBanksPayload() };
     console.log('Payload to send:', JSON.stringify(payload, null, 2));
+    setLoading(true); // 로딩 상태 true
 
     try {
       const response = await axiosInstance.post<BankResponse>(
@@ -103,18 +106,38 @@ const MyDataSelectPage = () => {
       );
       console.log('Server Response:', response.data);
 
-      // 연결된 계좌 정보를 상태로 저장
-      const allAccounts = [
-        ...(response.data.kbBanks?.accounts || []),
-        ...(response.data.nhBanks?.accounts || []),
-        ...(response.data.shBanks?.accounts || []),
-      ];
+      // 모든 은행의 계좌 정보를 병합하고 은행 키를 포함하여 저장
+      const allAccounts = processBankData(response.data);
 
       setConnectedAccounts(allAccounts); // 연결된 계좌 정보를 저장
       setConnectionComplete(true); // 연결 완료 상태로 설정
     } catch (error) {
       console.error('Failed to connect to banks:', error);
+    } finally {
+      setLoading(false); // 로딩 상태 false
     }
+  };
+
+  // 각 은행별 응답 데이터를 처리하여 계좌와 은행 키를 결합하는 함수
+  const processBankData = (bankData: BankResponse) => {
+    const accounts: { account: Account; bankKey: string }[] = [];
+
+    if (bankData.kbBanks) {
+      bankData.kbBanks.accounts.forEach((account) =>
+        accounts.push({ account, bankKey: 'kb' })
+      );
+    }
+    if (bankData.nhBanks) {
+      bankData.nhBanks.accounts.forEach((account) =>
+        accounts.push({ account, bankKey: 'nh' })
+      );
+    }
+    if (bankData.shBanks) {
+      bankData.shBanks.accounts.forEach((account) =>
+        accounts.push({ account, bankKey: 'sh' })
+      );
+    }
+    return accounts;
   };
 
   // 한 가지 이상의 은행이 선택되었는지 확인
@@ -142,12 +165,19 @@ const MyDataSelectPage = () => {
     return labels[key];
   };
 
-  // 은행 코드와 연결된 로고를 반환하는 함수
-  const getBankLogo = (accountNumber: string) => {
-    const bankCode = accountNumber.slice(0, 4);
-    const bank = bankDetails.find((detail) => detail.code === bankCode);
+  // 은행 키와 연결된 로고를 반환하는 함수
+  const getBankLogo = (bankKey: string) => {
+    const bank = bankDetails.find((detail) => detail.key === bankKey);
     return bank ? bank.logo : undefined;
   };
+
+  if (loading) {
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00CCCC]'></div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-white'>
@@ -155,12 +185,10 @@ const MyDataSelectPage = () => {
 
       <div className='mt-20 p-4 text-left'>
         <h2 className='text-xl text-[#373A3F]'>
-          {connectionComplete
-            ? '계좌가 성공적으로 연결됐습니다.'
-            : '연결할 계좌'}
+          {connectionComplete ? '계좌가 성공적으로' : '연결할 계좌'}
           <br />
           <span className='font-bold'>
-            {connectionComplete ? '' : '한번에 찾기'}
+            {connectionComplete ? '연결됐습니다.' : '한번에 찾기'}
           </span>
         </h2>
         <p className='text-sm text-[#373A3F] mt-2 mb-24'>
@@ -170,29 +198,35 @@ const MyDataSelectPage = () => {
         </p>
 
         {/* 연결된 계좌 정보 표시 */}
+
         {connectionComplete ? (
-          <div className='space-y-4 mb-40'>
-            {' '}
-            {/* 하단 여백 추가 */}
+          <div className='space-y-4 mb-40 '>
             {connectedAccounts.length > 0 ? (
-              connectedAccounts.map((account) => (
+              connectedAccounts.map(({ account, bankKey }, index) => (
                 <div
-                  key={account.id}
-                  className='flex items-center p-4 bg-gray-100 rounded-lg'
+                  key={`${account.accountNumber}-${index}`} // accountNumber와 index를 조합하여 고유한 키 생성
+                  className='flex items-center p-4 shadow-md bg-white rounded-lg'
                 >
-                  <div className='flex items-center mr-4'>
+                  <div className='flex items-center'>
+                    {/* 은행 키에 맞는 로고를 표시 */}
                     <img
-                      src={getBankLogo(account.accountNumber)}
+                      src={getBankLogo(bankKey)}
                       alt='은행 로고'
-                      className='w-6 h-6'
+                      className={`${
+                        bankKey === 'nh' ? 'w-6 h-8  mr-6' : 'w-8 h-8  mr-4' // nh 로고에만 다른 크기 적용
+                      }`}
                     />
                   </div>
                   <div>
                     <p className='text-sm text-[#6C6C6C]'>
-                      계좌번호: {account.accountNumber}
+                      {bankDetails
+                        .find((bank) => bank.key === bankKey)
+                        ?.name.slice(0, 2)}{' '}
+                      {account.accountNumber}
                     </p>
+
                     <p className='text-lg font-semibold text-[#373A3F]'>
-                      잔액: {account.accountBalance.toLocaleString()}원
+                      {account.accountBalance.toLocaleString()}원
                     </p>
                   </div>
                 </div>
@@ -210,7 +244,13 @@ const MyDataSelectPage = () => {
                 onClick={() => handleBankSelect(key)}
               >
                 <div className='flex items-center'>
-                  <img src={logo} alt={name} className='w-8 h-8 mr-3' />
+                  <img
+                    src={logo}
+                    alt={name}
+                    className={`${
+                      key === 'nh' ? 'w-6 h-8 mr-3 ml-1' : 'w-8 h-8 mr-2'
+                    }`}
+                  />
                   <span className='text-[#585962] font-medium'>{name}</span>
                 </div>
                 <span

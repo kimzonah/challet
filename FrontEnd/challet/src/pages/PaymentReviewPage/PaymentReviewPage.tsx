@@ -31,7 +31,11 @@ const PayReviewPage = () => {
   };
 
   if (!parsedData) {
-    return <p>결제 정보를 불러오는 중...</p>;
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00CCCC]'></div>
+      </div>
+    );
   }
 
   return (

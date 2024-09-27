@@ -1,8 +1,7 @@
 import ChalletLogo from '../../assets/wallet/challet-logo.png';
-import MyDataConnectButton from '../../components/Wallet/MyDataConnectButton';
+// import MyDataConnectButton from '../../components/Wallet/MyDataConnectButton';
 import WalletBalanceSection from '../../components/Wallet/WalletBalanceSection';
-import PaymentButton from '../../components/Wallet/PaymentButton'; // PaymentButton 컴포넌트 추가
-
+import PaymentButton from '../../components/Wallet/PaymentButton';
 const WalletPage = () => (
   <div className='min-h-screen bg-white flex flex-col items-center p-6 mt-12'>
     <div className='w-full flex flex-col items-center mb-8'>
@@ -16,7 +15,7 @@ const WalletPage = () => (
       <PaymentButton />
     </div>
     <WalletBalanceSection />
-    <MyDataConnectButton />
+    {/* <MyDataConnectButton /> */}
   </div>
 );
 
