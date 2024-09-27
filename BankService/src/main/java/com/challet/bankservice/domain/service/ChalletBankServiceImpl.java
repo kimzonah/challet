@@ -1,9 +1,11 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentHttpMessageResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
@@ -161,7 +163,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private ChalletBankTransaction createTransaction(ChalletBank challetBank,
         PaymentRequestDTO paymentRequestDTO, long transactionBalance) {
         return ChalletBankTransaction.builder()
-            .transactionAmount(-1*paymentRequestDTO.transactionAmount())
+            .transactionAmount(-1 * paymentRequestDTO.transactionAmount())
             .transactionDatetime(LocalDateTime.now())
             .deposit(paymentRequestDTO.accountNumber())
             .withdrawal(paymentRequestDTO.deposit())
@@ -263,5 +265,52 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         AccountInfoResponseListDTO shBanks = shBankFeignClient.getMyDataKbBank(tokenHeader);
 
         return getMyDataAccounts(kbBanks, nhBanks, shBanks);
+    }
+
+    @Transactional
+    @Override
+    public AccountTransferResponseDTO accountTransfer(Long accountId,
+        AccountTransferRequestDTO requestTransactionDTO) {
+
+        // 1. 내 계좌 조회 및 결제 가능 확인
+        ChalletBank fromBank = challetBankRepository.findByIdWithLock(accountId);
+        long transactionBalance = calculateTransactionBalance(fromBank,
+            requestTransactionDTO.transactionAmount());
+
+        if (requestTransactionDTO.bankCode().equals("8082")) {
+            ChalletBank toBank = challetBankRepository.getAccountByAccountNumber(
+                requestTransactionDTO.depositAccountNumber());
+
+            long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
+
+            ChalletBankTransaction paymentTransaction = createAccountTransferHistory(fromBank,
+                toBank, requestTransactionDTO, transactionBalance, true);
+            fromBank.addTransaction(paymentTransaction);
+
+            ChalletBankTransaction accountTransferHistory = createAccountTransferHistory(fromBank,
+                toBank, requestTransactionDTO, addMoney, false);
+
+            toBank.addTransaction(accountTransferHistory);
+
+            return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank,
+                requestTransactionDTO.transactionAmount());
+        }
+
+        return null;
+    }
+
+    private ChalletBankTransaction createAccountTransferHistory(ChalletBank fromBank,
+        ChalletBank toBank, AccountTransferRequestDTO requestTransactionDTO,
+        long transactionBalance, boolean isWithdrawal) {
+
+        return ChalletBankTransaction.builder()
+            .transactionAmount(isWithdrawal ? -1 * requestTransactionDTO.transactionAmount()
+                : requestTransactionDTO.transactionAmount())
+            .transactionDatetime(LocalDateTime.now())
+            .deposit(isWithdrawal ? toBank.getName()
+                : requestTransactionDTO.depositAccountNumber()) // 입금처
+            .withdrawal(isWithdrawal ? fromBank.getAccountNumber() : fromBank.getName()) // 출금처
+            .transactionBalance(transactionBalance)
+            .build();
     }
 }

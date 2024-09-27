@@ -112,4 +112,14 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .where(challetBank.phoneNumber.eq(phoneNumber))
             .execute();
     }
+
+    @Override
+    public ChalletBank getAccountByAccountNumber(String accountNumber) {
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        return query
+            .selectFrom(challetBank)
+            .where(challetBank.accountNumber.eq(accountNumber))
+            .fetchOne();
+    }
 }

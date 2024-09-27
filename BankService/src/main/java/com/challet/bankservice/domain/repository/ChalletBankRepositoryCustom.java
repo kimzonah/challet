@@ -19,4 +19,6 @@ public interface ChalletBankRepositoryCustom {
     ChalletBank findByIdWithLock(Long accountId);
 
     void setMyDataAuthorization(String phoneNumber);
+
+    ChalletBank getAccountByAccountNumber(String accountNumber);
 }
