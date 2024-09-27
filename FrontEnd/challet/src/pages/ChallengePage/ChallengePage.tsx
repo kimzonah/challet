@@ -32,7 +32,7 @@ const ChallengePage = () => {
   // 페이지 처음 로드될 때만 챌린지 목록 요청
   useEffect(() => {
     if (activeTab === '챌린지 찾기') {
-      fetchChallenges('', ''); // 페이지 로드 시 한 번만 호출
+      fetchChallenges('', category); // 페이지 로드 시 한 번만 호출
     }
   }, [activeTab]);
 
