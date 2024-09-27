@@ -135,19 +135,15 @@ export const useChallengeApi = () => {
   ) => {
     setIsLoading(true); // 로딩 시작
     try {
-      let url = '';
-      let params = {};
+      let url =
+        `${API_BASE_URL}/api/challet/challenges` +
+        (isMyChallenges ? '/my-challenges' : ''); // URL 설정
+      let params = { keyword, category }; // 파라미터 설정
 
-      if (isMyChallenges) {
-        // 'my-challenges'일 경우 키워드와 카테고리가 필요하지 않음
-        url = `${API_BASE_URL}/api/challet/challenges/my-challenges`;
-      } else {
-        // 일반 챌린지 조회의 경우 키워드와 카테고리 필요
-        url = `${API_BASE_URL}/api/challet/challenges`;
-        params = { keyword, category }; // 파라미터 설정
-      }
-
-      const response = await AxiosInstance.get(url, { params });
+      const response = await AxiosInstance.get(
+        url,
+        isMyChallenges ? {} : { params }
+      ); // GET 요청
 
       // API 응답 성공 시 로그
       console.log('API 응답 성공:', response.data.challengeList);
@@ -193,11 +189,7 @@ export const useChallengeApi = () => {
       const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/shared-transactions`;
 
       console.log('transaction:', transaction);
-      const response = await AxiosInstance.post(url, transaction, {
-        headers: {
-          'Content-Type': 'application/json', // JSON으로 전송할 때 명시적으로 Content-Type 설정
-        },
-      });
+      const response = await AxiosInstance.post(url, transaction);
 
       console.log('트랜잭션 등록 성공:', response.data);
     } catch (error) {

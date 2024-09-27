@@ -31,20 +31,19 @@ interface Transaction {
 const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const [sharedTransactions, setSharedTransactions] = useState<Transaction[]>(
     []
-  ); // 거래 내역 상태
-  const [hasNextPage, setHasNextPage] = useState(true); // 다음 페이지 여부
-  const [cursor, setCursor] = useState<number | null>(null); // 다음 페이지의 커서
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  );
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [cursor, setCursor] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const transactionListRef = useRef<HTMLDivElement>(null); // 스크롤을 조정할 ref
-  const navigate = useNavigate(); // 페이지 이동을 위한 hook
+  const navigate = useNavigate();
   const userId = Number(useAuthStore.getState().userId);
-  const { fetchSharedTransactions } = useChallengeApi(); // API 함수 사용
+  const { fetchSharedTransactions } = useChallengeApi();
 
   useEffect(() => {
     const connectAndSubscribe = async () => {
       try {
         if (!webSocketService.isConnected()) {
-          // 웹소켓 연결이 완료된 후 구독
           await webSocketService.connect();
           console.log('WebSocket 연결 완료 후 구독 시작');
         } else {
@@ -58,14 +57,14 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
             const receivedTransaction = JSON.parse(message.body);
 
             const transaction: Transaction = {
-              ...receivedTransaction, // 받은 데이터
-              sharedTransactionId: receivedTransaction.id, // id를 sharedTransactionId로 매핑
-              transactionDateTime: new Date().toISOString(), // 받은 시간
-              goodCount: 0, // 기본값
-              sosoCount: 0, // 기본값
-              badCount: 0, // 기본값
-              commentCount: 0, // 기본값
-              userEmoji: null, // 기본값
+              ...receivedTransaction,
+              sharedTransactionId: receivedTransaction.id,
+              transactionDateTime: new Date().toISOString(),
+              goodCount: 0,
+              sosoCount: 0,
+              badCount: 0,
+              commentCount: 0,
+              userEmoji: null,
             };
 
             setSharedTransactions((prevTransactions) => {
@@ -80,10 +79,8 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
         );
 
         webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
-          console.log('받은 이모지 메시지:', message.body);
           const emojiUpdate = JSON.parse(message.body);
 
-          // 이모지 업데이트 처리 로직
           setSharedTransactions((prevTransactions) =>
             prevTransactions.map((transaction) =>
               transaction.sharedTransactionId ===
@@ -102,7 +99,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                       emojiUpdate.type === 'BAD'
                         ? emojiUpdate.count
                         : transaction.badCount,
-                    userEmoji: emojiUpdate.type, // 사용자 이모지를 업데이트
+                    userEmoji: emojiUpdate.type,
                   }
                 : transaction
             )
@@ -114,25 +111,29 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     };
 
     connectAndSubscribe();
-
-    return () => {};
   }, [challengeId]);
 
-  // 거래내역을 API로부터 가져오는 함수
-  const fetchTransactions = async () => {
-    if (!hasNextPage || isLoading) return; // 더 가져올 페이지가 없거나 로딩 중이면 중단
+  const fetchTransactions = async (scrollToBottom = false) => {
+    if (!hasNextPage || isLoading) return;
     setIsLoading(true);
 
-    const response = await fetchSharedTransactions(challengeId, cursor); // API 호출
+    const response = await fetchSharedTransactions(challengeId, cursor);
 
     if (response && response.history) {
-      setSharedTransactions((prev) => [...response.history, ...prev]); // 새로운 데이터 추가
-      setHasNextPage(response.hasNextPage); // 다음 페이지 여부 업데이트
+      const reversedHistory = [...response.history].reverse();
 
-      // 커서를 마지막 거래내역의 sharedTransactionId로 업데이트
+      setSharedTransactions((prev) => [...reversedHistory, ...prev]);
+      setHasNextPage(response.hasNextPage);
+
       const lastTransaction = response.history[response.history.length - 1];
       if (lastTransaction) {
         setCursor(lastTransaction.sharedTransactionId);
+      }
+
+      // 데이터를 불러온 후 스크롤을 맨 아래로 이동
+      if (scrollToBottom && transactionListRef.current) {
+        transactionListRef.current!.scrollTop =
+          transactionListRef.current!.scrollHeight;
       }
     }
 
@@ -143,15 +144,18 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const handleScroll = () => {
     if (
       transactionListRef.current &&
-      transactionListRef.current.scrollTop === 0
+      transactionListRef.current.scrollTop === 0 &&
+      hasNextPage &&
+      !isLoading
     ) {
-      fetchTransactions(); // 스크롤 상단에 도달 시 새로운 데이터 가져오기
+      setTimeout(() => {
+        fetchTransactions(); // 일정 시간 이후 스크롤 상단에 도달 시 새로운 데이터 가져오기
+      }, 3000); // 1000ms 지연 후 요청
     }
   };
 
-  // 초기 로딩 및 무한 스크롤을 위한 이벤트 추가
   useEffect(() => {
-    fetchTransactions(); // 초기 로딩 시 첫 페이지 가져오기
+    fetchTransactions(true); // 최초 로딩 시 첫 페이지 가져오기 및 스크롤 맨 아래로 이동
 
     const ref = transactionListRef.current;
     if (ref) {
@@ -165,7 +169,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     };
   }, [cursor, hasNextPage]);
 
-  // 이모지 버튼 클릭 핸들러
   const handleEmojiClick = (transaction: Transaction, emojiType: string) => {
     let action = 'ADD';
     let beforeType = transaction.userEmoji;
@@ -183,12 +186,10 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
       beforeType: beforeType,
     };
 
-    console.log(`이모지 전송:`, emojiRequest);
-
     webSocketService.sendMessage(
       `/app/challenges/${challengeId}/emoji`,
       emojiRequest
-    ); // 웹소켓으로 메시지 전송
+    );
   };
 
   return (
@@ -199,11 +200,12 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
       {sharedTransactions.map((transaction: Transaction) => (
         <div
           key={transaction.sharedTransactionId}
-          className={'p-4 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px]'}
+          className={`p-4 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px] ${
+            transaction.userId === userId ? 'ml-auto ml-4' : 'mr-auto mr-4'
+          }`}
         >
-          {/* 내 거래 내역일 경우 */}
           {transaction.userId === userId ? (
-            <div className='text-right flex items-center'>
+            <div className='flex items-center'>
               <div className='text-sm text-gray-400 mr-2'>
                 {new Date(transaction.transactionDateTime).toLocaleTimeString(
                   'ko-KR',
@@ -324,7 +326,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
               </div>
             </div>
           ) : (
-            /* 다른 사람의 거래 내역일 경우 */
             <div className='flex'>
               <img
                 src={transaction.profileImage || '/default_profile.png'}
