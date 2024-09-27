@@ -2,10 +2,9 @@ package com.challet.challetservice.domain.controller;
 
 import com.challet.challetservice.domain.dto.request.ChallengeJoinRequestDTO;
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
-import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
+import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
-import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
 import com.challet.challetservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,12 +18,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/challet/challenges")
@@ -82,7 +80,8 @@ public class ChallengeController {
         @RequestHeader(value = "Authorization", required = false) String header,
         @RequestParam(value = "keyword", required = false) String keyword,
         @RequestParam(value = "category", required = false) String category) {
-        ChallengeListResponseDTO searchChallenges = challengeService.searchChallenges(header, keyword, category);
+        ChallengeListResponseDTO searchChallenges = challengeService.searchChallenges(header,
+            keyword, category);
         if (searchChallenges == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -126,7 +125,7 @@ public class ChallengeController {
         return ResponseEntity.status(HttpStatus.OK).body("챌린지 참여 신청 성공");
     }
 
-    @Operation(summary = "챌린지 내 공유 거래 내역 조회")
+    @Operation(summary = "챌린지 내 공유 거래 내역 조회 (완료)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "공유 거래 내역 조회 성공"),
         @ApiResponse(responseCode = "400", description = "공유 거래 내역 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -135,25 +134,14 @@ public class ChallengeController {
     @Parameters(value = {
         @Parameter(name = "id", description = "챌린지ID", in = ParameterIn.PATH),
     })
-    @GetMapping("/{id}/shared-transactions")
-    public ResponseEntity<List<SharedTransactionDetailResponseDTO>> getSharedTransactions(
-        @RequestHeader(value = "Authorization") String header, @PathVariable("id") String id) {
-        return null;
-    }
-
-    @Operation(summary = "챌린지 내 공유 거래 내역 수동 등록")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "공유 거래 내역 수동 등록 성공"),
-        @ApiResponse(responseCode = "400", description = "공유 거래 내역 수동 등록 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    })
-    @Parameters(value = {
-        @Parameter(name = "id", description = "챌린지ID", in = ParameterIn.PATH),
-    })
-    @PostMapping("/{id}/shared-transactions")
-    public ResponseEntity<String> registerSharedTransactions(
-        @RequestHeader(value = "Authorization") String header, @PathVariable("id") String id,
-        @RequestBody SharedTransactionRegisterRequestDTO request) {
-        return null;
+    @GetMapping("/{id}/history")
+    public ResponseEntity<ChallengeRoomHistoryResponseDTO> getChallengeRoomHistory(
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @PathVariable("id") Long id,
+        @RequestParam(required = false) Long cursor) {
+        ChallengeRoomHistoryResponseDTO history = challengeService.getChallengeRoomHistory(header,
+            id,
+            cursor);
+        return ResponseEntity.status(HttpStatus.OK).body(history);
     }
 }

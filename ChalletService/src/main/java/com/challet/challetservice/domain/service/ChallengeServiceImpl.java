@@ -7,6 +7,8 @@ import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRe
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
+import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
+import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
 import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.ChallengeStatus;
@@ -16,6 +18,7 @@ import com.challet.challetservice.domain.entity.UserChallenge;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
 import com.challet.challetservice.domain.repository.ChallengeRepositoryImpl;
 import com.challet.challetservice.domain.repository.SharedTransactionRepository;
+import com.challet.challetservice.domain.repository.SharedTransactionRepositoryImpl;
 import com.challet.challetservice.domain.repository.UserChallengeRepository;
 import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
@@ -25,6 +28,7 @@ import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,6 +43,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final UserChallengeRepository userChallengeRepository;
     private final ChallengeRepositoryImpl challengeRepositoryImpl;
     private final SharedTransactionRepository sharedTransactionRepository;
+    private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
 
     @Override
     @Transactional
@@ -150,10 +155,9 @@ public class ChallengeServiceImpl implements ChallengeService {
         }
 
         // 참여인원 초과면 참여 불가
-        if(challenge.getUserChallenges().size() >= challenge.getMaxParticipants()){
+        if (challenge.getUserChallenges().size() >= challenge.getMaxParticipants()) {
             throw new ExceptionResponse(CustomException.MAX_PARTICIPANTS_EXCEEDED_EXCEPTION);
         }
-
 
         UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
         userChallengeRepository.save(userChallenge);
@@ -162,30 +166,48 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     @Transactional
-    public SharedTransactionRegisterResponseDTO handleSharedTransaction(String header, Long id, SharedTransactionRegisterRequestDTO request) {
+    public SharedTransactionRegisterResponseDTO handleSharedTransaction(String header, Long id,
+        SharedTransactionRegisterRequestDTO request) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
         Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+            .orElseThrow(
+                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
         // 챌린지 참여자가 아니라면
-        if(!userChallengeRepository.existsByChallengeAndUser(challenge, user)){
+        if (!userChallengeRepository.existsByChallengeAndUser(challenge, user)) {
             throw new ExceptionResponse(CustomException.ACCESS_DENIED_EXCEPTION);
         }
 
         // action이 ADD일때
-        if (request.action().equals(ActionType.ADD)){
+        if (request.action().equals(ActionType.ADD)) {
 
-            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user)
-                .orElseThrow(()-> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
-            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(SharedTransaction.fromRequest(request, userChallenge));
+            UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge,
+                    user)
+                .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
+            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
+                SharedTransaction.fromRequest(request, userChallenge));
 
             return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
         }
-        
+
         return null;
+    }
+
+    @Override
+    public ChallengeRoomHistoryResponseDTO getChallengeRoomHistory(String header, Long id, Long cursor) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        Challenge challenge = challengeRepository.findById(id)
+            .orElseThrow(
+                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+
+        return sharedTransactionRepositoryImpl.findByChallenge(challenge, user, cursor);
+
     }
 
     public static String generateCode(int length) {

@@ -1,9 +1,13 @@
 package com.challet.challetservice.domain.dto.response;
 
+import com.challet.challetservice.domain.entity.EmojiType;
+import com.challet.challetservice.domain.entity.SharedTransaction;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import lombok.Builder;
 
-@Schema(description = "공유 거래 내역 목록 조회 응답 DTO")
+@Schema(description = "공유 거래 내역 조회 상세 DTO")
+@Builder
 public record SharedTransactionDetailResponseDTO(
 
     @Schema(description = "공유자 ID")
@@ -34,20 +38,41 @@ public record SharedTransactionDetailResponseDTO(
     String image,
 
     @Schema(description = "GOOD 이모지 개수")
-    Integer goodCount,
+    Long goodCount,
 
     @Schema(description = "SOSO 이모지 개수")
-    Integer sosoCount,
+    Long sosoCount,
 
     @Schema(description = "BAD 이모지 개수")
-    Integer badCount,
+    Long badCount,
 
     @Schema(description = "댓글 개수")
-    Integer commentCount,
+    Long commentCount,
 
     @Schema(description = "내가 누른 이모지")
-    String userEmoji
+    EmojiType userEmoji
 
 ) {
+
+    public static SharedTransactionDetailResponseDTO fromHistoru(SharedTransaction sharedTransaction,
+        Long goodCount, Long sosoCount, Long badCount, Long commentCount, EmojiType userEmoji) {
+
+        return SharedTransactionDetailResponseDTO.builder()
+            .userId(sharedTransaction.getUserChallenge().getUser().getId())
+            .nickname(sharedTransaction.getUserChallenge().getUser().getNickname())
+            .profileImage(sharedTransaction.getUserChallenge().getUser().getProfileImage())
+            .sharedTransactionId(sharedTransaction.getId())
+            .withdrawal(sharedTransaction.getWithdrawal())
+            .transactionAmount(sharedTransaction.getTransactionAmount())
+            .transactionDateTime(sharedTransaction.getTransactionDateTime())
+            .content(sharedTransaction.getContent())
+            .image(sharedTransaction.getImage())
+            .goodCount(goodCount)
+            .sosoCount(sosoCount)
+            .badCount(badCount)
+            .commentCount(commentCount)
+            .userEmoji(userEmoji)
+            .build();
+    }
 
 }
