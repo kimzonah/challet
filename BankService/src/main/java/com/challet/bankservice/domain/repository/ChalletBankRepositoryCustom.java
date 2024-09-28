@@ -20,5 +20,7 @@ public interface ChalletBankRepositoryCustom {
 
     void setMyDataAuthorization(String phoneNumber);
 
+    boolean isMyDataConnectedByPhoneNumber(String phoneNumber);
+
     ChalletBank getAccountByAccountNumber(String accountNumber);
 }

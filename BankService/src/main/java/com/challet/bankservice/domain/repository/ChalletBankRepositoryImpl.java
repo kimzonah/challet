@@ -114,6 +114,19 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
     }
 
     @Override
+    public boolean isMyDataConnectedByPhoneNumber(String phoneNumber) {
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        Boolean myDataStatus = query
+            .select(challetBank.myDataStatus)
+            .from(challetBank)
+            .where(challetBank.phoneNumber.eq(phoneNumber))
+            .fetchFirst();
+
+        return Boolean.TRUE.equals(myDataStatus);
+    }
+
+    @Override
     public ChalletBank getAccountByAccountNumber(String accountNumber) {
         QChalletBank challetBank = QChalletBank.challetBank;
 

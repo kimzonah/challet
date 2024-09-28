@@ -165,8 +165,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return ChalletBankTransaction.builder()
             .transactionAmount(-1 * paymentRequestDTO.transactionAmount())
             .transactionDatetime(LocalDateTime.now())
-            .deposit(paymentRequestDTO.accountNumber())
-            .withdrawal(paymentRequestDTO.deposit())
+            .deposit(paymentRequestDTO.deposit())
+            .withdrawal(challetBank.getAccountNumber())
             .transactionBalance(transactionBalance)
             .category(Category.valueOf(paymentRequestDTO.category()))
             .build();
@@ -259,7 +259,10 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     @Override
     public MyDataBankAccountInfoResponseDTO getMyDataAccounts(String tokenHeader) {
-
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        if(! challetBankRepository.isMyDataConnectedByPhoneNumber(phoneNumber)){
+            throw new ExceptionResponse(CustomException.NOT_CONNECTED_MYDATA_EXCEPTION);
+        }
         AccountInfoResponseListDTO kbBanks = kbBankFeignClient.getMyDataKbBank(tokenHeader);
         AccountInfoResponseListDTO nhBanks = nhBankFeignClient.getMyDataKbBank(tokenHeader);
         AccountInfoResponseListDTO shBanks = shBankFeignClient.getMyDataKbBank(tokenHeader);
