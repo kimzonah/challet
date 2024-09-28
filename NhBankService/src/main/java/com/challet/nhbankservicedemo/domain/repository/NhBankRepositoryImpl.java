@@ -4,6 +4,7 @@ import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseDTO;
+import com.challet.nhbankservicedemo.domain.entity.NhBank;
 import com.challet.nhbankservicedemo.domain.entity.QNhBank;
 import com.challet.nhbankservicedemo.domain.entity.QNhBankTransaction;
 import com.querydsl.core.types.Projections;
@@ -94,5 +95,14 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
             .set(nhBank.myDataStatus, true)
             .where(nhBank.phoneNumber.eq(phoneNumber))
             .execute();
+    }
+
+    @Override
+    public NhBank findByAccountNumber(String accountNumber) {
+        QNhBank nhBank = QNhBank.nhBank;
+        return query
+            .selectFrom(nhBank)
+            .where(nhBank.accountNumber.eq(accountNumber))
+            .fetchOne();
     }
 }

@@ -3,6 +3,7 @@ package com.challet.nhbankservicedemo.domain.repository;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseDTO;
+import com.challet.nhbankservicedemo.domain.entity.NhBank;
 import java.util.List;
 
 public interface NhBankRepositoryCustom {
@@ -16,4 +17,6 @@ public interface NhBankRepositoryCustom {
     Long findAccountBalanceById(Long accountId);
 
     void connectMyDataAccount(String phoneNumber);
+
+    NhBank findByAccountNumber(String accountNumber);
 }
