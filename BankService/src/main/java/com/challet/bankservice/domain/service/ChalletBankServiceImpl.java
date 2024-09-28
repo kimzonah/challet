@@ -260,7 +260,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     @Override
     public MyDataBankAccountInfoResponseDTO getMyDataAccounts(String tokenHeader) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
-        if(! challetBankRepository.isMyDataConnectedByPhoneNumber(phoneNumber)){
+        if (!challetBankRepository.isMyDataConnectedByPhoneNumber(phoneNumber)) {
             throw new ExceptionResponse(CustomException.NOT_CONNECTED_MYDATA_EXCEPTION);
         }
         AccountInfoResponseListDTO kbBanks = kbBankFeignClient.getMyDataKbBank(tokenHeader);
@@ -284,18 +284,18 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             ChalletBank toBank = challetBankRepository.getAccountByAccountNumber(
                 requestTransactionDTO.depositAccountNumber());
 
-            if(toBank == null){
+            if (toBank == null) {
                 throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
             }
 
             long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
 
-            ChalletBankTransaction paymentTransaction = createAccountTransferHistory(fromBank,
-                toBank, requestTransactionDTO, transactionBalance, true);
+            ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
+                fromBank, toBank, requestTransactionDTO, transactionBalance, true);
             fromBank.addTransaction(paymentTransaction);
 
-            ChalletBankTransaction accountTransferHistory = createAccountTransferHistory(fromBank,
-                toBank, requestTransactionDTO, addMoney, false);
+            ChalletBankTransaction accountTransferHistory = ChalletBankTransaction.createAccountTransferHistory(
+                fromBank, toBank, requestTransactionDTO, addMoney, false);
 
             toBank.addTransaction(accountTransferHistory);
 
@@ -304,20 +304,5 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         }
 
         return null;
-    }
-
-    private ChalletBankTransaction createAccountTransferHistory(ChalletBank fromBank,
-        ChalletBank toBank, AccountTransferRequestDTO requestTransactionDTO,
-        long transactionBalance, boolean isWithdrawal) {
-
-        return ChalletBankTransaction.builder()
-            .transactionAmount(isWithdrawal ? -1 * requestTransactionDTO.transactionAmount()
-                : requestTransactionDTO.transactionAmount())
-            .transactionDatetime(LocalDateTime.now())
-            .deposit(isWithdrawal ? toBank.getName()
-                : requestTransactionDTO.depositAccountNumber()) // 입금처
-            .withdrawal(isWithdrawal ? fromBank.getAccountNumber() : fromBank.getName()) // 출금처
-            .transactionBalance(transactionBalance)
-            .build();
     }
 }

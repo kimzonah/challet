@@ -1,5 +1,6 @@
 package com.challet.bankservice.domain.entity;
 
+import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -54,5 +55,20 @@ public class ChalletBankTransaction {
 
     public void assignTransactionChAccount(ChalletBank challetBank) {
         this.challetBank = challetBank;
+    }
+
+    public static ChalletBankTransaction createAccountTransferHistory(ChalletBank fromBank,
+        ChalletBank toBank, AccountTransferRequestDTO requestTransactionDTO,
+        long transactionBalance, boolean isWithdrawal) {
+
+        return ChalletBankTransaction.builder()
+            .transactionAmount(isWithdrawal ? -1 * requestTransactionDTO.transactionAmount()
+                : requestTransactionDTO.transactionAmount())
+            .transactionDatetime(LocalDateTime.now())
+            .deposit(isWithdrawal ? toBank.getName()
+                : requestTransactionDTO.depositAccountNumber()) // 입금처
+            .withdrawal(isWithdrawal ? fromBank.getAccountNumber() : fromBank.getName()) // 출금처
+            .transactionBalance(transactionBalance)
+            .build();
     }
 }
