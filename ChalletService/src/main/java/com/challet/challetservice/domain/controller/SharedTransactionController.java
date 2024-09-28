@@ -84,7 +84,7 @@ public class SharedTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 
-    @Operation(summary = "댓글 등록", description = "특정 공유 거래 내역에 댓글 달기")
+    @Operation(summary = "댓글 등록 (완료)", description = "특정 공유 거래 내역에 댓글 달기")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "댓글 등록 성공"),
         @ApiResponse(responseCode = "400", description = "댓글 등록 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
