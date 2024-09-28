@@ -257,7 +257,10 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     @Override
     public MyDataBankAccountInfoResponseDTO getMyDataAccounts(String tokenHeader) {
-
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        if(! challetBankRepository.isMyDataConnectedByPhoneNumber(phoneNumber)){
+            throw new ExceptionResponse(CustomException.NOT_CONNECTED_MYDATA_EXCEPTION);
+        }
         AccountInfoResponseListDTO kbBanks = kbBankFeignClient.getMyDataKbBank(tokenHeader);
         AccountInfoResponseListDTO nhBanks = nhBankFeignClient.getMyDataKbBank(tokenHeader);
         AccountInfoResponseListDTO shBanks = shBankFeignClient.getMyDataKbBank(tokenHeader);
