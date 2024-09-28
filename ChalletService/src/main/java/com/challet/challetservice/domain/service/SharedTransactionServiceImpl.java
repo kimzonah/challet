@@ -2,12 +2,14 @@ package com.challet.challetservice.domain.service;
 
 import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
+import com.challet.challetservice.domain.dto.response.CommentListResponseDTO;
 import com.challet.challetservice.domain.dto.response.EmojiResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.entity.Emoji;
 import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
+import com.challet.challetservice.domain.repository.CommentRepositoryImpl;
 import com.challet.challetservice.domain.repository.EmojiRepository;
 import com.challet.challetservice.domain.repository.SharedTransactionRepository;
 import com.challet.challetservice.domain.repository.SharedTransactionRepositoryImpl;
@@ -29,6 +31,7 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
     private final SharedTransactionRepository sharedTransactionRepository;
     private final EmojiRepository emojiRepository;
     private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
+    private final CommentRepositoryImpl commentRepositoryImpl;
 
     @Override
     @Transactional
@@ -78,6 +81,18 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
 
 
         return sharedTransactionRepositoryImpl.getDetail(sharedTransaction, user);
+    }
+
+    @Override
+    public CommentListResponseDTO getComment(String header, Long id) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        SharedTransaction sharedTransaction = sharedTransactionRepository.findById(id)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
+
+        return commentRepositoryImpl.getCommentList(sharedTransaction);
     }
 
     @Transactional

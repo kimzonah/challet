@@ -3,6 +3,7 @@ package com.challet.challetservice.domain.controller;
 import com.challet.challetservice.domain.dto.request.CommentRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionUpdateRequestDTO;
+import com.challet.challetservice.domain.dto.response.CommentListResponseDTO;
 import com.challet.challetservice.domain.dto.response.CommentResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.service.SharedTransactionService;
@@ -66,7 +67,7 @@ public class SharedTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(detail);
     }
 
-    @Operation(summary = "공유 거래 내역 댓글 목록 조회", description = "공유 거래 내역에 달린 댓글 조회")
+    @Operation(summary = "공유 거래 내역 댓글 목록 조회 (완료)", description = "공유 거래 내역에 달린 댓글 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "댓글 조회 성공"),
         @ApiResponse(responseCode = "400", description = "댓글 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -76,10 +77,11 @@ public class SharedTransactionController {
         @Parameter(name = "id", description = "공유거래내역ID", in = ParameterIn.PATH)
     })
     @GetMapping("/{id}/comments")
-    public ResponseEntity<List<CommentResponseDTO>> getComment(
-        @RequestHeader(value = "Authorization") String header,
-        @PathVariable("id") String id) {
-        return null;
+    public ResponseEntity<CommentListResponseDTO> getComment(
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @PathVariable("id") Long id) {
+        CommentListResponseDTO comments = sharedTransactionService.getComment(header, id);
+        return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 
     @Operation(summary = "댓글 등록", description = "특정 공유 거래 내역에 댓글 달기")
