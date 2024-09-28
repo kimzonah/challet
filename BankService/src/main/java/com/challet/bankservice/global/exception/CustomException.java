@@ -13,7 +13,10 @@ public enum CustomException {
     NOT_GET_TRANSACTION_DETAIL_EXCEPTION(400, "NotGetTransactionDetailException", "잘못된 거래내역 입니다.(동일한 거래내역 2개이상)"),
     NOT_ENOUGH_FUNDS_EXCEPTION(400, "NotEnoughFundsException", "잔액이 부족합니다"),
 
-    NOT_CONNECTED_MYDATA_EXCEPTION(401, "NotConnectedMyDataException", "해당 유저는 마이데이터가 연결되지 않았습니다");
+    NOT_CONNECTED_MYDATA_EXCEPTION(401, "NotConnectedMyDataException", "해당 유저는 마이데이터가 연결되지 않았습니다"),
+
+    ACCOUNT_NOT_FOUND_EXCEPTION(404, "AccountNotFoundException", "입력한 계좌가 존재하지 않습니다");
+
 
 
 

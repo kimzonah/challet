@@ -284,6 +284,10 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             ChalletBank toBank = challetBankRepository.getAccountByAccountNumber(
                 requestTransactionDTO.depositAccountNumber());
 
+            if(toBank == null){
+                throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+            }
+
             long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
 
             ChalletBankTransaction paymentTransaction = createAccountTransferHistory(fromBank,
