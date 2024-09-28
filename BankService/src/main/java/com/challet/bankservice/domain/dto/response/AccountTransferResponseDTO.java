@@ -21,9 +21,9 @@ public record AccountTransferResponseDTO(
     Long amount
 ) {
 
-    public static AccountTransferResponseDTO fromTransferInfo(ChalletBank fromBank, ChalletBank toBank, Long amount) {
+    public static AccountTransferResponseDTO fromTransferInfo(ChalletBank fromBank, String toBankName, Long amount) {
         return AccountTransferResponseDTO.builder()
-            .name(toBank.getName())
+            .name(toBankName)
             .myAccountNumber(fromBank.getAccountNumber())
             .balance(fromBank.getAccountBalance())
             .amount(amount)

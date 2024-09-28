@@ -3,9 +3,11 @@ package com.challet.bankservice.domain.service;
 import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
+import com.challet.bankservice.domain.dto.request.BankTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
+import com.challet.bankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentHttpMessageResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
@@ -291,16 +293,32 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
 
             ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-                fromBank, toBank, requestTransactionDTO, transactionBalance, true);
+                fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true);
             fromBank.addTransaction(paymentTransaction);
 
             ChalletBankTransaction accountTransferHistory = ChalletBankTransaction.createAccountTransferHistory(
-                fromBank, toBank, requestTransactionDTO, addMoney, false);
+                fromBank, toBank.getName(), requestTransactionDTO, addMoney, false);
 
             toBank.addTransaction(accountTransferHistory);
 
-            return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank,
+            return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.getName(),
                 requestTransactionDTO.transactionAmount());
+        } else if (requestTransactionDTO.bankCode().equals("8083")) {
+
+            BankTransferResponseDTO bankDTO = BankTransferResponseDTO.fromDTO(fromBank,
+                requestTransactionDTO);
+            try{
+                BankTransferRequestDTO toBank = kbBankFeignClient.getTransferAccount(bankDTO);
+
+                ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
+                    fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
+                fromBank.addTransaction(paymentTransaction);
+                return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
+                    requestTransactionDTO.transactionAmount());
+            }catch (Exception e){
+                throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+            }
+
         }
 
         return null;
