@@ -163,8 +163,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return ChalletBankTransaction.builder()
             .transactionAmount(-1*paymentRequestDTO.transactionAmount())
             .transactionDatetime(LocalDateTime.now())
-            .deposit(paymentRequestDTO.accountNumber())
-            .withdrawal(paymentRequestDTO.deposit())
+            .deposit(paymentRequestDTO.deposit())
+            .withdrawal(challetBank.getAccountNumber())
             .transactionBalance(transactionBalance)
             .category(Category.valueOf(paymentRequestDTO.category()))
             .build();
