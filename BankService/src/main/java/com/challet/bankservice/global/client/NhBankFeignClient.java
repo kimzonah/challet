@@ -1,6 +1,8 @@
 package com.challet.bankservice.global.client;
 
+import com.challet.bankservice.domain.dto.request.BankTransferRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.BankTransferResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,4 +18,7 @@ public interface NhBankFeignClient {
     @GetMapping("/api/nh-bank")
     AccountInfoResponseListDTO getMyDataKbBank(
         @RequestHeader(value = "Authorization", required = false) String tokenHeader);
+
+    @PostMapping("/api/nh-bank/account-transfers")
+    BankTransferRequestDTO getTransferAccount(BankTransferResponseDTO responseDTO);
 }

@@ -318,9 +318,21 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             }catch (Exception e){
                 throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
             }
+        } else if(requestTransactionDTO.bankCode().equals("8084")){
+            BankTransferResponseDTO bankDTO = BankTransferResponseDTO.fromDTO(fromBank,
+                requestTransactionDTO);
+            try{
+                BankTransferRequestDTO toBank = nhBankFeignClient.getTransferAccount(bankDTO);
 
+                ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
+                    fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
+                fromBank.addTransaction(paymentTransaction);
+                return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
+                    requestTransactionDTO.transactionAmount());
+            }catch (Exception e){
+                throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+            }
         }
-
         return null;
     }
 }
