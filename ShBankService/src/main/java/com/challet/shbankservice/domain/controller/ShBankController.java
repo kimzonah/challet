@@ -1,6 +1,8 @@
 package com.challet.shbankservice.domain.controller;
 
+import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.shbankservice.domain.service.ShBankService;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -83,6 +86,20 @@ public class ShBankController {
         AccountInfoResponseListDTO myDataAccounts = shBankService.getAccountsByPhoneNumber(
             tokenHeader);
         return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
+    }
+
+    @PostMapping("/account-transfers")
+    @Operation(summary = "계좌 이체시 계좌 입금", description = "계좌 번호, 입금금액, 사용자 정보를 받아 계좌 입금")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "계좌 입금 성공"),
+        @ApiResponse(responseCode = "400", description = "계좌 입금 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<BankTransferResponseDTO> addAccountFromTransfer(
+        @RequestBody AccountTransferRequestDTO requestDTO) {
+
+        BankTransferResponseDTO bankTransferResponseDTO = shBankService.addFundsToAccount(
+            requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(bankTransferResponseDTO);
     }
 
 

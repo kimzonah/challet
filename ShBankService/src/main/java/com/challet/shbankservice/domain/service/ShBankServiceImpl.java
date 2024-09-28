@@ -1,9 +1,13 @@
 package com.challet.shbankservice.domain.service;
 
+import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.shbankservice.domain.entity.ShBank;
+import com.challet.shbankservice.domain.entity.ShBankTransaction;
 import com.challet.shbankservice.domain.repository.ShBankRepository;
 import com.challet.shbankservice.global.exception.CustomException;
 import com.challet.shbankservice.global.exception.ExceptionResponse;
@@ -60,5 +64,21 @@ public class ShBankServiceImpl implements ShBankService {
     public void connectMyDataAccount(String tokenHeader) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
         shBankRepository.connectMyDataAccount(phoneNumber);
+    }
+
+    @Transactional
+    @Override
+    public BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO) {
+        ShBank shBank = shBankRepository.findByAccountNumber(requestDTO.depositAccountNumber());
+        if (shBank == null) {
+            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
+        long accountTransactionBalance = shBank.getAccountBalance() + requestDTO.amount();
+        ShBankTransaction transaction = ShBankTransaction.createAccountTransferHistory(shBank,
+            requestDTO, accountTransactionBalance);
+
+        shBank.addTransaction(transaction);
+
+        return BankTransferResponseDTO.fromBankTransferResponseDTO(shBank);
     }
 }
