@@ -31,11 +31,11 @@ public class EmojiRepositoryImpl implements EmojiRepositoryCustom{
             .select(Projections.constructor(
                 EmojiReactionDTO.class,
                 new CaseBuilder()
-                    .when(qEmoji.type.eq(EmojiType.GOOD)).then(1L).otherwise(0L).sum(),
+                    .when(qEmoji.type.eq(EmojiType.GOOD)).then(1L).otherwise(0L).sum().coalesce(0L),
                 new CaseBuilder()
-                    .when(qEmoji.type.eq(EmojiType.SOSO)).then(1L).otherwise(0L).sum(),
+                    .when(qEmoji.type.eq(EmojiType.SOSO)).then(1L).otherwise(0L).sum().coalesce(0L),
                 new CaseBuilder()
-                    .when(qEmoji.type.eq(EmojiType.BAD)).then(1L).otherwise(0L).sum(),
+                    .when(qEmoji.type.eq(EmojiType.BAD)).then(1L).otherwise(0L).sum().coalesce(0L),
                 queryFactory.select(qEmoji.type)
                     .from(qEmoji)
                     .where(qEmoji.sharedTransaction.eq(sharedTransaction)

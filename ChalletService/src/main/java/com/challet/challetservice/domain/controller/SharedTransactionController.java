@@ -49,7 +49,7 @@ public class SharedTransactionController {
         return null;
     }
 
-    @Operation(summary = "공유 거래 내역 상세 조회", description = "공유 거래 내역 상세 정보를 조회")
+    @Operation(summary = "공유 거래 내역 상세 조회 (완료)", description = "공유 거래 내역 상세 정보를 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "공유 거래 내역 상세 조회 성공"),
         @ApiResponse(responseCode = "400", description = "공유 거래 내역 상세 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
@@ -95,53 +95,6 @@ public class SharedTransactionController {
     public ResponseEntity<String> registerComment(
         @RequestHeader(value = "Authorization") String header,
         @PathVariable("id") String id, @RequestBody CommentRegisterRequestDTO request) {
-        return null;
-    }
-
-    @Operation(summary = "이모지 등록", description = "특정 공유 거래 내역에 이모지 달기")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "이모지 등록 성공"),
-        @ApiResponse(responseCode = "400", description = "이모지 등록 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    })
-    @Parameters(value = {
-        @Parameter(name = "id", description = "공유거래내역ID", in = ParameterIn.PATH)
-    })
-    @PostMapping("/{id}/emoji")
-    public ResponseEntity<String> registerEmoji(
-        @RequestHeader(value = "Authorization") String header,
-        @PathVariable("id") String id, @RequestBody EmojiRequestDTO request) {
-        return null;
-    }
-
-    @Operation(summary = "이모지 수정", description = "특정 공유 거래 내역에 이모지 수정하기")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "이모지 수정 성공"),
-        @ApiResponse(responseCode = "400", description = "이모지 수정 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    })
-    @Parameters(value = {
-        @Parameter(name = "id", description = "공유거래내역ID", in = ParameterIn.PATH)
-    })
-    @PatchMapping("/{id}/emoji")
-    public ResponseEntity<String> updateEmoji(@RequestHeader(value = "Authorization") String header,
-        @PathVariable("id") String id, @RequestBody EmojiRequestDTO request) {
-        return null;
-    }
-
-    // 공유 거래 내역 이모지 취소
-    @Operation(summary = "이모지 취소", description = "특정 공유 거래 내역에 이모지 취소하기")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "이모지 취소 성공"),
-        @ApiResponse(responseCode = "400", description = "이모지 취소 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-    })
-    @Parameters(value = {
-        @Parameter(name = "id", description = "공유거래내역ID", in = ParameterIn.PATH)
-    })
-    @DeleteMapping("/{id}/emoji")
-    public ResponseEntity<String> deleteEmoji(@RequestHeader(value = "Authorization") String header,
-        @PathVariable("id") String id) {
         return null;
     }
 
