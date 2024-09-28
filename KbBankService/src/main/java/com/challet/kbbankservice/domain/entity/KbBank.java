@@ -1,5 +1,6 @@
 package com.challet.kbbankservice.domain.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +29,9 @@ public class KbBank {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="name")
+    private String name;
+
     @Column(name = "account_number", nullable = false, unique = true)
     private String accountNumber;
 
@@ -52,5 +56,4 @@ public class KbBank {
         this.kbBankTransactions.add(kbBankTransaction);
         kbBankTransaction.assignTransactionKbAccount(this);
     }
-
 }

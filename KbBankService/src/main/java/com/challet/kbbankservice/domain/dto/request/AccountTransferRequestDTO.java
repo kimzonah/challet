@@ -14,7 +14,7 @@ public record AccountTransferRequestDTO (
     Long amount,
     
     @Schema(name = "입금 계좌 번호")
-    String deposit
+    String depositAccountNumber
 ){
 
 }

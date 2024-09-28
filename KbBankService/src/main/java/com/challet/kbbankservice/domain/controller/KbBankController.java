@@ -1,9 +1,9 @@
 package com.challet.kbbankservice.domain.controller;
 
 import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
-import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.kbbankservice.domain.service.KbBankService;
@@ -100,16 +100,18 @@ public class KbBankController {
         return ResponseEntity.status(HttpStatus.OK).body(accountTransferInfo);
     }
 
-    @PostMapping("/accounts/transfer")
+    @PostMapping("/account-transfers")
     @Operation(summary = "계좌 이체시 계좌 입금", description = "계좌 번호, 입금금액, 사용자 정보를 받아 계좌 입금")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "계좌 입금 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 입금 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity<AccountInfoResponseDTO> addAccountFromTransfer(
+    public ResponseEntity<BankTransferResponseDTO> addAccountFromTransfer(
         @RequestBody AccountTransferRequestDTO requestDTO) {
-        AccountInfoResponseDTO accountTransferInfo = kbBankService.addFundsToAccount(requestDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(accountTransferInfo);
+
+        BankTransferResponseDTO bankTransferResponseDTO = kbBankService.addFundsToAccount(
+            requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(bankTransferResponseDTO);
     }
 
 

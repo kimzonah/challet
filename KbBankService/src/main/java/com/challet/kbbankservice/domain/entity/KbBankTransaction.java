@@ -1,5 +1,6 @@
 package com.challet.kbbankservice.domain.entity;
 
+import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -53,5 +54,18 @@ public class KbBankTransaction {
 
     public void assignTransactionKbAccount(KbBank kbBank) {
         this.kbBank = kbBank;
+    }
+
+    public static KbBankTransaction createAccountTransferHistory(KbBank kbBank,
+        AccountTransferRequestDTO requestDTO, long accountTransactionBalance) {
+
+        return KbBankTransaction
+            .builder()
+            .transactionAmount(requestDTO.amount())
+            .transactionDatetime(LocalDateTime.now())
+            .deposit(kbBank.getAccountNumber())
+            .withdrawal(requestDTO.name())
+            .transactionBalance(accountTransactionBalance)
+            .build();
     }
 }

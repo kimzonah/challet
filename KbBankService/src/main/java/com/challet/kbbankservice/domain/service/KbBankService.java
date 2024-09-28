@@ -4,6 +4,7 @@ import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
 
@@ -19,5 +20,5 @@ public interface KbBankService {
 
     AccountTransferResponseDTO getAccountTransferInfo(String accountNumber);
 
-    AccountInfoResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO);
+    BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO);
 }
