@@ -10,6 +10,7 @@ import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
 import com.challet.challetservice.domain.repository.EmojiRepository;
 import com.challet.challetservice.domain.repository.SharedTransactionRepository;
+import com.challet.challetservice.domain.repository.SharedTransactionRepositoryImpl;
 import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
@@ -27,6 +28,7 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
     private final ChallengeRepository challengeRepository;
     private final SharedTransactionRepository sharedTransactionRepository;
     private final EmojiRepository emojiRepository;
+    private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
 
     @Override
     @Transactional
@@ -75,7 +77,7 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
 
 
-        return null;
+        return sharedTransactionRepositoryImpl.getDetail(sharedTransaction, user);
     }
 
     @Transactional

@@ -77,4 +77,23 @@ public record SharedTransactionDetailResponseDTO(
             .build();
     }
 
+    public static SharedTransactionDetailResponseDTO fromInfoAndReaction(SharedTransactionInfoDTO info, EmojiReactionDTO reaction){
+        return  SharedTransactionDetailResponseDTO.builder()
+            .userId(info.userId())
+            .nickname(info.nickname())
+            .profileImage(info.profileImage())
+            .sharedTransactionId(info.sharedTransactionId())
+            .withdrawal(info.withdrawal())
+            .transactionAmount(info.transactionAmount())
+            .transactionDateTime(info.transactionDateTime())
+            .content(info.content())
+            .image(info.image())
+            .commentCount(info.commentCount())
+            .goodCount(reaction.goodCount())
+            .sosoCount(reaction.sosoCount())
+            .badCount(reaction.badCount())
+            .userEmoji(reaction.userEmoji())
+            .build();
+    }
+
 }
