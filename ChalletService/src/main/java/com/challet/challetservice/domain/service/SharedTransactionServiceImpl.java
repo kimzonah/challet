@@ -5,6 +5,7 @@ import com.challet.challetservice.domain.dto.request.CommentRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.dto.response.CommentListResponseDTO;
 import com.challet.challetservice.domain.dto.response.EmojiReactionDTO;
+import com.challet.challetservice.domain.dto.response.EmojiResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.entity.Comment;
 import com.challet.challetservice.domain.entity.Emoji;
@@ -41,7 +42,7 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
 
     @Override
     @Transactional
-    public EmojiReactionDTO handleEmoji(String header,
+    public EmojiResponseDTO handleEmoji(String header,
         EmojiRequestDTO request) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
@@ -51,25 +52,23 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
                 request.sharedTransactionId())
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
 
-        EmojiReactionDTO response = null;
-
         if(request.action().equals(ActionType.ADD)){
             addEmoji(user, sharedTransaction, request);
-            response = emojiRepositoryImpl.getEmojiReaction(sharedTransaction.getId(), user);
         }
 
         if(request.action().equals(ActionType.DELETE)){
             deleteEmoji(user, sharedTransaction);
-            response = emojiRepositoryImpl.getEmojiReaction(sharedTransaction.getId(), user);
         }
 
         if (request.action().equals(ActionType.UPDATE)) {
             emojiRepository.findByUserAndSharedTransaction(user, sharedTransaction)
                 .ifPresent(emoji -> emoji.updateEmoji(request.type()));
-            response = emojiRepositoryImpl.getEmojiReaction(sharedTransaction.getId(), user);
         }
 
-        return response;
+        EmojiReactionDTO emojiReaction = emojiRepositoryImpl.getEmojiReaction(
+            sharedTransaction.getId(), user);
+
+        return new EmojiResponseDTO(sharedTransaction.getId(), emojiReaction);
     }
 
     @Override

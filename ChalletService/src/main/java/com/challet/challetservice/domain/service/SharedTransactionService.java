@@ -9,7 +9,7 @@ import com.challet.challetservice.domain.dto.response.SharedTransactionDetailRes
 
 public interface SharedTransactionService {
 
-    EmojiReactionDTO handleEmoji(String header, EmojiRequestDTO request);
+    EmojiResponseDTO handleEmoji(String header, EmojiRequestDTO request);
 
     SharedTransactionDetailResponseDTO getDetail(String header, Long id);
 
