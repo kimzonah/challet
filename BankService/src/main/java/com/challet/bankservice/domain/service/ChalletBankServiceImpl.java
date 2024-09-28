@@ -277,76 +277,73 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     public AccountTransferResponseDTO accountTransfer(Long accountId,
         AccountTransferRequestDTO requestTransactionDTO) {
 
-        // 1. 내 계좌 조회 및 결제 가능 확인
         ChalletBank fromBank = challetBankRepository.findByIdWithLock(accountId);
         long transactionBalance = calculateTransactionBalance(fromBank,
             requestTransactionDTO.transactionAmount());
 
         if (requestTransactionDTO.bankCode().equals("8082")) {
-            ChalletBank toBank = challetBankRepository.getAccountByAccountNumber(
-                requestTransactionDTO.depositAccountNumber());
+            return processInternalTransfer(fromBank, requestTransactionDTO, transactionBalance);
+        }
 
-            if (toBank == null) {
-                throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
-            }
+        return processExternalTransfer(fromBank, requestTransactionDTO, transactionBalance);
+    }
 
-            long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
+    private AccountTransferResponseDTO processInternalTransfer(ChalletBank fromBank,
+        AccountTransferRequestDTO requestTransactionDTO, long transactionBalance) {
+
+        ChalletBank toBank = challetBankRepository.getAccountByAccountNumber(
+            requestTransactionDTO.depositAccountNumber());
+
+        if (toBank == null) {
+            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
+
+        long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
+
+        ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
+            fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true);
+        fromBank.addTransaction(paymentTransaction);
+
+        ChalletBankTransaction accountTransferHistory = ChalletBankTransaction.createAccountTransferHistory(
+            fromBank, toBank.getName(), requestTransactionDTO, addMoney, false);
+        toBank.addTransaction(accountTransferHistory);
+
+        return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.getName(),
+            requestTransactionDTO.transactionAmount());
+    }
+
+    private AccountTransferResponseDTO processExternalTransfer(ChalletBank fromBank,
+        AccountTransferRequestDTO requestTransactionDTO, long transactionBalance) {
+
+        BankTransferResponseDTO bankDTO = BankTransferResponseDTO.fromDTO(fromBank,
+            requestTransactionDTO);
+
+        try {
+            BankTransferRequestDTO toBank = getExternalBankTransferAccount(bankDTO,
+                requestTransactionDTO.bankCode());
 
             ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-                fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true);
+                fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
             fromBank.addTransaction(paymentTransaction);
 
-            ChalletBankTransaction accountTransferHistory = ChalletBankTransaction.createAccountTransferHistory(
-                fromBank, toBank.getName(), requestTransactionDTO, addMoney, false);
-
-            toBank.addTransaction(accountTransferHistory);
-
-            return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.getName(),
+            return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
                 requestTransactionDTO.transactionAmount());
-        } else if (requestTransactionDTO.bankCode().equals("8083")) {
-
-            BankTransferResponseDTO bankDTO = BankTransferResponseDTO.fromDTO(fromBank,
-                requestTransactionDTO);
-            try{
-                BankTransferRequestDTO toBank = kbBankFeignClient.getTransferAccount(bankDTO);
-
-                ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-                    fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
-                fromBank.addTransaction(paymentTransaction);
-                return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
-                    requestTransactionDTO.transactionAmount());
-            }catch (Exception e){
-                throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
-            }
-        } else if(requestTransactionDTO.bankCode().equals("8084")){
-            BankTransferResponseDTO bankDTO = BankTransferResponseDTO.fromDTO(fromBank,
-                requestTransactionDTO);
-            try{
-                BankTransferRequestDTO toBank = nhBankFeignClient.getTransferAccount(bankDTO);
-
-                ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-                    fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
-                fromBank.addTransaction(paymentTransaction);
-                return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
-                    requestTransactionDTO.transactionAmount());
-            }catch (Exception e){
-                throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
-            }
-        }else if(requestTransactionDTO.bankCode().equals("8085")){
-            BankTransferResponseDTO bankDTO = BankTransferResponseDTO.fromDTO(fromBank,
-                requestTransactionDTO);
-            try{
-                BankTransferRequestDTO toBank = shBankFeignClient.getTransferAccount(bankDTO);
-
-                ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-                    fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
-                fromBank.addTransaction(paymentTransaction);
-                return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
-                    requestTransactionDTO.transactionAmount());
-            }catch (Exception e){
-                throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
-            }
+        } catch (Exception e) {
+            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
         }
-        return null;
+    }
+
+    private BankTransferRequestDTO getExternalBankTransferAccount(BankTransferResponseDTO bankDTO,
+        String bankCode) {
+        switch (bankCode) {
+            case "8083":
+                return kbBankFeignClient.getTransferAccount(bankDTO);
+            case "8084":
+                return nhBankFeignClient.getTransferAccount(bankDTO);
+            case "8085":
+                return shBankFeignClient.getTransferAccount(bankDTO);
+            default:
+                throw new ExceptionResponse(CustomException.INVALID_BANK_CODE_EXCEPTION);
+        }
     }
 }
