@@ -2,6 +2,7 @@ package com.challet.challetservice.domain.controller;
 
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
+import com.challet.challetservice.domain.dto.response.EmojiReactionDTO;
 import com.challet.challetservice.domain.dto.response.EmojiResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
@@ -32,7 +33,7 @@ public class ChallengeWebSocketController {
 
     @MessageMapping("/challenges/{id}/emoji")
     @SendTo("/topic/challenges/{id}/emoji")
-    public EmojiResponseDTO handleEmoji (StompHeaderAccessor headerAccessor, @DestinationVariable Long id, EmojiRequestDTO request) {
+    public EmojiReactionDTO handleEmoji (StompHeaderAccessor headerAccessor, @DestinationVariable Long id, EmojiRequestDTO request) {
         return sharedTransactionService.handleEmoji(headerAccessor.getFirstNativeHeader("Authorization"), request);
     }
 }
