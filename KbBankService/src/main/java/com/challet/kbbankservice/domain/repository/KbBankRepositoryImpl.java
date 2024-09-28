@@ -2,7 +2,6 @@ package com.challet.kbbankservice.domain.repository;
 
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.entity.KbBank;
@@ -97,7 +96,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .where(bank.phoneNumber.eq(phoneNumber))
             .execute();
     }
-    
+
     @Override
     public KbBank findByAccountNumber(String accountNumber) {
         QKbBank kbBank = QKbBank.kbBank;

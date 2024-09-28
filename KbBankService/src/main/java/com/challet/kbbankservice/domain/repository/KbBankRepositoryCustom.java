@@ -1,7 +1,6 @@
 package com.challet.kbbankservice.domain.repository;
 
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.kbbankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.entity.KbBank;
