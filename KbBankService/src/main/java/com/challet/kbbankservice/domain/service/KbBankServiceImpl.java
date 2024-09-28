@@ -68,11 +68,6 @@ public class KbBankServiceImpl implements KbBankService {
     }
 
     @Override
-    public AccountTransferResponseDTO getAccountTransferInfo(String accountNumber) {
-        return kbBankRepository.getAccountForTransfer(accountNumber);
-    }
-
-    @Override
     @Transactional
     public BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO) {
         KbBank kbBank = kbBankRepository.findByAccountNumber(requestDTO.depositAccountNumber());

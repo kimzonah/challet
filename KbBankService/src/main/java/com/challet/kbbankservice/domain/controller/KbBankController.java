@@ -87,19 +87,6 @@ public class KbBankController {
         return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
     }
 
-    @GetMapping("/accounts/accountNumber")
-    @Operation(summary = "계좌 이체시 계좌 번호로 계좌 조회", description = "계좌 번호로 계좌 조회, 계좌 번호와 전화번호 반환")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "계좌 조회 성공"),
-        @ApiResponse(responseCode = "400", description = "계좌 조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
-    })
-    public ResponseEntity<AccountTransferResponseDTO> searchAccountByAccountNumber(
-        @RequestHeader("AccountNumber") String accountNumber) {
-        AccountTransferResponseDTO accountTransferInfo = kbBankService.getAccountTransferInfo(
-            accountNumber);
-        return ResponseEntity.status(HttpStatus.OK).body(accountTransferInfo);
-    }
-
     @PostMapping("/account-transfers")
     @Operation(summary = "계좌 이체시 계좌 입금", description = "계좌 번호, 입금금액, 사용자 정보를 받아 계좌 입금")
     @ApiResponses(value = {

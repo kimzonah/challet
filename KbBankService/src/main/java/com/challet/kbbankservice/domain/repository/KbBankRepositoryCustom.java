@@ -19,7 +19,5 @@ public interface KbBankRepositoryCustom {
 
     void connectMyDataAccount(String phoneNumber);
 
-    AccountTransferResponseDTO getAccountForTransfer(String accountNumber);
-
     KbBank findByAccountNumber(String accountNumber);
 }

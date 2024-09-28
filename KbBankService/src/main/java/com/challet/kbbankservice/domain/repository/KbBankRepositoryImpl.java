@@ -97,20 +97,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .where(bank.phoneNumber.eq(phoneNumber))
             .execute();
     }
-
-    @Override
-    public AccountTransferResponseDTO getAccountForTransfer(String accountNumber) {
-        QKbBank kbBank = QKbBank.kbBank;
-
-        return query
-            .select(Projections.constructor(AccountTransferResponseDTO.class,
-                kbBank.phoneNumber,
-                kbBank.accountNumber))
-            .from(kbBank)
-            .where(kbBank.accountNumber.eq(accountNumber))
-            .fetchOne();
-    }
-
+    
     @Override
     public KbBank findByAccountNumber(String accountNumber) {
         QKbBank kbBank = QKbBank.kbBank;
