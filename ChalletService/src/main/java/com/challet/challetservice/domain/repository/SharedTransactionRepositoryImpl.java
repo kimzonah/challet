@@ -5,16 +5,12 @@ import com.challet.challetservice.domain.dto.response.EmojiReactionDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionInfoDTO;
 import com.challet.challetservice.domain.entity.Challenge;
-import com.challet.challetservice.domain.entity.Emoji;
-import com.challet.challetservice.domain.entity.EmojiType;
 import com.challet.challetservice.domain.entity.QComment;
 import com.challet.challetservice.domain.entity.QSharedTransaction;
 import com.challet.challetservice.domain.entity.QUser;
 import com.challet.challetservice.domain.entity.QUserChallenge;
 import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
-import com.challet.challetservice.global.exception.CustomException;
-import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -97,23 +93,6 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
             .toList();
 
         return new ChallengeRoomHistoryResponseDTO(hasNextPage, history);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<User> findUserBySharedTransaction(SharedTransaction sharedTransaction) {
-
-        QSharedTransaction qSharedTransaction = QSharedTransaction.sharedTransaction;
-        QUserChallenge qUserChallenge = QUserChallenge.userChallenge;
-        QUser qUser = QUser.user;
-
-        return Optional.ofNullable(queryFactory
-            .select(qUser)
-            .from(qSharedTransaction)
-            .join(qSharedTransaction.userChallenge, qUserChallenge)
-            .join(qUserChallenge.user, qUser)
-            .where(qSharedTransaction.eq(sharedTransaction))
-            .fetchOne());
     }
 
     @Override

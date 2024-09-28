@@ -11,8 +11,6 @@ public interface SharedTransactionRepositoryCustom {
 
     ChallengeRoomHistoryResponseDTO findByChallenge(Challenge challenge, User user, Long cursor);
 
-    Optional<User> findUserBySharedTransaction(SharedTransaction sharedTransaction);
-
     SharedTransactionDetailResponseDTO getDetail(SharedTransaction sharedTransaction, User user);
 
 }

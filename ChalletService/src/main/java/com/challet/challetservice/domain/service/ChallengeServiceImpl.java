@@ -24,7 +24,7 @@ import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +68,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ChallengeListResponseDTO getMyChallenges(String header) {
 
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
@@ -91,7 +91,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ChallengeListResponseDTO searchChallenges(String header, String keyword,
         String category) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
@@ -112,7 +112,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ChallengeDetailResponseDTO getChallengeDetail(String header, Long id) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
@@ -197,6 +197,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ChallengeRoomHistoryResponseDTO getChallengeRoomHistory(String header, Long id, Long cursor) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
@@ -211,6 +212,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SpendingAmountResponseDTO getSpendingAmount(String header, Long id) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)

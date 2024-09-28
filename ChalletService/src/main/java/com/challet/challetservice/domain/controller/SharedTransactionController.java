@@ -63,7 +63,7 @@ public class SharedTransactionController {
     public ResponseEntity<SharedTransactionDetailResponseDTO> getSharedTransactionDetail(
         @RequestHeader(value = "Authorization", required = false) String header,
         @PathVariable("id") Long id) {
-        SharedTransactionDetailResponseDTO detail = sharedTransactionService.getDatail(header, id);
+        SharedTransactionDetailResponseDTO detail = sharedTransactionService.getDetail(header, id);
         return ResponseEntity.status(HttpStatus.OK).body(detail);
     }
 

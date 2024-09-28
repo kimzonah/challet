@@ -3,7 +3,7 @@ package com.challet.challetservice.domain.service;
 import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.dto.response.CommentListResponseDTO;
-import com.challet.challetservice.domain.dto.response.EmojiResponseDTO;
+import com.challet.challetservice.domain.dto.response.EmojiReactionDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionDetailResponseDTO;
 import com.challet.challetservice.domain.entity.Emoji;
 import com.challet.challetservice.domain.entity.SharedTransaction;
@@ -11,13 +11,14 @@ import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.repository.ChallengeRepository;
 import com.challet.challetservice.domain.repository.CommentRepositoryImpl;
 import com.challet.challetservice.domain.repository.EmojiRepository;
+import com.challet.challetservice.domain.repository.EmojiRepositoryImpl;
 import com.challet.challetservice.domain.repository.SharedTransactionRepository;
 import com.challet.challetservice.domain.repository.SharedTransactionRepositoryImpl;
 import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +33,11 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
     private final EmojiRepository emojiRepository;
     private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
     private final CommentRepositoryImpl commentRepositoryImpl;
+    private final EmojiRepositoryImpl emojiRepositoryImpl;
 
     @Override
     @Transactional
-    public EmojiResponseDTO handleEmoji(String header,
+    public EmojiReactionDTO handleEmoji(String header,
         EmojiRequestDTO request) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
@@ -45,33 +47,30 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
                 request.sharedTransactionId())
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
 
-        EmojiResponseDTO response = null;
+        EmojiReactionDTO response = null;
 
         if(request.action().equals(ActionType.ADD)){
             addEmoji(user, sharedTransaction, request);
-            Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
-            response = EmojiResponseDTO.fromRequest(request, emojiCount);
+            response = emojiRepositoryImpl.getEmojiReaction(sharedTransaction.getId(), user);
         }
 
         if(request.action().equals(ActionType.DELETE)){
             deleteEmoji(user, sharedTransaction);
-            Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
-            response = EmojiResponseDTO.fromRequest(request, emojiCount);
+            response = emojiRepositoryImpl.getEmojiReaction(sharedTransaction.getId(), user);
         }
 
         if (request.action().equals(ActionType.UPDATE)) {
             emojiRepository.findByUserAndSharedTransaction(user, sharedTransaction)
                 .ifPresent(emoji -> emoji.updateEmoji(request.type()));
-            Long emojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.type());
-            Long beforeEmojiCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, request.beforeType());
-            response = EmojiResponseDTO.fromRequestWithBefore(request, emojiCount, beforeEmojiCount);
+            response = emojiRepositoryImpl.getEmojiReaction(sharedTransaction.getId(), user);
         }
 
         return response;
     }
 
     @Override
-    public SharedTransactionDetailResponseDTO getDatail(String header, Long id) {
+    @Transactional(readOnly = true)
+    public SharedTransactionDetailResponseDTO getDetail(String header, Long id) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
@@ -84,6 +83,7 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CommentListResponseDTO getComment(String header, Long id) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         userRepository.findByPhoneNumber(loginUserPhoneNumber)

@@ -16,7 +16,7 @@ import com.challet.challetservice.domain.repository.UserRepository;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final UserChallengeRepository userChallengeRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public UserInfoResponseDTO getUserInfo(String header) {
 
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
@@ -62,7 +63,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public MyRewardListResponseDTO getMyRewards(String header) {
 
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
@@ -76,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public RewardDetailResponseDTO getRewardDetail(String header, Long id) {
 
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
