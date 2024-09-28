@@ -24,7 +24,7 @@ public class EmojiRepositoryImpl implements EmojiRepositoryCustom{
 
     @Override
     @Transactional(readOnly = true)
-    public EmojiReactionDTO getEmojiReaction(SharedTransaction sharedTransaction, User user) {
+    public EmojiReactionDTO getEmojiReaction(Long sharedTransactionId, User user) {
         QEmoji qEmoji = QEmoji.emoji;
 
         return queryFactory
@@ -38,12 +38,12 @@ public class EmojiRepositoryImpl implements EmojiRepositoryCustom{
                     .when(qEmoji.type.eq(EmojiType.BAD)).then(1L).otherwise(0L).sum().coalesce(0L),
                 queryFactory.select(qEmoji.type)
                     .from(qEmoji)
-                    .where(qEmoji.sharedTransaction.eq(sharedTransaction)
+                    .where(qEmoji.sharedTransaction.id.eq(sharedTransactionId)
                         .and(qEmoji.user.eq(user)))
                     .limit(1)
             ))
             .from(qEmoji)
-            .where(qEmoji.sharedTransaction.eq(sharedTransaction))
+            .where(qEmoji.sharedTransaction.id.eq(sharedTransactionId))
             .fetchOne();
 
     }

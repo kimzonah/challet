@@ -37,7 +37,11 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
     @Override
     @Transactional(readOnly = true)
     public ChallengeRoomHistoryResponseDTO findByChallenge(Challenge challenge, User user, Long cursor) {
+
         QSharedTransaction qSharedTransaction = QSharedTransaction.sharedTransaction;
+        QUserChallenge qUserChallenge = QUserChallenge.userChallenge;
+        QUser qUser = QUser.user;
+        QComment qComment = QComment.comment;
 
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(qSharedTransaction.userChallenge.challenge.eq(challenge));
@@ -45,37 +49,55 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
             builder.and(qSharedTransaction.id.lt(cursor));
         }
 
-        List<SharedTransaction> sharedTransactions = queryFactory
-            .selectFrom(qSharedTransaction)
+        List<SharedTransactionInfoDTO> infoList = queryFactory
+            .select(Projections.constructor(
+                SharedTransactionInfoDTO.class,
+                qUser.id.as("userId"),
+                qUser.nickname.as("nickname"),
+                qUser.profileImage.as("profileImage"),
+                qSharedTransaction.id.as("sharedTransactionId"),
+                qSharedTransaction.withdrawal.as("withdrawal"),
+                qSharedTransaction.transactionAmount.as("transactionAmount"),
+                qSharedTransaction.transactionDateTime.as("transactionDateTime"),
+                qSharedTransaction.content.as("content"),
+                qSharedTransaction.image.as("image"),
+                qComment.count().as("commentCount")
+            ))
+            .from(qSharedTransaction)
+            .join(qUserChallenge).on(qSharedTransaction.userChallenge.eq(qUserChallenge))
+            .join(qUser).on(qUserChallenge.user.eq(qUser))
+            .leftJoin(qComment).on(qComment.sharedTransaction.eq(qSharedTransaction))
             .where(builder)
+            .groupBy(
+                qUser.id,
+                qUser.nickname,
+                qUser.profileImage,
+                qSharedTransaction.id,
+                qSharedTransaction.withdrawal,
+                qSharedTransaction.transactionAmount,
+                qSharedTransaction.transactionDateTime,
+                qSharedTransaction.content,
+                qSharedTransaction.image
+            )
             .orderBy(qSharedTransaction.id.desc())
             .limit(ITEM_SIZE +1)
             .fetch();
 
-        boolean hasNextPage = sharedTransactions.size() > ITEM_SIZE;
+        boolean hasNextPage = infoList.size() > ITEM_SIZE;
         if (hasNextPage) {
-            sharedTransactions.removeLast();
+            infoList.removeLast();
         }
 
-        List<SharedTransactionDetailResponseDTO> history = sharedTransactions.stream()
-            .map((sharedTransaction -> {
-                Long goodCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, EmojiType.GOOD);
-                Long sosoCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, EmojiType.SOSO);
-                Long badCount = emojiRepository.countBySharedTransactionAndType(sharedTransaction, EmojiType.BAD);
-                Long commentCount = commentRepository.countBySharedTransaction(sharedTransaction);
-                EmojiType userEmoji = emojiRepository.findByUserAndSharedTransaction(user, sharedTransaction)
-                    .map((Emoji::getType)).orElse(null);
-                User sharedUser = findUserBySharedTransaction(sharedTransaction)
-                    .orElseThrow(()-> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
-                return SharedTransactionDetailResponseDTO.fromHistory(sharedTransaction,sharedUser,goodCount,sosoCount,badCount,commentCount,userEmoji);
-            }))
+        List<SharedTransactionDetailResponseDTO> history = infoList.stream()
+            .map(info -> {
+                EmojiReactionDTO reaction = emojiRepositoryImpl.getEmojiReaction(
+                    info.sharedTransactionId(), user);
+                return SharedTransactionDetailResponseDTO.fromInfoAndReaction(info, reaction);
+            })
             .toList();
-
-
 
         return new ChallengeRoomHistoryResponseDTO(hasNextPage, history);
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -102,7 +124,7 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
         QUser qUser = QUser.user;
         QComment qComment = QComment.comment;
 
-        EmojiReactionDTO emojiReaction = emojiRepositoryImpl.getEmojiReaction(sharedTransaction, user);
+        EmojiReactionDTO emojiReaction = emojiRepositoryImpl.getEmojiReaction(sharedTransaction.getId(), user);
 
 
         SharedTransactionInfoDTO info = queryFactory

@@ -6,6 +6,6 @@ import com.challet.challetservice.domain.entity.User;
 
 public interface EmojiRepositoryCustom {
 
-    EmojiReactionDTO getEmojiReaction(SharedTransaction sharedTransaction, User user);
+    EmojiReactionDTO getEmojiReaction(Long sharedTransaction, User user);
 
 }
