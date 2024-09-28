@@ -95,9 +95,10 @@ public class SharedTransactionController {
     })
     @PostMapping("/{id}/comments")
     public ResponseEntity<String> registerComment(
-        @RequestHeader(value = "Authorization") String header,
-        @PathVariable("id") String id, @RequestBody CommentRegisterRequestDTO request) {
-        return null;
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @PathVariable("id") Long id, @RequestBody CommentRegisterRequestDTO request) {
+        sharedTransactionService.registerComment(header, id, request);
+        return ResponseEntity.status(HttpStatus.OK).body("댓글 등록 성공");
     }
 
 }

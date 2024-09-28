@@ -1,5 +1,6 @@
 package com.challet.challetservice.domain.entity;
 
+import com.challet.challetservice.domain.dto.request.CommentRegisterRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,5 +35,13 @@ public class Comment {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    public static Comment create(User user, SharedTransaction sharedTransaction, CommentRegisterRequestDTO request) {
+        return Comment.builder()
+            .user(user)
+            .sharedTransaction(sharedTransaction)
+            .content(request.content())
+            .build();
+    }
 
 }
