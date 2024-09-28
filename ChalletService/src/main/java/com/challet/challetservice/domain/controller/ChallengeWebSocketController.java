@@ -33,7 +33,7 @@ public class ChallengeWebSocketController {
 
     @MessageMapping("/challenges/{id}/emoji")
     @SendTo("/topic/challenges/{id}/emoji")
-    public EmojiReactionDTO handleEmoji (StompHeaderAccessor headerAccessor, @DestinationVariable Long id, EmojiRequestDTO request) {
+    public EmojiResponseDTO handleEmoji (StompHeaderAccessor headerAccessor, @DestinationVariable Long id, EmojiRequestDTO request) {
         return sharedTransactionService.handleEmoji(headerAccessor.getFirstNativeHeader("Authorization"), request);
     }
 }
