@@ -5,6 +5,7 @@ import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDT
 import com.challet.shbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.shbankservice.domain.entity.ShBank;
 import java.util.List;
+import java.util.Optional;
 
 public interface ShBankRepositoryCustom {
 
@@ -18,5 +19,5 @@ public interface ShBankRepositoryCustom {
 
     void connectMyDataAccount(String phoneNumber);
 
-    ShBank findByAccountNumber(String accountNumber);
+    Optional<ShBank> findByAccountNumber(String accountNumber);
 }

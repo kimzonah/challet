@@ -10,6 +10,7 @@ import com.challet.shbankservice.domain.entity.ShBank;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -98,11 +99,13 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
     }
 
     @Override
-    public ShBank findByAccountNumber(String accountNumber) {
+    public Optional<ShBank> findByAccountNumber(String accountNumber) {
         QShBank shBank = QShBank.shBank;
-        return query
+        ShBank result = query
             .selectFrom(shBank)
             .where(shBank.accountNumber.eq(accountNumber))
             .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }

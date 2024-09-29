@@ -69,10 +69,9 @@ public class ShBankServiceImpl implements ShBankService {
     @Transactional
     @Override
     public BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO) {
-        ShBank shBank = shBankRepository.findByAccountNumber(requestDTO.depositAccountNumber());
-        if (shBank == null) {
-            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
-        }
+        ShBank shBank = shBankRepository.findByAccountNumber(requestDTO.depositAccountNumber())
+            .orElseThrow(() -> new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION));
+
         long accountTransactionBalance = shBank.getAccountBalance() + requestDTO.amount();
         ShBankTransaction transaction = ShBankTransaction.createAccountTransferHistory(shBank,
             requestDTO, accountTransactionBalance);
