@@ -29,6 +29,9 @@ public class ChalletBank {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="name")
+    private String name;
+
     @Column(name = "account_number", nullable = false, unique = true)
     private String accountNumber;
 

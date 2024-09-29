@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record AccountTransferRequestDTO(
 
     @Schema(description = "이체 은행")
-    String bankName,
+    String bankCode,
 
     @Schema(description = "이체 계좌번호")
-    String accountNumber,
+    String depositAccountNumber,
 
     @Schema(description = "이체 금액")
     Long transactionAmount

@@ -1,8 +1,10 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
@@ -26,4 +28,6 @@ public interface ChalletBankService {
         BankSelectionRequestDTO bankSelectionRequestDTO);
 
     MyDataBankAccountInfoResponseDTO getMyDataAccounts(String tokenHeader);
+
+    AccountTransferResponseDTO accountTransfer(Long accountId, AccountTransferRequestDTO accountTransferRequestDTO);
 }

@@ -4,6 +4,7 @@ import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
@@ -121,9 +122,12 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "201", description = "이체 성공"),
         @ApiResponse(responseCode = "400", description = "이체 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity processAccountTransfer(
+    public ResponseEntity<AccountTransferResponseDTO> processAccountTransfer(
+        @RequestHeader("AccountId") Long accountId,
         @RequestBody AccountTransferRequestDTO accountTransferRequestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        AccountTransferResponseDTO accountTransferResponseDTO = challetBankService.accountTransfer(
+            accountId, accountTransferRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountTransferResponseDTO);
     }
 
     @PostMapping("/mydata-connect")

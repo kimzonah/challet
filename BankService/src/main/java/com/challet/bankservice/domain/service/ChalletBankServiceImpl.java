@@ -1,9 +1,13 @@
 package com.challet.bankservice.domain.service;
 
+import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
+import com.challet.bankservice.domain.dto.request.BankTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
+import com.challet.bankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentHttpMessageResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
@@ -161,7 +165,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private ChalletBankTransaction createTransaction(ChalletBank challetBank,
         PaymentRequestDTO paymentRequestDTO, long transactionBalance) {
         return ChalletBankTransaction.builder()
-            .transactionAmount(-1*paymentRequestDTO.transactionAmount())
+            .transactionAmount(-1 * paymentRequestDTO.transactionAmount())
             .transactionDatetime(LocalDateTime.now())
             .deposit(paymentRequestDTO.deposit())
             .withdrawal(challetBank.getAccountNumber())
@@ -258,7 +262,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     @Override
     public MyDataBankAccountInfoResponseDTO getMyDataAccounts(String tokenHeader) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
-        if(! challetBankRepository.isMyDataConnectedByPhoneNumber(phoneNumber)){
+        if (!challetBankRepository.isMyDataConnectedByPhoneNumber(phoneNumber)) {
             throw new ExceptionResponse(CustomException.NOT_CONNECTED_MYDATA_EXCEPTION);
         }
         AccountInfoResponseListDTO kbBanks = kbBankFeignClient.getMyDataKbBank(tokenHeader);
@@ -266,5 +270,80 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         AccountInfoResponseListDTO shBanks = shBankFeignClient.getMyDataKbBank(tokenHeader);
 
         return getMyDataAccounts(kbBanks, nhBanks, shBanks);
+    }
+
+    @Transactional
+    @Override
+    public AccountTransferResponseDTO accountTransfer(Long accountId,
+        AccountTransferRequestDTO requestTransactionDTO) {
+
+        ChalletBank fromBank = challetBankRepository.findByIdWithLock(accountId);
+        long transactionBalance = calculateTransactionBalance(fromBank,
+            requestTransactionDTO.transactionAmount());
+
+        if (requestTransactionDTO.bankCode().equals("8082")) {
+            return processInternalTransfer(fromBank, requestTransactionDTO, transactionBalance);
+        }
+
+        return processExternalTransfer(fromBank, requestTransactionDTO, transactionBalance);
+    }
+
+    private AccountTransferResponseDTO processInternalTransfer(ChalletBank fromBank,
+        AccountTransferRequestDTO requestTransactionDTO, long transactionBalance) {
+
+        ChalletBank toBank = challetBankRepository.getAccountByAccountNumber(
+            requestTransactionDTO.depositAccountNumber());
+
+        if (toBank == null) {
+            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
+
+        long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
+
+        ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
+            fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true);
+        fromBank.addTransaction(paymentTransaction);
+
+        ChalletBankTransaction accountTransferHistory = ChalletBankTransaction.createAccountTransferHistory(
+            fromBank, toBank.getName(), requestTransactionDTO, addMoney, false);
+        toBank.addTransaction(accountTransferHistory);
+
+        return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.getName(),
+            requestTransactionDTO.transactionAmount());
+    }
+
+    private AccountTransferResponseDTO processExternalTransfer(ChalletBank fromBank,
+        AccountTransferRequestDTO requestTransactionDTO, long transactionBalance) {
+
+        BankTransferResponseDTO bankDTO = BankTransferResponseDTO.fromDTO(fromBank,
+            requestTransactionDTO);
+
+        try {
+            BankTransferRequestDTO toBank = getExternalBankTransferAccount(bankDTO,
+                requestTransactionDTO.bankCode());
+
+            ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
+                fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
+            fromBank.addTransaction(paymentTransaction);
+
+            return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
+                requestTransactionDTO.transactionAmount());
+        } catch (Exception e) {
+            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
+    }
+
+    private BankTransferRequestDTO getExternalBankTransferAccount(BankTransferResponseDTO bankDTO,
+        String bankCode) {
+        switch (bankCode) {
+            case "8083":
+                return kbBankFeignClient.getTransferAccount(bankDTO);
+            case "8084":
+                return nhBankFeignClient.getTransferAccount(bankDTO);
+            case "8085":
+                return shBankFeignClient.getTransferAccount(bankDTO);
+            default:
+                throw new ExceptionResponse(CustomException.INVALID_BANK_CODE_EXCEPTION);
+        }
     }
 }

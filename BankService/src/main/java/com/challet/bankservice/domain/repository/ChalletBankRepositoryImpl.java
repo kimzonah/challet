@@ -125,4 +125,14 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
 
         return Boolean.TRUE.equals(myDataStatus);
     }
+
+    @Override
+    public ChalletBank getAccountByAccountNumber(String accountNumber) {
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        return query
+            .selectFrom(challetBank)
+            .where(challetBank.accountNumber.eq(accountNumber))
+            .fetchOne();
+    }
 }
