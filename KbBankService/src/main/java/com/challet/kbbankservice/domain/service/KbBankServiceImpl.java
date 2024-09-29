@@ -1,9 +1,13 @@
 package com.challet.kbbankservice.domain.service;
 
+import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.kbbankservice.domain.entity.KbBank;
+import com.challet.kbbankservice.domain.entity.KbBankTransaction;
 import com.challet.kbbankservice.domain.repository.KbBankRepository;
 import com.challet.kbbankservice.global.exception.CustomException;
 import com.challet.kbbankservice.global.exception.ExceptionResponse;
@@ -60,5 +64,20 @@ public class KbBankServiceImpl implements KbBankService {
     public void connectMyDataAccount(String tokenHeader) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
         kbBankRepository.connectMyDataAccount(phoneNumber);
+    }
+
+    @Override
+    @Transactional
+    public BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO) {
+        KbBank kbBank = kbBankRepository.findByAccountNumber(requestDTO.depositAccountNumber())
+            .orElseThrow(() -> new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION));
+
+        long accountTransactionBalance = kbBank.getAccountBalance() + requestDTO.amount();
+        KbBankTransaction transaction = KbBankTransaction.createAccountTransferHistory(kbBank,
+            requestDTO, accountTransactionBalance);
+
+        kbBank.addTransaction(transaction);
+
+        return BankTransferResponseDTO.fromBankTransferResponseDTO(kbBank);
     }
 }

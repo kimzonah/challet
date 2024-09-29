@@ -4,11 +4,13 @@ import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.kbbankservice.domain.entity.KbBank;
 import com.challet.kbbankservice.domain.entity.QKbBank;
 import com.challet.kbbankservice.domain.entity.QKbBankTransaction;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -94,5 +96,16 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .set(bank.myDataStatus, true)
             .where(bank.phoneNumber.eq(phoneNumber))
             .execute();
+    }
+
+    @Override
+    public Optional<KbBank> findByAccountNumber(String accountNumber) {
+        QKbBank kbBank = QKbBank.kbBank;
+        KbBank result = query
+            .selectFrom(kbBank)
+            .where(kbBank.accountNumber.eq(accountNumber))
+            .fetchOne();
+
+        return Optional.ofNullable(result); // Optional로 감싸기
     }
 }
