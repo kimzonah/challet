@@ -61,7 +61,7 @@ const Navbar = () => {
             <img
               src={iconSrc}
               alt={`${button.label} Icon`}
-              className='w-7 h-7 mb-1'
+              className='w-6 h-6'
             />
             <span className={`${textColor} text-xs font-medium`}>
               {button.label}
