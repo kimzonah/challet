@@ -93,7 +93,7 @@ const ChallengeRoom = () => {
       </div>
 
       {/* 트랜잭션 대화창 */}
-      <div className='pb-8 flex-1 overflow-y-auto'>
+      <div className='pb-8 flex-1 '>
         <TransactionList challengeId={challenge.challengeId} />
       </div>
 

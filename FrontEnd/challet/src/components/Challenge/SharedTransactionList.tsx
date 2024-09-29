@@ -2,12 +2,13 @@ import { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import Comment from '../../assets/Challenge/Comment.png';
+// import Comment from '../../assets/Challenge/Comment.png';
 import Emoji_1 from '../../assets/Challenge/Emoji-1.png';
 import Emoji_2 from '../../assets/Challenge/Emoji-2.png';
 import Emoji_3 from '../../assets/Challenge/Emoji-3.png';
 import useAuthStore from '../../store/useAuthStore';
 import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 추가
+import throttle from 'lodash/throttle'; // 스크롤 이벤트 성능 최적화를 위한 throttle 함수 추가
 import { useChallengeApi } from '../../hooks/useChallengeApi'; // API 함수 추가
 
 // 트랜잭션 타입 정의
@@ -32,142 +33,94 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const [sharedTransactions, setSharedTransactions] = useState<Transaction[]>(
     []
   );
-  const [hasNextPage, setHasNextPage] = useState(true);
-  const [cursor, setCursor] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const transactionListRef = useRef<HTMLDivElement>(null); // 스크롤을 조정할 ref
-  const navigate = useNavigate();
+  const cursorRef = useRef<number | null>(null);
+  const hasNextPageRef = useRef(true);
+  const isLoadingRef = useRef(false); // isLoading을 useRef로 변경
+  const transactionListRef = useRef<HTMLDivElement>(null);
+  const isFetchingRef = useRef(false);
   const userId = Number(useAuthStore.getState().userId);
   const { fetchSharedTransactions } = useChallengeApi();
-
-  useEffect(() => {
-    const connectAndSubscribe = async () => {
-      try {
-        if (!webSocketService.isConnected()) {
-          await webSocketService.connect();
-          console.log('WebSocket 연결 완료 후 구독 시작');
-        } else {
-          console.log('이미 WebSocket이 연결되어 있습니다.');
-        }
-
-        // 구독 진행
-        webSocketService.subscribeTransaction(
-          challengeId.toString(),
-          (message) => {
-            const receivedTransaction = JSON.parse(message.body);
-
-            const transaction: Transaction = {
-              ...receivedTransaction,
-              sharedTransactionId: receivedTransaction.id,
-              transactionDateTime: new Date().toISOString(),
-              goodCount: 0,
-              sosoCount: 0,
-              badCount: 0,
-              commentCount: 0,
-              userEmoji: null,
-            };
-
-            setSharedTransactions((prevTransactions) => {
-              const updatedTransactions = [...prevTransactions, transaction];
-              return updatedTransactions.sort(
-                (a, b) =>
-                  new Date(a.transactionDateTime).getTime() -
-                  new Date(b.transactionDateTime).getTime()
-              );
-            });
-          }
-        );
-
-        webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
-          const emojiUpdate = JSON.parse(message.body);
-
-          setSharedTransactions((prevTransactions) =>
-            prevTransactions.map((transaction) =>
-              transaction.sharedTransactionId ===
-              emojiUpdate.sharedTransactionId
-                ? {
-                    ...transaction,
-                    goodCount:
-                      emojiUpdate.type === 'GOOD'
-                        ? emojiUpdate.count
-                        : transaction.goodCount,
-                    sosoCount:
-                      emojiUpdate.type === 'SOSO'
-                        ? emojiUpdate.count
-                        : transaction.sosoCount,
-                    badCount:
-                      emojiUpdate.type === 'BAD'
-                        ? emojiUpdate.count
-                        : transaction.badCount,
-                    userEmoji: emojiUpdate.type,
-                  }
-                : transaction
-            )
-          );
-        });
-      } catch (error) {
-        console.error('WebSocket 연결 실패:', error);
-      }
-    };
-
-    connectAndSubscribe();
-  }, [challengeId]);
+  const navigate = useNavigate();
 
   const fetchTransactions = async (scrollToBottom = false) => {
-    if (!hasNextPage || isLoading) return;
-    setIsLoading(true);
+    if (
+      isFetchingRef.current ||
+      !hasNextPageRef.current ||
+      isLoadingRef.current
+    )
+      return;
 
-    const response = await fetchSharedTransactions(challengeId, cursor);
+    isFetchingRef.current = true;
+    isLoadingRef.current = true; // 로딩 시작
+
+    // 현재 스크롤 위치 저장
+    const previousScrollHeight = transactionListRef.current?.scrollHeight || 0;
+    const previousScrollTop = transactionListRef.current?.scrollTop || 0;
+
+    const response = await fetchSharedTransactions(
+      challengeId,
+      cursorRef.current
+    );
 
     if (response && response.history) {
       const reversedHistory = [...response.history].reverse();
 
-      setSharedTransactions((prev) => [...reversedHistory, ...prev]);
-      setHasNextPage(response.hasNextPage);
+      setSharedTransactions((prev) => {
+        const newTransactions = reversedHistory.filter(
+          (transaction) =>
+            !prev.some(
+              (t) => t.sharedTransactionId === transaction.sharedTransactionId
+            )
+        );
+        return [...newTransactions, ...prev];
+      });
 
       const lastTransaction = response.history[response.history.length - 1];
       if (lastTransaction) {
-        setCursor(lastTransaction.sharedTransactionId);
+        cursorRef.current = lastTransaction.sharedTransactionId;
       }
 
-      // 데이터를 불러온 후 스크롤을 맨 아래로 이동
+      hasNextPageRef.current = response.hasNextPage;
+
       if (scrollToBottom && transactionListRef.current) {
-        transactionListRef.current!.scrollTop =
-          transactionListRef.current!.scrollHeight;
+        // 전체 높이의 변화량 계산
+        const newScrollHeight = transactionListRef.current.scrollHeight;
+        const scrollDifference = newScrollHeight - previousScrollHeight;
+
+        // 기존 스크롤 위치로 복원
+        transactionListRef.current.scrollTop =
+          previousScrollTop + scrollDifference;
       }
     }
 
-    setIsLoading(false);
+    isFetchingRef.current = false;
+    isLoadingRef.current = false; // 로딩 끝
   };
 
-  // 스크롤 이벤트 처리: 상단에 도달 시 새로운 데이터를 가져옴
-  const handleScroll = () => {
+  const handleScrollThrottled = throttle(() => {
     if (
       transactionListRef.current &&
       transactionListRef.current.scrollTop === 0 &&
-      hasNextPage &&
-      !isLoading
+      hasNextPageRef.current &&
+      !isLoadingRef.current &&
+      !isFetchingRef.current
     ) {
-      setTimeout(() => {
-        fetchTransactions(); // 일정 시간 이후 스크롤 상단에 도달 시 새로운 데이터 가져오기
-      }, 3000); // 1000ms 지연 후 요청
+      fetchTransactions();
     }
-  };
+  }, 300);
 
   useEffect(() => {
-    fetchTransactions(true); // 최초 로딩 시 첫 페이지 가져오기 및 스크롤 맨 아래로 이동
-
+    fetchTransactions(true);
     const ref = transactionListRef.current;
     if (ref) {
-      ref.addEventListener('scroll', handleScroll);
+      ref.addEventListener('scroll', handleScrollThrottled);
     }
-
     return () => {
       if (ref) {
-        ref.removeEventListener('scroll', handleScroll);
+        ref.removeEventListener('scroll', handleScrollThrottled);
       }
     };
-  }, [cursor, hasNextPage]);
+  }, []);
 
   const handleEmojiClick = (transaction: Transaction, emojiType: string) => {
     let action = 'ADD';
@@ -271,7 +224,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
                         transaction.userEmoji === 'GOOD'
-                          ? 'border-2 border-[#00CCCC]'
+                          ? 'ring-2 ring-[#00CCCC]'
                           : ''
                       }`}
                       onClick={() => handleEmojiClick(transaction, 'GOOD')}
@@ -286,7 +239,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
                         transaction.userEmoji === 'SOSO'
-                          ? 'border-2 border-[#00CCCC]'
+                          ? 'ring-2 ring-[#00CCCC]'
                           : ''
                       }`}
                       onClick={() => handleEmojiClick(transaction, 'SOSO')}
@@ -301,7 +254,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
                         transaction.userEmoji === 'BAD'
-                          ? 'border-2 border-[#00CCCC]'
+                          ? 'ring-2 ring-[#00CCCC]'
                           : ''
                       }`}
                       onClick={() => handleEmojiClick(transaction, 'BAD')}
@@ -313,14 +266,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                       />
                       <span>{transaction.badCount}</span>
                     </button>
-                    <div className='flex items-center mr-2 bg-white p-2 rounded-lg shadow-md'>
-                      <img
-                        src={Comment}
-                        alt='comment'
-                        className='w-5 h-5 mr-1'
-                      />
-                      <span>{transaction.commentCount}</span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -406,7 +351,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
                         transaction.userEmoji === 'GOOD'
-                          ? 'border-2 border-[#00CCCC]'
+                          ? 'ring-2 ring-[#00CCCC]'
                           : ''
                       }`}
                       onClick={() => handleEmojiClick(transaction, 'GOOD')}
@@ -421,7 +366,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
                         transaction.userEmoji === 'SOSO'
-                          ? 'border-2 border-[#00CCCC]'
+                          ? 'ring-2 ring-[#00CCCC]'
                           : ''
                       }`}
                       onClick={() => handleEmojiClick(transaction, 'SOSO')}
@@ -436,7 +381,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     <button
                       className={`flex items-center mr-2 bg-white p-2 rounded-lg shadow-md ${
                         transaction.userEmoji === 'BAD'
-                          ? 'border-2 border-[#00CCCC]'
+                          ? 'ring-2 ring-[#00CCCC]'
                           : ''
                       }`}
                       onClick={() => handleEmojiClick(transaction, 'BAD')}
@@ -448,14 +393,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                       />
                       <span>{transaction.badCount}</span>
                     </button>
-                    <div className='flex items-center mr-2 bg-white p-2 rounded-lg shadow-md'>
-                      <img
-                        src={Comment}
-                        alt='comment'
-                        className='w-5 h-5 mr-1'
-                      />
-                      <span>{transaction.commentCount}</span>
-                    </div>
                   </div>
                 </div>
               </div>
