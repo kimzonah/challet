@@ -6,9 +6,11 @@ import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDT
 import com.challet.shbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.shbankservice.domain.entity.QShBank;
 import com.challet.shbankservice.domain.entity.QShBankTransaction;
+import com.challet.shbankservice.domain.entity.ShBank;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -94,5 +96,16 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
             .set(shBank.myDataStatus, true)
             .where(shBank.phoneNumber.eq(phoneNumber))
             .execute();
+    }
+
+    @Override
+    public Optional<ShBank> findByAccountNumber(String accountNumber) {
+        QShBank shBank = QShBank.shBank;
+        ShBank result = query
+            .selectFrom(shBank)
+            .where(shBank.accountNumber.eq(accountNumber))
+            .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }

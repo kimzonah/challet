@@ -1,5 +1,6 @@
 package com.challet.shbankservice.domain.entity;
 
+import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -50,4 +51,21 @@ public class ShBankTransaction {
 
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    public void assignTransactionNhAccount(ShBank shBank) {
+        this.shBank = shBank;
+    }
+
+    public static ShBankTransaction createAccountTransferHistory(ShBank shBank,
+        AccountTransferRequestDTO requestDTO, long accountTransactionBalance) {
+
+        return ShBankTransaction
+            .builder()
+            .transactionAmount(requestDTO.amount())
+            .transactionDatetime(LocalDateTime.now())
+            .deposit(shBank.getAccountNumber())
+            .withdrawal(requestDTO.name())
+            .transactionBalance(accountTransactionBalance)
+            .build();
+    }
 }
