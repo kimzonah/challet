@@ -5,6 +5,7 @@ import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDT
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.entity.KbBank;
 import java.util.List;
+import java.util.Optional;
 
 public interface KbBankRepositoryCustom {
 
@@ -18,5 +19,5 @@ public interface KbBankRepositoryCustom {
 
     void connectMyDataAccount(String phoneNumber);
 
-    KbBank findByAccountNumber(String accountNumber);
+    Optional<KbBank> findByAccountNumber(String accountNumber);
 }

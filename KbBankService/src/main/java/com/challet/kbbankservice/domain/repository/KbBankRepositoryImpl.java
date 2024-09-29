@@ -10,6 +10,7 @@ import com.challet.kbbankservice.domain.entity.QKbBankTransaction;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -98,11 +99,13 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
     }
 
     @Override
-    public KbBank findByAccountNumber(String accountNumber) {
+    public Optional<KbBank> findByAccountNumber(String accountNumber) {
         QKbBank kbBank = QKbBank.kbBank;
-        return query
+        KbBank result = query
             .selectFrom(kbBank)
             .where(kbBank.accountNumber.eq(accountNumber))
             .fetchOne();
+
+        return Optional.ofNullable(result); // Optional로 감싸기
     }
 }

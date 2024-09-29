@@ -69,10 +69,9 @@ public class KbBankServiceImpl implements KbBankService {
     @Override
     @Transactional
     public BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO) {
-        KbBank kbBank = kbBankRepository.findByAccountNumber(requestDTO.depositAccountNumber());
-        if (kbBank == null) {
-            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
-        }
+        KbBank kbBank = kbBankRepository.findByAccountNumber(requestDTO.depositAccountNumber())
+            .orElseThrow(() -> new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION));
+
         long accountTransactionBalance = kbBank.getAccountBalance() + requestDTO.amount();
         KbBankTransaction transaction = KbBankTransaction.createAccountTransferHistory(kbBank,
             requestDTO, accountTransactionBalance);
