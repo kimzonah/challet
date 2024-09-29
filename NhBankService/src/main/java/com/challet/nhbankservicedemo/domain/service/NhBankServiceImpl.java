@@ -69,10 +69,9 @@ public class NhBankServiceImpl implements NhBankService {
     @Transactional
     @Override
     public BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO) {
-        NhBank nhBank = nhBankRepository.findByAccountNumber(requestDTO.depositAccountNumber());
-        if (nhBank == null) {
-            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
-        }
+        NhBank nhBank = nhBankRepository.findByAccountNumber(requestDTO.depositAccountNumber())
+            .orElseThrow(() -> new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION));
+
         long accountTransactionBalance = nhBank.getAccountBalance() + requestDTO.amount();
         NhBankTransaction transaction = NhBankTransaction.createAccountTransferHistory(nhBank,
             requestDTO, accountTransactionBalance);

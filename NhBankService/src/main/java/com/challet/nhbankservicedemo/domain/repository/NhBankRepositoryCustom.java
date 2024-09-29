@@ -5,6 +5,7 @@ import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailRespon
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseDTO;
 import com.challet.nhbankservicedemo.domain.entity.NhBank;
 import java.util.List;
+import java.util.Optional;
 
 public interface NhBankRepositoryCustom {
 
@@ -18,5 +19,5 @@ public interface NhBankRepositoryCustom {
 
     void connectMyDataAccount(String phoneNumber);
 
-    NhBank findByAccountNumber(String accountNumber);
+    Optional<NhBank> findByAccountNumber(String accountNumber);
 }

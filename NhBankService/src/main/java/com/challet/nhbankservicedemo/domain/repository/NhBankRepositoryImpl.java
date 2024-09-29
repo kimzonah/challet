@@ -10,6 +10,7 @@ import com.challet.nhbankservicedemo.domain.entity.QNhBankTransaction;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -98,11 +99,12 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
     }
 
     @Override
-    public NhBank findByAccountNumber(String accountNumber) {
+    public Optional<NhBank> findByAccountNumber(String accountNumber) {
         QNhBank nhBank = QNhBank.nhBank;
-        return query
+        NhBank result = query
             .selectFrom(nhBank)
             .where(nhBank.accountNumber.eq(accountNumber))
             .fetchOne();
+        return Optional.ofNullable(result);
     }
 }
