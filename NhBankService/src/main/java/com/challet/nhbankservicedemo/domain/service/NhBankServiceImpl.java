@@ -1,9 +1,13 @@
 package com.challet.nhbankservicedemo.domain.service;
 
+import com.challet.nhbankservicedemo.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.BankTransferResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseListDTO;
+import com.challet.nhbankservicedemo.domain.entity.NhBank;
+import com.challet.nhbankservicedemo.domain.entity.NhBankTransaction;
 import com.challet.nhbankservicedemo.domain.repository.NhBankRepository;
 import com.challet.nhbankservicedemo.global.exception.CustomException;
 import com.challet.nhbankservicedemo.global.exception.ExceptionResponse;
@@ -60,5 +64,20 @@ public class NhBankServiceImpl implements NhBankService {
     public void connectMyDataAccount(String tokenHeader) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
         nhBankRepository.connectMyDataAccount(phoneNumber);
+    }
+
+    @Transactional
+    @Override
+    public BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO) {
+        NhBank nhBank = nhBankRepository.findByAccountNumber(requestDTO.depositAccountNumber())
+            .orElseThrow(() -> new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION));
+
+        long accountTransactionBalance = nhBank.getAccountBalance() + requestDTO.amount();
+        NhBankTransaction transaction = NhBankTransaction.createAccountTransferHistory(nhBank,
+            requestDTO, accountTransactionBalance);
+
+        nhBank.addTransaction(transaction);
+
+        return BankTransferResponseDTO.fromBankTransferResponseDTO(nhBank);
     }
 }

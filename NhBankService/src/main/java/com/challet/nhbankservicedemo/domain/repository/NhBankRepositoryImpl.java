@@ -4,11 +4,13 @@ import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseDTO;
+import com.challet.nhbankservicedemo.domain.entity.NhBank;
 import com.challet.nhbankservicedemo.domain.entity.QNhBank;
 import com.challet.nhbankservicedemo.domain.entity.QNhBankTransaction;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -94,5 +96,15 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
             .set(nhBank.myDataStatus, true)
             .where(nhBank.phoneNumber.eq(phoneNumber))
             .execute();
+    }
+
+    @Override
+    public Optional<NhBank> findByAccountNumber(String accountNumber) {
+        QNhBank nhBank = QNhBank.nhBank;
+        NhBank result = query
+            .selectFrom(nhBank)
+            .where(nhBank.accountNumber.eq(accountNumber))
+            .fetchOne();
+        return Optional.ofNullable(result);
     }
 }
