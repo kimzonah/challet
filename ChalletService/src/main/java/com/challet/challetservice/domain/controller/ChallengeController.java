@@ -57,7 +57,6 @@ public class ChallengeController {
     @GetMapping("/my-challenges")
     public ResponseEntity<ChallengeListResponseDTO> getMyChallenges(
         @RequestHeader(value = "Authorization", required = false) String header) {
-        System.out.println(header);
         ChallengeListResponseDTO myChallenges = challengeService.getMyChallenges(header);
         if (myChallenges == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

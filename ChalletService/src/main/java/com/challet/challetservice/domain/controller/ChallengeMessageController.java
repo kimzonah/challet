@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "ChallengeMessageController", description = "ch-bank에서 결제 시 메시지 받는 controller")
 public class ChallengeMessageController {
 
-    private final SimpMessagingTemplate messagingTemplate;
     private final ChallengeService challengeService;
 
     @PostMapping("/payments")
