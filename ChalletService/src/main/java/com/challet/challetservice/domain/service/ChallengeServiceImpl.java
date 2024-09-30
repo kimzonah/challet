@@ -20,10 +20,13 @@ import com.challet.challetservice.domain.repository.ChallengeRepositoryImpl;
 import com.challet.challetservice.domain.repository.SharedTransactionRepository;
 import com.challet.challetservice.domain.repository.SharedTransactionRepositoryImpl;
 import com.challet.challetservice.domain.repository.UserChallengeRepository;
+import com.challet.challetservice.domain.repository.UserChallengeRepositoryImpl;
 import com.challet.challetservice.domain.repository.UserRepository;
+import com.challet.challetservice.domain.request.PaymentHttpMessageRequestDTO;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
@@ -43,6 +46,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final ChallengeRepositoryImpl challengeRepositoryImpl;
     private final SharedTransactionRepository sharedTransactionRepository;
     private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final UserChallengeRepositoryImpl userChallengeRepositoryImpl;
 
     @Override
     @Transactional
@@ -98,12 +103,12 @@ public class ChallengeServiceImpl implements ChallengeService {
         userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        List<Challenge> searchChallengesList = challengeRepositoryImpl.searchChallengeByKewordAndCategory(
+        List<Challenge> searchChallenges = challengeRepositoryImpl.searchChallengeByKeywordAndCategory(
             keyword, category);
-        if (searchChallengesList == null || searchChallengesList.isEmpty()) {
+        if (searchChallenges == null || searchChallenges.isEmpty()) {
             return null;
         }
-        List<ChallengeInfoResponseDTO> result = searchChallengesList.stream()
+        List<ChallengeInfoResponseDTO> result = searchChallenges.stream()
             .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge,
                 challenge.getUserChallenges().size()))
             .toList();
@@ -198,7 +203,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     @Transactional(readOnly = true)
-    public ChallengeRoomHistoryResponseDTO getChallengeRoomHistory(String header, Long id, Long cursor) {
+    public ChallengeRoomHistoryResponseDTO getChallengeRoomHistory(String header, Long id,
+        Long cursor) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
@@ -222,10 +228,34 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(
                 () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user)
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge,
+                user)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
 
         return new SpendingAmountResponseDTO(userChallenge.getSpendingAmount());
+    }
+
+    @Override
+    @Transactional
+    public void handlePayment(PaymentHttpMessageRequestDTO paymentNotification) {
+
+        User user = userRepository.findByPhoneNumber(paymentNotification.phoneNumber())
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        List<UserChallenge> userChallenges = userChallengeRepositoryImpl.getChallengeByPaymentCategory(
+            paymentNotification.category(), user);
+
+        for (UserChallenge userChallenge : userChallenges) {
+
+            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
+                SharedTransaction.fromPayment(paymentNotification, userChallenge));
+            userChallenge.addSpendingAmount(paymentNotification.transactionAmount());
+
+            SharedTransactionRegisterResponseDTO registerResponseDTO = SharedTransactionRegisterResponseDTO.from(
+                savedSharedTransaction, user);
+            messagingTemplate.convertAndSend(
+                "/topic/challenges/" + userChallenge.getChallenge().getId() + "/shared-transactions", registerResponseDTO);
+        }
     }
 
     public static String generateCode(int length) {

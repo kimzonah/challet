@@ -1,6 +1,7 @@
 package com.challet.challetservice.domain.entity;
 
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
+import com.challet.challetservice.domain.request.PaymentHttpMessageRequestDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -67,6 +68,18 @@ public class SharedTransaction {
             .transactionDateTime(LocalDateTime.now())
             .content(request.content())
             .image(request.image())
+            .build();
+
+        userChallenge.getSharedTransactions().add(sharedTransaction);
+        return sharedTransaction;
+    }
+
+    public static SharedTransaction fromPayment(PaymentHttpMessageRequestDTO paymentNotification, UserChallenge userChallenge){
+        SharedTransaction sharedTransaction = SharedTransaction.builder()
+            .userChallenge(userChallenge)
+            .withdrawal(paymentNotification.deposit())
+            .transactionAmount(paymentNotification.transactionAmount())
+            .transactionDateTime(LocalDateTime.now())
             .build();
 
         userChallenge.getSharedTransactions().add(sharedTransaction);
