@@ -132,6 +132,7 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
             .from(nhBankTransaction)
             .join(nhBankTransaction.nhBank, nhbank)
             .where(nhbank.phoneNumber.eq(phoneNumber)
+                .and(nhbank.myDataStatus.isTrue())
                 .and(nhBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
                 .and(nhBankTransaction.transactionDatetime.month().eq(requestDTO.month())))
             .orderBy(nhBankTransaction.transactionDatetime.desc())
