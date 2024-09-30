@@ -17,13 +17,13 @@ public class ChallengeRepositoryImpl implements ChallengeRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Challenge> searchChallengeByKewordAndCategory(String keword, String category) {
+    public List<Challenge> searchChallengeByKeywordAndCategory(String keyword, String category) {
         QChallenge qChallenge = QChallenge.challenge;
         BooleanBuilder builder = new BooleanBuilder();
 
         // keyword가 있으면 조건 적용
-        if (keword != null && !keword.isEmpty()) {
-            builder.and(qChallenge.title.containsIgnoreCase(keword));
+        if (keyword != null && !keyword.isEmpty()) {
+            builder.and(qChallenge.title.containsIgnoreCase(keyword));
         }
 
         // category가 있으면 조건 적용

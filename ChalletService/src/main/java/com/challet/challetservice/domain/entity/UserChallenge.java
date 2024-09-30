@@ -57,7 +57,6 @@ public class UserChallenge {
         return userChallenge;
     }
 
-    // (수동 등록시) 현재 소비 금액에 거래 금액 더하기
     public void addSpendingAmount(Long amount) {
         this.spendingAmount += amount;
     }
