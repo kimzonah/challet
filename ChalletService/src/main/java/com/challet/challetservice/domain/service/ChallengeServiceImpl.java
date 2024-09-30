@@ -103,12 +103,12 @@ public class ChallengeServiceImpl implements ChallengeService {
         userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        List<Challenge> searchChallengesList = challengeRepositoryImpl.searchChallengeByKeywordAndCategory(
+        List<Challenge> searchChallenges = challengeRepositoryImpl.searchChallengeByKeywordAndCategory(
             keyword, category);
-        if (searchChallengesList == null || searchChallengesList.isEmpty()) {
+        if (searchChallenges == null || searchChallenges.isEmpty()) {
             return null;
         }
-        List<ChallengeInfoResponseDTO> result = searchChallengesList.stream()
+        List<ChallengeInfoResponseDTO> result = searchChallenges.stream()
             .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge,
                 challenge.getUserChallenges().size()))
             .toList();
@@ -246,7 +246,6 @@ public class ChallengeServiceImpl implements ChallengeService {
             paymentNotification.category(), user);
 
         for (UserChallenge userChallenge : userChallenges) {
-            System.out.println(userChallenge.getId());
 
             SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
                 SharedTransaction.fromPayment(paymentNotification, userChallenge));
