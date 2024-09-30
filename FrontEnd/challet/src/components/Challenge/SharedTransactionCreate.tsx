@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faCamera } from '@fortawesome/free-solid-svg-icons'; // 필요한 아이콘
-import { useChallengeApi } from '../../hooks/useChallengeApi'; // useChallengeApi 임포트
 import useFile2URL from '../../hooks/useFile2URL'; // useFile2URL 임포트
 import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 임포트
 
@@ -10,7 +9,6 @@ const SharedTransactionCreate = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = location.state || {}; // ChallengeRoom에서 전달된 id 가져오기
-  const { registTransaction } = useChallengeApi(); // useChallengeApi에서 registTransaction 메소드 사용
   const { file2URL } = useFile2URL(); // AWS S3 업로드 함수 사용
 
   const [image, setImage] = useState<File | null>(null); // 이미지 파일
@@ -48,17 +46,6 @@ const SharedTransactionCreate = () => {
         // 이미지가 있는 경우 AWS S3에 업로드하고 URL을 반환받음
         imageUrl = await file2URL(image);
       }
-
-      // JSON 형태로 보낼 데이터 구조 생성
-      const formData = {
-        image: imageUrl, // 이미지 URL을 서버로 전달
-        withdrawal, // 출금처
-        transactionAmount: Number(transactionAmount), // 거래 금액
-        content, // 내용
-      };
-
-      // registTransaction API 호출
-      await registTransaction(id, formData); // JSON 데이터를 전달
 
       // 웹소켓을 통해 서버로 데이터 전송
       const webSocketMessage = {
@@ -186,6 +173,7 @@ const SharedTransactionCreate = () => {
               type='text'
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
               value={withdrawal}
+              maxLength={12}
               placeholder='직접 추가할 항목을 작성해주세요'
               onChange={(e) => setWithdrawal(e.target.value)}
               required
@@ -198,9 +186,18 @@ const SharedTransactionCreate = () => {
             <input
               type='number'
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
-              value={transactionAmount}
+              value={transactionAmount === null ? '' : transactionAmount}
               placeholder='결제한 금액을 입력해주세요'
-              onChange={(e) => setTransactionAmount(Number(e.target.value))}
+              max={9999999}
+              onChange={(e) => {
+                const value = e.target.value;
+                // 빈 값 처리 및 마이너스 값 또는 1천만(10,000,000) 이상을 입력하지 않도록 제한
+                if (value === '') {
+                  setTransactionAmount(''); // 빈 값일 때 null로 설정
+                } else if (Number(value) >= 0 && Number(value) <= 9999999) {
+                  setTransactionAmount(Number(value));
+                }
+              }}
               required
             />
           </div>
@@ -212,6 +209,7 @@ const SharedTransactionCreate = () => {
               className='w-full p-2 border rounded-lg h-40 resize-none overflow-auto bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
               value={content}
               placeholder='결제 내용을 작성해주세요'
+              maxLength={200}
               onChange={(e) => setContent(e.target.value)}
             />
           </div>

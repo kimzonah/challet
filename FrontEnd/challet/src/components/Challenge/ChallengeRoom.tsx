@@ -100,7 +100,7 @@ const ChallengeRoom = () => {
       {/* 지출 추가하기 버튼 */}
       <div className='w-full fixed bottom-0'>
         <button
-          className='w-full py-[30px] bg-[#00CCCC] text-white hover:bg-teal-600'
+          className='w-full py-[4.2vh] bg-[#00CCCC] text-white hover:bg-teal-600'
           onClick={handleAddTransaction} // 버튼 클릭 시 함수 호출
         >
           지출 추가하기

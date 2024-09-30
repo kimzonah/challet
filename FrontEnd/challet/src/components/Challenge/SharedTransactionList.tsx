@@ -209,7 +209,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
   return (
     <div
-      className='scrollbar-hide overflow-y-auto max-h-[510px]'
+      className='scrollbar-hide overflow-y-auto max-h-[70vh]'
       ref={transactionListRef}
     >
       {sharedTransactions.map((transaction: Transaction) => (

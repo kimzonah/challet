@@ -85,9 +85,14 @@ const ChallengeCreatePage: React.FC = () => {
     }
   };
 
-  // 오늘 날짜 + 6 (내일) 계산
+  // 오늘 날짜 + 6 (일주일) 계산
   const startDateLimit = new Date();
   startDateLimit.setDate(startDateLimit.getDate() + 6);
+  // 종료 날짜 제한을 동적으로 지정: 시작 날짜로부터 1년 뒤까지
+  const endDateLimit = startDate ? new Date(startDate.getTime()) : new Date();
+  if (startDate) {
+    endDateLimit.setFullYear(startDate.getFullYear() + 1);
+  }
 
   return (
     <div>
@@ -136,9 +141,11 @@ const ChallengeCreatePage: React.FC = () => {
               type='number'
               value={spendingLimit}
               onChange={(e) => {
-                const value = Number(e.target.value);
+                const value = e.target.value;
                 // 마이너스 값 또는 1억(100,000,000) 이상을 입력하지 않도록 제한
-                if (value >= 0 && value <= 100000000) {
+                if (value === '') {
+                  setSpendingLimit(''); // 빈 값일 때 빈 값으로 설정
+                } else if (Number(value) >= 0 && Number(value) <= 100000000) {
                   setSpendingLimit(e.target.value);
                 }
               }}
@@ -162,7 +169,8 @@ const ChallengeCreatePage: React.FC = () => {
               startDate={startDate}
               endDate={endDate}
               selectsRange={true} // 시작 날짜와 종료 날짜를 동시에 선택
-              minDate={startDateLimit} // 시작 날짜를 내일부터 선택 가능
+              minDate={startDateLimit} // 시작 날짜를 6일 후 부터 선택 가능
+              maxDate={endDateLimit} // 종료 날짜를 1년 후까지 선택 가능
               locale={ko}
               dateFormat='yyyy년 MM월 dd일'
               placeholderText='시작 날짜 ~ 종료 날짜'
