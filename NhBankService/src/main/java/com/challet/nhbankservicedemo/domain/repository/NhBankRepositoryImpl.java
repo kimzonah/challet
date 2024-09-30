@@ -1,13 +1,17 @@
 package com.challet.nhbankservicedemo.domain.repository;
 
+import com.challet.nhbankservicedemo.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseDTO;
 import com.challet.nhbankservicedemo.domain.entity.NhBank;
 import com.challet.nhbankservicedemo.domain.entity.QNhBank;
 import com.challet.nhbankservicedemo.domain.entity.QNhBankTransaction;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -106,5 +110,33 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
             .where(nhBank.accountNumber.eq(accountNumber))
             .fetchOne();
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(
+        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+        QNhBankTransaction nhBankTransaction = QNhBankTransaction.nhBankTransaction;
+        QNhBank nhbank = QNhBank.nhBank;
+
+        List<MonthlyTransactionHistoryDTO> result = query
+            .select(Projections.constructor(MonthlyTransactionHistoryDTO.class,
+                Expressions.constant("nh-bank"),
+                nhbank.accountNumber,
+                nhbank.accountBalance,
+                nhBankTransaction.transactionDatetime,
+                nhBankTransaction.deposit,
+                nhBankTransaction.withdrawal,
+                nhBankTransaction.transactionBalance,
+                nhBankTransaction.transactionAmount,
+                nhBankTransaction.category))
+            .from(nhBankTransaction)
+            .join(nhBankTransaction.nhBank, nhbank)
+            .where(nhbank.phoneNumber.eq(phoneNumber)
+                .and(nhBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                .and(nhBankTransaction.transactionDatetime.month().eq(requestDTO.month())))
+            .orderBy(nhBankTransaction.transactionDatetime.desc())
+            .fetch();
+
+        return MonthlyTransactionHistoryListDTO.from(result);
     }
 }
