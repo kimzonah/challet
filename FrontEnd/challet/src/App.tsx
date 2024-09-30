@@ -17,6 +17,7 @@ import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
 import HistoryPage from './pages/HistoryPage/HistoryPage';
 import HistoryDetailPage from './pages/HistoryDetailPage/HistoryDetailPage';
+// import MyDataHistoryPage from './pages/MyDataHistoryPage/MyDataHistoryPage';
 import TransferPage from './pages/TransferPage/TransferPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
@@ -24,6 +25,7 @@ import MyPage2 from './pages/MyPage/MyPage2';
 import RewardsPage from './pages/RewardsPage/RewardsPage';
 import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
+import PayReviewPage from './pages/PaymentReviewPage/PaymentReviewPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
 import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
 import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton';
@@ -45,6 +47,7 @@ function App() {
   const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
   const sharedTransactionEdit = useMatch('/sharedTransactionEdit');
   const matchpayment = useMatch('/payment');
+  const matchpayreview = useMatch('/payreview');
   const matchpayresult = useMatch('/payresult');
   const matchHistory = useMatch('/history');
   const matchHistorydetail = useMatch('//history-detail/:transactionId');
@@ -62,6 +65,7 @@ function App() {
     matchHistory ||
     matchHistorydetail ||
     matchpayment ||
+    matchpayreview ||
     matchpayresult ||
     matchTransfer ||
     matchmydataselect ||
@@ -79,16 +83,18 @@ function App() {
         <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
-        <Route path='/history' element={<HistoryPage />} />
+        {/* <Route path='/mydata-history' element={<MyDataHistoryPage />} /> */}
         <Route
           path='/history-detail/:transactionId'
           element={<HistoryDetailPage />}
         />
+        <Route path='/history' element={<HistoryPage />} />
         <Route path='/transfer' element={<TransferPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
         <Route path='/challenge/create' element={<ChallengeCreatePage />} />
         <Route path='/analysis' element={<AnalysisPage />} />
         <Route path='/payment' element={<PaymentPage />} />
+        <Route path='/payreview' element={<PayReviewPage />} />
         <Route path='/payresult' element={<PayResult />} />
         <Route path='/mydataselect' element={<MyDataSelectPage />} />
         <Route path='/mypage' element={<MyPage2 />} />

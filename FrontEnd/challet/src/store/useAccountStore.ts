@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface AccountInfo {
-  id: number;
+  id: string | number;
   accountNumber: string;
   accountBalance: number;
 }

@@ -6,7 +6,7 @@ const MyDataConnectButton = () => {
 
   return (
     <div
-      className='flex items-center justify-between p-4 bg-white rounded-lg shadow-md cursor-pointer' // cursor-pointer로 클릭 가능하게 표시
+      className='flex items-center justify-between p-4 bg-white rounded-lg shadow-md cursor-pointer'
       style={{ width: '97%' }}
       onClick={() => navigate('/mydataselect')}
     >

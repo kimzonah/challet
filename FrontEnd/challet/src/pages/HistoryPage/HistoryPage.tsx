@@ -62,9 +62,12 @@ const HistoryPage = () => {
   const handleTransactionClick = (transactionId: number) => {
     navigate(`/history-detail/${transactionId}`);
   };
-
   if (loading) {
-    return <p>로딩 중...</p>;
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00CCCC]'></div>
+      </div>
+    );
   }
 
   if (error) {
