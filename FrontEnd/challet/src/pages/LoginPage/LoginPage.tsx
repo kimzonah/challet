@@ -41,7 +41,7 @@ const LoginPage = () => {
 
       // 상태에 저장된 accessToken 확인
       console.log(
-        '현재 저장된 accessToken:',
+        '현재 저장된 AccessToken:',
         useAuthStore.getState().accessToken
       );
 

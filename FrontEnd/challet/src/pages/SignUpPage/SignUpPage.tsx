@@ -51,43 +51,65 @@ const SignUpPage = () => {
 
   // 유효성 검사 - 이름, 주민등록번호 앞자리 6자리, 뒷자리 1자리 모두 유효할 때 true
   useEffect(() => {
-    if (!name) {
-      setErrorMessage('이름을 입력해주세요');
-    } else if (idNumberFront.length !== 6) {
-      setErrorMessage('주민등록번호 앞자리는 6자리여야 합니다');
-    } else if (idNumberBackFirst.length !== 1) {
-      setErrorMessage('주민등록번호 뒷자리 첫 자리를 입력해주세요');
-    } else {
-      const year = parseInt(idNumberFront.slice(0, 2), 10);
-      const fullYear = year < 50 ? 2000 + year : 1900 + year;
-      const backFirstDigit = parseInt(idNumberBackFirst, 10);
-
-      // 2000년 이후 출생자는 뒷자리 첫 숫자가 3 또는 4, 2000년 이전은 1 또는 2
-      if (fullYear >= 2000 && backFirstDigit !== 3 && backFirstDigit !== 4) {
-        setErrorMessage(
-          '2000년 이후 출생자는 뒷자리 첫 숫자가 3 또는 4여야 합니다'
-        );
-      } else if (
-        fullYear < 2000 &&
-        backFirstDigit !== 1 &&
-        backFirstDigit !== 2
-      ) {
-        setErrorMessage(
-          '2000년 이전 출생자는 뒷자리 첫 숫자가 1 또는 2여야 합니다'
-        );
+    const isValidForm = () => {
+      if (!name) {
+        setErrorMessage('이름을 입력해주세요');
+        return false;
+      } else if (idNumberFront.length !== 6) {
+        setErrorMessage('주민등록번호 앞자리는 6자리여야 합니다');
+        return false;
+      } else if (idNumberBackFirst.length !== 1) {
+        setErrorMessage('주민등록번호 뒷자리 첫 자리를 입력해주세요');
+        return false;
       } else {
-        setErrorMessage(''); // 유효하면 에러 메시지 초기화
+        const year = parseInt(idNumberFront.slice(0, 2), 10);
+        const month = parseInt(idNumberFront.slice(2, 4), 10);
+        const day = parseInt(idNumberFront.slice(4, 6), 10);
+
+        const fullYear = year < 50 ? 2000 + year : 1900 + year;
+        const backFirstDigit = parseInt(idNumberBackFirst, 10);
+
+        // 날짜 유효성 검사
+        const isValidDate = (y: number, m: number, d: number) => {
+          const date = new Date(y, m - 1, d);
+          return (
+            date.getFullYear() === y &&
+            date.getMonth() + 1 === m &&
+            date.getDate() === d
+          );
+        };
+
+        if (!isValidDate(fullYear, month, day)) {
+          setErrorMessage('유효한 날짜를 입력해주세요');
+          return false;
+        }
+        // 2000년 이후 출생자는 뒷자리 첫 숫자가 3 또는 4, 2000년 이전은 1 또는 2
+        else if (
+          fullYear >= 2000 &&
+          backFirstDigit !== 3 &&
+          backFirstDigit !== 4
+        ) {
+          setErrorMessage(
+            '2000년 이후 출생자는 뒷자리 첫 숫자가 3 또는 4여야 합니다'
+          );
+          return false;
+        } else if (
+          fullYear < 2000 &&
+          backFirstDigit !== 1 &&
+          backFirstDigit !== 2
+        ) {
+          setErrorMessage(
+            '2000년 이전 출생자는 뒷자리 첫 숫자가 1 또는 2여야 합니다'
+          );
+          return false;
+        }
+        setErrorMessage('');
+        return true; // 유효한 경우 true 반환
       }
-    }
+    };
 
-    const isValid =
-      name.length > 0 &&
-      idNumberFront.length === 6 &&
-      idNumberBackFirst.length === 1 &&
-      errorMessage === '';
-
-    setIsFormValid(isValid);
-  }, [name, idNumberFront, idNumberBackFirst, errorMessage]);
+    setIsFormValid(isValidForm());
+  }, [name, idNumberFront, idNumberBackFirst]);
 
   // 랜덤 닉네임 생성
   useEffect(() => {
