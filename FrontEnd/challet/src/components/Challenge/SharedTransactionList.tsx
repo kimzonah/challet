@@ -42,6 +42,68 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const { fetchSharedTransactions } = useChallengeApi();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const connectAndSubscribe = async () => {
+      try {
+        if (!webSocketService.isConnected()) {
+          await webSocketService.connect();
+        }
+        webSocketService.subscribeTransaction(
+          challengeId.toString(),
+          (message) => {
+            const receivedTransaction = JSON.parse(message.body);
+            const transaction: Transaction = {
+              ...receivedTransaction,
+              sharedTransactionId: receivedTransaction.id,
+              transactionDateTime: new Date().toISOString(),
+              goodCount: 0,
+              sosoCount: 0,
+              badCount: 0,
+              commentCount: 0,
+              userEmoji: null,
+            };
+
+            setSharedTransactions((prevTransactions) => {
+              // 중복된 트랜잭션을 방지
+              const isDuplicate = prevTransactions.some(
+                (t) => t.sharedTransactionId === transaction.sharedTransactionId
+              );
+              if (!isDuplicate) {
+                const updatedTransactions = [...prevTransactions, transaction];
+                return updatedTransactions.sort(
+                  (a, b) =>
+                    new Date(a.transactionDateTime).getTime() -
+                    new Date(b.transactionDateTime).getTime()
+                );
+              }
+              return prevTransactions;
+            });
+          }
+        );
+        webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
+          const emojiUpdate = JSON.parse(message.body);
+          setSharedTransactions((prevTransactions) =>
+            prevTransactions.map((transaction) =>
+              transaction.sharedTransactionId ===
+              emojiUpdate.sharedTransactionId
+                ? {
+                    ...transaction,
+                    goodCount: emojiUpdate.emoji.goodCount,
+                    sosoCount: emojiUpdate.emoji.sosoCount,
+                    badCount: emojiUpdate.emoji.badCount,
+                    userEmoji: emojiUpdate.emoji.userEmoji,
+                  }
+                : transaction
+            )
+          );
+        });
+      } catch (error) {
+        console.error('WebSocket 연결 실패:', error);
+      }
+    };
+    connectAndSubscribe();
+  }, [challengeId]);
+
   const fetchTransactions = async (scrollToBottom = false) => {
     if (
       isFetchingRef.current ||
