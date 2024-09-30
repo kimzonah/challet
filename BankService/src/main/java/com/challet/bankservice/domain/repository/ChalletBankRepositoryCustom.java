@@ -1,6 +1,8 @@
 package com.challet.bankservice.domain.repository;
 
+import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
@@ -23,4 +25,7 @@ public interface ChalletBankRepositoryCustom {
     boolean isMyDataConnectedByPhoneNumber(String phoneNumber);
 
     ChalletBank getAccountByAccountNumber(String accountNumber);
+
+    MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(String phoneNumber,
+        MonthlyTransactionRequestDTO requestDTO);
 }

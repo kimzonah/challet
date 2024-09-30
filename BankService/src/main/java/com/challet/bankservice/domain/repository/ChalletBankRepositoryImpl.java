@@ -1,13 +1,17 @@
 package com.challet.bankservice.domain.repository;
 
+import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
+import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.QChalletBank;
 import com.challet.bankservice.domain.entity.QChalletBankTransaction;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.LockModeType;
 import java.util.List;
@@ -134,5 +138,33 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .selectFrom(challetBank)
             .where(challetBank.accountNumber.eq(accountNumber))
             .fetchOne();
+    }
+
+    @Override
+    public MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(
+        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+        QChalletBankTransaction challetBankTransaction = QChalletBankTransaction.challetBankTransaction;
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        List<MonthlyTransactionHistoryDTO> result = query
+            .select(Projections.constructor(MonthlyTransactionHistoryDTO.class,
+                Expressions.constant("ch-bank"),
+                challetBank.accountNumber,
+                challetBank.accountBalance,
+                challetBankTransaction.transactionDatetime,
+                challetBankTransaction.deposit,
+                challetBankTransaction.withdrawal,
+                challetBankTransaction.transactionBalance,
+                challetBankTransaction.transactionAmount,
+                challetBankTransaction.category))
+            .from(challetBankTransaction)
+            .join(challetBankTransaction.challetBank, challetBank)
+            .where(challetBank.phoneNumber.eq(phoneNumber)
+                .and(challetBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                .and(challetBankTransaction.transactionDatetime.month().eq(requestDTO.month())))
+            .orderBy(challetBankTransaction.transactionDatetime.desc())
+            .fetch();
+
+        return MonthlyTransactionHistoryListDTO.from(result);
     }
 }
