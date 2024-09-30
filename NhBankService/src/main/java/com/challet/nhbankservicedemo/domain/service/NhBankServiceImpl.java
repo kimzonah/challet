@@ -87,9 +87,9 @@ public class NhBankServiceImpl implements NhBankService {
     public MonthlyTransactionHistoryListDTO getMonthlyTransactionHistory(String tokenHeader,
         MonthlyTransactionRequestDTO requestDTO) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
-        MonthlyTransactionHistoryListDTO transactionByPhoneNumber = nhBankRepository.getTransactionByPhoneNumberAndYearMonth(
+        MonthlyTransactionHistoryListDTO transactions = nhBankRepository.getTransactionByPhoneNumberAndYearMonth(
             phoneNumber, requestDTO);
 
-        return transactionByPhoneNumber;
+        return transactions;
     }
 }
