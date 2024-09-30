@@ -133,6 +133,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .from(kbBankTransaction)
             .join(kbBankTransaction.kbBank, kbBank)
             .where(kbBank.phoneNumber.eq(phoneNumber)
+                .and(kbBank.myDataStatus.isTrue())
                 .and(kbBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
                 .and(kbBankTransaction.transactionDatetime.month().eq(requestDTO.month())))
             .orderBy(kbBankTransaction.transactionDatetime.desc())
