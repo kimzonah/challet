@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 import useSignUpStore from '../../store/useSignUpStore';
 import Button from '../../components/Button/Button';
+import './PhoneCheckPage.css'; // CSS 파일을 추가합니다
 
 const PhoneCheckPage = () => {
   const [phoneNumber, setPhoneNumber] = useState(''); // 실제 입력된 전화번호
@@ -82,25 +83,40 @@ const PhoneCheckPage = () => {
   };
 
   return (
-    <div>
-      <h1>전화번호 중복 검사</h1>
-      <div>
-        <label>전화번호</label>
+    <div className='phone-check-container flex flex-col items-center justify-center min-h-screen pt-16'>
+      <h1 className='text-2xl font-bold mb-8'>번호 입력</h1>
+
+      {/* 전화번호 입력 필드 */}
+      <div className='input-group'>
+        <label htmlFor='phone-number' className='input-label'>
+          전화번호
+        </label>
         <input
-          type='tel' // 전화번호 입력을 위한 타입
+          type='tel'
+          id='phone-number'
           value={formattedPhoneNumber}
           onChange={handlePhoneNumberChange}
-          placeholder='010-xxxx-xxxx'
-          maxLength={13} // 010-xxxx-xxxx 형식에 맞춘 최대 길이
-          inputMode='numeric' // 숫자 전용 키패드를 표시
-          pattern='[0-9]*' // 숫자만 입력 가능하도록 제어
+          placeholder='전화번호'
+          maxLength={13}
+          inputMode='numeric'
+          className='phone-input'
+          pattern='[0-9]*'
         />
-
-        {errorMessage && (
-          <p style={{ color: isValid ? 'green' : 'red' }}>{errorMessage}</p>
-        )}
       </div>
-      <Button text='확인' onClick={handleConfirm} disabled={!isValid} />
+
+      {errorMessage && (
+        <p className={`error-message ${isValid ? 'valid' : 'invalid'}`}>
+          {errorMessage}
+        </p>
+      )}
+
+      {/* 확인 버튼 */}
+      <Button
+        className='confirm-button'
+        text='확인'
+        onClick={handleConfirm}
+        disabled={!isValid}
+      />
     </div>
   );
 };

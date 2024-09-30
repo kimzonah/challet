@@ -54,9 +54,20 @@ class WebSocketService {
     return this.stompClient !== null && this.stompClient.connected;
   }
 
-  // 특정 채널 구독
-  subscribe(challengeId: string, callback: (message: any) => void) {
+  // 거래내역 채널 구독
+  subscribeTransaction(challengeId: string, callback: (message: any) => void) {
     const destination = `/topic/challenges/${challengeId}/shared-transactions`;
+    if (this.stompClient && this.stompClient.connected) {
+      const subscription = this.stompClient.subscribe(destination, callback);
+      this.subscriptions[destination] = () => subscription.unsubscribe();
+    } else {
+      console.warn('WebSocket 연결이 되지 않았습니다.');
+    }
+  }
+
+  // 이모지 채널 구독
+  subscribeEmoji(challengeId: string, callback: (message: any) => void) {
+    const destination = `/topic/challenges/${challengeId}/emoji`;
     if (this.stompClient && this.stompClient.connected) {
       const subscription = this.stompClient.subscribe(destination, callback);
       this.subscriptions[destination] = () => subscription.unsubscribe();
@@ -92,7 +103,7 @@ class WebSocketService {
 }
 
 // WebSocketService 인스턴스 생성
-const webSocketUrl = 'http://localhost:8000/api/challet/ws'; // 서버에서 웹소켓 연결을 처리하는 URL
+const webSocketUrl = import.meta.env.VITE_API_URL + '/api/challet/ws'; // 서버에서 웹소켓 연결을 처리하는 URL
 const webSocketService = new WebSocketService(webSocketUrl);
 
 export default webSocketService;

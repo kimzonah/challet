@@ -1,8 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
-import { faCamera } from '@fortawesome/free-solid-svg-icons'; // 카메라 아이콘 추가
+import { faAngleLeft, faCamera } from '@fortawesome/free-solid-svg-icons'; // 필요한 아이콘
 import { useChallengeApi } from '../../hooks/useChallengeApi'; // useChallengeApi 임포트
 import useFile2URL from '../../hooks/useFile2URL'; // useFile2URL 임포트
 import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 임포트
@@ -20,6 +19,8 @@ const SharedTransactionCreate = () => {
   const [content, setContent] = useState(''); // 내용
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
   const [isSuccess, setIsSuccess] = useState(false); // 성공 여부 상태 관리
+  const [isError, setIsError] = useState(false); // 에러 모달 상태 관리
+  const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 관리
 
   // 이미지 업로드 처리 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +32,13 @@ const SharedTransactionCreate = () => {
   // 폼 제출 시 처리할 함수
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 결제 항목 및 결제 금액 필수 값 체크
+    if (!withdrawal || transactionAmount === '') {
+      setErrorMessage('결제 항목과 결제 금액은 빈칸이 될 수 없습니다.');
+      setIsError(true); // 에러 모달 표시
+      return; // 필수 값이 없을 경우 처리 중단
+    }
 
     try {
       setIsLoading(true); // API 호출 전 로딩 상태로 전환
@@ -78,7 +86,7 @@ const SharedTransactionCreate = () => {
   return (
     <div className='min-h-screen bg-white flex justify-center items-center relative'>
       {/* 모달이 로딩 중이거나 성공 시 표시 */}
-      {(isLoading || isSuccess) && (
+      {(isLoading || isSuccess || isError) && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
           <div className='bg-white p-6 rounded-lg text-center'>
             {isLoading ? (
@@ -88,7 +96,7 @@ const SharedTransactionCreate = () => {
                 </div>
                 <p className='text-lg font-semibold'>업로드 중입니다...</p>
               </>
-            ) : (
+            ) : isSuccess ? (
               <>
                 <p className='text-lg font-semibold text-[#00CCCC]'>
                   등록이 완료되었습니다!
@@ -100,12 +108,26 @@ const SharedTransactionCreate = () => {
                   확인
                 </button>
               </>
+            ) : (
+              isError && (
+                <>
+                  <p className='text-lg font-semibold text-red-500'>
+                    {errorMessage}
+                  </p>
+                  <button
+                    className='mt-4 py-2 px-4 bg-red-500 text-white rounded-lg'
+                    onClick={() => setIsError(false)} // 에러 모달 닫기
+                  >
+                    확인
+                  </button>
+                </>
+              )
             )}
           </div>
         </div>
       )}
 
-      {/* 탑바 변경을 위해 다시 만듦 */}
+      {/* 탑바 */}
       <div className='fixed top-0 left-0 right-0'>
         <div className='flex justify-between pt-8 px-3 items-center bg-white'>
           <FontAwesomeIcon
@@ -191,7 +213,6 @@ const SharedTransactionCreate = () => {
               value={content}
               placeholder='결제 내용을 작성해주세요'
               onChange={(e) => setContent(e.target.value)}
-              required
             />
           </div>
         </form>
