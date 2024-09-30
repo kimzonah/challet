@@ -32,13 +32,14 @@ const ChallengePage = () => {
   // 페이지 처음 로드될 때만 챌린지 목록 요청
   useEffect(() => {
     if (activeTab === '챌린지 찾기') {
-      fetchChallenges('', ''); // 페이지 로드 시 한 번만 호출
+      fetchChallenges('', category); // 페이지 로드 시 한 번만 호출
     }
   }, [activeTab]);
 
   return (
-    <div className='min-h-screen flex flex-col items-center p-2'>
-      <div className='flex justify-center w-full mb-2 mt-8'>
+    <div className=' flex flex-col items-center p-2'>
+      {/* 탭 버튼 */}
+      <div className='flex justify-center w-full mb-2 mt-4 h-'>
         {['챌린지 찾기', '나의 챌린지'].map((tab) => (
           <button
             key={tab}
@@ -54,29 +55,23 @@ const ChallengePage = () => {
         ))}
       </div>
 
-      {isLoading ? (
-        <div className='flex justify-center items-center h-64'>
-          <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00CCCC]'></div>
-        </div>
-      ) : (
-        <div className='w-full overflow-y-auto'>
-          {/* CategoryList가 스크롤될 때 상단에 고정되도록 설정 */}
-          <div>
-            {activeTab === '챌린지 찾기' && (
-              <CategoryList
-                activeCategory={category}
-                onCategoryChange={handleCategoryChange}
-                onSearch={handleSearch}
-              />
-            )}
-          </div>
-
-          <ChallengeForm
-            challenges={challenges}
-            isMyChallenges={activeTab === '나의 챌린지'}
+      {/* 카테고리 리스트는 항상 표시 */}
+      <div className='w-full'>
+        {activeTab === '챌린지 찾기' && (
+          <CategoryList
+            activeCategory={category}
+            onCategoryChange={handleCategoryChange}
+            onSearch={handleSearch}
           />
-        </div>
-      )}
+        )}
+
+        {/* 챌린지 폼은 로딩 상태에 따라 로딩 애니메이션을 표시 */}
+        <ChallengeForm
+          challenges={challenges}
+          isMyChallenges={activeTab === '나의 챌린지'}
+          isLoading={isLoading}
+        />
+      </div>
     </div>
   );
 };

@@ -53,6 +53,12 @@ importers:
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      lodash.throttle:
+        specifier: ^4.1.1
+        version: 4.1.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -93,6 +99,9 @@ importers:
       '@types/axios':
         specifier: ^0.14.0
         version: 0.14.0
+      '@types/lodash':
+        specifier: ^4.17.9
+        version: 4.17.9
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.5
@@ -1553,6 +1562,9 @@ packages:
   '@types/history@4.7.11':
     resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
 
+  '@types/lodash@4.17.9':
+    resolution: {integrity: sha512-w9iWudx1XWOHW5lQRS9iKpK/XuRhnN+0T7HvdCCd802FYkT1AMTnxndJHGrNJwRoRHkslGr4S29tjm1cT7x/7w==}
+
   '@types/node@22.6.1':
     resolution: {integrity: sha512-V48tCfcKb/e6cVUigLAaJDAILdMP0fUW6BidkPK4GpGjXcfbnoHasCZDwz3N3yVt5we2RHm4XTQCpv0KJz9zqw==}
 
@@ -2654,6 +2666,9 @@ packages:
 
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
+
+  lodash.throttle@4.1.1:
+    resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
 
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
@@ -5558,6 +5573,8 @@ snapshots:
 
   '@types/history@4.7.11': {}
 
+  '@types/lodash@4.17.9': {}
+
   '@types/node@22.6.1':
     dependencies:
       undici-types: 6.19.8
@@ -6814,6 +6831,8 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lodash.sortby@4.7.0: {}
+
+  lodash.throttle@4.1.1: {}
 
   lodash@4.17.21: {}
 

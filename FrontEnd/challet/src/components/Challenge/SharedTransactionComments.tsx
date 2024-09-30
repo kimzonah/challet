@@ -9,21 +9,24 @@ interface Comment {
 
 const SharedTransactionComments = ({
   sharedTransactionId,
+  refreshComments, // 새로고침을 위한 상태 추가
 }: {
   sharedTransactionId: number;
+  refreshComments: boolean; // 새로고침 상태를 prop으로 받음
 }) => {
-  const { fetchExampleTransactionComments } = useChallengeApi();
+  const { fetchTransactionComments } = useChallengeApi();
   const [comments, setComments] = useState<Comment[]>([]);
 
   useEffect(() => {
     const fetchComments = async () => {
-      // 실제 API 요청 대신 더미 데이터를 가져옵니다.
-      const fetchedComments = await fetchExampleTransactionComments();
+      // 댓글 데이터를 가져오는 API 요청
+      const fetchedComments =
+        await fetchTransactionComments(sharedTransactionId);
       setComments(fetchedComments);
     };
 
     fetchComments();
-  }, [sharedTransactionId, fetchExampleTransactionComments]);
+  }, [sharedTransactionId, refreshComments, fetchTransactionComments]); // refreshComments가 변경될 때마다 새로 불러오기
 
   if (comments.length === 0) {
     return <div>댓글이 없습니다.</div>;

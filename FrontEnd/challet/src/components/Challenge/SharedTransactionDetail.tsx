@@ -12,25 +12,41 @@ import Emoji_1 from '../../assets/Challenge/Emoji-1.png'; // 이모티콘 이미
 import Emoji_2 from '../../assets/Challenge/Emoji-2.png';
 import Emoji_3 from '../../assets/Challenge/Emoji-3.png';
 import Comment from '../../assets/Challenge/Comment.png';
+import useAuthStore from '../../store/useAuthStore';
 
 const SharedTransactionDetail = () => {
   const { id } = useParams<{ id: string }>(); // URL에서 sharedTransactionId 가져오기
-  const { exampleTransactions } = useChallengeApi(); // 더미 데이터를 가져옴
+  const { fetchSharedTransactionDetail, registComment } = useChallengeApi(); // API 함수 추가
   const [transactionDetail, setTransactionDetail] = useState<any>(null);
+  const [commentContent, setCommentContent] = useState(''); // 댓글 내용을 관리할 상태
+  const [refreshComments, setRefreshComments] = useState(false); // 댓글 목록 새로고침 상태
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
+  const userId = useAuthStore((state) => state.userId);
 
   useEffect(() => {
     const fetchDetail = async () => {
       if (id) {
-        // 더미 데이터에서 해당 id를 가진 거래 내역을 찾음
-        const detail = exampleTransactions.find(
-          (transaction) => transaction.sharedTransactionId === Number(id)
-        );
-        setTransactionDetail(detail || null); // detail이 없을 경우 null 처리
+        const detail = await fetchSharedTransactionDetail(Number(id));
+        setTransactionDetail(detail);
       }
     };
     fetchDetail();
   }, [id]);
+
+  const handleCommentSubmit = async () => {
+    if (commentContent.trim() === '') {
+      return;
+    }
+
+    try {
+      // 댓글 등록 API 호출
+      await registComment(Number(id), commentContent);
+      setCommentContent(''); // 댓글 입력창 초기화
+      setRefreshComments((prev) => !prev); // 댓글 목록 새로고침
+    } catch (error) {
+      console.error('댓글 등록 중 오류 발생:', error);
+    }
+  };
 
   if (!transactionDetail) {
     return <div>Loading...</div>;
@@ -48,9 +64,9 @@ const SharedTransactionDetail = () => {
           />
           <p className='text-lg font-semibold'>
             {transactionDetail.withdrawal} |{' '}
-            {transactionDetail.transactionAmount.toLocaleString()}원
+            {transactionDetail.transactionAmount}원
           </p>
-          {transactionDetail.isMine ? (
+          {transactionDetail.userId === userId ? (
             <FontAwesomeIcon
               icon={faEdit} // 수정 아이콘
               className='cursor-pointer'
@@ -65,7 +81,7 @@ const SharedTransactionDetail = () => {
             <FontAwesomeIcon
               icon={faSyncAlt} // 새로고침 아이콘
               className='cursor-pointer'
-              onClick={() => window.location.reload()} // 새로고침
+              onClick={() => setRefreshComments((prev) => !prev)} // 새로고침
             />
           )}
         </div>
@@ -97,25 +113,26 @@ const SharedTransactionDetail = () => {
         <div className='flex space-x-4 py-2 border-b-2 border-dashed'>
           <div className='flex items-center'>
             <img src={Emoji_3} alt='Emoji 3' className='w-5 h-5 mr-1' />
-            <span>{transactionDetail.threeEmojiNum}</span>
+            <span>{transactionDetail.goodCount}</span>
           </div>
           <div className='flex items-center'>
             <img src={Emoji_2} alt='Emoji 2' className='w-5 h-5 mr-1' />
-            <span>{transactionDetail.twoEmojiNum}</span>
+            <span>{transactionDetail.sosoCount}</span>
           </div>
           <div className='flex items-center'>
             <img src={Emoji_1} alt='Emoji 1' className='w-5 h-5 mr-1' />
-            <span>{transactionDetail.oneEmojiNum}</span>
+            <span>{transactionDetail.badCount}</span>
           </div>
           <div className='flex items-center'>
             <img src={Comment} alt='comment' className='w-5 h-5 mr-1' />
-            <span>{transactionDetail.commentNum}</span>
+            <span>{transactionDetail.commentCount}</span>
           </div>
         </div>
 
         {/* 댓글 컴포넌트에 refreshComments 상태 전달 */}
         <SharedTransactionComments
-          sharedTransactionId={transactionDetail.sharedTransactionId}
+          sharedTransactionId={Number(id)}
+          refreshComments={refreshComments} // 새로고침 트리거 전달
         />
       </div>
 
@@ -124,10 +141,15 @@ const SharedTransactionDetail = () => {
         <div className='flex items-center'>
           <input
             type='text'
+            value={commentContent}
+            onChange={(e) => setCommentContent(e.target.value)} // 입력된 댓글 내용 업데이트
             placeholder='댓글을 입력하세요.'
-            className='flex-grow px-4 py-2 border rounded-lg mr-2'
+            className='flex-grow px-4 py-2 border rounded-lg mr-2 focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
           />
-          <button className='bg-[#00CCCC] text-white px-4 py-2 rounded-lg'>
+          <button
+            className='bg-[#00CCCC] text-white px-4 py-2 rounded-lg'
+            onClick={handleCommentSubmit} // 댓글 등록 함수 호출
+          >
             확인
           </button>
         </div>
