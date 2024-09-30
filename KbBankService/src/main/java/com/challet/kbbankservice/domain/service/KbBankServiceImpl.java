@@ -1,8 +1,10 @@
 package com.challet.kbbankservice.domain.service;
 
 import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
@@ -79,5 +81,15 @@ public class KbBankServiceImpl implements KbBankService {
         kbBank.addTransaction(transaction);
 
         return BankTransferResponseDTO.fromBankTransferResponseDTO(kbBank);
+    }
+
+    @Override
+    public MonthlyTransactionHistoryListDTO getMonthlyTransactionHistory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        MonthlyTransactionHistoryListDTO transactions = kbBankRepository.getTransactionByPhoneNumberAndYearMonth(
+            phoneNumber, requestDTO);
+
+        return transactions;
     }
 }

@@ -1,8 +1,10 @@
 package com.challet.kbbankservice.domain.controller;
 
 import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.kbbankservice.domain.service.KbBankService;
@@ -102,7 +104,7 @@ public class KbBankController {
 
 
     @GetMapping("/search")
-    @Operation(summary = "극민은행 계좌 거래 내역 검색", description = "keyword, category를 통해 거래 내역 검색")
+    @Operation(summary = "국민은행 계좌 거래 내역 검색", description = "keyword, category를 통해 거래 내역 검색")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "검색 성공"),
         @ApiResponse(responseCode = "400", description = "검색 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
@@ -113,4 +115,18 @@ public class KbBankController {
         return null;
     }
 
+    @PostMapping("/transactions-monthly")
+    @Operation(summary = "한달 결제내역", description = "year, month를 통해 거래 내역 검색")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "검색 성공"),
+        @ApiResponse(responseCode = "400", description = "검색 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<MonthlyTransactionHistoryListDTO> getMonthlyTransactionHistory(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
+        @RequestBody MonthlyTransactionRequestDTO requestDTO
+    ) {
+        MonthlyTransactionHistoryListDTO monthlyTransactionHistory = kbBankService.getMonthlyTransactionHistory(
+            tokenHeader, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(monthlyTransactionHistory);
+    }
 }

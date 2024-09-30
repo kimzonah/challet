@@ -1,6 +1,8 @@
 package com.challet.kbbankservice.domain.repository;
 
+import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.entity.KbBank;
@@ -20,4 +22,7 @@ public interface KbBankRepositoryCustom {
     void connectMyDataAccount(String phoneNumber);
 
     Optional<KbBank> findByAccountNumber(String accountNumber);
+
+    MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(String phoneNumber,
+        MonthlyTransactionRequestDTO requestDTO);
 }

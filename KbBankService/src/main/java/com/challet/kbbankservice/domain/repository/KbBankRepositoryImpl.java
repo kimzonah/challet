@@ -1,13 +1,17 @@
 package com.challet.kbbankservice.domain.repository;
 
+import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
+import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.entity.KbBank;
 import com.challet.kbbankservice.domain.entity.QKbBank;
 import com.challet.kbbankservice.domain.entity.QKbBankTransaction;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -106,6 +110,34 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .where(kbBank.accountNumber.eq(accountNumber))
             .fetchOne();
 
-        return Optional.ofNullable(result); // Optional로 감싸기
+        return Optional.ofNullable(result);
+    }
+
+    @Override
+    public MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(
+        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+        QKbBankTransaction kbBankTransaction = QKbBankTransaction.kbBankTransaction;
+        QKbBank kbBank = QKbBank.kbBank;
+
+        List<MonthlyTransactionHistoryDTO> result = query
+            .select(Projections.constructor(MonthlyTransactionHistoryDTO.class,
+                Expressions.constant("kb-bank"),
+                kbBank.accountNumber,
+                kbBank.accountBalance,
+                kbBankTransaction.transactionDatetime,
+                kbBankTransaction.deposit,
+                kbBankTransaction.withdrawal,
+                kbBankTransaction.transactionBalance,
+                kbBankTransaction.transactionAmount,
+                kbBankTransaction.category))
+            .from(kbBankTransaction)
+            .join(kbBankTransaction.kbBank, kbBank)
+            .where(kbBank.phoneNumber.eq(phoneNumber)
+                .and(kbBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                .and(kbBankTransaction.transactionDatetime.month().eq(requestDTO.month())))
+            .orderBy(kbBankTransaction.transactionDatetime.desc())
+            .fetch();
+
+        return MonthlyTransactionHistoryListDTO.from(result);
     }
 }
