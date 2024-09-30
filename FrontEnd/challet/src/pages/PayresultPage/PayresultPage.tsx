@@ -38,7 +38,7 @@ const PayResult = () => {
         const data = {
           transactionAmount: parsedData.transactionAmount,
           accountNumber: accountInfo.accountNumber,
-          withdrawal: parsedData.deposit, // QR 데이터에서 deposit을 withdrawal로 사용 중~~ 추후 수정
+          deposit: parsedData.deposit,
           category: parsedData.category,
         };
 
@@ -48,6 +48,8 @@ const PayResult = () => {
 
         setPaymentSuccess(true); // 결제 성공
         console.log('결제 성공');
+        console.log(parsedData);
+        console.log(data);
       } catch (error) {
         setPaymentSuccess(false); // 결제 실패
         console.error('결제 실패:', error);

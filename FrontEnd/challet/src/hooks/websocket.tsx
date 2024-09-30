@@ -103,7 +103,7 @@ class WebSocketService {
 }
 
 // WebSocketService 인스턴스 생성
-const webSocketUrl = 'http://localhost:8000/api/challet/ws'; // 서버에서 웹소켓 연결을 처리하는 URL
+const webSocketUrl = import.meta.env.VITE_API_URL + '/api/challet/ws'; // 서버에서 웹소켓 연결을 처리하는 URL
 const webSocketService = new WebSocketService(webSocketUrl);
 
 export default webSocketService;
