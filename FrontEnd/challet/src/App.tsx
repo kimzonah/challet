@@ -17,6 +17,7 @@ import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
 import HistoryPage from './pages/HistoryPage/HistoryPage';
 import HistoryDetailPage from './pages/HistoryDetailPage/HistoryDetailPage';
+// import MyDataHistoryPage from './pages/MyDataHistoryPage/MyDataHistoryPage';
 import TransferPage from './pages/TransferPage/TransferPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
@@ -79,11 +80,12 @@ function App() {
         <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
-        <Route path='/history' element={<HistoryPage />} />
+        {/* <Route path='/mydata-history' element={<MyDataHistoryPage />} /> */}
         <Route
           path='/history-detail/:transactionId'
           element={<HistoryDetailPage />}
         />
+        <Route path='/history' element={<HistoryPage />} />
         <Route path='/transfer' element={<TransferPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
         <Route path='/challenge/create' element={<ChallengeCreatePage />} />
