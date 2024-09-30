@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react'; // useState 추가
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import ChallengeProgressbar from './ChallengeProgressbar'; // Progressbar 임포트
 import TransactionList from './SharedTransactionList';
 import webSocketService from '../../hooks/websocket';
+import { useChallengeApi } from '../../hooks/useChallengeApi';
 
 // 남은 일수를 계산하는 함수
 const calculateRemainDays = (endDateString: string): number => {
@@ -26,39 +27,28 @@ const ChallengeRoom = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { challenge } = location.state || {};
+  const { fetchCurrentSpending } = useChallengeApi(); // API 함수 사용
+
+  // 현재 소비 금액 상태
+  const [spendingAmount, setSpendingAmount] = useState<number | null>(null); // null 초기화로 상태 관리
 
   if (!challenge) {
     return <div>챌린지 정보가 없습니다.</div>;
   }
 
   useEffect(() => {
-    // const connectAndSubscribe = async () => {
-    //   try {
-    //     // 웹소켓이 이미 연결되어 있는지 확인
-    //     if (!webSocketService.isConnected()) {
-    //       // 웹소켓 연결이 완료된 후 구독
-    //       await webSocketService.connect();
-    //       console.log('WebSocket 연결 완료 후 구독 시작');
-    //     } else {
-    //       console.log('이미 WebSocket이 연결되어 있습니다.');
-    //     }
+    // 소비 금액을 가져오는 비동기 함수 호출
+    const getSpendingAmount = async () => {
+      const spendingAmount = await fetchCurrentSpending(challenge.challengeId); // 현재 소비 금액 조회
+      setSpendingAmount(spendingAmount); // 상태 업데이트
+    };
 
-    //     // 구독 진행
-    //     webSocketService.subscribe(challenge.challengeId, (message) => {
-    //       console.log('받은 거래 메시지:', message.body);
-    //       const transaction = JSON.parse(message.body);
-    //       // 받은 메시지 처리 로직 추가
-    //       console.log('거래 내역:', transaction);
-    //     });
-    //   } catch (error) {
-    //     console.error('WebSocket 연결 실패:', error);
-    //   }
-    // };
+    getSpendingAmount(); // 함수 호출
 
-    // connectAndSubscribe();
-
-    return () => {};
-  }, [challenge.challengeId]);
+    return () => {
+      // 필요 시 정리 작업 추가 가능
+    };
+  }, [challenge.challengeId, fetchCurrentSpending]); // 챌린지 ID가 변경될 때마다 호출
 
   // 남은 일 수 계산
   const remainDays = calculateRemainDays(challenge.endDate);
@@ -95,7 +85,7 @@ const ChallengeRoom = () => {
       <div className='mt-16 flex justify-center'>
         <div className='px-4 py-2 mt-2 bg-white rounded-lg w-[90%]'>
           <ChallengeProgressbar
-            currentSpending={challenge.currentSpending || 0} // 현재 지출 금액 전달
+            currentSpending={spendingAmount || 0} // 현재 지출 금액 전달
             spendingLimit={challenge.spendingLimit} // 지출 한도 전달
             remainDays={remainDays} // 남은 일 수 전달
           />
@@ -103,7 +93,7 @@ const ChallengeRoom = () => {
       </div>
 
       {/* 트랜잭션 대화창 */}
-      <div className='pb-8 flex-1 overflow-y-auto'>
+      <div className='pb-8 flex-1 '>
         <TransactionList challengeId={challenge.challengeId} />
       </div>
 

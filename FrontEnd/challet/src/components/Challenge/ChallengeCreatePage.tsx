@@ -98,7 +98,7 @@ const ChallengeCreatePage: React.FC = () => {
           <div>
             <label className='flex text-sm font-semibold mb-2 ml-2'>주제</label>
             <select
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              className='w-[85vw] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               value={category}
               onChange={handleInputChange(setCategory)}
             >
@@ -122,7 +122,7 @@ const ChallengeCreatePage: React.FC = () => {
               value={roomName}
               maxLength={15}
               onChange={handleInputChange(setRoomName)}
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              className='w-[85vw] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               placeholder='방 이름 (최대 15자)'
             />
           </div>
@@ -135,9 +135,17 @@ const ChallengeCreatePage: React.FC = () => {
             <input
               type='number'
               value={spendingLimit}
-              onChange={handleInputChange(setSpendingLimit)}
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                // 마이너스 값 또는 1억(100,000,000) 이상을 입력하지 않도록 제한
+                if (value >= 0 && value <= 100000000) {
+                  setSpendingLimit(e.target.value);
+                }
+              }}
+              className='w-[85vw] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               placeholder='지출 한도를 입력하세요'
+              min='0'
+              max='100000000'
             />
           </div>
 
@@ -158,7 +166,7 @@ const ChallengeCreatePage: React.FC = () => {
               locale={ko}
               dateFormat='yyyy년 MM월 dd일'
               placeholderText='시작 날짜 ~ 종료 날짜'
-              className='w-[300px] py-2 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
+              className='w-[85vw] py-2 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
             />
           </div>
 
@@ -170,7 +178,7 @@ const ChallengeCreatePage: React.FC = () => {
             <select
               value={maxParticipants}
               onChange={handleInputChange(setMaxParticipants)}
-              className='w-[300px] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              className='w-[85vw] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
             >
               {[...Array(10).keys()].map((num) => (
                 <option key={num + 1} value={num + 1}>
@@ -188,7 +196,7 @@ const ChallengeCreatePage: React.FC = () => {
             <div className='flex space-x-4 justify-center'>
               <button
                 type='button'
-                className={`w-[140px] py-4 rounded-lg text-white ${
+                className={`w-full py-4 rounded-lg text-white ${
                   isPublic ? 'bg-[#00CCCC]' : 'bg-gray-400'
                 }`}
                 onClick={() => setIsPublic(true)}
@@ -197,7 +205,7 @@ const ChallengeCreatePage: React.FC = () => {
               </button>
               <button
                 type='button'
-                className={`w-[140px] py-4 rounded-lg text-white ${
+                className={`w-full py-4 rounded-lg text-white ${
                   !isPublic ? 'bg-[#00CCCC]' : 'bg-gray-400'
                 }`}
                 onClick={() => setIsPublic(false)}
@@ -210,7 +218,7 @@ const ChallengeCreatePage: React.FC = () => {
           {/* 제출 버튼 */}
           <button
             type='submit'
-            className='w-[300px] py-4 bg-[#00CCCC] text-white rounded-lg hover:bg-teal-600 mt-6 mb-6'
+            className='w-full py-4 bg-[#00CCCC] text-white rounded-lg hover:bg-teal-600 mt-6 mb-6'
           >
             챌린지 생성하기
           </button>
