@@ -1,8 +1,10 @@
 package com.challet.shbankservice.domain.service;
 
 import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
@@ -79,5 +81,15 @@ public class ShBankServiceImpl implements ShBankService {
         shBank.addTransaction(transaction);
 
         return BankTransferResponseDTO.fromBankTransferResponseDTO(shBank);
+    }
+
+    @Override
+    public MonthlyTransactionHistoryListDTO getMonthlyTransactionHistory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        MonthlyTransactionHistoryListDTO transactions = shBankRepository.getTransactionByPhoneNumberAndYearMonth(
+            phoneNumber, requestDTO);
+
+        return transactions;
     }
 }
