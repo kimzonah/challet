@@ -21,6 +21,7 @@ import TransferPage from './pages/TransferPage/TransferPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
 import MyPage2 from './pages/MyPage/MyPage2';
+import RewardsPage from './pages/RewardsPage/RewardsPage';
 import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
@@ -49,6 +50,7 @@ function App() {
   const matchHistorydetail = useMatch('//history-detail/:transactionId');
   const matchTransfer = useMatch('/transfer');
   const matchmydataselect = useMatch('/mydataselect');
+  const PhoneCheck = useMatch('/phone-check');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
@@ -62,7 +64,8 @@ function App() {
     matchpayment ||
     matchpayresult ||
     matchTransfer ||
-    matchmydataselect;
+    matchmydataselect ||
+    PhoneCheck;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -89,6 +92,7 @@ function App() {
         <Route path='/payresult' element={<PayResult />} />
         <Route path='/mydataselect' element={<MyDataSelectPage />} />
         <Route path='/mypage' element={<MyPage2 />} />
+        <Route path='/rewards' element={<RewardsPage />} />
         <Route path='/challet-service/users/login' element={<LoginPage />} />
         <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
         <Route

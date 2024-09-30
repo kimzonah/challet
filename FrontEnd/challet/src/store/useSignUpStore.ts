@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
 interface SignUpState {
   name: string;
@@ -23,8 +23,7 @@ const useSignUpStore = create<SignUpState>()(
       setSignUpData: (data) => set((state) => ({ ...state, ...data })),
     }),
     {
-      name: 'signUp-storage', // 로컬 스토리지에 저장될 키 이름
-      storage: createJSONStorage(() => localStorage), // JSON 스토리지를 localStorage로 생성
+      name: 'signup-storage',
     }
   )
 );
