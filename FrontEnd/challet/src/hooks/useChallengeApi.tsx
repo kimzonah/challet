@@ -5,72 +5,32 @@ import { useState } from 'react';
 export const useChallengeApi = () => {
   const [challenges, setChallenges] = useState<any[]>([]); // 초기값을 빈 배열로 설정
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
-  const [sharedTransactions, setSharedTransactions] = useState([]); // 트랜잭션 데이터 저장
   const API_BASE_URL = import.meta.env.VITE_API_URL as string;
 
-  const exampleTransactions = [
-    {
-      isMine: true,
-      userId: 1,
-      nickname: '배고픈 고양이',
-      profileImage:
-        'https://flexible.img.hani.co.kr/flexible/normal/970/777/imgdb/resize/2019/0926/00501881_20190926.JPG',
-      sharedTransactionId: 1,
-      withdrawal: '망고시루 케이크',
-      transactionAmount: 43000,
-      transactionDateTime: '2024-09-17T14:00:00.000Z',
-      content: '4만원 넘게 써버렸지만 후회 없는 선택이었습니다.',
-      image: 'https://newsimg.sedaily.com/2024/07/20/2DBTAKL314_7.jpg',
-      threeEmojiNum: 1,
-      twoEmojiNum: 0,
-      oneEmojiNum: 2,
-      commentNum: 3,
-      pushedEmoji: 1,
-    },
-    {
-      isMine: false,
-      userId: 2,
-      nickname: '배고픈 토끼',
-      profileImage:
-        'https://media.istockphoto.com/id/959866606/ko/%EC%82%AC%EC%A7%84/%ED%86%A0%EB%81%BC-4-%EA%B0%9C%EC%9B%94-%ED%9D%B0%EC%83%89-%EB%B0%B0%EA%B2%BD%EC%97%90-%EC%95%89%EC%95%84.jpg?s=1024x1024&w=is&k=20&c=4XbJDAKpvRz0zIlSXxd7LaOBxwzGOvaEXA6B12MjHT8=',
-      sharedTransactionId: 2,
-      withdrawal: '냉장고 털이 비빔밥',
-      transactionAmount: 0,
-      transactionDateTime: '2024-09-17T13:30:00.000Z',
-      content: '냉장고 잔반 털어서 비빔밥 했습니다.',
-      image: '',
-      threeEmojiNum: 5,
-      twoEmojiNum: 0,
-      oneEmojiNum: 1,
-      commentNum: 1,
-      pushedEmoji: 3,
-    },
-  ];
-
-  const exampleComments = [
-    {
-      nickname: '배고픈 고양이',
-      profileImage: 'https://example.com/cat_profile.png',
-      content: '정말 좋은 거래네요!',
-    },
-    {
-      nickname: '배고픈 토끼',
-      profileImage: 'https://example.com/rabbit_profile.png',
-      content: '이건 좀 별로인 것 같아요...',
-    },
-    {
-      nickname: '배고픈 토끼',
-      profileImage: 'https://example.com/rabbit_profile.png',
-      content: '이건 좀 별로인 것 같아요...',
-    },
-  ];
+  // const exampleComments = [
+  //   {
+  //     nickname: '배고픈 고양이',
+  //     profileImage: 'https://example.com/cat_profile.png',
+  //     content: '정말 좋은 거래네요!',
+  //   },
+  //   {
+  //     nickname: '배고픈 토끼',
+  //     profileImage: 'https://example.com/rabbit_profile.png',
+  //     content: '이건 좀 별로인 것 같아요...',
+  //   },
+  //   {
+  //     nickname: '배고픈 토끼',
+  //     profileImage: 'https://example.com/rabbit_profile.png',
+  //     content: '이건 좀 별로인 것 같아요...',
+  //   },
+  // ];
 
   // 챌린지 참가 API 요청 함수
   const joinChallenge = async (
     challengeId: number,
     isPublic: boolean,
     inviteCode: string | null
-  ) => {
+  ): Promise<boolean> => {
     setIsLoading(true); // 로딩 상태
     try {
       const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}`;
@@ -83,8 +43,11 @@ export const useChallengeApi = () => {
       const response = await AxiosInstance.post(url, requestBody);
 
       console.log('챌린지 참가 성공:', response.data);
+
+      return true; // 성공 시 true 반환
     } catch (error) {
       console.error('챌린지 참가 중 오류 발생:', error);
+      return false; // 실패 시 false 반환
     } finally {
       setIsLoading(false); // 로딩 완료
     }
@@ -114,6 +77,18 @@ export const useChallengeApi = () => {
     }
   };
 
+  // 챌린지 내 현재 소비 금액 조회 API 요청 함수
+  const fetchCurrentSpending = async (challengeId: number) => {
+    try {
+      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/spending-amount`;
+      const response = await AxiosInstance.get(url);
+      return response.data.spendingAmount; // 소비 금액 데이터 반환
+    } catch (error) {
+      console.error('소비 금액 조회 중 오류 발생:', error);
+      return null;
+    }
+  };
+
   const fetchChallenges = async (
     keyword: string,
     category: string,
@@ -121,19 +96,15 @@ export const useChallengeApi = () => {
   ) => {
     setIsLoading(true); // 로딩 시작
     try {
-      let url = '';
-      let params = {};
+      let url =
+        `${API_BASE_URL}/api/challet/challenges` +
+        (isMyChallenges ? '/my-challenges' : ''); // URL 설정
+      let params = { keyword, category }; // 파라미터 설정
 
-      if (isMyChallenges) {
-        // 'my-challenges'일 경우 키워드와 카테고리가 필요하지 않음
-        url = `${API_BASE_URL}/api/challet/challenges/my-challenges`;
-      } else {
-        // 일반 챌린지 조회의 경우 키워드와 카테고리 필요
-        url = `${API_BASE_URL}/api/challet/challenges`;
-        params = { keyword, category }; // 파라미터 설정
-      }
-
-      const response = await AxiosInstance.get(url, { params });
+      const response = await AxiosInstance.get(
+        url,
+        isMyChallenges ? {} : { params }
+      ); // GET 요청
 
       // API 응답 성공 시 로그
       console.log('API 응답 성공:', response.data.challengeList);
@@ -147,19 +118,24 @@ export const useChallengeApi = () => {
   };
 
   // 트랜잭션 조회 API 요청 함수
-  const fetchSharedTransactions = async (challengeId: number) => {
+  const fetchSharedTransactions = async (
+    challengeId: number,
+    cursor: number | null
+  ) => {
     setIsLoading(true); // 로딩 시작
     try {
-      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/shared-transactions`;
+      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/history`;
+      const param = cursor ? { cursor } : {}; // 커서 값이 있으면 파라미터에 추가
 
-      const response = await AxiosInstance.get(url);
+      const response = await AxiosInstance.get(url, { params: param });
 
       // API 응답 성공 시 로그 및 상태 업데이트
       console.log('트랜잭션 조회 성공:', response.data);
-      setSharedTransactions(response.data);
+      return response.data; // 트랜잭션 데이터 반환
     } catch (error) {
       // API 호출 중 오류 발생 시 로그
       console.error('트랜잭션 조회 중 오류 발생:', error);
+      return null; // 오류 발생 시 null 반환
     } finally {
       setIsLoading(false); // 로딩 완료
     }
@@ -174,11 +150,7 @@ export const useChallengeApi = () => {
       const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/shared-transactions`;
 
       console.log('transaction:', transaction);
-      const response = await AxiosInstance.post(url, transaction, {
-        headers: {
-          'Content-Type': 'application/json', // JSON으로 전송할 때 명시적으로 Content-Type 설정
-        },
-      });
+      const response = await AxiosInstance.post(url, transaction);
 
       console.log('트랜잭션 등록 성공:', response.data);
     } catch (error) {
@@ -211,6 +183,7 @@ export const useChallengeApi = () => {
     try {
       const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}`;
       const response = await AxiosInstance.get(url);
+      console.log('트랜잭션 상세 조회 성공:', response.data);
       return response.data; // 상세 내역 데이터 반환
     } catch (error) {
       console.error('거래 상세 조회 중 오류 발생:', error);
@@ -219,51 +192,47 @@ export const useChallengeApi = () => {
   };
 
   // 댓글 조회 API 요청 함수
-  // const fetchTransactionComments = async (sharedTransactionId: number) => {
-  //   실제 API 요청 부분은 주석 처리합니다.
-  //   try {
-  //     const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}/comments`;
-  //     const response = await axiosInstance.get(url);
-  //     return response.data; // 댓글 데이터 반환
-  //   } catch (error) {
-  //     console.error('댓글 조회 중 오류 발생:', error);
-  //     return [];
-  //   }
-
-  //   주석 처리된 API 요청 대신 더미 데이터를 반환합니다.
-  //   return exampleComments;
-  // };
-
-  // 댓글 조회 API 요청 함수
-  const fetchExampleTransactionComments = async () => {
+  const fetchTransactionComments = async (sharedTransactionId: number) => {
     // 실제 API 요청 부분은 주석 처리합니다.
-    // try {
-    //   const url = `https://localhost:8000/challet-service/shared-transactions/${sharedTransactionId}/comments`;
-    //   const response = await axios.get(url);
-    //   return response.data; // 댓글 데이터 반환
-    // } catch (error) {
-    //   console.error('댓글 조회 중 오류 발생:', error);
-    //   return [];
-    // }
+    try {
+      const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}/comments`;
+      const response = await AxiosInstance.get(url);
+      return response.data.comments; // 댓글 데이터 반환
+    } catch (error) {
+      console.error('댓글 조회 중 오류 발생:', error);
+      return [];
+    }
+  };
 
-    // 주석 처리된 API 요청 대신 더미 데이터를 반환합니다.
-    return exampleComments;
+  const registComment = async (
+    sharedTransactionId: number,
+    content: string
+  ) => {
+    try {
+      const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}/comments`;
+      const requestBody = { content };
+
+      const response = await AxiosInstance.post(url, requestBody);
+
+      console.log('댓글 등록 성공:', response.data);
+    } catch (error) {
+      console.error('댓글 등록 중 오류 발생:', error);
+    }
   };
 
   return {
     challenges,
     isLoading,
-    sharedTransactions,
     fetchChallenges,
     fetchChallengeDetail,
     createChallenge,
     joinChallenge,
-    exampleTransactions,
     fetchSharedTransactions,
+    fetchCurrentSpending,
     registTransaction,
     editTransaction,
     fetchSharedTransactionDetail,
-    // fetchTransactionComments,
-    fetchExampleTransactionComments,
+    fetchTransactionComments,
+    registComment,
   };
 };
