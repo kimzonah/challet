@@ -1,25 +1,21 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import useAccountStore from '../../store/useAccountStore'; // Zustand 스토어 가져오기
+import axiosInstance from '../../api/axiosInstance';
+import useAccountStore from '../../store/useAccountStore';
 import shLogo from '../../assets/mydata/sh-logo.png';
 import kbLogo from '../../assets/mydata/kb-logo.png';
 import nhLogo from '../../assets/mydata/nh-logo.png';
 
-// Account 타입 정의
 type Account = {
   id: number | string;
   accountNumber: string;
   accountBalance: number;
 };
 
-// BankData 타입 정의
 type BankData = {
   accountCount: number;
   accounts: Account[];
 };
 
-// ConnectedMyDataProps 타입 정의
 type ConnectedMyDataProps = {
   data: {
     kbBanks?: BankData;
@@ -28,7 +24,6 @@ type ConnectedMyDataProps = {
   };
 };
 
-// 은행별 로고와 짧은 이름을 저장하는 타입 정의
 type BankKey = 'sh' | 'kb' | 'nh';
 
 const bankDetails: Record<BankKey, { shortName: string; logo: string }> = {
@@ -37,7 +32,7 @@ const bankDetails: Record<BankKey, { shortName: string; logo: string }> = {
   nh: { shortName: '농협', logo: nhLogo },
 };
 
-const ConnectedMyData: React.FC<ConnectedMyDataProps> = ({ data }) => {
+function ConnectedMyData({ data }: ConnectedMyDataProps) {
   const navigate = useNavigate();
   const setAccountInfo = useAccountStore((state) => state.setAccountInfo);
 
@@ -51,23 +46,40 @@ const ConnectedMyData: React.FC<ConnectedMyDataProps> = ({ data }) => {
   // 계좌 클릭 시 스토어에 저장 및 API 호출 후 이동
   const handleAccountClick = async (bankKey: BankKey, account: Account) => {
     setAccountInfo({
-      id: account.id,
+      id: Number(account.id),
       accountNumber: account.accountNumber,
       accountBalance: account.accountBalance,
     });
 
     try {
       const apiUrl = apiEndpoints[bankKey];
-      const response = await axios.get(apiUrl, {
-        headers: { AccountId: account.id },
+
+      const response = await axiosInstance.get(apiUrl, {
+        headers: { AccountId: account.id.toString() },
       });
 
+      console.log('API 응답:', response.data);
+
       navigate('/mydata-history', {
-        state: { transactionData: response.data },
+        state: {
+          bankShortName: bankDetails[bankKey].shortName,
+          accountNumber: account.accountNumber,
+          transactionData: response.data, // 거래 내역 데이터
+        },
       });
     } catch (error) {
-      console.error('Error fetching account data:', error);
+      console.error('계좌 데이터를 가져오는 중 오류가 발생했습니다:', error);
     }
+  };
+
+  // 송금 버튼 클릭 시 계좌 정보를 함께 navigate로 전달
+  const handleTransferClick = (account: Account) => {
+    navigate('/transfer', {
+      state: {
+        accountNumber: account.accountNumber,
+        accountBalance: account.accountBalance,
+      },
+    });
   };
 
   // 각 은행별 계좌 정보를 렌더링
@@ -98,8 +110,8 @@ const ConnectedMyData: React.FC<ConnectedMyDataProps> = ({ data }) => {
             <button
               className='border border-gray-300 rounded-lg px-3 py-1 text-sm text-[#6C6C6C] bg-white'
               onClick={(e) => {
-                e.stopPropagation(); // 부모의 클릭 이벤트 방지
-                navigate('/transfer');
+                e.stopPropagation();
+                handleTransferClick(account); // 클릭된 계좌 정보와 함께 navigate 호출
               }}
             >
               송금
@@ -127,6 +139,6 @@ const ConnectedMyData: React.FC<ConnectedMyDataProps> = ({ data }) => {
       </div>
     </div>
   );
-};
+}
 
 export default ConnectedMyData;

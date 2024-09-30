@@ -165,7 +165,7 @@ const MyDataSelectPage = () => {
     return labels[key];
   };
 
-  // 은행 키와 연결된 로고를 반환하는 함수
+  // 은행 키와 연결된 로고를 반환
   const getBankLogo = (bankKey: string) => {
     const bank = bankDetails.find((detail) => detail.key === bankKey);
     return bank ? bank.logo : undefined;
@@ -213,7 +213,7 @@ const MyDataSelectPage = () => {
                       src={getBankLogo(bankKey)}
                       alt='은행 로고'
                       className={`${
-                        bankKey === 'nh' ? 'w-6 h-8  mr-6' : 'w-8 h-8  mr-4' // nh 로고에만 다른 크기 적용
+                        bankKey === 'nh' ? 'w-6 h-8  mr-6' : 'w-8 h-8  mr-4' // nh 로고에만 다른 크기
                       }`}
                     />
                   </div>

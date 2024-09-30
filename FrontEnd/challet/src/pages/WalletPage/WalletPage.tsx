@@ -32,7 +32,6 @@ const WalletPage = () => {
     fetchData();
   }, []);
 
-  // 분리된 렌더링 로직
   const renderMyDataSection = () => {
     if (walletData) {
       // 데이터가 있을 때 ConnectedMyData를 렌더링
@@ -44,7 +43,6 @@ const WalletPage = () => {
       return <MyDataConnectButton />;
     }
 
-    // 로딩 상태를 표시하거나 다른 상태를 처리할 수 있습니다.
     return null;
   };
 
@@ -61,7 +59,6 @@ const WalletPage = () => {
         <PaymentButton />
       </div>
 
-      {/* WalletBalanceSection은 계속 존재 */}
       <WalletBalanceSection />
 
       {/* MyData 섹션 렌더링 */}
