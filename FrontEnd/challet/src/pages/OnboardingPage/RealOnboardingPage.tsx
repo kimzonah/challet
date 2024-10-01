@@ -58,7 +58,7 @@ const RealOnboardingPage = () => {
 
       {/* 로딩 애니메이션 */}
       {isLoading && (
-        <div className='mt-8'>
+        <div className='mt-8 mb-16'>
           <div className='w-8 h-8 border-4 border-[#00CCCC] border-dashed rounded-full animate-spin'></div>
         </div>
       )}
