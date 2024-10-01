@@ -1,5 +1,6 @@
 package com.challet.challetservice.domain.dto.response;
 
+import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
 import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
@@ -9,6 +10,9 @@ import lombok.Builder;
 @Builder
 @Schema(description = "공유 거래 내역 수동 등록 웹소켓 응답 DTO")
 public record SharedTransactionRegisterResponseDTO(
+
+    @Schema(description = "유저 행위")
+    ActionType action,
 
     @Schema(description = "등록된 거래 내역 ID")
     Long id,
@@ -37,6 +41,7 @@ public record SharedTransactionRegisterResponseDTO(
 
     public static SharedTransactionRegisterResponseDTO from(SharedTransaction savedSharedTransaction, User user) {
         return SharedTransactionRegisterResponseDTO.builder()
+            .action(ActionType.ADD)
             .id(savedSharedTransaction.getId())
             .image(savedSharedTransaction.getImage())
             .withdrawal(savedSharedTransaction.getWithdrawal())

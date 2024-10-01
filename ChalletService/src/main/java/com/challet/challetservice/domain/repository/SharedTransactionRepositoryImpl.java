@@ -130,6 +130,23 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
         return SharedTransactionDetailResponseDTO.fromInfoAndReaction(info, emojiReaction);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean isSameUser(SharedTransaction sharedTransaction, User user) {
+        QSharedTransaction qSharedTransaction = QSharedTransaction.sharedTransaction;
+        QUser qUser = QUser.user;
+        QUserChallenge qUserChallenge = QUserChallenge.userChallenge;
+
+        Optional<User> sharedUser = Optional.ofNullable(queryFactory
+            .select(qUser)
+            .from(qSharedTransaction)
+            .join(qSharedTransaction.userChallenge, qUserChallenge)
+            .join(qUserChallenge.user, qUser)
+            .where(qSharedTransaction.eq(sharedTransaction))
+            .fetchOne());
+
+        return sharedUser.map(user::equals).orElse(false);
+    }
 
 
 }

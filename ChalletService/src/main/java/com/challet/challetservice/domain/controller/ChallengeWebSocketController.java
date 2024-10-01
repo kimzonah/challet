@@ -2,12 +2,12 @@ package com.challet.challetservice.domain.controller;
 
 import com.challet.challetservice.domain.dto.request.EmojiRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
-import com.challet.challetservice.domain.dto.response.EmojiReactionDTO;
+import com.challet.challetservice.domain.dto.request.SharedTransactionUpdateRequestDTO;
 import com.challet.challetservice.domain.dto.response.EmojiResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
+import com.challet.challetservice.domain.dto.response.SharedTransactionUpdateResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
 import com.challet.challetservice.domain.service.SharedTransactionService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -27,7 +27,13 @@ public class ChallengeWebSocketController {
     @MessageMapping("/challenges/{id}/shared-transactions")
     @SendTo("/topic/challenges/{id}/shared-transactions")
     public SharedTransactionRegisterResponseDTO registerTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long id, SharedTransactionRegisterRequestDTO request) {
-        return challengeService.handleSharedTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
+        return challengeService.registerTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
+    }
+
+    @MessageMapping("/challenges/{challengeId}/shared-transactions/{transactionId}")
+    @SendTo("/topic/challenges/{challengeId}/shared-transactions")
+    public SharedTransactionUpdateResponseDTO updateTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long transactionId, SharedTransactionUpdateRequestDTO request) {
+        return challengeService.updateTransaction(headerAccessor.getFirstNativeHeader("Authorization"), transactionId, request);
     }
 
 
