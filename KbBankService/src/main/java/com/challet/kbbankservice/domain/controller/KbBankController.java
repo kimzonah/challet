@@ -4,6 +4,8 @@ import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -128,5 +131,15 @@ public class KbBankController {
         MonthlyTransactionHistoryListDTO monthlyTransactionHistory = kbBankService.getMonthlyTransactionHistory(
             tokenHeader, requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(monthlyTransactionHistory);
+    }
+
+    @PostMapping("/transaction-category")
+    public ResponseEntity<CategoryAmountResponseListDTO> getTransactionGroupCategory(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
+        @RequestBody MonthlyTransactionRequestDTO requestDTO) {
+
+        CategoryAmountResponseListDTO transactionByGroupCategory = kbBankService.getTransactionByGroupCategory(
+            tokenHeader, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
 }

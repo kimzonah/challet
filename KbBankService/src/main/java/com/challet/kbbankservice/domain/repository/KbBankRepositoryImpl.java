@@ -3,10 +3,13 @@ package com.challet.kbbankservice.domain.repository;
 import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.kbbankservice.domain.entity.Category;
 import com.challet.kbbankservice.domain.entity.KbBank;
 import com.challet.kbbankservice.domain.entity.QKbBank;
 import com.challet.kbbankservice.domain.entity.QKbBankTransaction;
@@ -140,5 +143,29 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
             .fetch();
 
         return MonthlyTransactionHistoryListDTO.from(result);
+    }
+
+    @Override
+    public CategoryAmountResponseListDTO getTransactionByGroupCategory(
+        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+        QKbBankTransaction kbBankTransaction = QKbBankTransaction.kbBankTransaction;
+        QKbBank kbBank = QKbBank.kbBank;
+
+        List<CategoryAmountResponseDTO> result = query
+            .select(Projections.constructor(CategoryAmountResponseDTO.class,
+                kbBankTransaction.category,
+                kbBankTransaction.transactionAmount.sum()))
+            .from(kbBankTransaction)
+            .join(kbBankTransaction.kbBank, kbBank)
+            .where(kbBank.phoneNumber.eq(phoneNumber)
+                .and(kbBank.myDataStatus.isTrue())
+                .and(kbBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                .and(kbBankTransaction.transactionDatetime.month().eq(requestDTO.month()))
+                .and(kbBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
+                    Category.SHOPPING, Category.TRANSPORT)))
+            .groupBy(kbBankTransaction.category)
+            .fetch();
+
+        return CategoryAmountResponseListDTO.from(result);
     }
 }

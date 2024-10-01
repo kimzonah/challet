@@ -2,6 +2,8 @@ package com.challet.kbbankservice.domain.repository;
 
 import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
@@ -24,5 +26,8 @@ public interface KbBankRepositoryCustom {
     Optional<KbBank> findByAccountNumber(String accountNumber);
 
     MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(String phoneNumber,
+        MonthlyTransactionRequestDTO requestDTO);
+
+    CategoryAmountResponseListDTO getTransactionByGroupCategory(String phoneNumber,
         MonthlyTransactionRequestDTO requestDTO);
 }
