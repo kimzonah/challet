@@ -63,7 +63,7 @@ const ChallengeRoom = () => {
   // 뒤로가기 버튼 클릭 시 웹소켓 연결 끊고 뒤로가기
   const handleBackClick = () => {
     webSocketService.disconnect(); // 웹소켓 연결 해제
-    navigate(-1); // 이전 페이지로 이동
+    navigate('/challenge', { state: { activeTab: '나의 챌린지' } }); // 나의 챌린지 탭 활성화
   };
 
   return (
