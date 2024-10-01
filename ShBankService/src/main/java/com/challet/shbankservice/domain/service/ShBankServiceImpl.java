@@ -4,6 +4,7 @@ import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseDTO;
@@ -91,5 +92,12 @@ public class ShBankServiceImpl implements ShBankService {
             phoneNumber, requestDTO);
 
         return transactions;
+    }
+
+    @Override
+    public CategoryAmountResponseListDTO getTransactionByGroupCategory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        return shBankRepository.getTransactionByGroupCategory(phoneNumber, requestDTO);
     }
 }

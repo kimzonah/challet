@@ -4,6 +4,7 @@ import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
@@ -130,5 +131,15 @@ public class ShBankController {
         MonthlyTransactionHistoryListDTO monthlyTransactionHistory = shBankService.getMonthlyTransactionHistory(
             tokenHeader, requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(monthlyTransactionHistory);
+    }
+
+    @PostMapping("/transaction-category")
+    public ResponseEntity<CategoryAmountResponseListDTO> getTransactionGroupCategory(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
+        @RequestBody MonthlyTransactionRequestDTO requestDTO) {
+
+        CategoryAmountResponseListDTO transactionByGroupCategory = shBankService.getTransactionByGroupCategory(
+            tokenHeader, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
 }

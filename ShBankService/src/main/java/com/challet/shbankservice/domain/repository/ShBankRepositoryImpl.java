@@ -3,10 +3,13 @@ package com.challet.shbankservice.domain.repository;
 import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.shbankservice.domain.entity.Category;
 import com.challet.shbankservice.domain.entity.QShBank;
 import com.challet.shbankservice.domain.entity.QShBankTransaction;
 import com.challet.shbankservice.domain.entity.ShBank;
@@ -140,5 +143,29 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
             .fetch();
 
         return MonthlyTransactionHistoryListDTO.from(result);
+    }
+
+    @Override
+    public CategoryAmountResponseListDTO getTransactionByGroupCategory(
+        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+        QShBankTransaction shBankTransaction = QShBankTransaction.shBankTransaction;
+        QShBank shBank = QShBank.shBank;
+
+        List<CategoryAmountResponseDTO> result = query
+            .select(Projections.constructor(CategoryAmountResponseDTO.class,
+                shBankTransaction.category,
+                shBankTransaction.transactionAmount.sum()))
+            .from(shBankTransaction)
+            .join(shBankTransaction.shBank, shBank)
+            .where(shBank.phoneNumber.eq(phoneNumber)
+                .and(shBank.myDataStatus.isTrue())
+                .and(shBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                .and(shBankTransaction.transactionDatetime.month().eq(requestDTO.month()))
+                .and(shBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
+                    Category.SHOPPING, Category.TRANSPORT)))
+            .groupBy(shBankTransaction.category)
+            .fetch();
+
+        return CategoryAmountResponseListDTO.from(result);
     }
 }

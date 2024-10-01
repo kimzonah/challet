@@ -4,6 +4,7 @@ import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
@@ -21,5 +22,8 @@ public interface ShBankService {
     BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO);
 
     MonthlyTransactionHistoryListDTO getMonthlyTransactionHistory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO);
+
+    CategoryAmountResponseListDTO getTransactionByGroupCategory(String tokenHeader,
         MonthlyTransactionRequestDTO requestDTO);
 }
