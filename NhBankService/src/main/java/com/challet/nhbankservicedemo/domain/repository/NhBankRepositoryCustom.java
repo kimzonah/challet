@@ -2,6 +2,7 @@ package com.challet.nhbankservicedemo.domain.repository;
 
 import com.challet.nhbankservicedemo.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseDTO;
@@ -24,5 +25,8 @@ public interface NhBankRepositoryCustom {
     Optional<NhBank> findByAccountNumber(String accountNumber);
 
     MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(String phoneNumber,
+        MonthlyTransactionRequestDTO requestDTO);
+
+    CategoryAmountResponseListDTO getTransactionByGroupCategory(String phoneNumber,
         MonthlyTransactionRequestDTO requestDTO);
 }
