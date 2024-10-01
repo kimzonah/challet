@@ -20,7 +20,7 @@ public record SharedTransactionRegisterResponseDTO(
     String image,
 
     @Schema(description = "결제 항목")
-    String withdrawal,
+    String deposit,
 
     @Schema(description = "결제 금액")
     Long transactionAmount,
@@ -43,7 +43,7 @@ public record SharedTransactionRegisterResponseDTO(
             .action(ActionType.ADD)
             .id(savedSharedTransaction.getId())
             .image(savedSharedTransaction.getImage())
-            .withdrawal(savedSharedTransaction.getWithdrawal())
+            .deposit(savedSharedTransaction.getDeposit())
             .transactionAmount(savedSharedTransaction.getTransactionAmount())
             .content(savedSharedTransaction.getContent())
             .userId(user.getId())

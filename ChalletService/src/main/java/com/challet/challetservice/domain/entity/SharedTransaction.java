@@ -39,7 +39,7 @@ public class SharedTransaction {
     private UserChallenge userChallenge;
 
     @Column(nullable = false)
-    private String withdrawal;
+    private String deposit;
 
     @Column(nullable = false)
     private Long transactionAmount;
@@ -64,7 +64,7 @@ public class SharedTransaction {
     public static SharedTransaction fromRequest(SharedTransactionRegisterRequestDTO request, UserChallenge userChallenge) {
         SharedTransaction sharedTransaction = SharedTransaction.builder()
             .userChallenge(userChallenge)
-            .withdrawal(request.withdrawal())
+            .deposit(request.deposit())
             .transactionAmount(request.transactionAmount())
             .transactionDateTime(LocalDateTime.now())
             .content(request.content())
@@ -78,7 +78,7 @@ public class SharedTransaction {
     public static SharedTransaction fromPayment(PaymentHttpMessageRequestDTO paymentNotification, UserChallenge userChallenge){
         SharedTransaction sharedTransaction = SharedTransaction.builder()
             .userChallenge(userChallenge)
-            .withdrawal(paymentNotification.deposit())
+            .deposit(paymentNotification.deposit())
             .transactionAmount(paymentNotification.transactionAmount())
             .transactionDateTime(LocalDateTime.now())
             .build();
@@ -88,7 +88,7 @@ public class SharedTransaction {
     }
 
     public void updateSharedTransaction(SharedTransactionUpdateRequestDTO updateRequest){
-        this.withdrawal = updateRequest.withdrawal();
+        this.deposit = updateRequest.deposit();
         this.transactionAmount = updateRequest.transactionAmount();
         this.content = updateRequest.content();
         this.image = updateRequest.image();

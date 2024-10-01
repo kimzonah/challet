@@ -9,7 +9,7 @@ public record SharedTransactionUpdateRequestDTO(
     String image,
 
     @Schema(description = "결제 항목")
-    String withdrawal,
+    String deposit,
 
     @Schema(description = "결제 금액")
     Long transactionAmount,

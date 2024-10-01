@@ -1,6 +1,5 @@
 package com.challet.challetservice.domain.dto.response;
 
-import com.challet.challetservice.domain.entity.EmojiType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
@@ -20,7 +19,7 @@ public record SharedTransactionInfoDTO(
     Long sharedTransactionId,
 
     @Schema(description = "출금처")
-    String withdrawal,
+    String deposit,
 
     @Schema(description = "거래 금액")
     Long transactionAmount,
