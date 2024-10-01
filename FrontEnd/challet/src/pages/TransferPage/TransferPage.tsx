@@ -5,41 +5,27 @@ import { TopBar } from '../../components/topbar/topbar';
 function TransferPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { accountBalance } = location.state || {}; // 전달받은 잔액 정보만 사용
+  const { accountBalance } = location.state || {}; // 전달받은 잔액 정보 사용
   const [bank, setBank] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [amount, setAmount] = useState('');
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [warningMessage, setWarningMessage] = useState(''); // 경고 메시지 상태
 
-  // 금액을 쉼표가 들어가게 변환하는 함수 (string 타입 명시)
-  const formatNumberWithCommas = (value: string): string => {
-    const cleanedValue = value.replace(/[^0-9]/g, ''); // 숫자만 남김
+  // 금액을 쉼표로 형식화하는 함수
+  const formatNumberWithCommas = (value) => {
+    const cleanedValue = value.replace(/[^0-9]/g, '');
     return cleanedValue ? parseInt(cleanedValue, 10).toLocaleString() : '';
   };
 
-  // 금액 입력 변경 처리 함수
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputAmount = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 입력되게 처리
-    const numericAmount = parseInt(inputAmount, 10);
-
-    if (numericAmount > accountBalance) {
-      setWarningMessage(
-        `최대 ${accountBalance?.toLocaleString()}원까지 보낼 수 있어요.`
-      );
-    } else {
-      setAmount(formatNumberWithCommas(inputAmount));
-      setWarningMessage(''); // 경고 메시지 초기화
-    }
+  // 금액 입력 처리 함수
+  const handleAmountChange = (e) => {
+    setAmount(formatNumberWithCommas(e.target.value));
   };
 
   // 계좌번호 입력 처리 함수
-  const handleAccountNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value.replace(/[^0-9]/g, ''); // 숫자 외의 문자 제거
-    setAccountNumber(value);
+  const handleAccountNumberChange = (e) => {
+    setAccountNumber(e.target.value);
   };
 
   // 송금 처리 함수
@@ -48,13 +34,12 @@ function TransferPage() {
       alert('모든 필드를 입력해주세요.');
       return;
     }
-
     setConfirmationMessage(`${accountNumber}님에게\n${amount}원을 보냈어요`);
     setShowConfirmation(true);
   };
 
   // 모든 필드가 채워졌는지 확인
-  const allChecked = bank && accountNumber && amount && !warningMessage;
+  const allChecked = bank && accountNumber && amount;
 
   return (
     <div className='min-h-screen bg-white flex flex-col items-center justify-between p-4 relative'>
@@ -65,7 +50,7 @@ function TransferPage() {
           <div className='w-full max-w-sm mb-4'>
             <div className='relative'>
               <select
-                className='w-full px-4 py-4 bg-gray-100 rounded-lg focus:ring-2 focus:ring-[#00CCCC] focus:outline-none mb-6 text-gray-400 appearance-none'
+                className='w-full px-4 py-4 bg-gray-100 rounded-lg focus:ring-0 focus:outline-none mb-6 text-gray-400 appearance-none'
                 value={bank}
                 onChange={(e) => setBank(e.target.value)}
               >
@@ -77,10 +62,7 @@ function TransferPage() {
                 <option value='bank3'>국민은행</option>
                 <option value='bank4'>농협은행</option>
               </select>
-              <div
-                className='absolute inset-y-0 right-3 flex items-center pointer-events-none'
-                style={{ top: '-16px' }}
-              >
+              <div className='absolute inset-y-0 right-3 flex items-center pointer-events-none'>
                 <svg
                   className='w-4 h-4 text-gray-600'
                   fill='none'
@@ -98,21 +80,21 @@ function TransferPage() {
               </div>
             </div>
 
-            {/* 계좌번호 입력 (숫자만 입력 가능) */}
+            {/* 계좌번호 입력 */}
             <input
               type='text'
-              className='w-full px-4 py-4 bg-gray-100 rounded-lg focus:ring-2 focus:ring-[#00CCCC] focus:outline-none mb-12'
+              className='w-full px-4 py-4 bg-gray-100 rounded-lg focus:ring-0 focus:outline-none mb-12'
               placeholder='계좌번호 입력'
               value={accountNumber}
               onChange={handleAccountNumberChange}
               maxLength={20}
             />
 
-            {/* 보낼 금액 입력 (아래쪽만 테두리) */}
+            {/* 보낼 금액 입력 */}
             <div className='w-full mb-2 border-b border-gray-400'>
               <input
                 type='text'
-                className='w-full px-4 py-2 bg-white text-lg font-medium text-gray-700 focus:border-b-2 focus:border-[#00CCCC] focus:outline-none'
+                className='w-full px-4 py-2 focus:outline-none focus:ring-0 bg-white text-lg font-medium text-gray-700'
                 placeholder='보낼 금액 입력'
                 value={amount}
                 onChange={handleAmountChange}
@@ -121,14 +103,13 @@ function TransferPage() {
             <p className='text-right text-xs text-gray-400'>
               최대 {accountBalance?.toLocaleString()}원
             </p>
-            {warningMessage && (
-              <p className='text-red-500 text-xs mt-1'>{warningMessage}</p>
-            )}
           </div>
 
           <button
             onClick={handleSubmit}
-            className={`w-full py-5 ${allChecked ? 'bg-[#00CCCC]' : 'bg-[#C8C8C8] cursor-not-allowed'} text-white text-lg font-medium fixed bottom-0 left-0 right-0`}
+            className={`w-full py-5 ${
+              allChecked ? 'bg-[#00CCCC]' : 'bg-[#C8C8C8] cursor-not-allowed'
+            } text-white text-lg font-medium fixed bottom-0 left-0 right-0`}
             disabled={!allChecked}
           >
             확인
