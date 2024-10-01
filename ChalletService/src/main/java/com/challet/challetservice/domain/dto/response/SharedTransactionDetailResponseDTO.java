@@ -56,27 +56,6 @@ public record SharedTransactionDetailResponseDTO(
 
 ) {
 
-    public static SharedTransactionDetailResponseDTO fromHistory(SharedTransaction sharedTransaction, User sharedUser,
-        Long goodCount, Long sosoCount, Long badCount, Long commentCount, EmojiType userEmoji) {
-
-        return SharedTransactionDetailResponseDTO.builder()
-            .userId(sharedUser.getId())
-            .nickname(sharedUser.getNickname())
-            .profileImage(sharedUser.getProfileImage())
-            .sharedTransactionId(sharedTransaction.getId())
-            .withdrawal(sharedTransaction.getWithdrawal())
-            .transactionAmount(sharedTransaction.getTransactionAmount())
-            .transactionDateTime(sharedTransaction.getTransactionDateTime())
-            .content(sharedTransaction.getContent())
-            .image(sharedTransaction.getImage())
-            .goodCount(goodCount)
-            .sosoCount(sosoCount)
-            .badCount(badCount)
-            .commentCount(commentCount)
-            .userEmoji(userEmoji)
-            .build();
-    }
-
     public static SharedTransactionDetailResponseDTO fromInfoAndReaction(SharedTransactionInfoDTO info, EmojiReactionDTO reaction){
         return  SharedTransactionDetailResponseDTO.builder()
             .userId(info.userId())

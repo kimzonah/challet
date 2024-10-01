@@ -13,4 +13,6 @@ public interface SharedTransactionRepositoryCustom {
 
     SharedTransactionDetailResponseDTO getDetail(SharedTransaction sharedTransaction, User user);
 
+    Boolean isSameUser(SharedTransaction sharedTransaction, User user);
+
 }

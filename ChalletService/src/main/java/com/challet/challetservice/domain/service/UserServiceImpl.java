@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(reward.getChallenge(), user)
             .orElseThrow(()-> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
 
-        return RewardDetailResponseDTO.from(reward, userChallenge);
+        return RewardDetailResponseDTO.fromReward(reward, userChallenge);
     }
 
     @Override
