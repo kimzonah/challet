@@ -4,6 +4,7 @@ import com.challet.challetservice.domain.dto.request.UserUpdateNicknameRequestDT
 import com.challet.challetservice.domain.dto.request.UserUpdateProfileRequestDTO;
 import com.challet.challetservice.domain.dto.response.MyRewardListResponseDTO;
 import com.challet.challetservice.domain.dto.response.RewardDetailResponseDTO;
+import com.challet.challetservice.domain.dto.response.UserInfoMessageResponseDTO;
 import com.challet.challetservice.domain.dto.response.UserInfoResponseDTO;
 
 public interface UserService {
@@ -17,4 +18,6 @@ public interface UserService {
     MyRewardListResponseDTO getMyRewards(String header);
 
     RewardDetailResponseDTO getRewardDetail(String header, Long id);
+
+    UserInfoMessageResponseDTO getUserInfoMessage(String header);
 }
