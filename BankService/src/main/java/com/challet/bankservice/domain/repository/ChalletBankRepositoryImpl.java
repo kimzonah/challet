@@ -1,6 +1,7 @@
 package com.challet.bankservice.domain.repository;
 
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.bankservice.domain.dto.request.UserInfoMessageRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
@@ -17,7 +18,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.LockModeType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @RequiredArgsConstructor
 public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
+
+    private static final int BATCH_SIZE = 1000;
 
     private final JPAQueryFactory query;
 
@@ -172,25 +178,41 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
     }
 
     @Override
-    public CategoryAmountResponseListDTO getTransactionByGroupCategory(
-        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+    public Map<Category, Long> getTransactionByGroupCategory(
+        UserInfoMessageRequestDTO analysisInfo, MonthlyTransactionRequestDTO requestDTO) {
         QChalletBankTransaction challetBankTransaction = QChalletBankTransaction.challetBankTransaction;
         QChalletBank challetBank = QChalletBank.challetBank;
 
-        List<CategoryAmountResponseDTO> result = query
-            .select(Projections.constructor(CategoryAmountResponseDTO.class,
-                challetBankTransaction.category,
-                challetBankTransaction.transactionAmount.sum()))
-            .from(challetBankTransaction)
-            .join(challetBankTransaction.challetBank, challetBank)
-            .where(challetBank.phoneNumber.eq(phoneNumber)
-                .and(challetBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
-                .and(challetBankTransaction.transactionDatetime.month().eq(requestDTO.month()))
-                .and(challetBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
-                    Category.SHOPPING, Category.TRANSPORT)))
-            .groupBy(challetBankTransaction.category)
-            .fetch();
+        List<String> phoneNumbers = analysisInfo.phoneNumbers();
+        Map<Category, Long> categorySums = new HashMap<>();
 
-        return CategoryAmountResponseListDTO.from(result);
+        for (int i = 0; i < phoneNumbers.size(); i += BATCH_SIZE) {
+            int end = Math.min(i + BATCH_SIZE, phoneNumbers.size());
+            List<String> subListPhoneNumbers = phoneNumbers.subList(i, end);
+
+            List<CategoryAmountResponseDTO> results = query
+                .select(Projections.constructor(CategoryAmountResponseDTO.class,
+                    challetBankTransaction.category,
+                    challetBankTransaction.transactionAmount.sum()))
+                .from(challetBankTransaction)
+                .join(challetBankTransaction.challetBank, challetBank)
+                .where(
+                    challetBank.phoneNumber.in(subListPhoneNumbers)
+                        .and(
+                            challetBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                        .and(challetBankTransaction.transactionDatetime.month()
+                            .eq(requestDTO.month()))
+                        .and(challetBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
+                            Category.SHOPPING, Category.TRANSPORT)))
+                .groupBy(challetBankTransaction.category)
+                .fetch();
+
+            for (CategoryAmountResponseDTO result : results) {
+                categorySums.put(result.category(),
+                    categorySums.getOrDefault(result.category(), 0l) + result.totalAmount());
+            }
+        }
+
+        return categorySums;
     }
 }
