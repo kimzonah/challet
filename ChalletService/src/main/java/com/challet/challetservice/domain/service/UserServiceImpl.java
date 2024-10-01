@@ -5,6 +5,7 @@ import com.challet.challetservice.domain.dto.request.UserUpdateProfileRequestDTO
 import com.challet.challetservice.domain.dto.response.MyRewardInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.MyRewardListResponseDTO;
 import com.challet.challetservice.domain.dto.response.RewardDetailResponseDTO;
+import com.challet.challetservice.domain.dto.response.UserInfoMessageResponseDTO;
 import com.challet.challetservice.domain.dto.response.UserInfoResponseDTO;
 import com.challet.challetservice.domain.entity.Reward;
 import com.challet.challetservice.domain.entity.User;
@@ -95,5 +96,11 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(()-> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
 
         return RewardDetailResponseDTO.from(reward, userChallenge);
+    }
+
+    @Override
+    public UserInfoMessageResponseDTO getUserInfoMessage(String header) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        return userRepository.getUserInfoMessage(phoneNumber);
     }
 }
