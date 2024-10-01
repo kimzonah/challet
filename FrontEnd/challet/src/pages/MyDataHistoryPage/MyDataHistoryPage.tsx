@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axiosInstance'; // axiosInstance 사용
+import axiosInstance from '../../api/axiosInstance';
 import { TopBar } from '../../components/topbar/topbar';
 
 interface Transaction {

@@ -64,7 +64,7 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
         state: {
           bankShortName: bankDetails[bankKey].shortName,
           accountNumber: account.accountNumber,
-          transactionData: response.data, // 거래 내역 데이터
+          transactionData: response.data,
         },
       });
     } catch (error) {
@@ -73,14 +73,15 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
   };
 
   // 송금 버튼 클릭 시 계좌 정보를 함께 navigate로 전달
-  const handleTransferClick = (account: Account) => {
-    navigate('/transfer', {
-      state: {
-        accountNumber: account.accountNumber,
-        accountBalance: account.accountBalance,
-      },
-    });
-  };
+  // const handleTransferClick = (account: Account) => {
+  //   navigate('/transfer', {
+  //     state: {
+  //       accountNumber: account.accountNumber,
+  //       accountBalance: account.accountBalance,
+  //       accountId: account.id,
+  //     },
+  //   });
+  // };
 
   // 각 은행별 계좌 정보를 렌더링
   const renderBankAccounts = (bankKey: BankKey, bankData: BankData) => (
@@ -88,7 +89,8 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
       {bankData.accounts.map((account) => (
         <div
           key={account.id}
-          className='p-4 bg-white w-full flex justify-between items-center cursor-pointer'
+          className='p-4 bg-white w-full flex justify-between items-center cursor-pointer '
+          // className='p-4 bg-white w-full flex justify-between items-center cursor-pointer rounded-lg shadow-md mb-4'
           onClick={() => handleAccountClick(bankKey, account)}
         >
           <div className='flex-shrink-0'>
@@ -107,15 +109,15 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
             </p>
           </div>
           <div className='ml-auto'>
-            <button
+            {/* <button
               className='border border-gray-300 rounded-lg px-3 py-1 text-sm text-[#6C6C6C] bg-white'
               onClick={(e) => {
                 e.stopPropagation();
-                handleTransferClick(account); // 클릭된 계좌 정보와 함께 navigate 호출
+                handleTransferClick(account);
               }}
             >
               송금
-            </button>
+            </button> */}
           </div>
         </div>
       ))}
@@ -125,11 +127,11 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
   return (
     <div className='connected-mydata-section' style={{ width: '97%' }}>
       <div className='border-t border-gray-200'>
-        <h2 className='text-base font-medium mt-4 mb-4 text-left'>
+        <h2 className='text-base font-medium mt-4 mb-4 text-left '>
           마이데이터 연동 계좌
         </h2>
       </div>
-      <div className='bg-white mb-24' style={{ width: '100%' }}>
+      <div className='bg-white mb-24 ' style={{ width: '100%' }}>
         {data.kbBanks && renderBankAccounts('kb', data.kbBanks)}
         {data.nhBanks && renderBankAccounts('nh', data.nhBanks)}
         {data.shBanks && renderBankAccounts('sh', data.shBanks)}

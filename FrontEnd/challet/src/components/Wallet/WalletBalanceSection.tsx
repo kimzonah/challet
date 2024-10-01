@@ -22,7 +22,7 @@ const WalletBalanceSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { setAccountInfo: setStoreAccountInfo } = useAccountStore(); // 스토어에 계좌 정보 업데이트
+  const { setAccountInfo: setStoreAccountInfo } = useAccountStore();
   const { accessToken } = useAuthStore();
 
   const fetchAccountInfo = useCallback(async () => {
@@ -86,7 +86,7 @@ const WalletBalanceSection = () => {
   }
 
   if (error || !accountInfo) {
-    // 에러가 발생했거나 계좌 정보가 없는 경우
+    // 에러가 발생했거나 계좌 정보가 없을 때
     return (
       <div className='w-full bg-white p-4 rounded-lg shadow-md mb-8'>
         <p className='text-xs font-bold mt-2 mb-4'>
@@ -96,7 +96,7 @@ const WalletBalanceSection = () => {
     );
   }
 
-  // 계좌 정보가 있을 때의 화면 표시
+  // 계좌 정보가 있을 때
   return (
     <div
       className=' bg-white p-4 rounded-lg shadow-md mb-8 cursor-pointer'
@@ -119,6 +119,7 @@ const WalletBalanceSection = () => {
             navigate('/transfer', {
               state: {
                 accountBalance: accountInfo.accountBalance,
+                accountId: accountInfo.id,
               },
             });
           }}

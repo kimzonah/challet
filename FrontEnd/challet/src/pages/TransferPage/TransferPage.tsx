@@ -1,68 +1,153 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { TopBar } from '../../components/topbar/topbar';
+import AxiosInstance from '../../api/axiosInstance';
+
+interface FormState {
+  bank: string;
+  accountNumber: string;
+  amount: string;
+}
+
+const bankCodes: Record<string, string> = {
+  챌렛뱅크: '8082',
+  국민은행: '8083',
+  농협은행: '8084',
+  신한은행: '8085',
+};
 
 function TransferPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { accountBalance } = location.state || {}; // 전달받은 잔액 정보 사용
-  const [bank, setBank] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
-  const [amount, setAmount] = useState('');
+  const { accountBalance, accountId } = location.state || {};
+
+  const [form, setForm] = useState<FormState>({
+    bank: '',
+    accountNumber: '',
+    amount: '',
+  });
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+  const [errorMessage, setErrorMessage] = useState('');
+  const [accountNumberError, setAccountNumberError] = useState('');
 
-  // 금액을 쉼표로 형식화하는 함수
-  const formatNumberWithCommas = (value) => {
+  const formatNumberWithCommas = (value: string) => {
     const cleanedValue = value.replace(/[^0-9]/g, '');
     return cleanedValue ? parseInt(cleanedValue, 10).toLocaleString() : '';
   };
 
-  // 금액 입력 처리 함수
-  const handleAmountChange = (e) => {
-    setAmount(formatNumberWithCommas(e.target.value));
-  };
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
 
-  // 계좌번호 입력 처리 함수
-  const handleAccountNumberChange = (e) => {
-    setAccountNumber(e.target.value);
-  };
-
-  // 송금 처리 함수
-  const handleSubmit = () => {
-    if (!bank || !accountNumber || !amount) {
-      alert('모든 필드를 입력해주세요.');
-      return;
+    if (name === 'accountNumber' && value.length === 20) {
+      setAccountNumberError('계좌번호를 확인해주세요.');
+    } else {
+      setAccountNumberError('');
     }
-    setConfirmationMessage(`${accountNumber}님에게\n${amount}원을 보냈어요`);
-    setShowConfirmation(true);
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === 'amount' ? formatNumberWithCommas(value) : value,
+    }));
+
+    if (name === 'amount') {
+      const enteredAmount = parseInt(value.replace(/[^0-9]/g, ''), 10);
+      setErrorMessage(
+        accountBalance && enteredAmount > accountBalance
+          ? `${accountBalance.toLocaleString()}원까지 보낼 수 있어요.`
+          : ''
+      );
+    }
   };
 
-  // 모든 필드가 채워졌는지 확인
-  const allChecked = bank && accountNumber && amount;
+  const handleConfirmTransfer = () => setIsModalOpen(true);
+
+  const handleSubmit = async () => {
+    setLoading(true); // 로딩 시작
+    try {
+      const bankCode = bankCodes[form.bank];
+      const transactionAmount = parseInt(
+        form.amount.replace(/[^0-9]/g, ''),
+        10
+      );
+
+      await AxiosInstance.post(
+        '/api/ch-bank/account-transfers',
+        {
+          bankCode,
+          depositAccountNumber: form.accountNumber,
+          transactionAmount,
+        },
+        { headers: { AccountId: accountId as string } }
+      );
+
+      setConfirmationMessage(
+        `${form.accountNumber}님에게\n${form.amount}원을 보냈어요`
+      );
+      setShowConfirmation(true);
+    } catch (error) {
+      console.error('송금 요청 실패:', error);
+      alert('송금에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setLoading(false); // 로딩 끝
+      setIsModalOpen(false); // 모달 닫기
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Delete'];
+    if (!allowedKeys.includes(e.key)) {
+      const currentAmount = form.amount.replace(/[^0-9]/g, '');
+      if (
+        currentAmount &&
+        accountBalance &&
+        currentAmount.length >= accountBalance.toString().length
+      ) {
+        e.preventDefault(); // 추가 입력 방지
+      }
+    }
+  };
+
+  const allChecked =
+    form.bank && form.accountNumber && form.amount && !errorMessage;
 
   return (
     <div className='min-h-screen bg-white flex flex-col items-center justify-between p-4 relative'>
       <TopBar title='송금' />
 
-      {!showConfirmation ? (
+      {/* 입력 필드 및 확인 버튼 */}
+      {!showConfirmation && (
         <div className='flex flex-col items-center justify-center w-full mt-40'>
           <div className='w-full max-w-sm mb-4'>
+            {/* 은행 선택 */}
             <div className='relative'>
               <select
-                className='w-full px-4 py-4 bg-gray-100 rounded-lg focus:ring-0 focus:outline-none mb-6 text-gray-400 appearance-none'
-                value={bank}
-                onChange={(e) => setBank(e.target.value)}
+                name='bank'
+                className={`w-full px-4 py-4 bg-[#F1F4F6] rounded-lg focus:ring-0 focus:outline-none mb-6 text-[#6C6C6C] appearance-none ${
+                  form.bank
+                    ? 'border-[#00CCCC] border-2'
+                    : 'border-[#F1F4F6] border'
+                }`}
+                value={form.bank}
+                onChange={handleInputChange}
               >
                 <option value='' disabled>
                   은행 선택
                 </option>
-                <option value='bank1'>챌렛뱅크</option>
-                <option value='bank2'>신한은행</option>
-                <option value='bank3'>국민은행</option>
-                <option value='bank4'>농협은행</option>
+                {Object.keys(bankCodes).map((bank) => (
+                  <option key={bank} value={bank}>
+                    {bank}
+                  </option>
+                ))}
               </select>
-              <div className='absolute inset-y-0 right-3 flex items-center pointer-events-none'>
+              <div
+                className='absolute inset-y-0 right-3 flex items-center pointer-events-none'
+                style={{ top: '-16px' }}
+              >
                 <svg
                   className='w-4 h-4 text-gray-600'
                   fill='none'
@@ -83,39 +168,83 @@ function TransferPage() {
             {/* 계좌번호 입력 */}
             <input
               type='text'
-              className='w-full px-4 py-4 bg-gray-100 rounded-lg focus:ring-0 focus:outline-none mb-12'
+              name='accountNumber'
+              className={`w-full px-4 py-4 bg-[#F1F4F6] rounded-lg text-[#6C6C6C] focus:ring-0 focus:outline-none mb-2 ${
+                form.accountNumber
+                  ? 'border-[#00CCCC] border-2'
+                  : 'border-[#F1F4F6] border'
+              }`}
               placeholder='계좌번호 입력'
-              value={accountNumber}
-              onChange={handleAccountNumberChange}
+              value={form.accountNumber}
+              onChange={handleInputChange}
               maxLength={20}
             />
 
+            {accountNumberError && (
+              <p className='text-red-500 text-right text-xs'>
+                {accountNumberError}
+              </p>
+            )}
+
             {/* 보낼 금액 입력 */}
-            <div className='w-full mb-2 border-b border-gray-400'>
+            <div className='w-full mt-12 mb-2'>
               <input
                 type='text'
-                className='w-full px-4 py-2 focus:outline-none focus:ring-0 bg-white text-lg font-medium text-gray-700'
+                name='amount'
+                className={`w-full px-4 py-2 focus:outline-none focus:ring-0 bg-white text-lg font-medium text-[#6C6C6C] border-b-2 ${
+                  form.amount ? 'border-b-[#00CCCC]' : 'border-b-gray-300'
+                }`}
                 placeholder='보낼 금액 입력'
-                value={amount}
-                onChange={handleAmountChange}
+                value={form.amount}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
               />
             </div>
+
+            {errorMessage && (
+              <p className='text-right text-xs text-red-500'>{errorMessage}</p>
+            )}
             <p className='text-right text-xs text-gray-400'>
               최대 {accountBalance?.toLocaleString()}원
             </p>
           </div>
 
           <button
-            onClick={handleSubmit}
-            className={`w-full py-5 ${
-              allChecked ? 'bg-[#00CCCC]' : 'bg-[#C8C8C8] cursor-not-allowed'
-            } text-white text-lg font-medium fixed bottom-0 left-0 right-0`}
+            onClick={handleConfirmTransfer}
+            className={`w-full py-5 ${allChecked ? 'bg-[#00CCCC]' : 'bg-[#C8C8C8] cursor-not-allowed'} text-white text-lg font-medium fixed bottom-0 left-0 right-0`}
             disabled={!allChecked}
           >
             확인
           </button>
         </div>
-      ) : (
+      )}
+
+      {/* 모달 - 송금 확인 화면 */}
+      {isModalOpen && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50'>
+          <div className='bg-white rounded-t-3xl w-full pb-20 relative min-h-[50%]'>
+            <div className='p-6'>
+              <p className='text-xl font-medium text-center text-[#373A3F]'>
+                <span className='text-[#00CCCC]'>{form.accountNumber}</span>으로
+              </p>
+              <p className='text-xl font-medium text-center text-[#373A3F]'>
+                <span className='text-[#00CCCC]'>{form.amount}</span>원을
+                보낼까요?
+              </p>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              className='w-full py-5 bg-[#00CCCC] text-white text-lg font-medium fixed bottom-0 left-0 right-0'
+            >
+              {loading ? '로딩중...' : '송금하기'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 송금 완료 메시지 */}
+      {showConfirmation && (
         <div className='flex flex-col items-center justify-center h-full'>
           <div className='flex flex-col items-center justify-center mt-60'>
             <div className='w-16 h-16 bg-[#00CCCC] rounded-full flex items-center justify-center'>
