@@ -1,6 +1,7 @@
 package com.challet.bankservice.domain.service;
 
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
@@ -53,5 +54,12 @@ public class TransactionAnalysisServiceImpl implements TransactionAnalysisServic
         MonthlyTransactionHistoryListDTO sortedTransactions = MonthlyTransactionHistoryListDTO.from(allTransactions);
 
         return sortedTransactions;
+    }
+
+    @Override
+    public List<CategoryAmountResponseDTO> getTransactionByGroupCategory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        return challetBankRepository.getTransactionByGroupCategory(phoneNumber, requestDTO);
     }
 }

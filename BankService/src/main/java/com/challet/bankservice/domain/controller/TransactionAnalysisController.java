@@ -1,6 +1,7 @@
 package com.challet.bankservice.domain.controller;
 
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.service.TransactionAnalysisService;
 import com.challet.bankservice.global.exception.ExceptionDto;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,5 +52,15 @@ public class TransactionAnalysisController {
     })
     public ResponseEntity<?> getTransactionAnalysisByGenderAndAge() {
         return null;
+    }
+
+    @GetMapping("/transaction-category")
+    public ResponseEntity<List<CategoryAmountResponseDTO>> getTransactionGroupCategory(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
+        @RequestBody MonthlyTransactionRequestDTO requestDTO) {
+
+        List<CategoryAmountResponseDTO> transactionByGroupCategory = transactionAnalysisService.getTransactionByGroupCategory(
+            tokenHeader, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
 }

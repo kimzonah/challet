@@ -3,10 +3,12 @@ package com.challet.bankservice.domain.repository;
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.bankservice.domain.entity.Category;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.QChalletBank;
 import com.challet.bankservice.domain.entity.QChalletBankTransaction;
@@ -166,5 +168,26 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .fetch();
 
         return MonthlyTransactionHistoryListDTO.from(result);
+    }
+
+    @Override
+    public List<CategoryAmountResponseDTO> getTransactionByGroupCategory(
+        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+        QChalletBankTransaction challetBankTransaction = QChalletBankTransaction.challetBankTransaction;
+        QChalletBank challetBank = QChalletBank.challetBank;
+
+        return query
+            .select(Projections.constructor(CategoryAmountResponseDTO.class,
+                challetBankTransaction.category,
+                challetBankTransaction.transactionAmount.sum()))
+            .from(challetBankTransaction)
+            .join(challetBankTransaction.challetBank, challetBank)
+            .where(challetBank.phoneNumber.eq(phoneNumber)
+                .and(challetBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                .and(challetBankTransaction.transactionDatetime.month().eq(requestDTO.month()))
+                .and(challetBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
+                    Category.SHOPPING, Category.TRANSPORT)))
+            .groupBy(challetBankTransaction.category)
+            .fetch();
     }
 }
