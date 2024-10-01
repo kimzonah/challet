@@ -2,7 +2,7 @@ package com.challet.bankservice.domain.repository;
 
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.bankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
@@ -30,6 +30,6 @@ public interface ChalletBankRepositoryCustom {
     MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(String phoneNumber,
         MonthlyTransactionRequestDTO requestDTO);
 
-    List<CategoryAmountResponseDTO> getTransactionByGroupCategory(String phoneNumber,
+    CategoryAmountResponseListDTO getTransactionByGroupCategory(String phoneNumber,
         MonthlyTransactionRequestDTO requestDTO);
 }

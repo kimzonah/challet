@@ -2,6 +2,7 @@ package com.challet.bankservice.domain.service;
 
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.bankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
@@ -57,9 +58,28 @@ public class TransactionAnalysisServiceImpl implements TransactionAnalysisServic
     }
 
     @Override
-    public List<CategoryAmountResponseDTO> getTransactionByGroupCategory(String tokenHeader,
+    public CategoryAmountResponseListDTO getTransactionByGroupCategory(String tokenHeader,
         MonthlyTransactionRequestDTO requestDTO) {
+        
+        /* 수정 필요
+            각 은행별 전화번호로 카테고리 합 구하기
+            마이데이터에 연결된 하나의 전화번호이기 때문에 여러 사용자일 경우의 로직 수정이 필요
+            user 테이블에서 전화번호 리스트도 필요        
+         */
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
-        return challetBankRepository.getTransactionByGroupCategory(phoneNumber, requestDTO);
+
+        CategoryAmountResponseListDTO chBankCategory = challetBankRepository.getTransactionByGroupCategory(
+            phoneNumber, requestDTO);
+
+        CategoryAmountResponseListDTO kbBankCategory = kbBankFeignClient.getTransactionGroupCategory(
+            tokenHeader, requestDTO);
+
+        CategoryAmountResponseListDTO nhBankCategory = nhBankFeignClient.getTransactionGroupCategory(
+            tokenHeader, requestDTO);
+
+        CategoryAmountResponseListDTO shBankCategory = shBankFeignClient.getTransactionGroupCategory(
+            tokenHeader, requestDTO);
+
+        return shBankCategory;
     }
 }

@@ -4,6 +4,7 @@ import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.bankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
@@ -171,12 +172,12 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
     }
 
     @Override
-    public List<CategoryAmountResponseDTO> getTransactionByGroupCategory(
+    public CategoryAmountResponseListDTO getTransactionByGroupCategory(
         String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
         QChalletBankTransaction challetBankTransaction = QChalletBankTransaction.challetBankTransaction;
         QChalletBank challetBank = QChalletBank.challetBank;
 
-        return query
+        List<CategoryAmountResponseDTO> result = query
             .select(Projections.constructor(CategoryAmountResponseDTO.class,
                 challetBankTransaction.category,
                 challetBankTransaction.transactionAmount.sum()))
@@ -189,5 +190,7 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
                     Category.SHOPPING, Category.TRANSPORT)))
             .groupBy(challetBankTransaction.category)
             .fetch();
+
+        return CategoryAmountResponseListDTO.from(result);
     }
 }

@@ -2,6 +2,7 @@ package com.challet.bankservice.domain.controller;
 
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
+import com.challet.bankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.service.TransactionAnalysisService;
 import com.challet.bankservice.global.exception.ExceptionDto;
@@ -44,22 +45,17 @@ public class TransactionAnalysisController {
         return ResponseEntity.status(HttpStatus.OK).body(monthlyTransactionHistory);
     }
 
-    @GetMapping("/age-gender-comparisons")
+    @GetMapping("/transaction-category")
     @Operation(summary = "성별,나이 분석 조회", description = "성별,나이,이번달 데이터를 통해 모든 사용자 계좌 전월 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "분석 성공"),
         @ApiResponse(responseCode = "400", description = "분석 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    public ResponseEntity<?> getTransactionAnalysisByGenderAndAge() {
-        return null;
-    }
-
-    @GetMapping("/transaction-category")
-    public ResponseEntity<List<CategoryAmountResponseDTO>> getTransactionGroupCategory(
+    public ResponseEntity<CategoryAmountResponseListDTO> getTransactionGroupCategory(
         @RequestHeader(value = "Authorization", required = false) String tokenHeader,
         @RequestBody MonthlyTransactionRequestDTO requestDTO) {
 
-        List<CategoryAmountResponseDTO> transactionByGroupCategory = transactionAnalysisService.getTransactionByGroupCategory(
+        CategoryAmountResponseListDTO transactionByGroupCategory = transactionAnalysisService.getTransactionByGroupCategory(
             tokenHeader, requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
