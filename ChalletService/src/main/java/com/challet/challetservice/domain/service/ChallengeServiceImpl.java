@@ -1,6 +1,5 @@
 package com.challet.challetservice.domain.service;
 
-import com.challet.challetservice.domain.dto.request.ActionType;
 import com.challet.challetservice.domain.dto.request.ChallengeJoinRequestDTO;
 import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO;
 import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
@@ -29,7 +28,6 @@ import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
@@ -130,7 +128,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             .orElseThrow(
                 () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        return ChallengeDetailResponseDTO.of(challenge,
+        return ChallengeDetailResponseDTO.fromChallenge(challenge,
             userChallengeRepository.existsByChallengeAndUser(challenge, user),
             challenge.getUserChallenges().size());
     }
@@ -191,7 +189,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             SharedTransaction.fromRequest(request, userChallenge));
         userChallenge.addSpendingAmount(request.transactionAmount());
 
-        return SharedTransactionRegisterResponseDTO.from(savedSharedTransaction, user);
+        return SharedTransactionRegisterResponseDTO.fromSharedTransaction(savedSharedTransaction, user);
 
     }
 
@@ -245,7 +243,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                 SharedTransaction.fromPayment(paymentNotification, userChallenge));
             userChallenge.addSpendingAmount(paymentNotification.transactionAmount());
 
-            SharedTransactionRegisterResponseDTO registerResponseDTO = SharedTransactionRegisterResponseDTO.from(
+            SharedTransactionRegisterResponseDTO registerResponseDTO = SharedTransactionRegisterResponseDTO.fromSharedTransaction(
                 savedSharedTransaction, user);
             messagingTemplate.convertAndSend(
                 "/topic/challenges/" + userChallenge.getChallenge().getId() + "/shared-transactions", registerResponseDTO);

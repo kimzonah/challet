@@ -48,7 +48,7 @@ public record ChallengeDetailResponseDTO(
 
 ) {
 
-    public static ChallengeDetailResponseDTO of(Challenge challenge,
+    public static ChallengeDetailResponseDTO fromChallenge(Challenge challenge,
         boolean isIncluded, int currentParticipants) {
         return ChallengeDetailResponseDTO.builder()
             .challengeId(challenge.getId())

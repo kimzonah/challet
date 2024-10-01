@@ -1,7 +1,6 @@
 package com.challet.challetservice.domain.dto.response;
 
 import com.challet.challetservice.domain.dto.request.ActionType;
-import com.challet.challetservice.domain.dto.request.SharedTransactionRegisterRequestDTO;
 import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,7 +38,7 @@ public record SharedTransactionRegisterResponseDTO(
     String profileImage
 ) {
 
-    public static SharedTransactionRegisterResponseDTO from(SharedTransaction savedSharedTransaction, User user) {
+    public static SharedTransactionRegisterResponseDTO fromSharedTransaction(SharedTransaction savedSharedTransaction, User user) {
         return SharedTransactionRegisterResponseDTO.builder()
             .action(ActionType.ADD)
             .id(savedSharedTransaction.getId())

@@ -3,7 +3,6 @@ package com.challet.challetservice.domain.dto.response;
 import com.challet.challetservice.domain.entity.Category;
 import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.Reward;
-import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
@@ -36,7 +35,7 @@ public record RewardDetailResponseDTO(
 
 ) {
 
-    public static RewardDetailResponseDTO from(Reward reward, UserChallenge userChallenge) {
+    public static RewardDetailResponseDTO fromReward(Reward reward, UserChallenge userChallenge) {
         Challenge challenge = userChallenge.getChallenge();
         return RewardDetailResponseDTO.builder()
             .title(challenge.getTitle())
