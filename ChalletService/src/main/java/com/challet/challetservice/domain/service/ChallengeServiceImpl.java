@@ -303,19 +303,6 @@ public class ChallengeServiceImpl implements ChallengeService {
         return SharedTransactionUpdateResponseDTO.fromRequest(request, transactionId);
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    @Transactional
-    public void startChallenge() {
-
-        List<Challenge> challenges = challengeRepository.getChallengesToStart(LocalDate.now());
-        for(Challenge challenge : challenges) {
-            challenge.startChallenge();
-            log.info(challenge.getId() + " Challenge started");
-        }
-        challengeRepository.saveAll(challenges);
-
-    }
-
     public static String generateCode(int length) {
         StringBuilder code = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
