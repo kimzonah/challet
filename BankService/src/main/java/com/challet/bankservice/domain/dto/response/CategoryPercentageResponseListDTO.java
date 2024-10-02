@@ -6,13 +6,13 @@ import lombok.Builder;
 
 @Builder
 @Schema(description = "카테고리별 합계")
-public record CategoryAmountResponseListDTO(
+public record CategoryPercentageResponseListDTO(
     
     @Schema(description = "카테고리 리스트")
-    List<CategoryAmountResponseDTO> categoryList
+    List<CategoryPercentageResponseDTO> categoryList
 ){
-    public static CategoryAmountResponseListDTO from(List<CategoryAmountResponseDTO> categoryList){
-        return CategoryAmountResponseListDTO
+    public static CategoryPercentageResponseListDTO fromCategoryList(List<CategoryPercentageResponseDTO> categoryList){
+        return CategoryPercentageResponseListDTO
             .builder()
             .categoryList(categoryList)
             .build();

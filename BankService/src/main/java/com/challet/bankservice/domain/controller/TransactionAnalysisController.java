@@ -1,8 +1,7 @@
 package com.challet.bankservice.domain.controller;
 
 import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
-import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
-import com.challet.bankservice.domain.dto.response.CategoryAmountResponseListDTO;
+import com.challet.bankservice.domain.dto.response.CategoryPercentageResponseListDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.service.TransactionAnalysisService;
 import com.challet.bankservice.global.exception.ExceptionDto;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,11 +49,11 @@ public class TransactionAnalysisController {
         @ApiResponse(responseCode = "200", description = "분석 성공"),
         @ApiResponse(responseCode = "400", description = "분석 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
     })
-    public ResponseEntity<CategoryAmountResponseListDTO> getTransactionGroupCategory(
+    public ResponseEntity<CategoryPercentageResponseListDTO> getTransactionGroupCategory(
         @RequestHeader(value = "Authorization", required = false) String tokenHeader,
         @RequestBody MonthlyTransactionRequestDTO requestDTO) {
 
-        CategoryAmountResponseListDTO transactionByGroupCategory = transactionAnalysisService.getTransactionByGroupCategory(
+        CategoryPercentageResponseListDTO transactionByGroupCategory = transactionAnalysisService.getTransactionByGroupCategory(
             tokenHeader, requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }

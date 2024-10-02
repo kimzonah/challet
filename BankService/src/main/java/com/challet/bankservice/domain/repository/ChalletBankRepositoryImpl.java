@@ -5,7 +5,6 @@ import com.challet.bankservice.domain.dto.request.UserInfoMessageRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.CategoryAmountResponseDTO;
-import com.challet.bankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
@@ -21,7 +20,6 @@ import jakarta.persistence.LockModeType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -187,32 +185,48 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
         Map<Category, Long> categorySums = new HashMap<>();
 
         for (int i = 0; i < phoneNumbers.size(); i += BATCH_SIZE) {
-            int end = Math.min(i + BATCH_SIZE, phoneNumbers.size());
-            List<String> subListPhoneNumbers = phoneNumbers.subList(i, end);
-
-            List<CategoryAmountResponseDTO> results = query
-                .select(Projections.constructor(CategoryAmountResponseDTO.class,
-                    challetBankTransaction.category,
-                    challetBankTransaction.transactionAmount.sum()))
-                .from(challetBankTransaction)
-                .join(challetBankTransaction.challetBank, challetBank)
-                .where(
-                    challetBank.phoneNumber.in(subListPhoneNumbers)
-                        .and(
-                            challetBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
-                        .and(challetBankTransaction.transactionDatetime.month()
-                            .eq(requestDTO.month()))
-                        .and(challetBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
-                            Category.SHOPPING, Category.TRANSPORT)))
-                .groupBy(challetBankTransaction.category)
-                .fetch();
-
-            for (CategoryAmountResponseDTO result : results) {
-                categorySums.put(result.category(),
-                    categorySums.getOrDefault(result.category(), 0l) + result.totalAmount());
-            }
+            List<String> subListPhoneNumbers = subList(i, phoneNumbers);
+            List<CategoryAmountResponseDTO> results = getCategoryList(requestDTO,
+                challetBankTransaction,
+                challetBank, subListPhoneNumbers);
+            addCategoryList(results, categorySums);
         }
-
         return categorySums;
+    }
+
+    private List<String> subList(int start, List<String> phoneNumbers) {
+        int end = Math.min(start + BATCH_SIZE, phoneNumbers.size());
+        return phoneNumbers.subList(start, end);
+    }
+
+    private List<CategoryAmountResponseDTO> getCategoryList(MonthlyTransactionRequestDTO requestDTO,
+        QChalletBankTransaction challetBankTransaction, QChalletBank challetBank,
+        List<String> subListPhoneNumbers) {
+        return query
+            .select(Projections.constructor(CategoryAmountResponseDTO.class,
+                challetBankTransaction.category,
+                challetBankTransaction.transactionAmount.sum(),
+                challetBank.phoneNumber.countDistinct()))
+            .from(challetBankTransaction)
+            .join(challetBankTransaction.challetBank, challetBank)
+            .where(
+                challetBank.phoneNumber.in(subListPhoneNumbers)
+                    .and(
+                        challetBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                    .and(challetBankTransaction.transactionDatetime.month()
+                        .eq(requestDTO.month()))
+                    .and(challetBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
+                        Category.SHOPPING, Category.TRANSPORT, Category.ETC)))
+            .groupBy(challetBankTransaction.category)
+            .fetch();
+    }
+
+    private static void addCategoryList(List<CategoryAmountResponseDTO> results,
+        Map<Category, Long> categorySums) {
+        for (CategoryAmountResponseDTO result : results) {
+            categorySums.put(result.category(),
+                categorySums.getOrDefault(result.category(), 0l) + (result.totalAmount()
+                    / result.count()));
+        }
     }
 }
