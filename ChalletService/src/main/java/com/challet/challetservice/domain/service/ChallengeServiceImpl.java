@@ -121,6 +121,11 @@ public class ChallengeServiceImpl implements ChallengeService {
         if(category == null) {
             return searchedChallengeRepository.findByStatusAndTitleContaining(status, keyword);
         }
+
+        if(keyword == null) {
+            return searchedChallengeRepository.findByStatusAndCategoryContaining(status, category);
+        }
+
         return searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(
             status , category, keyword);
     }
