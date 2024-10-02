@@ -99,7 +99,7 @@ export const useChallengeApi = () => {
       let url =
         `${API_BASE_URL}/api/challet/challenges` +
         (isMyChallenges ? '/my-challenges' : ''); // URL 설정
-      let params = { keyword, category }; // 파라미터 설정
+      let params = { category, keyword }; // 파라미터 설정
 
       const response = await AxiosInstance.get(
         url,
