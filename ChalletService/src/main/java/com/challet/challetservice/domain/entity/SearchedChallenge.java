@@ -2,9 +2,6 @@ package com.challet.challetservice.domain.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
