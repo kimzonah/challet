@@ -12,6 +12,9 @@ public record CategoryAmountResponseDTO(
     Category category,
     
     @Schema(description = "합계")
-    Long totalAmount
+    Long totalAmount,
+
+    @Schema(description = "사람의 수")
+    Long count
 ){
 }

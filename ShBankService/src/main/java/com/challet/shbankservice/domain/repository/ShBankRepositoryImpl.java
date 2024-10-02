@@ -1,10 +1,10 @@
 package com.challet.shbankservice.domain.repository;
 
+import com.challet.shbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseDTO;
-import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
@@ -16,7 +16,9 @@ import com.challet.shbankservice.domain.entity.ShBank;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,6 +26,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
+
+    private static final int BATCH_SIZE = 1000;
 
     private final JPAQueryFactory query;
 
@@ -146,26 +150,55 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
     }
 
     @Override
-    public CategoryAmountResponseListDTO getTransactionByGroupCategory(
-        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+    public Map<Category, Long> getTransactionByGroupCategory(
+        BankToAnalysisMessageRequestDTO requestDTO) {
         QShBankTransaction shBankTransaction = QShBankTransaction.shBankTransaction;
         QShBank shBank = QShBank.shBank;
 
-        List<CategoryAmountResponseDTO> result = query
+        List<String> phoneNumbers = requestDTO.getUserInfo();
+        Map<Category, Long> categorySums = new HashMap<>();
+
+        for(int i=0; i<phoneNumbers.size(); i+=BATCH_SIZE) {
+            List<String> subListPhoneNumbers = subList(i, phoneNumbers);
+
+            List<CategoryAmountResponseDTO> results = getCategoryList(requestDTO, shBankTransaction,
+                shBank, subListPhoneNumbers);
+
+            addCategoryList(results, categorySums);
+        }
+        return categorySums;
+    }
+
+    private List<String> subList(int i, List<String> phoneNumbers){
+        int end = Math.min(i + BATCH_SIZE, phoneNumbers.size());
+        return phoneNumbers.subList(i, end);
+    }
+
+    private List<CategoryAmountResponseDTO> getCategoryList(BankToAnalysisMessageRequestDTO requestDTO,
+        QShBankTransaction shBankTransaction, QShBank shBank, List<String> subListPhoneNumbers) {
+        return query
             .select(Projections.constructor(CategoryAmountResponseDTO.class,
                 shBankTransaction.category,
-                shBankTransaction.transactionAmount.sum()))
+                shBankTransaction.transactionAmount.sum(),
+                shBank.phoneNumber.countDistinct()))
             .from(shBankTransaction)
             .join(shBankTransaction.shBank, shBank)
-            .where(shBank.phoneNumber.eq(phoneNumber)
-                .and(shBank.myDataStatus.isTrue())
-                .and(shBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
-                .and(shBankTransaction.transactionDatetime.month().eq(requestDTO.month()))
-                .and(shBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
-                    Category.SHOPPING, Category.TRANSPORT)))
+            .where(
+                shBank.phoneNumber.in(subListPhoneNumbers)
+                    .and(shBank.myDataStatus.isTrue())
+                    .and(shBankTransaction.transactionDatetime.year().eq(requestDTO.getYear()))
+                    .and(shBankTransaction.transactionDatetime.month().eq(requestDTO.getMonth()))
+                    .and(shBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
+                        Category.SHOPPING, Category.TRANSPORT, Category.ETC)))
             .groupBy(shBankTransaction.category)
             .fetch();
+    }
 
-        return CategoryAmountResponseListDTO.from(result);
+    private static void addCategoryList(List<CategoryAmountResponseDTO> results,
+        Map<Category, Long> categorySums) {
+        for (CategoryAmountResponseDTO result : results) {
+            categorySums.put(result.category(),
+                categorySums.getOrDefault(result.category(), 0l) + (result.totalAmount()/result.count()));
+        }
     }
 }
