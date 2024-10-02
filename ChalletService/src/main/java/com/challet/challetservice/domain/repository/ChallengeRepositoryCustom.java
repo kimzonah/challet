@@ -10,4 +10,5 @@ public interface ChallengeRepositoryCustom {
 
     List<Challenge> getChallengesToStart(LocalDate today);
 
+    List<Challenge> getChallengesToEnd(LocalDate now);
 }

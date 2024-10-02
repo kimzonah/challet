@@ -32,7 +32,7 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
 
     @Override
     @Transactional(readOnly = true)
-    public ChallengeRoomHistoryResponseDTO findByChallenge(Challenge challenge, User user, Long cursor) {
+    public ChallengeRoomHistoryResponseDTO findHistoryByChallenge(Challenge challenge, User user, Long cursor) {
 
         QSharedTransaction qSharedTransaction = QSharedTransaction.sharedTransaction;
         QUserChallenge qUserChallenge = QUserChallenge.userChallenge;
@@ -146,6 +146,15 @@ public class SharedTransactionRepositoryImpl implements SharedTransactionReposit
             .fetchOne());
 
         return sharedUser.map(user::equals).orElse(false);
+    }
+
+    @Override
+    public List<SharedTransaction> findByChallengeIdWithLock(Long id) {
+        QSharedTransaction qSharedTransaction = QSharedTransaction.sharedTransaction;
+        return queryFactory
+            .selectFrom(qSharedTransaction)
+            .where(qSharedTransaction.userChallenge.challenge.id.eq(id))
+            .fetch();
     }
 
 

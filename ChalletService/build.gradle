@@ -65,6 +65,10 @@ dependencies {
 
     // openfeign
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.0'
+
+    // spring batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
 }
 
 dependencyManagement {

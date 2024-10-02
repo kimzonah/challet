@@ -85,4 +85,8 @@ public class Challenge {
         this.status = ChallengeStatus.PROGRESSING;
     }
 
+    public void endChallenge(){
+        this.status = ChallengeStatus.END;
+    }
+
 }

@@ -48,4 +48,14 @@ public class ChallengeRepositoryImpl implements ChallengeRepositoryCustom {
             .fetch();
     }
 
+    @Override
+    public List<Challenge> getChallengesToEnd(LocalDate today) {
+        QChallenge qChallenge = QChallenge.challenge;
+        return queryFactory
+            .selectFrom(qChallenge)
+            .where(qChallenge.endDate.before(today)
+                .and(qChallenge.status.eq(ChallengeStatus.PROGRESSING)))
+            .fetch();
+    }
+
 }
