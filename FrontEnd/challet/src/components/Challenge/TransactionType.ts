@@ -5,7 +5,7 @@ export interface Transaction {
   nickname: string;
   profileImage: string;
   sharedTransactionId: number;
-  withdrawal: string;
+  deposit: string;
   transactionAmount: number;
   transactionDateTime: string;
   content: string;

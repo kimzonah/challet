@@ -12,7 +12,7 @@ const SharedTransactionCreate = () => {
   const { file2URL } = useFile2URL(); // AWS S3 업로드 함수 사용
 
   const [image, setImage] = useState<File | null>(null); // 이미지 파일
-  const [withdrawal, setWithdrawal] = useState(''); // 출금처
+  const [deposit, setdeposit] = useState(''); // 출금처
   const [transactionAmount, setTransactionAmount] = useState<number | ''>(''); // 거래 금액
   const [content, setContent] = useState(''); // 내용
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
@@ -32,7 +32,7 @@ const SharedTransactionCreate = () => {
     e.preventDefault();
 
     // 결제 항목 및 결제 금액 필수 값 체크
-    if (!withdrawal || transactionAmount === '') {
+    if (!deposit || transactionAmount === '') {
       setErrorMessage('결제 항목과 결제 금액은 빈칸이 될 수 없습니다.');
       setIsError(true); // 에러 모달 표시
       return; // 필수 값이 없을 경우 처리 중단
@@ -51,7 +51,7 @@ const SharedTransactionCreate = () => {
       const webSocketMessage = {
         action: 'ADD', // DTO에서 요구하는 ActionType
         image: imageUrl, // 업로드된 이미지 URL
-        withdrawal, // 출금처
+        deposit, // 출금처
         transactionAmount: Number(transactionAmount), // 거래 금액
         content, // 결제 내용
       };
@@ -172,10 +172,10 @@ const SharedTransactionCreate = () => {
             <input
               type='text'
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
-              value={withdrawal}
+              value={deposit}
               maxLength={12}
               placeholder='직접 추가할 항목을 작성해주세요'
-              onChange={(e) => setWithdrawal(e.target.value)}
+              onChange={(e) => setdeposit(e.target.value)}
               required
             />
           </div>

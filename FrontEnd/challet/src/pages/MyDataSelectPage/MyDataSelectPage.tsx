@@ -10,7 +10,7 @@ type AgreementType = {
   serviceAgreement: boolean;
   financialTransaction: boolean;
   personalInfoUsage: boolean;
-  withdrawalConsent: boolean;
+  depositConsent: boolean;
   thirdPartyInfo: boolean;
 };
 
@@ -39,7 +39,7 @@ const MyDataSelectPage = () => {
     serviceAgreement: false,
     financialTransaction: false,
     personalInfoUsage: false,
-    withdrawalConsent: false,
+    depositConsent: false,
     thirdPartyInfo: false,
   });
   const [allChecked, setAllChecked] = useState(false);
@@ -63,7 +63,7 @@ const MyDataSelectPage = () => {
       serviceAgreement: newState,
       financialTransaction: newState,
       personalInfoUsage: newState,
-      withdrawalConsent: newState,
+      depositConsent: newState,
       thirdPartyInfo: newState,
     }));
   };
@@ -159,7 +159,7 @@ const MyDataSelectPage = () => {
       serviceAgreement: '오픈뱅킹 서비스 동의(필수)',
       financialTransaction: '오픈뱅킹 금융거래제공동의(필수)',
       personalInfoUsage: '오픈뱅킹 개인정보 수집이용제공 동의(필수)',
-      withdrawalConsent: '오픈뱅킹 출금/조회 동의(필수)',
+      depositConsent: '오픈뱅킹 출금/조회 동의(필수)',
       thirdPartyInfo: '출금 이체를 위한 개인정보 제3자제공동의(필수)',
     };
     return labels[key];

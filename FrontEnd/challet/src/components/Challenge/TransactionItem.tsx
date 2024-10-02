@@ -62,7 +62,7 @@ const TransactionListItem = ({
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {transaction.withdrawal}
+                    {transaction.deposit}
                     <span className='ml-2'>
                       {transaction.transactionAmount.toLocaleString()}원
                     </span>
@@ -135,7 +135,7 @@ const TransactionListItem = ({
                       textOverflow: 'ellipsis',
                     }}
                   >
-                    {transaction.withdrawal}
+                    {transaction.deposit}
                     <span className='ml-2'>
                       {transaction.transactionAmount.toLocaleString()}원
                     </span>

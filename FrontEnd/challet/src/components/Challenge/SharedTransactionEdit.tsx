@@ -11,7 +11,7 @@ const SharedTransactionEdit = () => {
   const { editTransaction } = useChallengeApi(); // 트랜잭션 수정 및 더미 데이터
   const { transaction } = location.state || {}; // SharedTransactionDetail에서 전달된 거래 데이터
   const [image, setImage] = useState<File | null>(null); // 이미지 파일
-  const [withdrawal, setWithdrawal] = useState(''); // 출금처
+  const [deposit, setdeposit] = useState(''); // 출금처
   const [transactionAmount, setTransactionAmount] = useState<number | ''>(''); // 거래 금액
   const [content, setContent] = useState(''); // 내용
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
@@ -20,7 +20,7 @@ const SharedTransactionEdit = () => {
   useEffect(() => {
     if (transaction) {
       // 거래 내역에서 전달된 값들로 기본 값을 설정
-      setWithdrawal(transaction.withdrawal);
+      setdeposit(transaction.deposit);
       setTransactionAmount(transaction.transactionAmount);
       setContent(transaction.content);
       setImage(null); // 기본 이미지는 새로 등록하지 않음 (이미지 미리보기를 위한 설정)
@@ -41,7 +41,7 @@ const SharedTransactionEdit = () => {
     // JSON 형태로 보낼 데이터 구조 생성
     const formData = {
       image: image ? URL.createObjectURL(image) : transaction.image, // 기존 이미지가 없으면 빈 문자열, 아니면 그대로 사용
-      withdrawal, // 출금처
+      deposit, // 출금처
       transactionAmount: Number(transactionAmount), // 거래 금액
       content, // 내용
     };
@@ -154,10 +154,10 @@ const SharedTransactionEdit = () => {
             <input
               type='text'
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
-              value={withdrawal}
+              value={deposit}
               maxLength={12}
               placeholder='직접 추가할 항목을 작성해주세요'
-              onChange={(e) => setWithdrawal(e.target.value)}
+              onChange={(e) => setdeposit(e.target.value)}
               required
             />
           </div>

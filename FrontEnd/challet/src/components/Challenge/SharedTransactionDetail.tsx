@@ -63,8 +63,8 @@ const SharedTransactionDetail = () => {
             onClick={() => navigate(-1)}
           />
           <p className='text-lg font-semibold'>
-            {transactionDetail.withdrawal} |{' '}
-            {transactionDetail.transactionAmount}원
+            {transactionDetail.deposit} | {transactionDetail.transactionAmount}
+            원
           </p>
           {transactionDetail.userId === userId ? (
             <FontAwesomeIcon
