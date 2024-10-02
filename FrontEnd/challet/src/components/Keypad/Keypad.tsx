@@ -57,7 +57,7 @@ const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
   return (
     <>
       {/* 비밀번호 표시 */}
-      <div className='pin-display-container'>
+      <div className='pin-display-container pb-40'>
         {[...Array(maxLength)].map((_, i) => (
           <span
             key={i}
@@ -114,14 +114,18 @@ const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
               </td>
               <td>
                 <button
-                  className='keypad'
+                  className='keypad-button'
                   onClick={() => handleInputPin(shuffledKeys[9])}
                 >
                   {shuffledKeys[9]}
                 </button>
               </td>
               <td>
-                <button className='keypad-button' onClick={handleDelete}>
+                <button
+                  className='keypad-button flex justify-center items-center'
+                  style={{ height: '48px', width: '48px', marginLeft: '36px' }} // 필요한 만큼 margin-left 조정
+                  onClick={handleDelete}
+                >
                   <FaBackspace size={24} />
                 </button>
               </td>

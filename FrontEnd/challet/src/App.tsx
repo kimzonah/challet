@@ -33,6 +33,8 @@ import SharedTransactionDetail from './components/Challenge/SharedTransactionDet
 import SharedTransactionEdit from './components/Challenge/SharedTransactionEdit';
 import ImageUpload from './pages/TestPage/ImageUpload';
 import WebSocketTest from './pages/TestPage/WebSocketTest';
+import CalendarSpendingPage from './pages/AnalysisPage/CalendarSpendingPage';
+import CalendarSpendingPage2 from './pages/AnalysisPage/CalendarSpendingPage2';
 import './assets/App.css';
 
 function App() {
@@ -51,6 +53,8 @@ function App() {
   const matchTransfer = useMatch('/transfer');
   const matchmydataselect = useMatch('/mydataselect');
   const PhoneCheck = useMatch('/phone-check');
+  const Login = useMatch('/login');
+  const Main = useMatch('/');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
@@ -65,7 +69,9 @@ function App() {
     matchpayresult ||
     matchTransfer ||
     matchmydataselect ||
-    PhoneCheck;
+    PhoneCheck ||
+    Login ||
+    Main;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
@@ -107,9 +113,16 @@ function App() {
           path='/sharedTransactionEdit'
           element={<SharedTransactionEdit />}
         />
-
         <Route path='/test' element={<ImageUpload />} />
         <Route path='/websocket-test' element={<WebSocketTest />}></Route>
+        <Route
+          path='/calendarSpendingPage'
+          element={<CalendarSpendingPage />}
+        />
+        <Route
+          path='/calendarSpendingPage2'
+          element={<CalendarSpendingPage2 />}
+        />
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
