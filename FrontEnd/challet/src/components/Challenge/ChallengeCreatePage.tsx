@@ -88,10 +88,14 @@ const ChallengeCreatePage: React.FC = () => {
   // 오늘 날짜 + 6 (일주일) 계산
   const startDateLimit = new Date();
   startDateLimit.setDate(startDateLimit.getDate() + 6);
-  // 종료 날짜 제한을 동적으로 지정: 시작 날짜로부터 1년 뒤까지
+
+  // 종료 날짜 제한을 동적으로 지정
+  // startDate가 없을 경우 오늘 날짜의 1년 뒤로 설정
   const endDateLimit = startDate ? new Date(startDate.getTime()) : new Date();
   if (startDate) {
     endDateLimit.setFullYear(startDate.getFullYear() + 1);
+  } else {
+    endDateLimit.setFullYear(endDateLimit.getFullYear() + 1); // 오늘 날짜 기준 1년 뒤
   }
 
   return (
