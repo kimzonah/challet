@@ -4,29 +4,26 @@ import AxiosInstance from '../../api/axiosInstance';
 import useAccountStore from '../../store/useAccountStore';
 import { AxiosError } from 'axios';
 
-// QR 데이터의 형식을 정의하는 인터페이스
 interface ParsedData {
   deposit: string;
   transactionAmount: number;
   category: string;
 }
 
-const PayResult = () => {
+function PayResult() {
   const location = useLocation();
   const navigate = useNavigate();
   const { accountInfo } = useAccountStore();
   const { qrData } = location.state || {};
   const [hasSentRequest, setHasSentRequest] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null); // 결제 성공  상태
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 결제 실패 메시지 상태
-
-  // qrData가 JSON 형식일 경우 파싱
   const parsedData: ParsedData | null = (() => {
     try {
       return qrData ? JSON.parse(qrData) : null;
     } catch (error) {
-      console.error('Error parsing QR data:', error);
+      console.error('QR 데이터를 파싱하는 중 오류가 발생했습니다:', error);
       return null;
     }
   })();
@@ -34,7 +31,6 @@ const PayResult = () => {
   useEffect(() => {
     if (!accountInfo || !parsedData || hasSentRequest) return;
 
-    // 결제 요청 함수
     const sendPaymentRequest = async () => {
       try {
         const data = {
@@ -49,23 +45,17 @@ const PayResult = () => {
         });
 
         setPaymentSuccess(true);
-        console.log('결제 성공');
-        console.log(parsedData);
-        console.log(data);
+        console.log('결제 성공:', parsedData, data);
       } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-          if (error.response && error.response.status === 400) {
-            setErrorMessage('잔액이 부족합니다.');
-          } else {
-            setErrorMessage('결제 실패');
-          }
+        if (error instanceof AxiosError && error.response?.status === 400) {
+          setErrorMessage('잔액이 부족합니다.');
         } else {
           setErrorMessage('결제 실패');
         }
         setPaymentSuccess(false);
         console.error('결제 실패:', error);
       } finally {
-        setHasSentRequest(true); // 요청이 한 번만 보내지도록 설정
+        setHasSentRequest(true);
       }
     };
 
@@ -101,7 +91,7 @@ const PayResult = () => {
 
   return (
     <div className='min-h-screen bg-white flex flex-col items-center justify-between p-4 relative'>
-      {paymentSuccess ? ( // 결제 성공일 때의 화면
+      {paymentSuccess ? (
         <div className='flex flex-col items-center justify-center flex-grow w-full'>
           <div className='flex flex-col items-center mt-16'>
             <div className='w-16 h-16 bg-teal-400 rounded-full flex items-center justify-center'>
@@ -128,12 +118,11 @@ const PayResult = () => {
             renderPaymentDetails()
           ) : (
             <p className='text-[#585962] text-xs mt-4 text-center'>
-              No QR data found.
+              QR 데이터를 찾을 수 없습니다.
             </p>
           )}
         </div>
       ) : (
-        // 결제 실패일 때의 화면
         <div className='flex flex-col items-center justify-center flex-grow w-full'>
           <div className='flex flex-col items-center mt-16'>
             <div className='w-16 h-16 bg-red-400 rounded-full flex items-center justify-center'>
@@ -169,6 +158,6 @@ const PayResult = () => {
       </button>
     </div>
   );
-};
+}
 
 export default PayResult;

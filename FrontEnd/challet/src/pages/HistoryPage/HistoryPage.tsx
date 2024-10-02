@@ -23,7 +23,7 @@ interface TransactionResponse {
 
 const HistoryPage = () => {
   const navigate = useNavigate();
-  const { accountInfo } = useAccountStore(); // 스토어에서 accountInfo 가져오기
+  const { accountInfo } = useAccountStore();
   const [transactionHistory, setTransactionHistory] = useState<Transaction[]>(
     []
   );

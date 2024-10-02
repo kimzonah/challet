@@ -22,7 +22,7 @@ const WalletBalanceSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { setAccountInfo: setStoreAccountInfo } = useAccountStore(); // 스토어에 계좌 정보 업데이트 함수
+  const { setAccountInfo: setStoreAccountInfo } = useAccountStore();
   const { accessToken } = useAuthStore();
 
   const fetchAccountInfo = useCallback(async () => {
@@ -72,9 +72,6 @@ const WalletBalanceSection = () => {
   };
 
   useEffect(() => {
-    console.log(
-      'WalletBalanceSection 컴포넌트가 마운트되었습니다. 계좌 정보를 불러옵니다.'
-    );
     fetchAccountInfo();
   }, [fetchAccountInfo]);
 
@@ -89,7 +86,7 @@ const WalletBalanceSection = () => {
   }
 
   if (error || !accountInfo) {
-    // 에러가 발생했거나 계좌 정보가 없는 경우
+    // 에러가 발생했거나 계좌 정보가 없을 때
     return (
       <div className='w-full bg-white p-4 rounded-lg shadow-md mb-8'>
         <p className='text-xs font-bold mt-2 mb-4'>
@@ -99,10 +96,10 @@ const WalletBalanceSection = () => {
     );
   }
 
-  // 계좌 정보가 있을 때의 화면 표시
+  // 계좌 정보가 있을 때
   return (
     <div
-      className=' bg-white p-4 rounded-lg shadow-md mb-8 cursor-pointer' // cursor-pointer로 커서 스타일 추가
+      className=' bg-white p-4 rounded-lg shadow-md mb-8 cursor-pointer'
       onClick={() => navigate('/history')}
       style={{ width: '97%' }}
     >
@@ -117,13 +114,24 @@ const WalletBalanceSection = () => {
       <div className='flex justify-end gap-2'>
         <button
           className='border border-gray-300 rounded-lg px-3 py-1 text-sm text-[#6C6C6C] bg-white'
-          onClick={() => navigate('/transfer')}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate('/transfer', {
+              state: {
+                accountBalance: accountInfo.accountBalance,
+                accountId: accountInfo.id,
+              },
+            });
+          }}
         >
           송금
         </button>
         <button
           className='border border-gray-300 rounded-lg px-3 py-1 text-sm text-[#6C6C6C] bg-white'
-          onClick={() => navigate('/history')}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate('/history');
+          }}
         >
           내역
         </button>
