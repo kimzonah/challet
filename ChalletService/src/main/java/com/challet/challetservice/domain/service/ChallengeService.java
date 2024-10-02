@@ -7,6 +7,7 @@ import com.challet.challetservice.domain.dto.request.SharedTransactionUpdateRequ
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
+import com.challet.challetservice.domain.dto.response.SearchedChallengesResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionUpdateResponseDTO;
 import com.challet.challetservice.domain.dto.response.SpendingAmountResponseDTO;
@@ -18,7 +19,7 @@ public interface ChallengeService {
 
     ChallengeListResponseDTO getMyChallenges(String header);
 
-    ChallengeListResponseDTO searchChallenges(String header, String keyword, String category);
+    SearchedChallengesResponseDTO searchChallenges(String header, String category, String keyword);
 
     ChallengeDetailResponseDTO getChallengeDetail(String header, Long id);
 

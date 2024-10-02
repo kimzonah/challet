@@ -8,11 +8,14 @@ import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO
 import com.challet.challetservice.domain.dto.response.ChallengeInfoResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
+import com.challet.challetservice.domain.dto.response.SearchedChallengesResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionRegisterResponseDTO;
 import com.challet.challetservice.domain.dto.response.SharedTransactionUpdateResponseDTO;
 import com.challet.challetservice.domain.dto.response.SpendingAmountResponseDTO;
+import com.challet.challetservice.domain.elasticsearch.repository.SearchedChallengeRepository;
 import com.challet.challetservice.domain.entity.Challenge;
 import com.challet.challetservice.domain.entity.ChallengeStatus;
+import com.challet.challetservice.domain.entity.SearchedChallenge;
 import com.challet.challetservice.domain.entity.SharedTransaction;
 import com.challet.challetservice.domain.entity.User;
 import com.challet.challetservice.domain.entity.UserChallenge;
@@ -49,6 +52,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserChallengeRepositoryImpl userChallengeRepositoryImpl;
+    private final SearchedChallengeRepository searchedChallengeRepository;
 
     @Override
     @Transactional
@@ -66,6 +70,8 @@ public class ChallengeServiceImpl implements ChallengeService {
         // 챌린지 생성
         Challenge challenge = Challenge.createChallenge(request, code);
         challengeRepository.save(challenge);
+
+        searchedChallengeRepository.save(SearchedChallenge.fromChallenge(challenge));
 
         // 생성한 유저는 참여 멤버로 추가
         UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
@@ -98,23 +104,16 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     @Transactional(readOnly = true)
-    public ChallengeListResponseDTO searchChallenges(String header, String keyword,
-        String category) {
+    public SearchedChallengesResponseDTO searchChallenges(String header, String category,
+        String keyword) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        List<Challenge> searchChallenges = challengeRepositoryImpl.searchChallengeByKeywordAndCategory(
-            keyword, category);
-        if (searchChallenges == null || searchChallenges.isEmpty()) {
-            return null;
-        }
-        List<ChallengeInfoResponseDTO> result = searchChallenges.stream()
-            .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge,
-                challenge.getUserChallenges().size()))
-            .toList();
+        List<SearchedChallenge> result = searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(
+            ChallengeStatus.RECRUITING.toString(), category, keyword);
 
-        return new ChallengeListResponseDTO(result);
+        return SearchedChallengesResponseDTO.fromSearchedChallenges(result);
     }
 
     @Override
@@ -167,6 +166,23 @@ public class ChallengeServiceImpl implements ChallengeService {
         UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
         userChallengeRepository.save(userChallenge);
 
+        SearchedChallenge searchedChallenge = searchedChallengeRepository.findById(challenge.getId())
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+
+        SearchedChallenge updatedChallenge = SearchedChallenge.builder()
+            .challengeId(searchedChallenge.challengeId())
+            .status(searchedChallenge.status())
+            .category(searchedChallenge.category())
+            .title(searchedChallenge.title())
+            .spendingLimit(searchedChallenge.spendingLimit())
+            .startDate(searchedChallenge.startDate())
+            .endDate(searchedChallenge.endDate())
+            .maxParticipants(searchedChallenge.maxParticipants())
+            .currentParticipants(searchedChallenge.currentParticipants() + 1)
+            .isPublic(searchedChallenge.isPublic())
+            .build();
+
+        searchedChallengeRepository.save(updatedChallenge);
     }
 
     @Override
