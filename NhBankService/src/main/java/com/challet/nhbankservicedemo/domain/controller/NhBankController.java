@@ -1,10 +1,15 @@
 package com.challet.nhbankservicedemo.domain.controller;
 
 import com.challet.nhbankservicedemo.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.nhbankservicedemo.domain.dto.request.BankToAnalysisMessageRequestDTO;
+import com.challet.nhbankservicedemo.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.BankTransferResponseDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.CategoryAmountResponseListDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseListDTO;
+import com.challet.nhbankservicedemo.domain.entity.Category;
 import com.challet.nhbankservicedemo.domain.service.NhBankService;
 import com.challet.nhbankservicedemo.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -111,5 +117,29 @@ public class NhBankController {
         @RequestParam String keyword,
         @RequestParam String category) {
         return null;
+    }
+
+    @PostMapping("/transactions-monthly")
+    @Operation(summary = "한달 결제내역", description = "year, month를 통해 거래 내역 검색")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "검색 성공"),
+        @ApiResponse(responseCode = "400", description = "검색 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<MonthlyTransactionHistoryListDTO> getMonthlyTransactionHistory(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
+        @RequestBody MonthlyTransactionRequestDTO requestDTO
+    ) {
+        MonthlyTransactionHistoryListDTO monthlyTransactionHistory = nhBankService.getMonthlyTransactionHistory(
+            tokenHeader, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(monthlyTransactionHistory);
+    }
+
+    @PostMapping("/transaction-category")
+    public ResponseEntity<Map<Category, Long>> getTransactionGroupCategory(
+        @RequestBody BankToAnalysisMessageRequestDTO requestDTO) {
+
+        Map<Category, Long> transactionByGroupCategory = nhBankService.getTransactionByGroupCategory(
+            requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
 }
