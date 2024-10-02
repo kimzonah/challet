@@ -52,8 +52,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  elasticsearch:
-    uris: "challet.world:9200"
 
 
 springdoc:
