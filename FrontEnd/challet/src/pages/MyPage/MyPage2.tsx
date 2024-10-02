@@ -19,7 +19,7 @@ const MyPage = () => {
   const { clearAuthData } = useAuthStore();
   const [nickname, setNickname] = useState(''); // API 응답에서 닉네임 설정
   const [profileImageUrl, setProfileImageUrl] = useState(''); // API 응답에서 프로필 이미지 설정
-  const [accountNumber, setAccountNumber] = useState('110-123-456789'); // 계좌번호는 하드코딩
+  // const [accountNumber, setAccountNumber] = useState('110-123-456789'); // 계좌번호는 하드코딩
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
 
   // 로그인한 유저 정보 조회 API 호출
@@ -141,7 +141,7 @@ const MyPage = () => {
             onClick={() => setIsNicknameModalOpen(true)}
           />
         </div>
-        <p className='text-gray-500 text-left'>{accountNumber}</p>
+        {/* <p className='text-gray-500 text-left'>{accountNumber}</p> */}
       </div>
 
       {/* 네 개의 아이템을 한 줄에 한 개씩 배치 */}
