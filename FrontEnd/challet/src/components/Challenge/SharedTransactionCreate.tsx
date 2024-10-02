@@ -49,7 +49,6 @@ const SharedTransactionCreate = () => {
 
       // 웹소켓을 통해 서버로 데이터 전송
       const webSocketMessage = {
-        action: 'ADD', // DTO에서 요구하는 ActionType
         image: imageUrl, // 업로드된 이미지 URL
         deposit, // 출금처
         transactionAmount: Number(transactionAmount), // 거래 금액

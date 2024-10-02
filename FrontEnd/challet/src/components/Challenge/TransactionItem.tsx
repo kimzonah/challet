@@ -6,10 +6,12 @@ import EmojiButtons from './TransactionEmojiButtons'; // EmojiButtons 컴포넌�
 
 const TransactionListItem = ({
   transaction,
+  challengeId,
   userId,
   handleEmojiClick,
 }: {
   transaction: Transaction;
+  challengeId: number;
   userId: number;
   handleEmojiClick: (transaction: Transaction, emojiType: string) => void;
 }) => {
@@ -49,7 +51,8 @@ const TransactionListItem = ({
                 className='bg-white p-3 rounded-xl shadow-md mb-2 w-full cursor-pointer'
                 onClick={() =>
                   navigate(
-                    `/sharedTransactionDetail/${transaction.sharedTransactionId}`
+                    `/sharedTransactionDetail/${transaction.sharedTransactionId}`,
+                    { state: { challengeId } }
                   )
                 }
               >
