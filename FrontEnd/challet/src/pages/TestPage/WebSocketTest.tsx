@@ -12,7 +12,7 @@ const WebSocketTest: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     image: '',
-    withdrawal: '',
+    deposit: '',
     transactionAmount: 0,
     content: '',
   });
@@ -57,7 +57,7 @@ const WebSocketTest: React.FC = () => {
     if (stompClient) {
       const transactionData = {
         image: formData.image,
-        withdrawal: formData.withdrawal,
+        deposit: formData.deposit,
         transactionAmount: formData.transactionAmount,
         content: formData.content,
       };
@@ -97,13 +97,13 @@ const WebSocketTest: React.FC = () => {
         />
         <br />
 
-        <label htmlFor='withdrawal'>Withdrawal:</label>
+        <label htmlFor='deposit'>deposit:</label>
         <input
           type='text'
-          id='withdrawal'
-          value={formData.withdrawal}
+          id='deposit'
+          value={formData.deposit}
           onChange={handleInputChange}
-          placeholder='withdrawal'
+          placeholder='deposit'
         />
         <br />
 
@@ -135,8 +135,8 @@ const WebSocketTest: React.FC = () => {
         <ul>
           {transactions.map((transaction, index) => (
             <li key={index}>
-              Response DTO - Image: {transaction.image}, Withdrawal:{' '}
-              {transaction.withdrawal}, Amount: {transaction.transactionAmount},
+              Response DTO - Image: {transaction.image}, deposit:{' '}
+              {transaction.deposit}, Amount: {transaction.transactionAmount},
               Content: {transaction.content}, Sender: {transaction.userId}
             </li>
           ))}

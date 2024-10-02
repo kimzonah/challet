@@ -1,30 +1,29 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AxiosInstance from '../../api/axiosInstance'; // Axios 인스턴스 가져오기
-import useAccountStore from '../../store/useAccountStore'; // AccountStore 가져오기
+import AxiosInstance from '../../api/axiosInstance';
+import useAccountStore from '../../store/useAccountStore';
+import { AxiosError } from 'axios';
 
-// QR 데이터의 형식을 정의하는 인터페이스
 interface ParsedData {
   deposit: string;
   transactionAmount: number;
   category: string;
 }
 
-const PayResult = () => {
+function PayResult() {
   const location = useLocation();
   const navigate = useNavigate();
   const { accountInfo } = useAccountStore();
   const { qrData } = location.state || {};
   const [hasSentRequest, setHasSentRequest] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [paymentSuccess, setPaymentSuccess] = useState<boolean | null>(null); // 결제 성공 여부를 관리하는 상태
-
-  // qrData가 JSON 형식일 경우 파싱
   const parsedData: ParsedData | null = (() => {
     try {
       return qrData ? JSON.parse(qrData) : null;
     } catch (error) {
-      console.error('Error parsing QR data:', error);
+      console.error('QR 데이터를 파싱하는 중 오류가 발생했습니다:', error);
       return null;
     }
   })();
@@ -32,7 +31,6 @@ const PayResult = () => {
   useEffect(() => {
     if (!accountInfo || !parsedData || hasSentRequest) return;
 
-    // 결제 요청 함수
     const sendPaymentRequest = async () => {
       try {
         const data = {
@@ -46,15 +44,18 @@ const PayResult = () => {
           headers: { AccountId: accountInfo.id.toString() },
         });
 
-        setPaymentSuccess(true); // 결제 성공
-        console.log('결제 성공');
-        console.log(parsedData);
-        console.log(data);
-      } catch (error) {
-        setPaymentSuccess(false); // 결제 실패
+        setPaymentSuccess(true);
+        console.log('결제 성공:', parsedData, data);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 400) {
+          setErrorMessage('잔액이 부족합니다.');
+        } else {
+          setErrorMessage('결제 실패');
+        }
+        setPaymentSuccess(false);
         console.error('결제 실패:', error);
       } finally {
-        setHasSentRequest(true); // 요청이 한 번만 보내지도록 설정
+        setHasSentRequest(true);
       }
     };
 
@@ -81,12 +82,16 @@ const PayResult = () => {
   );
 
   if (paymentSuccess === null) {
-    return <p>결제 처리 중...</p>; // 결제 상태가 아직 결정되지 않은 경우 로딩 표시
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00CCCC]'></div>
+      </div>
+    );
   }
 
   return (
     <div className='min-h-screen bg-white flex flex-col items-center justify-between p-4 relative'>
-      {paymentSuccess ? ( // 결제 성공일 때의 화면
+      {paymentSuccess ? (
         <div className='flex flex-col items-center justify-center flex-grow w-full'>
           <div className='flex flex-col items-center mt-16'>
             <div className='w-16 h-16 bg-teal-400 rounded-full flex items-center justify-center'>
@@ -113,12 +118,11 @@ const PayResult = () => {
             renderPaymentDetails()
           ) : (
             <p className='text-[#585962] text-xs mt-4 text-center'>
-              No QR data found.
+              QR 데이터를 찾을 수 없습니다.
             </p>
           )}
         </div>
       ) : (
-        // 결제 실패일 때의 화면
         <div className='flex flex-col items-center justify-center flex-grow w-full'>
           <div className='flex flex-col items-center mt-16'>
             <div className='w-16 h-16 bg-red-400 rounded-full flex items-center justify-center'>
@@ -141,7 +145,7 @@ const PayResult = () => {
               결제 실패
             </h2>
             <p className='text-[#585962] text-lg font-medium mb-28 text-center'>
-              잔액이 부족합니다.
+              {errorMessage}
             </p>
           </div>
         </div>
@@ -154,6 +158,6 @@ const PayResult = () => {
       </button>
     </div>
   );
-};
+}
 
 export default PayResult;

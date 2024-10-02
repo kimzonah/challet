@@ -31,8 +31,16 @@ const TransactionItem = ({ transaction, onClick }: TransactionItemProps) => {
           {transaction.deposit}
         </p>
         <div className='text-right'>
-          <p className='text-base font-medium text-[#373A3F]'>
-            -{transaction.transactionAmount.toLocaleString()}원
+          <p
+            className={`text-base font-medium ${
+              transaction.transactionAmount < 0
+                ? 'text-[#373A3F]'
+                : 'text-[#00CCCC]'
+            }`}
+          >
+            {transaction.transactionAmount > 0
+              ? `+${transaction.transactionAmount.toLocaleString()}원`
+              : `${transaction.transactionAmount.toLocaleString()}원`}
           </p>
           <p className='text-sm font-medium text-[#6C6C6C]'>
             잔액 {transaction.transactionBalance.toLocaleString()}원

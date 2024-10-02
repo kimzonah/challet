@@ -8,6 +8,7 @@ import {
 import 'react-dates/lib/css/_datepicker.css';
 import ChallengeRoom from './components/Challenge/ChallengeRoom';
 import OnboardingPage from './pages/OnboardingPage/OnboardingPage';
+import RealOnboardingPage from './pages/OnboardingPage/RealOnboardingPage';
 import PhoneAuthPage from './pages/PhoneAuthPage/PhoneAuthPage';
 import PhoneCheckPage from './pages/PhoneCheckPage/PhoneCheckPage';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
@@ -17,6 +18,8 @@ import Navbar from './components/navigation/Navbar';
 import WalletPage from './pages/WalletPage/WalletPage';
 import HistoryPage from './pages/HistoryPage/HistoryPage';
 import HistoryDetailPage from './pages/HistoryDetailPage/HistoryDetailPage';
+import MyDataHistoryPage from './pages/MyDataHistoryPage/MyDataHistoryPage';
+import MyDataDetailPage from './pages/MyDataDetailPage/MyDataDetailPage';
 import TransferPage from './pages/TransferPage/TransferPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
@@ -24,6 +27,7 @@ import MyPage2 from './pages/MyPage/MyPage2';
 import RewardsPage from './pages/RewardsPage/RewardsPage';
 import SetPasswordPage from './pages/SetPasswordPage/SetPasswordPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
+import PayReviewPage from './pages/PaymentReviewPage/PaymentReviewPage';
 import PayResult from './pages/PayresultPage/PayresultPage';
 import MyDataSelectPage from './pages/MyDataSelectPage/MyDataSelectPage';
 import ChallengeCreateButton from './components/Challenge/ChallengeCreateButton';
@@ -41,12 +45,15 @@ function App() {
   const location = useLocation();
 
   // 훅을 배열 순회 외부에서 호출하여 순서가 유지되도록 수정
+  const matchRealOnboardingPage = useMatch('/');
+  const matchOnboardingPage = useMatch('/onboarding');
   const matchChallengeCreate = useMatch('/challenge/create');
   const matchChallengeRoom = useMatch('/challengeRoom/:id');
   const sharedTransactionCreate = useMatch('/sharedTransactionCreate');
   const sharedTransactionDetail = useMatch('/sharedTransactionDetail/:id');
   const sharedTransactionEdit = useMatch('/sharedTransactionEdit');
   const matchpayment = useMatch('/payment');
+  const matchpayreview = useMatch('/payreview');
   const matchpayresult = useMatch('/payresult');
   const matchHistory = useMatch('/history');
   const matchHistorydetail = useMatch('//history-detail/:transactionId');
@@ -58,6 +65,8 @@ function App() {
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
+    matchRealOnboardingPage ||
+    matchOnboardingPage ||
     matchChallengeCreate ||
     matchChallengeRoom ||
     sharedTransactionCreate ||
@@ -66,6 +75,7 @@ function App() {
     matchHistory ||
     matchHistorydetail ||
     matchpayment ||
+    matchpayreview ||
     matchpayresult ||
     matchTransfer ||
     matchmydataselect ||
@@ -77,7 +87,8 @@ function App() {
     <div className='min-h-screen flex flex-col justify-between'>
       {/* Routes 설정 */}
       <Routes>
-        <Route path='/' element={<OnboardingPage />} />
+        <Route path='/' element={<RealOnboardingPage />} />
+        <Route path='/onboarding' element={<OnboardingPage />} />
         <Route path='/phone-auth' element={<PhoneAuthPage />} />
         <Route path='/phone-check' element={<PhoneCheckPage />} />
         <Route path='/signup' element={<SignUpPage />} />
@@ -85,16 +96,23 @@ function App() {
         <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/wallet' element={<WalletPage />} />
-        <Route path='/history' element={<HistoryPage />} />
+        <Route path='/mydata-history' element={<MyDataHistoryPage />} />
         <Route
           path='/history-detail/:transactionId'
           element={<HistoryDetailPage />}
         />
+        <Route
+          path='/mydata-detail/:transactionId'
+          element={<MyDataDetailPage />}
+        />
+
+        <Route path='/history' element={<HistoryPage />} />
         <Route path='/transfer' element={<TransferPage />} />
         <Route path='/challenge' element={<ChallengePage />} />
         <Route path='/challenge/create' element={<ChallengeCreatePage />} />
         <Route path='/analysis' element={<AnalysisPage />} />
         <Route path='/payment' element={<PaymentPage />} />
+        <Route path='/payreview' element={<PayReviewPage />} />
         <Route path='/payresult' element={<PayResult />} />
         <Route path='/mydataselect' element={<MyDataSelectPage />} />
         <Route path='/mypage' element={<MyPage2 />} />

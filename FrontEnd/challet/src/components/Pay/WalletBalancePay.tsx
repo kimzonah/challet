@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
 import useAccountStore from '../../store/useAccountStore';
 import AxiosInstance from '../../api/axiosInstance';
 import axios from 'axios';
+import challetLogo from '../../assets/wallet/challet-logo.png';
 
 interface Account {
   id: number;
@@ -16,8 +16,7 @@ interface AccountResponse {
   accounts: Account[];
 }
 
-const WalletBalanceSection = () => {
-  const navigate = useNavigate();
+const WalletBalancePay = () => {
   const [accountInfo, setAccountInfo] = useState<Account | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -72,6 +71,9 @@ const WalletBalanceSection = () => {
   };
 
   useEffect(() => {
+    console.log(
+      'WalletBalanceForPayReview 컴포넌트가 마운트되었습니다. 계좌 정보를 불러옵니다.'
+    );
     fetchAccountInfo();
   }, [fetchAccountInfo]);
 
@@ -86,7 +88,6 @@ const WalletBalanceSection = () => {
   }
 
   if (error || !accountInfo) {
-    // 에러가 발생했거나 계좌 정보가 없을 때
     return (
       <div className='w-full bg-white p-4 rounded-lg shadow-md mb-8'>
         <p className='text-xs font-bold mt-2 mb-4'>
@@ -96,48 +97,24 @@ const WalletBalanceSection = () => {
     );
   }
 
-  // 계좌 정보가 있을 때
   return (
     <div
       className=' bg-white p-4 rounded-lg shadow-md mb-8 cursor-pointer'
-      onClick={() => navigate('/history')}
       style={{ width: '97%' }}
     >
       <div className='text-left'>
-        <h2 className='text-sm font-medium text-[#6C6C6C] mb-4'>
+        <h2 className='text-sm font-medium text-[#6C6C6C] mt-2 mb-4'>
           챌렛계좌 {` ${accountInfo.accountNumber}`}
         </h2>
-        <p className='text-2xl font-bold mt-2 mb-4'>
+        <p className='text-2xl font-bold mt-2 mb-8'>
           {accountInfo.accountBalance.toLocaleString()}원
         </p>
       </div>
       <div className='flex justify-end gap-2'>
-        <button
-          className='border border-gray-300 rounded-lg px-3 py-1 text-sm text-[#6C6C6C] bg-white'
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate('/transfer', {
-              state: {
-                accountBalance: accountInfo.accountBalance,
-                accountId: accountInfo.id,
-              },
-            });
-          }}
-        >
-          송금
-        </button>
-        <button
-          className='border border-gray-300 rounded-lg px-3 py-1 text-sm text-[#6C6C6C] bg-white'
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate('/history');
-          }}
-        >
-          내역
-        </button>
+        <img src={challetLogo} alt='Challet Logo' className='w-20 h-auto' />{' '}
       </div>
     </div>
   );
 };
 
-export default WalletBalanceSection;
+export default WalletBalancePay;

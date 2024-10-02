@@ -63,8 +63,8 @@ const SharedTransactionDetail = () => {
             onClick={() => navigate(-1)}
           />
           <p className='text-lg font-semibold'>
-            {transactionDetail.withdrawal} |{' '}
-            {transactionDetail.transactionAmount}원
+            {transactionDetail.deposit} | {transactionDetail.transactionAmount}
+            원
           </p>
           {transactionDetail.userId === userId ? (
             <FontAwesomeIcon
@@ -142,6 +142,7 @@ const SharedTransactionDetail = () => {
           <input
             type='text'
             value={commentContent}
+            maxLength={50} // 최대 글자 수 제한
             onChange={(e) => setCommentContent(e.target.value)} // 입력된 댓글 내용 업데이트
             placeholder='댓글을 입력하세요.'
             className='flex-grow px-4 py-2 border rounded-lg mr-2 focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
