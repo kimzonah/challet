@@ -18,7 +18,6 @@ export const TopBar = ({ title }: TopBarProps) => {
           onClick={() => navigate(-1)}
         />
         <p className='text-lg font-semibold flex-grow text-center'>{title}</p>
-        {/* 오른쪽에 비어있는 공간을 추가해서 가운데 정렬 유지 */}
         <div className='w-5' />
       </div>
     </div>

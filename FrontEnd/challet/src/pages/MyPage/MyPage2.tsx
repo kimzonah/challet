@@ -5,13 +5,15 @@ import {
   faCamera,
   faPencilAlt,
   faSignOutAlt,
-} from '@fortawesome/free-solid-svg-icons'; // 무료 아이콘 사용
+  faChevronRight,
+} from '@fortawesome/free-solid-svg-icons';
 import { AxiosError } from 'axios';
 import useFile2URL from '../../hooks/useFile2URL';
 import useAuthStore from '../../store/useAuthStore';
 import axiosInstance from '../../api/axiosInstance';
 import NicknameModal from './NicknameModal';
 import defaultProfileImage from '../../assets/mypage/default-profile.png';
+import { TopBar } from '../../components/topbar/topbar';
 
 const MyPage = () => {
   const navigate = useNavigate();
@@ -19,7 +21,6 @@ const MyPage = () => {
   const { clearAuthData } = useAuthStore();
   const [nickname, setNickname] = useState(''); // API 응답에서 닉네임 설정
   const [profileImageUrl, setProfileImageUrl] = useState(''); // API 응답에서 프로필 이미지 설정
-  // const [accountNumber, setAccountNumber] = useState('110-123-456789'); // 계좌번호는 하드코딩
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
 
   // 로그인한 유저 정보 조회 API 호출
@@ -28,7 +29,6 @@ const MyPage = () => {
       const response = await axiosInstance.get('/api/challet/users');
       setNickname(response.data.nickname || ''); // 닉네임 상태에 저장
       setProfileImageUrl(response.data.profileImage || defaultProfileImage); // 프로필 이미지 URL 상태에 저장, 없으면 기본 이미지 사용
-      // setAccountNumber(response.data.accountNumber || ''); // 계좌번호 응답
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(
@@ -90,8 +90,10 @@ const MyPage = () => {
   };
 
   return (
-    <div className='min-h-screen bg-white p-4'>
-      <div className='flex items-end justify-between'>
+    <div className='min-h-screen bg-white p-4 mt-12'>
+      <TopBar title='마이페이지' />
+      {/* 중앙에 배치된 프로필 이미지 */}
+      <div className='flex flex-col items-center mt-16'>
         {/* 프로필 이미지 */}
         <div className='relative'>
           <img
@@ -119,21 +121,8 @@ const MyPage = () => {
           />
         </div>
 
-        {/* 로그아웃 버튼 (오른쪽 끝에 배치) */}
-        <div className='flex items-end'>
-          <button className='text-lg flex items-center' onClick={handleLogout}>
-            <FontAwesomeIcon
-              icon={faSignOutAlt}
-              className='text-gray-600 w-5 h-5 mr-1'
-            />
-            로그아웃
-          </button>
-        </div>
-      </div>
-
-      {/* 사용자 정보 (닉네임과 수정 아이콘, 계좌번호) */}
-      <div className='mt-4'>
-        <div className='flex items-center'>
+        {/* 닉네임과 수정 아이콘 */}
+        <div className='mt-6 flex items-center '>
           <h2 className='font-semibold text-xl'>{nickname}</h2>
           <FontAwesomeIcon
             icon={faPencilAlt}
@@ -141,95 +130,33 @@ const MyPage = () => {
             onClick={() => setIsNicknameModalOpen(true)}
           />
         </div>
-        {/* <p className='text-gray-500 text-left'>{accountNumber}</p> */}
       </div>
 
-      {/* 네 개의 아이템을 한 줄에 한 개씩 배치 */}
-      <div className='grid grid-cols-1 gap-4 mt-6'>
-        <div
-          className='bg-red-100 rounded-lg p-4 relative'
-          onClick={() => handleNavigate('/wallet')}
-          style={{
-            backgroundImage: 'url(/path-to-your-image.jpg)',
-            backgroundSize: 'cover',
-          }} // 배경 이미지 설정
-        >
-          <h2 className='text-white font-bold text-lg text-left'>
-            지갑을 관리하고 결제 및 마이데이터를 연동하세요
-          </h2>
-          <p className='text-white text-sm mt-2 text-left'>
-            결제 내역을 쉽게 확인하고, 마이데이터 연동으로 금융 데이터를 자동
-            관리하세요.
-          </p>
+      {/* 네비게이션 아이템들 (리워드 페이지와 로그아웃 버튼) */}
+      <div className='mt-12'>
+        <div className='border-t border-b border-gray-200'>
+          <div
+            className='flex justify-between items-center py-4 px-4 cursor-pointer border-b border-gray-200'
+            onClick={() => handleNavigate('/rewards')}
+          >
+            <span>나의 챌린지 리워드</span>
+            <FontAwesomeIcon icon={faChevronRight} className='text-gray-600' />
+          </div>
 
-          {/* 오른쪽 하단에 배치되는 버튼 */}
-          <button className='bg-white text-red-500 font-bold py-2 px-4 rounded-full absolute bottom-0 right-0 m-4'>
-            지갑 보기
-          </button>
-        </div>
+          <div
+            className='flex justify-between items-center py-4 px-4 cursor-pointer border-b border-gray-200' // Bottom border added
+            onClick={handleLogout}
+          >
+            <span>로그아웃</span>
+            <FontAwesomeIcon icon={faSignOutAlt} className='text-gray-600' />
+          </div>
 
-        <div
-          className='bg-orange-100 rounded-lg p-4 relative'
-          onClick={() => handleNavigate('/challenge')}
-          style={{
-            backgroundImage: 'url(/path-to-your-image.jpg)',
-            backgroundSize: 'cover',
-          }}
-        >
-          <h2 className='text-white font-bold text-lg text-left'>
-            챌린지에 참여해 소비 목표를 설정하고 습관을 개선하세요
-          </h2>
-          <p className='text-white text-sm mt-2 text-left'>
-            거래 내역을 공유하고, 더 나은 소비 습관을 위한 목표를 설정하세요.
-          </p>
-
-          {/* 오른쪽 하단에 배치되는 버튼 */}
-          <button className='bg-white text-orange-500 font-bold py-2 px-4 rounded-full absolute bottom-0 right-0 m-4'>
-            챌린지 참여하기
-          </button>
-        </div>
-
-        <div
-          className='bg-yellow-100 rounded-lg p-4 relative'
-          onClick={() => handleNavigate('/analysis')}
-          style={{
-            backgroundImage: 'url(/path-to-your-image.jpg)',
-            backgroundSize: 'cover',
-          }}
-        >
-          <h2 className='text-white font-bold text-lg text-left'>
-            소비 패턴을 분석하고 다른 사용자와 비교해 보세요
-          </h2>
-          <p className='text-white text-sm mt-2 text-left'>
-            내 소비 내역을 분석하고, 비슷한 소비 습관을 가진 사용자들과 비교할
-            수 있습니다.
-          </p>
-
-          {/* 오른쪽 하단에 배치되는 버튼 */}
-          <button className='bg-white text-yellow-500 font-bold py-2 px-4 rounded-full absolute bottom-0 right-0 m-4'>
-            소비 분석 보기
-          </button>
-        </div>
-
-        <div
-          className='bg-green-100 rounded-lg p-4 relative'
-          onClick={() => handleNavigate('/rewards')}
-          style={{
-            backgroundImage: 'url(/path-to-your-image.jpg)',
-            backgroundSize: 'cover',
-          }}
-        >
-          <h2 className='text-white font-bold text-lg text-left'>
-            챌린지 리워드를 확인하고 활용하세요
-          </h2>
-          <p className='text-white text-sm mt-2 text-left'>
-            완료한 챌린지에서 얻은 리워드를 확인하고 관리하세요.
-          </p>
-
-          {/* 오른쪽 하단에 배치되는 버튼 */}
-          <button className='bg-white text-green-500 font-bold py-2 px-4 rounded-full absolute bottom-0 right-0 m-4'>
-            리워드 확인하기
-          </button>
+          <div
+            className='flex justify-between items-center py-4 px-4' // No extra margin needed here
+          >
+            <span>앱 정보</span>
+            <span>1.01</span>
+          </div>
         </div>
       </div>
 
