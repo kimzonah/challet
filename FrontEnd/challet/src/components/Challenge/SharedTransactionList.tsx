@@ -5,6 +5,8 @@ import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 추
 import throttle from 'lodash/throttle'; // 스크롤 이벤트 성능 최적화를 위한 throttle 함수 추가
 import { useChallengeApi } from '../../hooks/useChallengeApi'; // API 함수 추가
 import { Transaction } from './TransactionType'; // Transaction 타입 추가
+import { format } from 'date-fns'; // 날짜 형식화 라이브러리
+import { ko } from 'date-fns/locale'; // 한국어 로케일
 
 const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const [sharedTransactions, setSharedTransactions] = useState<Transaction[]>(
@@ -34,49 +36,83 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
         if (!webSocketService.isConnected()) {
           await webSocketService.connect();
         }
+
         webSocketService.subscribeTransaction(
           challengeId.toString(),
           (message) => {
             const receivedTransaction = JSON.parse(message.body);
-            const transaction: Transaction = {
-              ...receivedTransaction,
-              sharedTransactionId: receivedTransaction.id,
-              transactionDateTime: new Date().toISOString(),
-              goodCount: 0,
-              sosoCount: 0,
-              badCount: 0,
-              commentCount: 0,
-              userEmoji: null,
-            };
 
-            setSharedTransactions((prevTransactions) => {
-              // 중복된 트랜잭션을 방지
-              const isDuplicate = prevTransactions.some(
-                (t) => t.sharedTransactionId === transaction.sharedTransactionId
-              );
-              if (!isDuplicate) {
-                const updatedTransactions = [...prevTransactions, transaction];
-                return updatedTransactions.sort(
-                  (a, b) =>
-                    new Date(a.transactionDateTime).getTime() -
-                    new Date(b.transactionDateTime).getTime()
+            // Action 처리
+            if (receivedTransaction.action === 'ADD') {
+              // ADD의 경우 새 트랜잭션 추가
+              const transaction: Transaction = {
+                sharedTransactionId: receivedTransaction.id,
+                transactionDateTime: new Date().toISOString(), // 기본값으로 현재 시간 설정
+                goodCount: 0,
+                sosoCount: 0,
+                badCount: 0,
+                commentCount: 0,
+                userEmoji: null,
+                image: receivedTransaction.image,
+                deposit: receivedTransaction.deposit, // ADD일 때 deposit 필드
+                transactionAmount: receivedTransaction.transactionAmount,
+                content: receivedTransaction.content,
+                userId: receivedTransaction.userId,
+                nickname: receivedTransaction.nickname,
+                profileImage: receivedTransaction.profileImage,
+              };
+
+              setSharedTransactions((prevTransactions) => {
+                const isDuplicate = prevTransactions.some(
+                  (t) =>
+                    t.sharedTransactionId === transaction.sharedTransactionId
                 );
-              }
-              return prevTransactions;
-            });
+                if (!isDuplicate) {
+                  const updatedTransactions = [
+                    ...prevTransactions,
+                    transaction,
+                  ];
+                  return updatedTransactions.sort(
+                    (a, b) =>
+                      new Date(a.transactionDateTime).getTime() -
+                      new Date(b.transactionDateTime).getTime()
+                  );
+                }
+                return prevTransactions;
+              });
 
-            // 새로운 거래내역이 발생했을 때 모달을 보여줌
-            showNewTransactionModal();
+              // 새로운 거래내역이 발생했을 때 모달을 보여줌
+              showNewTransactionModal();
 
-            // 데이터가 추가된 후 100ms 후에 스크롤을 맨 아래로 이동
-            setTimeout(() => {
-              if (transactionListRef.current) {
-                transactionListRef.current.scrollTop =
-                  transactionListRef.current.scrollHeight;
-              }
-            }, 100);
+              // **Scroll to the bottom after ADD action**
+              setTimeout(() => {
+                if (transactionListRef.current) {
+                  transactionListRef.current.scrollTop =
+                    transactionListRef.current.scrollHeight;
+                }
+              }, 100);
+            } else if (receivedTransaction.action === 'UPDATE') {
+              // UPDATE의 경우 기존 트랜잭션 업데이트
+              setSharedTransactions((prevTransactions) =>
+                prevTransactions.map((t) =>
+                  t.sharedTransactionId === receivedTransaction.id
+                    ? {
+                        ...t,
+                        image: receivedTransaction.image,
+                        deposit: receivedTransaction.deposit, // UPDATE일 때 deposit 필드
+                        transactionAmount:
+                          receivedTransaction.transactionAmount,
+                        content: receivedTransaction.content,
+                      }
+                    : t
+                )
+              );
+
+              // **No scroll adjustment for UPDATE action**
+            }
           }
         );
+
         webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
           const emojiUpdate = JSON.parse(message.body);
           setSharedTransactions((prevTransactions) =>
@@ -222,14 +258,37 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
         className='scrollbar-hide overflow-y-auto max-h-[70vh]'
         ref={transactionListRef}
       >
-        {sharedTransactions.map((transaction) => (
-          <TransactionListItem
-            key={transaction.sharedTransactionId}
-            transaction={transaction}
-            userId={userId}
-            handleEmojiClick={handleEmojiClick}
-          />
-        ))}
+        {sharedTransactions.map((transaction, index) => {
+          const previousTransaction = sharedTransactions[index - 1];
+          const currentDate = new Date(
+            transaction.transactionDateTime
+          ).toDateString();
+          const previousDate = previousTransaction
+            ? new Date(previousTransaction.transactionDateTime).toDateString()
+            : null;
+
+          const isDifferentDate = currentDate !== previousDate;
+
+          return (
+            <div key={transaction.sharedTransactionId}>
+              {isDifferentDate && (
+                <div className='text-center text-gray-500 my-2'>
+                  {format(
+                    new Date(transaction.transactionDateTime),
+                    'yyyy년 MM월 dd일',
+                    { locale: ko }
+                  )}
+                </div>
+              )}
+              <TransactionListItem
+                challengeId={challengeId}
+                transaction={transaction}
+                userId={userId}
+                handleEmojiClick={handleEmojiClick}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

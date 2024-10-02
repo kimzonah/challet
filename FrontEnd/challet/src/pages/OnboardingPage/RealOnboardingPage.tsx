@@ -51,7 +51,7 @@ const RealOnboardingPage = () => {
       <img
         src={ChalletLogo}
         alt='온보딩 이미지'
-        className={`w-64 mt-32 mb-4 transition-opacity duration-1000 ${
+        className={`w-48 mt-60 mb-4 transition-opacity duration-1000 ${
           isImageVisible && !isFadeOut ? 'opacity-100' : 'opacity-0'
         }`} // 이미지가 서서히 나타나고 사라짐
       />

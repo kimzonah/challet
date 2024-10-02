@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
 import SharedTransactionComments from './SharedTransactionComments';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +22,8 @@ const SharedTransactionDetail = () => {
   const [refreshComments, setRefreshComments] = useState(false); // 댓글 목록 새로고침 상태
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
   const userId = useAuthStore((state) => state.userId);
+  const location = useLocation();
+  const { challengeId } = location.state || {};
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -73,7 +75,10 @@ const SharedTransactionDetail = () => {
               onClick={() => {
                 // 수정 페이지로 이동하고, transactionDetail 데이터를 전달
                 navigate('/sharedTransactionEdit', {
-                  state: { transaction: transactionDetail },
+                  state: {
+                    transaction: transactionDetail,
+                    challengeId: challengeId,
+                  },
                 });
               }}
             />
