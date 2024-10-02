@@ -141,23 +141,6 @@ export const useChallengeApi = () => {
     }
   };
 
-  // 트랜잭션 등록 API 요청 함수
-  const registTransaction = async (
-    challengeId: number,
-    transaction: Record<string, any> // transaction의 타입을 Record<string, any>로 변경
-  ) => {
-    try {
-      const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/shared-transactions`;
-
-      console.log('transaction:', transaction);
-      const response = await AxiosInstance.post(url, transaction);
-
-      console.log('트랜잭션 등록 성공:', response.data);
-    } catch (error) {
-      console.error('트랜잭션 등록 중 오류 발생:', error);
-    }
-  };
-
   const editTransaction = async (
     sharedTransactionId: number,
     transaction: Record<string, any> // transaction의 타입을 Record<string, any>로 변경
@@ -229,7 +212,6 @@ export const useChallengeApi = () => {
     joinChallenge,
     fetchSharedTransactions,
     fetchCurrentSpending,
-    registTransaction,
     editTransaction,
     fetchSharedTransactionDetail,
     fetchTransactionComments,

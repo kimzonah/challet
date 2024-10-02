@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom'; // useLocation 훅 추가
 import CategoryList from '../../components/Challenge/CategoryList';
 import ChallengeForm from '../../components/Challenge/ChallengeForm';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
 
 const ChallengePage = () => {
-  const [activeTab, setActiveTab] = useState('챌린지 찾기'); // 기본 활성화된 탭
+  const location = useLocation(); // location 사용
+  const [activeTab, setActiveTab] = useState(
+    location.state?.activeTab || '챌린지 찾기'
+  ); // location.state에서 activeTab 가져옴, 없으면 기본값 '챌린지 찾기'
   const { challenges, isLoading, fetchChallenges } = useChallengeApi();
   const [keyword, setKeyword] = useState(''); // 검색 키워드
   const [category, setCategory] = useState(''); // 선택된 카테고리
@@ -33,6 +37,8 @@ const ChallengePage = () => {
   useEffect(() => {
     if (activeTab === '챌린지 찾기') {
       fetchChallenges('', category); // 페이지 로드 시 한 번만 호출
+    } else if (activeTab === '나의 챌린지') {
+      fetchChallenges('', '', true); // 나의 챌린지 요청
     }
   }, [activeTab]);
 
