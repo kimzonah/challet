@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import onboardImage from '../../assets/onboardImage.png'; // 이미지 경로에 맞게 수정해주세요
+import onboardImage from '../../assets/onboardImage.png';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
