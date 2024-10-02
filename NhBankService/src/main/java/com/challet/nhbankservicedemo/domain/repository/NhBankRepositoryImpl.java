@@ -166,9 +166,9 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
         return categorySums;
     }
 
-    private List<String> subList(int i, List<String> phoneNumbers) {
-        int end = Math.min(i + BATCH_SIZE, phoneNumbers.size());
-        return phoneNumbers.subList(i, end);
+    private List<String> subList(int start, List<String> phoneNumbers) {
+        int end = Math.min(start + BATCH_SIZE, phoneNumbers.size());
+        return phoneNumbers.subList(start, end);
     }
 
     private List<CategoryAmountResponseDTO> getCategoryList(
