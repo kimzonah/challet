@@ -101,14 +101,19 @@ export const useChallengeApi = () => {
         (isMyChallenges ? '/my-challenges' : ''); // URL 설정
       let params = { category, keyword }; // 파라미터 설정
 
-      const response = await AxiosInstance.get(
-        url,
-        isMyChallenges ? {} : { params }
-      ); // GET 요청
-
-      // API 응답 성공 시 로그
-      console.log('API 응답 성공:', response.data.challengeList);
-      setChallenges(response.data.challengeList);
+      if (isMyChallenges) {
+        const response = await AxiosInstance.get(url);
+        setChallenges(response.data.challengeList);
+      } else {
+        if (category === '') {
+          delete (params as Record<string, any>)?.category; // 카테고리가 전체인 경우 삭제
+        }
+        if (keyword === '') {
+          delete (params as Record<string, any>)?.keyword; // 검색어가 없는 경우 삭제
+        }
+        const response = await AxiosInstance.get(url, { params });
+        setChallenges(response.data.searchedChallenges);
+      }
     } catch (error) {
       // API 호출 중 오류 발생 시 로그
       console.error('API 호출 중 오류 발생:', error);

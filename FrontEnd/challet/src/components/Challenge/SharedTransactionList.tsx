@@ -196,15 +196,16 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     isLoadingRef.current = false; // 로딩 끝
   };
 
+  // 스크롤이 맨 위로부터 100px 떨어진 시점에 데이터를 미리 불러옴
   const handleScrollThrottled = throttle(() => {
     if (
       transactionListRef.current &&
-      transactionListRef.current.scrollTop === 0 &&
+      transactionListRef.current.scrollTop < 100 && // 스크롤이 맨 위로부터 100px 이내일 때
       hasNextPageRef.current &&
       !isLoadingRef.current &&
       !isFetchingRef.current
     ) {
-      fetchTransactions(); // 스크롤이 위에 도달했을 때 새로운 데이터를 가져옴
+      fetchTransactions(); // 새로운 데이터를 미리 가져옴
     }
   }, 200); // 200ms 동안 스크롤 이벤트를 조절 (성능 최적화)
 
