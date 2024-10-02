@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Builder
-@Document(indexName = "challenges")  // Elasticsearch에 저장될 인덱스명 설정
+@Document(indexName = "challenges")
 @Schema(description = "챌린지 검색")
 public record SearchedChallenge(
 
@@ -18,15 +18,15 @@ public record SearchedChallenge(
     @Schema(description = "챌린지ID")
     String challengeId,
 
-    @Field(type = FieldType.Keyword)  // 정확한 값 일치를 위해 Keyword 타입으로 매핑
+    @Field(type = FieldType.Keyword)
     @Schema(description = "챌린지 진행 상태", allowableValues = {"RECRUITING", "PROGRESSING", "END"})
     String status,
 
-    @Field(type = FieldType.Keyword)  // Keyword 타입으로 매핑 (category는 분석하지 않음)
+    @Field(type = FieldType.Keyword)
     @Schema(description = "챌린지 카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE", "SHOPPING"})
     String category,
 
-    @Field(type = FieldType.Text)  // Text 타입으로 매핑 (title은 분석)
+    @Field(type = FieldType.Text)
     @Schema(description = "챌린지 제목")
     String title,
 
