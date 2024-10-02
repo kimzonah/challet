@@ -10,7 +10,7 @@ type AgreementType = {
   serviceAgreement: boolean;
   financialTransaction: boolean;
   personalInfoUsage: boolean;
-  depositConsent: boolean;
+  withdrawalConsent: boolean;
   thirdPartyInfo: boolean;
 };
 
@@ -39,7 +39,7 @@ const MyDataSelectPage = () => {
     serviceAgreement: false,
     financialTransaction: false,
     personalInfoUsage: false,
-    depositConsent: false,
+    withdrawalConsent: false,
     thirdPartyInfo: false,
   });
   const [allChecked, setAllChecked] = useState(false);
@@ -54,7 +54,6 @@ const MyDataSelectPage = () => {
   const [connectionComplete, setConnectionComplete] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 전체 동의 상태 변경
   const handleAllChecked = () => {
     const newState = !allChecked;
     setAllChecked(newState);
@@ -63,12 +62,11 @@ const MyDataSelectPage = () => {
       serviceAgreement: newState,
       financialTransaction: newState,
       personalInfoUsage: newState,
-      depositConsent: newState,
+      withdrawalConsent: newState,
       thirdPartyInfo: newState,
     }));
   };
 
-  // 개별 동의 항목 상태 변경
   const handleIndividualCheck = (key: keyof AgreementType) => {
     setAgreements((prevState) => {
       const updatedAgreements = { ...prevState, [key]: !prevState[key] };
@@ -77,7 +75,6 @@ const MyDataSelectPage = () => {
     });
   };
 
-  // 은행 선택 상태 변경
   const handleBankSelect = (bankKey: string) => {
     setSelectedBanks((prevState) => ({
       ...prevState,
@@ -85,7 +82,6 @@ const MyDataSelectPage = () => {
     }));
   };
 
-  // 선택된 은행 데이터를 생성
   const getSelectedBanksPayload = () => {
     return bankDetails.map(({ key, code }) => ({
       bankCode: code,
@@ -93,12 +89,10 @@ const MyDataSelectPage = () => {
     }));
   };
 
-  // 은행 연결 API 호출 함수
   const connectToBanks = async () => {
     const payload = { selectedBanks: getSelectedBanksPayload() };
     console.log('Payload to send:', JSON.stringify(payload, null, 2));
-    setLoading(true); // 로딩 상태 true
-
+    setLoading(true);
     try {
       const response = await axiosInstance.post<BankResponse>(
         '/api/ch-bank/mydata-connect',
@@ -106,15 +100,14 @@ const MyDataSelectPage = () => {
       );
       console.log('Server Response:', response.data);
 
-      // 모든 은행의 계좌 정보를 병합하고 은행 키를 포함하여 저장
       const allAccounts = processBankData(response.data);
 
-      setConnectedAccounts(allAccounts); // 연결된 계좌 정보를 저장
-      setConnectionComplete(true); // 연결 완료 상태로 설정
+      setConnectedAccounts(allAccounts);
+      setConnectionComplete(true);
     } catch (error) {
       console.error('Failed to connect to banks:', error);
     } finally {
-      setLoading(false); // 로딩 상태 false
+      setLoading(false);
     }
   };
 
@@ -159,7 +152,7 @@ const MyDataSelectPage = () => {
       serviceAgreement: '오픈뱅킹 서비스 동의(필수)',
       financialTransaction: '오픈뱅킹 금융거래제공동의(필수)',
       personalInfoUsage: '오픈뱅킹 개인정보 수집이용제공 동의(필수)',
-      depositConsent: '오픈뱅킹 출금/조회 동의(필수)',
+      withdrawalConsent: '오픈뱅킹 출금/조회 동의(필수)',
       thirdPartyInfo: '출금 이체를 위한 개인정보 제3자제공동의(필수)',
     };
     return labels[key];

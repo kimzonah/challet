@@ -39,7 +39,6 @@ function MyDataHistoryPage() {
     );
   }
 
-  // 은행별 엔드포인트
   const bankEndpoints: Record<string, string> = {
     국민: '/api/kb-bank/details',
     농협: '/api/nh-bank/details',
@@ -62,7 +61,6 @@ function MyDataHistoryPage() {
 
       console.log('거래 상세 내역 응답:', response.data);
 
-      // 성공 시 상세 페이지로 이동
       navigate(`/mydata-detail/${transactionId}`, {
         state: { transactionDetails: response.data },
       });
