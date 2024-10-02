@@ -8,4 +8,7 @@ public interface SearchedChallengeRepository extends ElasticsearchRepository<Sea
 
     List<SearchedChallenge> findByStatusAndCategoryAndTitleContaining(String status, String category, String title);
 
+    List<SearchedChallenge> findByStatusAndTitleContaining(String status, String title);
+
+    List<SearchedChallenge> findByStatusContaining(String status);
 }

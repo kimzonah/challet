@@ -110,10 +110,19 @@ public class ChallengeServiceImpl implements ChallengeService {
         userRepository.findByPhoneNumber(loginUserPhoneNumber)
             .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        List<SearchedChallenge> result = searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(
-            ChallengeStatus.RECRUITING.toString(), category, keyword);
+        return SearchedChallengesResponseDTO.fromSearchedChallenges(getResult(category, keyword));
+    }
 
-        return SearchedChallengesResponseDTO.fromSearchedChallenges(result);
+    public List<SearchedChallenge> getResult(String category, String keyword) {
+        String status = ChallengeStatus.RECRUITING.toString();
+        if(category == null && keyword == null) {
+            return searchedChallengeRepository.findByStatusContaining(status);
+        }
+        if(category == null) {
+            return searchedChallengeRepository.findByStatusAndTitleContaining(status, keyword);
+        }
+        return searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(
+            status , category, keyword);
     }
 
     @Override
