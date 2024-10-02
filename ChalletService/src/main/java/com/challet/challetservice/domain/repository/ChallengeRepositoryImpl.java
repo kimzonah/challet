@@ -6,6 +6,7 @@ import com.challet.challetservice.domain.entity.ChallengeStatus;
 import com.challet.challetservice.domain.entity.QChallenge;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -35,6 +36,16 @@ public class ChallengeRepositoryImpl implements ChallengeRepositoryCustom {
         builder.and(qChallenge.status.eq(ChallengeStatus.RECRUITING));
 
         return queryFactory.selectFrom(qChallenge).where(builder).fetch();
+    }
+
+    @Override
+    public List<Challenge> getChallengesToStart(LocalDate today) {
+        QChallenge qChallenge = QChallenge.challenge;
+        return queryFactory
+            .selectFrom(qChallenge)
+            .where(qChallenge.startDate.eq(today)
+                .and(qChallenge.status.eq(ChallengeStatus.RECRUITING)))
+            .fetch();
     }
 
 }
