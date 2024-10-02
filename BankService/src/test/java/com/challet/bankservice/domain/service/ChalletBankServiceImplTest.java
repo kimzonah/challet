@@ -35,7 +35,7 @@ class ChalletBankServiceImplTest {
         testAccount = ChalletBank.builder()
             .accountBalance(100L)
             .phoneNumber("01012345678")
-            .accountNumber("999999999999")
+            .accountNumber("9999999999998")
             .build();
 
         challetBankRepository.save(testAccount);

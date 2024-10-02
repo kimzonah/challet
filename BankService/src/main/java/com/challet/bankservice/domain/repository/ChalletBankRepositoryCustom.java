@@ -1,10 +1,15 @@
 package com.challet.bankservice.domain.repository;
 
+import com.challet.bankservice.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.bankservice.domain.dto.request.UserInfoMessageRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.bankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
+import com.challet.bankservice.domain.entity.Category;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import java.util.List;
+import java.util.Map;
 
 public interface ChalletBankRepositoryCustom {
 
@@ -23,4 +28,11 @@ public interface ChalletBankRepositoryCustom {
     boolean isMyDataConnectedByPhoneNumber(String phoneNumber);
 
     ChalletBank getAccountByAccountNumber(String accountNumber);
+
+    MonthlyTransactionHistoryListDTO getTransactionByPhoneNumberAndYearMonth(String phoneNumber,
+        MonthlyTransactionRequestDTO requestDTO);
+
+    Map<Category, Long> getTransactionByGroupCategory(
+        UserInfoMessageRequestDTO analysisInfo,
+        MonthlyTransactionRequestDTO requestDTO);
 }
