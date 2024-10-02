@@ -1,6 +1,7 @@
 package com.challet.nhbankservicedemo.domain.controller;
 
 import com.challet.nhbankservicedemo.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.nhbankservicedemo.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.BankTransferResponseDTO;
@@ -8,6 +9,7 @@ import com.challet.nhbankservicedemo.domain.dto.response.CategoryAmountResponseL
 import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseListDTO;
+import com.challet.nhbankservicedemo.domain.entity.Category;
 import com.challet.nhbankservicedemo.domain.service.NhBankService;
 import com.challet.nhbankservicedemo.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -132,12 +135,11 @@ public class NhBankController {
     }
 
     @PostMapping("/transaction-category")
-    public ResponseEntity<CategoryAmountResponseListDTO> getTransactionGroupCategory(
-        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
-        @RequestBody MonthlyTransactionRequestDTO requestDTO) {
+    public ResponseEntity<Map<Category, Long>> getTransactionGroupCategory(
+        @RequestBody BankToAnalysisMessageRequestDTO requestDTO) {
 
-        CategoryAmountResponseListDTO transactionByGroupCategory = nhBankService.getTransactionByGroupCategory(
-            tokenHeader, requestDTO);
+        Map<Category, Long> transactionByGroupCategory = nhBankService.getTransactionByGroupCategory(
+            requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
 }
