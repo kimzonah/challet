@@ -59,8 +59,8 @@ const RealOnboardingPage = () => {
 
       {/* 로딩 애니메이션 */}
       {isLoading && (
-        <div className='mt-8 mb-16 text-[#00CCCC]'>
-          <SyncLoader />
+        <div className='mt-8 mb-16 '>
+          <SyncLoader color='#00CCCC' />
         </div>
       )}
     </div>
