@@ -1,11 +1,15 @@
 package com.challet.kbbankservice.domain.service;
 
 import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.kbbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
+import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.kbbankservice.domain.entity.Category;
 import com.challet.kbbankservice.domain.entity.KbBank;
 import com.challet.kbbankservice.domain.entity.KbBankTransaction;
 import com.challet.kbbankservice.domain.repository.KbBankRepository;
@@ -14,6 +18,7 @@ import com.challet.kbbankservice.global.exception.ExceptionResponse;
 import com.challet.kbbankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -79,5 +84,18 @@ public class KbBankServiceImpl implements KbBankService {
         kbBank.addTransaction(transaction);
 
         return BankTransferResponseDTO.fromBankTransferResponseDTO(kbBank);
+    }
+
+    @Override
+    public MonthlyTransactionHistoryListDTO getMonthlyTransactionHistory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        return kbBankRepository.getTransactionByPhoneNumberAndYearMonth(phoneNumber, requestDTO);
+    }
+
+    @Override
+    public Map<Category, Long> getTransactionByGroupCategory(
+        BankToAnalysisMessageRequestDTO requestDTO) {
+        return kbBankRepository.getTransactionByGroupCategory(requestDTO);
     }
 }
