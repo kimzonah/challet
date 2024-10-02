@@ -30,7 +30,10 @@ import com.challet.challetservice.domain.request.PaymentHttpMessageRequestDTO;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
+import java.time.LocalDate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.util.List;
@@ -39,6 +42,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChallengeServiceImpl implements ChallengeService {
 
     private final JwtUtil jwtUtil;
@@ -283,6 +287,19 @@ public class ChallengeServiceImpl implements ChallengeService {
         sharedTransaction.updateSharedTransaction(request);
 
         return SharedTransactionUpdateResponseDTO.fromRequest(request, transactionId);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
+    public void startChallenge() {
+
+        List<Challenge> challenges = challengeRepository.getChallengesToStart(LocalDate.now());
+        for(Challenge challenge : challenges) {
+            challenge.startChallenge();
+            log.info(challenge.getId() + " Challenge started");
+        }
+        challengeRepository.saveAll(challenges);
+
     }
 
     public static String generateCode(int length) {

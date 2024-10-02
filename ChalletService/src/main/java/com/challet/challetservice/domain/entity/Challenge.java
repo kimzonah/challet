@@ -81,4 +81,8 @@ public class Challenge {
             .build();
     }
 
+    public void startChallenge(){
+        this.status = ChallengeStatus.PROGRESSING;
+    }
+
 }
