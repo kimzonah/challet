@@ -47,7 +47,7 @@ const WalletPage = () => {
   };
 
   return (
-    <div className='min-h-screen bg-white flex flex-col items-center p-6 mt-12'>
+    <div className='min-h-screen bg-white flex flex-col items-center p-6 mt-6'>
       <div className='w-full flex flex-col items-center mb-8'>
         <div className='w-full flex justify-start'>
           <img

@@ -12,7 +12,7 @@ const TransactionInfo = ({
     <h2
       className={`text-3xl font-semibold ${transactionAmount < 0 ? 'text-[#373A3F]' : 'text-[#373A3F]'}`}
     >
-      {Math.abs(transactionAmount).toLocaleString()}원
+      {transactionAmount.toLocaleString()}원
     </h2>
   </div>
 );
