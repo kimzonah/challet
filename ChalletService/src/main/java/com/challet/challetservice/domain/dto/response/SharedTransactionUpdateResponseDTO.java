@@ -18,7 +18,7 @@ public record SharedTransactionUpdateResponseDTO(
     String image,
 
     @Schema(description = "결제 항목")
-    String withdrawal,
+    String deposit,
 
     @Schema(description = "결제 금액")
     Long transactionAmount,
@@ -33,7 +33,7 @@ public record SharedTransactionUpdateResponseDTO(
             .action(ActionType.UPDATE)
             .id(transactionId)
             .image(request.image())
-            .withdrawal(request.withdrawal())
+            .deposit(request.deposit())
             .transactionAmount(request.transactionAmount())
             .content(request.content())
             .build();

@@ -1,11 +1,8 @@
 package com.challet.challetservice.domain.dto.response;
 
 import com.challet.challetservice.domain.entity.EmojiType;
-import com.challet.challetservice.domain.entity.SharedTransaction;
-import com.challet.challetservice.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.Builder;
 
 @Schema(description = "공유 거래 내역 조회 상세 DTO")
@@ -25,7 +22,7 @@ public record SharedTransactionDetailResponseDTO(
     Long sharedTransactionId,
 
     @Schema(description = "출금처")
-    String withdrawal,
+    String deposit,
 
     @Schema(description = "거래 금액")
     Long transactionAmount,
@@ -62,7 +59,7 @@ public record SharedTransactionDetailResponseDTO(
             .nickname(info.nickname())
             .profileImage(info.profileImage())
             .sharedTransactionId(info.sharedTransactionId())
-            .withdrawal(info.withdrawal())
+            .deposit(info.deposit())
             .transactionAmount(info.transactionAmount())
             .transactionDateTime(info.transactionDateTime())
             .content(info.content())
