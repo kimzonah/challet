@@ -5,6 +5,7 @@ import com.challet.challetservice.domain.dto.request.ChallengeRegisterRequestDTO
 import com.challet.challetservice.domain.dto.response.ChallengeDetailResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeRoomHistoryResponseDTO;
 import com.challet.challetservice.domain.dto.response.ChallengeListResponseDTO;
+import com.challet.challetservice.domain.dto.response.SearchedChallengesResponseDTO;
 import com.challet.challetservice.domain.dto.response.SpendingAmountResponseDTO;
 import com.challet.challetservice.domain.service.ChallengeService;
 import com.challet.challetservice.global.exception.ExceptionDto;
@@ -73,20 +74,20 @@ public class ChallengeController {
         @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @Parameters(value = {
-        @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
         @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
+        @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
     })
     @GetMapping()
-    public ResponseEntity<ChallengeListResponseDTO> searchChallenges(
+    public ResponseEntity<SearchedChallengesResponseDTO> searchChallenges(
         @RequestHeader(value = "Authorization", required = false) String header,
-        @RequestParam(value = "keyword", required = false) String keyword,
-        @RequestParam(value = "category", required = false) String category) {
-        ChallengeListResponseDTO searchChallenges = challengeService.searchChallenges(header,
-            keyword, category);
-        if (searchChallenges == null) {
+        @RequestParam(value = "category", required = false) String category,
+        @RequestParam(value = "keyword", required = false) String keyword) {
+        SearchedChallengesResponseDTO searchedChallengesResponseDTO = challengeService.searchChallenges(
+            header, category, keyword);
+        if (searchedChallengesResponseDTO == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(searchChallenges);
+        return ResponseEntity.status(HttpStatus.OK).body(searchedChallengesResponseDTO);
     }
 
     @Operation(summary = "챌린지 정보 상세 조회 (완료)", description = "챌린지ID로 챌린지 정보 조회")
