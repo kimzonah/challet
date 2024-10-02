@@ -1,6 +1,7 @@
 package com.challet.kbbankservice.domain.service;
 
 import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.kbbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
@@ -9,7 +10,9 @@ import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseListD
 import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.kbbankservice.domain.entity.Category;
 import java.util.List;
+import java.util.Map;
 
 public interface KbBankService {
 
@@ -26,6 +29,5 @@ public interface KbBankService {
     MonthlyTransactionHistoryListDTO getMonthlyTransactionHistory(String tokenHeader,
         MonthlyTransactionRequestDTO requestDTO);
 
-    CategoryAmountResponseListDTO getTransactionByGroupCategory(String tokenHeader,
-        MonthlyTransactionRequestDTO requestDTO);
+    Map<Category, Long> getTransactionByGroupCategory(BankToAnalysisMessageRequestDTO requestDTO);
 }

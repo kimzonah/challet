@@ -1,14 +1,14 @@
 package com.challet.kbbankservice.domain.controller;
 
 import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.kbbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
-import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseDTO;
-import com.challet.kbbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.kbbankservice.domain.entity.Category;
 import com.challet.kbbankservice.domain.service.KbBankService;
 import com.challet.kbbankservice.global.exception.ExceptionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -134,12 +134,11 @@ public class KbBankController {
     }
 
     @PostMapping("/transaction-category")
-    public ResponseEntity<CategoryAmountResponseListDTO> getTransactionGroupCategory(
-        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
-        @RequestBody MonthlyTransactionRequestDTO requestDTO) {
+    public ResponseEntity<Map<Category, Long>> getTransactionGroupCategory(
+        @RequestBody BankToAnalysisMessageRequestDTO requestDTO) {
 
-        CategoryAmountResponseListDTO transactionByGroupCategory = kbBankService.getTransactionByGroupCategory(
-            tokenHeader, requestDTO);
+        Map<Category, Long> transactionByGroupCategory = kbBankService.getTransactionByGroupCategory(
+            requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
 }
