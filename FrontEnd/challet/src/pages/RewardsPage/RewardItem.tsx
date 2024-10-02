@@ -21,6 +21,7 @@ const categoryThumbnails: Record<string, string> = {
   SHOPPING: Shopping,
 };
 
+// 랜덤 색상
 const backgroundColors = [
   'bg-red-200',
   'bg-blue-200',
