@@ -9,7 +9,7 @@ interface TransactionDetail {
   transactionAmount: number;
   transactionDatetime: string;
   deposit: string;
-  deposit: string;
+  withdrawal: string;
   transactionBalance: number;
   category: string;
 }

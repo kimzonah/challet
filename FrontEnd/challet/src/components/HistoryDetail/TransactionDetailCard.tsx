@@ -2,7 +2,7 @@ type TransactionDetailCardProps = {
   transactionDetail: {
     transactionDatetime: string;
     deposit: string;
-    deposit: string;
+    withdrawal: string;
     transactionBalance: number;
     category: string;
   };
@@ -40,7 +40,7 @@ const TransactionDetailCard = ({
         </div>
         <div className='text-left font-medium'>출금처</div>
         <div className='text-right font-medium'>
-          {transactionDetail.deposit}
+          {transactionDetail.withdrawal}
         </div>
         <div className='text-left font-medium'>거래 후 잔액</div>
         <div className='text-right font-medium'>
