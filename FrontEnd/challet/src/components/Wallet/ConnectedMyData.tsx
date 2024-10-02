@@ -36,7 +36,6 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
   const navigate = useNavigate();
   const setAccountInfo = useAccountStore((state) => state.setAccountInfo);
 
-  // API 엔드포인트 맵핑
   const apiEndpoints: Record<BankKey, string> = {
     nh: '/api/nh-bank/account',
     kb: '/api/kb-bank/account',
@@ -83,7 +82,7 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
   //   });
   // };
 
-  // 각 은행별 계좌 정보를 렌더링
+  // 각 은행별 계좌 정보 렌더링
   const renderBankAccounts = (bankKey: BankKey, bankData: BankData) => (
     <div key={bankKey}>
       {bankData.accounts.map((account) => (
