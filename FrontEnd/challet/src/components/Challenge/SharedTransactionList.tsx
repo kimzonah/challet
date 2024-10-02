@@ -99,7 +99,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     ? {
                         ...t,
                         image: receivedTransaction.image,
-                        withdrawal: receivedTransaction.deposit, // UPDATE일 때 deposit 필드
+                        deposit: receivedTransaction.deposit, // UPDATE일 때 deposit 필드
                         transactionAmount:
                           receivedTransaction.transactionAmount,
                         content: receivedTransaction.content,
