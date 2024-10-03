@@ -77,16 +77,15 @@ public class ChallengeController {
         @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
     })
     @GetMapping()
-    public ResponseEntity<SearchedChallengesResponseDTO> searchChallengesByElasticsearch(
-        @RequestHeader(value = "Authorization", required = false) String header,
-        @RequestParam(value = "category", required = false) String category,
-        @RequestParam(value = "keyword", required = false) String keyword) {
-        SearchedChallengesResponseDTO searchedChallengesResponseDTO = challengeService.searchChallengesFromElasticsearch(
-            header, category, keyword);
-        if (searchedChallengesResponseDTO == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(searchedChallengesResponseDTO);
+    public ResponseEntity<SearchedChallengesResponseDTO> searchChallenges(
+        @RequestHeader("Authorization") String header,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+
+        SearchedChallengesResponseDTO result = challengeService.searchChallengesFromElasticsearch(header, category, keyword, page, size);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "챌린지 검색 - MySQL (완료)", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +

@@ -1,16 +1,19 @@
 package com.challet.challetservice.domain.elasticsearch.repository;
 
-import com.challet.challetservice.domain.entity.SearchedChallenge;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import java.util.List;
+
+import com.challet.challetservice.domain.entity.SearchedChallenge;
 
 public interface SearchedChallengeRepository extends ElasticsearchRepository<SearchedChallenge, Long> {
 
-    List<SearchedChallenge> findByStatusAndCategoryAndTitleContaining(String status, String category, String title);
+    Page<SearchedChallenge> findByStatusAndCategoryAndTitleContaining(String status, String category, String title, Pageable pageable);
 
-    List<SearchedChallenge> findByStatusAndTitleContaining(String status, String title);
+    Page<SearchedChallenge> findByStatusAndTitleContaining(String status, String title, Pageable pageable);
 
-    List<SearchedChallenge> findByStatusAndCategoryContaining(String status, String category);
+    Page<SearchedChallenge> findByStatusAndCategoryContaining(String status, String category, Pageable pageable);
 
-    List<SearchedChallenge> findByStatusContaining(String status);
+    Page<SearchedChallenge> findByStatusContaining(String status, Pageable pageable);
 }
+

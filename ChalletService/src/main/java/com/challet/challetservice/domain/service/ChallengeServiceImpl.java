@@ -30,12 +30,19 @@ import com.challet.challetservice.domain.request.PaymentHttpMessageRequestDTO;
 import com.challet.challetservice.global.exception.CustomException;
 import com.challet.challetservice.global.exception.ExceptionResponse;
 import com.challet.challetservice.global.util.JwtUtil;
+
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.security.SecureRandom;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,290 +50,299 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ChallengeServiceImpl implements ChallengeService {
 
-    private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final SecureRandom random = new SecureRandom();
-    private final ChallengeRepository challengeRepository;
-    private final UserChallengeRepository userChallengeRepository;
-    private final ChallengeRepositoryImpl challengeRepositoryImpl;
-    private final SharedTransactionRepository sharedTransactionRepository;
-    private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
-    private final SimpMessagingTemplate messagingTemplate;
-    private final UserChallengeRepositoryImpl userChallengeRepositoryImpl;
-    private final SearchedChallengeRepository searchedChallengeRepository;
+	private final JwtUtil jwtUtil;
+	private final UserRepository userRepository;
+	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	private static final SecureRandom random = new SecureRandom();
+	private final ChallengeRepository challengeRepository;
+	private final UserChallengeRepository userChallengeRepository;
+	private final ChallengeRepositoryImpl challengeRepositoryImpl;
+	private final SharedTransactionRepository sharedTransactionRepository;
+	private final SharedTransactionRepositoryImpl sharedTransactionRepositoryImpl;
+	private final SimpMessagingTemplate messagingTemplate;
+	private final UserChallengeRepositoryImpl userChallengeRepositoryImpl;
+	private final SearchedChallengeRepository searchedChallengeRepository;
 
-    @Override
-    @Transactional
-    public void createChallenge(String header, ChallengeRegisterRequestDTO request) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+	@Override
+	@Transactional
+	public void createChallenge(String header, ChallengeRegisterRequestDTO request) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        // 비공개 챌린지라면 초대코드 생성
-        String code = null;
-        if (!request.isPublic()) {
-            code = generateCode(6);
-        }
+		// 비공개 챌린지라면 초대코드 생성
+		String code = null;
+		if (!request.isPublic()) {
+			code = generateCode(6);
+		}
 
-        // 챌린지 생성
-        Challenge challenge = Challenge.createChallenge(request, code);
-        challengeRepository.save(challenge);
+		// 챌린지 생성
+		Challenge challenge = Challenge.createChallenge(request, code);
+		challengeRepository.save(challenge);
 
-        searchedChallengeRepository.save(SearchedChallenge.fromChallenge(challenge));
+		searchedChallengeRepository.save(SearchedChallenge.fromChallenge(challenge));
 
-        // 생성한 유저는 참여 멤버로 추가
-        UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
-        userChallengeRepository.save(userChallenge);
+		// 생성한 유저는 참여 멤버로 추가
+		UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
+		userChallengeRepository.save(userChallenge);
 
-    }
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public ChallengeListResponseDTO getMyChallenges(String header) {
+	@Override
+	@Transactional(readOnly = true)
+	public ChallengeListResponseDTO getMyChallenges(String header) {
 
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        if (user.getUserChallenges() == null || user.getUserChallenges().isEmpty()) {
-            return null;
-        }
+		if (user.getUserChallenges() == null || user.getUserChallenges().isEmpty()) {
+			return null;
+		}
 
-        List<ChallengeInfoResponseDTO> result = user.getUserChallenges().stream()
-            .map(userChallenge -> {
-                Challenge challenge = userChallenge.getChallenge();
-                return ChallengeInfoResponseDTO.fromChallenge(challenge,
-                    challenge.getUserChallenges().size());
-            })
-            .toList();
+		List<ChallengeInfoResponseDTO> result = user.getUserChallenges()
+			.stream()
+			.map(userChallenge -> {
+				Challenge challenge = userChallenge.getChallenge();
+				return ChallengeInfoResponseDTO.fromChallenge(challenge,
+					challenge.getUserChallenges().size());
+			})
+			.toList();
 
-        return ChallengeListResponseDTO.fromChallengeList(result);
-    }
+		return ChallengeListResponseDTO.fromChallengeList(result);
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header, String category,
-        String keyword) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+	@Override
+	@Transactional(readOnly = true)
+	public SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header,
+		String category, String keyword, int page, int size) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        return SearchedChallengesResponseDTO.fromSearchedChallenges(getResult(category, keyword));
-    }
+		Pageable pageable = PageRequest.of(page, size);
+		return SearchedChallengesResponseDTO.fromSearchedChallenges(
+			getResult(category, keyword, pageable));
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public ChallengeListResponseDTO searchChallengesFromMySQL(String header, String category, String keyword) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+	private List<SearchedChallenge> getResult(String category, String keyword, Pageable pageable) {
+		String status = ChallengeStatus.RECRUITING.toString();
+		if (category != null && keyword != null) {
+			return searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(status,
+				category, keyword, pageable).getContent();
+		}
+		if (category != null) {
+			return searchedChallengeRepository.findByStatusAndCategoryContaining(status, category,
+				pageable).getContent();
+		}
+		if (keyword != null) {
+			return searchedChallengeRepository.findByStatusAndTitleContaining(status, keyword,
+				pageable).getContent();
+		}
+		return searchedChallengeRepository.findByStatusContaining(status, pageable).getContent();
+	}
 
-        List<Challenge> searchChallenges = challengeRepositoryImpl.searchChallengeByKeywordAndCategory(
-            keyword, category);
-        if (searchChallenges == null || searchChallenges.isEmpty()) {
-            return null;
-        }
-        List<ChallengeInfoResponseDTO> result = searchChallenges.stream()
-            .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge,
-                challenge.getUserChallenges().size()))
-            .toList();
+	@Override
+	@Transactional(readOnly = true)
+	public ChallengeListResponseDTO searchChallengesFromMySQL(String header, String category,
+		String keyword) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        return ChallengeListResponseDTO.fromChallengeList(result);
-    }
+		List<Challenge> searchChallenges = challengeRepositoryImpl.searchChallengeByKeywordAndCategory(
+			keyword, category);
+		if (searchChallenges == null || searchChallenges.isEmpty()) {
+			return null;
+		}
+		List<ChallengeInfoResponseDTO> result = searchChallenges.stream()
+			.map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge,
+				challenge.getUserChallenges().size()))
+			.toList();
 
+		return ChallengeListResponseDTO.fromChallengeList(result);
+	}
 
-    public List<SearchedChallenge> getResult(String category, String keyword) {
-        String status = ChallengeStatus.RECRUITING.toString();
-        if(category == null && keyword == null) {
-            return searchedChallengeRepository.findByStatusContaining(status);
-        }
-        if(category == null) {
-            return searchedChallengeRepository.findByStatusAndTitleContaining(status, keyword);
-        }
+	@Override
+	@Transactional(readOnly = true)
+	public ChallengeDetailResponseDTO getChallengeDetail(String header, Long id) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        if(keyword == null) {
-            return searchedChallengeRepository.findByStatusAndCategoryContaining(status, category);
-        }
+		Challenge challenge = challengeRepository.findById(id)
+			.orElseThrow(
+				() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        return searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(
-            status , category, keyword);
-    }
+		return ChallengeDetailResponseDTO.fromChallenge(challenge,
+			userChallengeRepository.existsByChallengeAndUser(challenge, user),
+			challenge.getUserChallenges().size());
+	}
 
-    @Override
-    @Transactional(readOnly = true)
-    public ChallengeDetailResponseDTO getChallengeDetail(String header, Long id) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+	@Override
+	@Transactional
+	public void joinChallenge(String header, Long id, ChallengeJoinRequestDTO request) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(
-                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+		Challenge challenge = challengeRepository.findById(id)
+			.orElseThrow(
+				() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        return ChallengeDetailResponseDTO.fromChallenge(challenge,
-            userChallengeRepository.existsByChallengeAndUser(challenge, user),
-            challenge.getUserChallenges().size());
-    }
+		// 비공개 챌린지라면 코드 검증
+		if (!request.isPublic() && !request.inviteCode().equals(challenge.getInviteCode())) {
+			throw new ExceptionResponse(CustomException.CODE_MISMATCH_EXCEPTION);
+		}
 
-    @Override
-    @Transactional
-    public void joinChallenge(String header, Long id, ChallengeJoinRequestDTO request) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+		// 이미 참여중인 챌린지라면 예외처리
+		if (userChallengeRepository.existsByChallengeAndUser(challenge, user)) {
+			throw new ExceptionResponse(CustomException.ALREADY_JOIN_EXCEPTION);
+		}
 
-        Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(
-                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+		// 모집중인 챌린지가 아니라면 참여 불가
+		if (!challenge.getStatus().equals(ChallengeStatus.RECRUITING)) {
+			throw new ExceptionResponse(CustomException.NOT_RECRUITING_EXCEPTION);
+		}
 
-        // 비공개 챌린지라면 코드 검증
-        if (!request.isPublic() && !request.inviteCode().equals(challenge.getInviteCode())) {
-            throw new ExceptionResponse(CustomException.CODE_MISMATCH_EXCEPTION);
-        }
+		// 참여인원 초과면 참여 불가
+		if (challenge.getUserChallenges().size() >= challenge.getMaxParticipants()) {
+			throw new ExceptionResponse(CustomException.MAX_PARTICIPANTS_EXCEEDED_EXCEPTION);
+		}
 
-        // 이미 참여중인 챌린지라면 예외처리
-        if (userChallengeRepository.existsByChallengeAndUser(challenge, user)) {
-            throw new ExceptionResponse(CustomException.ALREADY_JOIN_EXCEPTION);
-        }
+		UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
+		userChallengeRepository.save(userChallenge);
 
-        // 모집중인 챌린지가 아니라면 참여 불가
-        if (!challenge.getStatus().equals(ChallengeStatus.RECRUITING)) {
-            throw new ExceptionResponse(CustomException.NOT_RECRUITING_EXCEPTION);
-        }
+		SearchedChallenge searchedChallenge = searchedChallengeRepository.findById(
+				challenge.getId())
+			.orElseThrow(
+				() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        // 참여인원 초과면 참여 불가
-        if (challenge.getUserChallenges().size() >= challenge.getMaxParticipants()) {
-            throw new ExceptionResponse(CustomException.MAX_PARTICIPANTS_EXCEEDED_EXCEPTION);
-        }
+		SearchedChallenge updatedChallenge = SearchedChallenge.builder()
+			.challengeId(searchedChallenge.challengeId())
+			.status(searchedChallenge.status())
+			.category(searchedChallenge.category())
+			.title(searchedChallenge.title())
+			.spendingLimit(searchedChallenge.spendingLimit())
+			.startDate(searchedChallenge.startDate())
+			.endDate(searchedChallenge.endDate())
+			.maxParticipants(searchedChallenge.maxParticipants())
+			.currentParticipants(searchedChallenge.currentParticipants() + 1)
+			.isPublic(searchedChallenge.isPublic())
+			.build();
 
-        UserChallenge userChallenge = UserChallenge.fromUserAndChallenge(user, challenge);
-        userChallengeRepository.save(userChallenge);
+		searchedChallengeRepository.save(updatedChallenge);
+	}
 
-        SearchedChallenge searchedChallenge = searchedChallengeRepository.findById(challenge.getId())
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+	@Override
+	@Transactional
+	public SharedTransactionRegisterResponseDTO registerTransaction(String header, Long id,
+		SharedTransactionRegisterRequestDTO request) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        SearchedChallenge updatedChallenge = SearchedChallenge.builder()
-            .challengeId(searchedChallenge.challengeId())
-            .status(searchedChallenge.status())
-            .category(searchedChallenge.category())
-            .title(searchedChallenge.title())
-            .spendingLimit(searchedChallenge.spendingLimit())
-            .startDate(searchedChallenge.startDate())
-            .endDate(searchedChallenge.endDate())
-            .maxParticipants(searchedChallenge.maxParticipants())
-            .currentParticipants(searchedChallenge.currentParticipants() + 1)
-            .isPublic(searchedChallenge.isPublic())
-            .build();
+		Challenge challenge = challengeRepository.findById(id)
+			.orElseThrow(
+				() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-        searchedChallengeRepository.save(updatedChallenge);
-    }
+		UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge,
+				user)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
 
-    @Override
-    @Transactional
-    public SharedTransactionRegisterResponseDTO registerTransaction(String header, Long id,
-        SharedTransactionRegisterRequestDTO request) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+		SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
+			SharedTransaction.fromRequest(request, userChallenge));
+		userChallenge.addSpendingAmount(request.transactionAmount());
 
-        Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(
-                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+		return SharedTransactionRegisterResponseDTO.fromSharedTransaction(savedSharedTransaction,
+			user);
 
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge,
-                user)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
+	}
 
-        SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
-            SharedTransaction.fromRequest(request, userChallenge));
-        userChallenge.addSpendingAmount(request.transactionAmount());
+	@Override
+	@Transactional(readOnly = true)
+	public ChallengeRoomHistoryResponseDTO getChallengeRoomHistory(String header, Long id,
+		Long cursor) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        return SharedTransactionRegisterResponseDTO.fromSharedTransaction(savedSharedTransaction, user);
+		Challenge challenge = challengeRepository.findById(id)
+			.orElseThrow(
+				() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-    }
+		return sharedTransactionRepositoryImpl.findHistoryByChallenge(challenge, user, cursor);
 
-    @Override
-    @Transactional(readOnly = true)
-    public ChallengeRoomHistoryResponseDTO getChallengeRoomHistory(String header, Long id,
-        Long cursor) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+	}
 
-        Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(
-                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+	@Override
+	@Transactional(readOnly = true)
+	public SpendingAmountResponseDTO getSpendingAmount(String header, Long id) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        return sharedTransactionRepositoryImpl.findHistoryByChallenge(challenge, user, cursor);
+		Challenge challenge = challengeRepository.findById(id)
+			.orElseThrow(
+				() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
-    }
+		UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge,
+				user)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
 
-    @Override
-    @Transactional(readOnly = true)
-    public SpendingAmountResponseDTO getSpendingAmount(String header, Long id) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+		return new SpendingAmountResponseDTO(userChallenge.getSpendingAmount());
+	}
 
-        Challenge challenge = challengeRepository.findById(id)
-            .orElseThrow(
-                () -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
+	@Override
+	@Transactional
+	public void handlePayment(PaymentHttpMessageRequestDTO paymentNotification) {
 
-        UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge,
-                user)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
+		User user = userRepository.findByPhoneNumber(paymentNotification.phoneNumber())
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-        return new SpendingAmountResponseDTO(userChallenge.getSpendingAmount());
-    }
+		List<UserChallenge> userChallenges = userChallengeRepositoryImpl.getChallengeByPaymentCategory(
+			paymentNotification.category(), user);
 
-    @Override
-    @Transactional
-    public void handlePayment(PaymentHttpMessageRequestDTO paymentNotification) {
+		for (UserChallenge userChallenge : userChallenges) {
 
-        User user = userRepository.findByPhoneNumber(paymentNotification.phoneNumber())
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+			SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
+				SharedTransaction.fromPayment(paymentNotification, userChallenge));
+			userChallenge.addSpendingAmount(paymentNotification.transactionAmount());
 
-        List<UserChallenge> userChallenges = userChallengeRepositoryImpl.getChallengeByPaymentCategory(
-            paymentNotification.category(), user);
+			SharedTransactionRegisterResponseDTO registerResponseDTO = SharedTransactionRegisterResponseDTO.fromSharedTransaction(
+				savedSharedTransaction, user);
+			messagingTemplate.convertAndSend(
+				"/topic/challenges/" + userChallenge.getChallenge().getId()
+					+ "/shared-transactions", registerResponseDTO);
+		}
+	}
 
-        for (UserChallenge userChallenge : userChallenges) {
+	@Override
+	@Transactional
+	public SharedTransactionUpdateResponseDTO updateTransaction(String header, Long transactionId,
+		SharedTransactionUpdateRequestDTO request) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-            SharedTransaction savedSharedTransaction = sharedTransactionRepository.save(
-                SharedTransaction.fromPayment(paymentNotification, userChallenge));
-            userChallenge.addSpendingAmount(paymentNotification.transactionAmount());
+		SharedTransaction sharedTransaction = sharedTransactionRepository.findById(transactionId)
+			.orElseThrow(() -> new ExceptionResponse(
+				CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
 
-            SharedTransactionRegisterResponseDTO registerResponseDTO = SharedTransactionRegisterResponseDTO.fromSharedTransaction(
-                savedSharedTransaction, user);
-            messagingTemplate.convertAndSend(
-                "/topic/challenges/" + userChallenge.getChallenge().getId() + "/shared-transactions", registerResponseDTO);
-        }
-    }
+		if (!sharedTransactionRepositoryImpl.isSameUser(sharedTransaction, user)) {
+			throw new ExceptionResponse(CustomException.ACCESS_DENIED_EXCEPTION);
+		}
 
-    @Override
-    @Transactional
-    public SharedTransactionUpdateResponseDTO updateTransaction(String header, Long transactionId, SharedTransactionUpdateRequestDTO request) {
-        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
-        User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+		sharedTransaction.updateSharedTransaction(request);
 
-        SharedTransaction sharedTransaction = sharedTransactionRepository.findById(transactionId)
-            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_SHARED_TRANSACTION_EXCEPTION));
+		return SharedTransactionUpdateResponseDTO.fromRequest(request, transactionId);
+	}
 
-        if (!sharedTransactionRepositoryImpl.isSameUser(sharedTransaction, user)){
-            throw new ExceptionResponse(CustomException.ACCESS_DENIED_EXCEPTION);
-        }
-
-        sharedTransaction.updateSharedTransaction(request);
-
-        return SharedTransactionUpdateResponseDTO.fromRequest(request, transactionId);
-    }
-
-    public static String generateCode(int length) {
-        StringBuilder code = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            code.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
-        }
-        return code.toString();
-    }
+	public static String generateCode(int length) {
+		StringBuilder code = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
+			code.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+		}
+		return code.toString();
+	}
 }

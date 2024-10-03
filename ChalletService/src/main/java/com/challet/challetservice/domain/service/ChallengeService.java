@@ -19,7 +19,7 @@ public interface ChallengeService {
 
     ChallengeListResponseDTO getMyChallenges(String header);
 
-    SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header, String category, String keyword);
+    SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header, String category, String keyword, int page, int size);
 
     ChallengeListResponseDTO searchChallengesFromMySQL(String header, String category, String keyword);
 
