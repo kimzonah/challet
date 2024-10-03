@@ -37,5 +37,5 @@ public interface ChallengeService {
 
     void handlePayment(PaymentHttpMessageRequestDTO paymentNotification);
 
-    SharedTransactionUpdateResponseDTO updateTransaction(String header, Long transactionId, SharedTransactionUpdateRequestDTO request);
+    SharedTransactionUpdateResponseDTO updateTransaction(String header, Long challengeId,Long transactionId, SharedTransactionUpdateRequestDTO request);
 }
