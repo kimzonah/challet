@@ -30,6 +30,7 @@ import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
 import com.challet.bankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -195,9 +196,16 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             paymentRequestDTO.deposit());
 
         if(categoryName.equals("ETC")) {
-            
-        }
+            CategoryT categoryInfo = categoryRepository.getCategoryInfo(accountId, categoryName);
 
+            CategoryMapping newPayment = CategoryMapping.builder().depositName(
+                paymentRequestDTO.deposit())
+                .categoryT(categoryInfo)
+                .challetBank(challetBank)
+                .build();
+
+            categoryMappingRepository.save(newPayment);
+        }
         ChalletBankTransaction paymentTransaction = createTransaction(challetBank,
             paymentRequestDTO, transactionBalance);
 
