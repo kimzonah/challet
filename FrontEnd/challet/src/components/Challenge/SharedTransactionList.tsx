@@ -83,14 +83,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
               // 새로운 거래내역이 발생했을 때 모달을 보여줌
               showNewTransactionModal();
-
-              // **Scroll to the bottom after ADD action**
-              setTimeout(() => {
-                if (transactionListRef.current) {
-                  transactionListRef.current.scrollTop =
-                    transactionListRef.current.scrollHeight;
-                }
-              }, 100);
             } else if (receivedTransaction.action === 'UPDATE') {
               // UPDATE의 경우 기존 트랜잭션 업데이트
               setSharedTransactions((prevTransactions) =>
@@ -115,6 +107,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
         webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
           const emojiUpdate = JSON.parse(message.body);
+
           setSharedTransactions((prevTransactions) =>
             prevTransactions.map((transaction) =>
               transaction.sharedTransactionId ===
@@ -124,7 +117,10 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     goodCount: emojiUpdate.emoji.goodCount,
                     sosoCount: emojiUpdate.emoji.sosoCount,
                     badCount: emojiUpdate.emoji.badCount,
-                    userEmoji: emojiUpdate.emoji.userEmoji,
+                    userEmoji:
+                      emojiUpdate.userId === userId
+                        ? emojiUpdate.emoji.userEmoji
+                        : transaction.userEmoji,
                   }
                 : transaction
             )
@@ -185,10 +181,10 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
             newScrollHeight - previousScrollHeight + previousScrollTop;
         }, 100);
       } else if (!scrollToBottom && transactionListRef.current) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           transactionListRef.current!.scrollTop =
             transactionListRef.current!.scrollHeight - previousScrollHeight;
-        }, 50);
+        });
       }
     }
 
@@ -196,17 +192,18 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     isLoadingRef.current = false; // 로딩 끝
   };
 
+  // 스크롤이 맨 위로부터 200px 떨어진 시점에 데이터를 미리 불러옴
   const handleScrollThrottled = throttle(() => {
     if (
       transactionListRef.current &&
-      transactionListRef.current.scrollTop === 0 &&
+      transactionListRef.current.scrollTop < 200 && // 스크롤이 맨 위로부터 100px 이내일 때
       hasNextPageRef.current &&
       !isLoadingRef.current &&
       !isFetchingRef.current
     ) {
-      fetchTransactions(); // 스크롤이 위에 도달했을 때 새로운 데이터를 가져옴
+      fetchTransactions(); // 새로운 데이터를 미리 가져옴
     }
-  }, 200); // 200ms 동안 스크롤 이벤트를 조절 (성능 최적화)
+  }, 300); // 300ms 동안 스크롤 이벤트를 조절 (성능 최적화)
 
   useEffect(() => {
     fetchTransactions(true); // 처음 로드될 때 스크롤을 맨 아래로 이동
@@ -235,7 +232,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
       sharedTransactionId: transaction.sharedTransactionId,
       action: action,
       type: emojiType,
-      beforeType: beforeType,
     };
 
     webSocketService.sendMessage(

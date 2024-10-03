@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
 import ChallengeModal from './ChallengeModal';
 import AllSearch from '../../assets/Challenge/Search.png';
@@ -23,9 +23,9 @@ export interface Challenge {
 }
 
 interface ChallengeFormProps {
-  challenges: Challenge[];
-  isMyChallenges: boolean;
-  isLoading: boolean;
+  keyword?: string;
+  category?: string;
+  activeTab?: string;
 }
 
 const categoryIcons: Record<string, string> = {
@@ -50,12 +50,20 @@ const getRandomBackgroundColor = () => {
 };
 
 const ChallengeForm = ({
-  challenges,
-  isMyChallenges,
-  isLoading,
+  keyword = '',
+  category = '',
+  activeTab,
 }: ChallengeFormProps) => {
+  const {
+    joinChallenge,
+    isLastPage,
+    isLoading,
+    challenges,
+    fetchChallenges,
+    fetchChallengeDetail,
+  } = useChallengeApi();
+
   const validChallenges = Array.isArray(challenges) ? challenges : [];
-  const { joinChallenge, fetchChallengeDetail } = useChallengeApi();
   const [isModalOpen, setIsModalOpen] = useState(false); // 챌린지 세부정보 모달 상태
   const [challengeDetail, setChallengeDetail] = useState<any | null>(null); // 선택된 챌린지 상태
   const [inviteCodeInput, setInviteCodeInput] = useState(''); // 초대코드 입력 상태
@@ -65,6 +73,11 @@ const ChallengeForm = ({
   const [showJoinResultModal, setShowJoinResultModal] = useState(false); // 참가 결과 모달 상태
   const [joinResultMessage, setJoinResultMessage] = useState(''); // 모달에 표시할 메시지
   const [isClosingModal, setIsClosingModal] = useState(false); // 모달 닫힘 애니메이션 상태
+  const [page, setPage] = useState(0); // 페이지 상태 추가
+  const [hasFetchedMyChallenges, setHasFetchedMyChallenges] = useState(false); // "나의 챌린지" 데이터를 불러왔는지 여부
+
+  // 스크롤 컨테이너를 참조할 ref 생성
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   // 배경 색상 할당
   useEffect(() => {
@@ -80,8 +93,54 @@ const ChallengeForm = ({
     }
   }, [validChallenges]);
 
+  // 탭 변경 시 데이터 로드 및 페이지 초기화
+  useEffect(() => {
+    if (activeTab === '나의 챌린지') {
+      if (!hasFetchedMyChallenges) {
+        // "나의 챌린지" 탭이 변경될 때만 데이터 요청
+        fetchChallenges(keyword, category, 0, true);
+        setHasFetchedMyChallenges(true); // 데이터가 로드되면 다시 요청하지 않음
+      }
+    } else {
+      // 다른 탭일 경우 요청을 매번 보냄
+      fetchChallenges(keyword, category, 0, false);
+      setHasFetchedMyChallenges(false); // 나의 챌린지를 떠나면 다시 요청할 수 있게 초기화
+    }
+    setPage(0); // 페이지 초기화
+  }, [keyword, category, activeTab]); // activeTab 변경 시 page 0으로 리셋
+
+  // 스크롤 감지하여 페이지 끝에 도달 시 추가 데이터 요청
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isLoading || isLastPage || !scrollContainerRef.current) return; // 로딩 중이거나 마지막 페이지면 요청 안함
+
+      const { scrollTop, scrollHeight, clientHeight } =
+        scrollContainerRef.current;
+
+      // 스크롤이 끝에 도달했는지 확인
+      if (scrollTop + clientHeight >= scrollHeight - 20) {
+        setPage((prevPage) => prevPage + 1); // 페이지 증가
+      }
+    };
+
+    // 스크롤 이벤트 리스너 추가
+    const container = scrollContainerRef.current;
+    container?.addEventListener('scroll', handleScroll);
+    return () => container?.removeEventListener('scroll', handleScroll); // 클린업
+  }, [isLoading, isLastPage]);
+
+  // 페이지가 변경될 때마다 fetchChallenges 호출
+  useEffect(() => {
+    if (page > 0 && !isLastPage) {
+      const isMyChallenges = activeTab === '나의 챌린지';
+      if (!isMyChallenges) {
+        fetchChallenges(keyword, category, page);
+      }
+    }
+  }, [page, keyword, category, activeTab]); // page, keyword, category, activeTab에 의존
+
   // 로딩 상태 처리
-  if (isLoading) {
+  if (isLoading && page === 0) {
     return (
       <div className='flex justify-center items-center h-64'>
         <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00CCCC]'></div>
@@ -195,11 +254,14 @@ const ChallengeForm = ({
   };
 
   return (
-    <div className='scrollbar-hide overflow-y-auto'>
+    <div className=''>
       {/* 나의 챌린지 여부에 따른 챌린지 목록 */}
-      {isMyChallenges ? (
+      {activeTab === '나의 챌린지' ? (
         <>
-          <div className='scrollbar-hide overflow-y-auto max-h-[80vh] mb-4'>
+          <div
+            ref={scrollContainerRef}
+            className='scrollbar-hide overflow-y-auto max-h-[80vh] mb-4'
+          >
             {/* 진행 중인 챌린지 */}
             {validChallenges.filter(
               (challenge) => challenge.status === 'PROGRESSING'
@@ -248,7 +310,10 @@ const ChallengeForm = ({
           </div>
         </>
       ) : (
-        <div className='scrollbar-hide overflow-y-auto max-h-[60vh] mb-4'>
+        <div
+          ref={scrollContainerRef}
+          className='scrollbar-hide overflow-y-auto max-h-[60vh] mb-4'
+        >
           {renderChallenges(validChallenges)}
         </div>
       )}
