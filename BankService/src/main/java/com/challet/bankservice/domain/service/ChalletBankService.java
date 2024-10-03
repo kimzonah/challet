@@ -22,7 +22,7 @@ public interface ChalletBankService {
 
     PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
 
-    int sendPaymentInfoToChallet(Long accountId, PaymentRequestDTO paymentRequestDTO);
+    int sendPaymentInfoToChallet(Long accountId, PaymentResponseDTO paymentInfoDTO);
 
     MyDataBankAccountInfoResponseDTO connectMyDataBanks(String tokenHeader,
         BankSelectionRequestDTO bankSelectionRequestDTO);

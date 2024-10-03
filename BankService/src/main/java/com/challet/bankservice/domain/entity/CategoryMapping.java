@@ -35,5 +35,5 @@ public class CategoryMapping {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ch_bank_id", nullable = false)
-    private ChalletBank challetBank;  // 계좌와 연관
+    private ChalletBank challetBank;
 }

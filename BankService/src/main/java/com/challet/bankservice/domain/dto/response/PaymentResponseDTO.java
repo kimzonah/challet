@@ -13,8 +13,7 @@ public record PaymentResponseDTO(
     @Schema(description = "결제 장소")
     String deposit,
 
-    @Schema(description = "결제 카테고리", allowableValues = {"DELIVERY", "TRANSPORT", "COFFEE",
-        "SHOPPING"})
+    @Schema(description = "결제 카테고리")
     String category
 ) {
 
