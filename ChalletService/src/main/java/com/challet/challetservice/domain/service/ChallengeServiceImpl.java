@@ -345,11 +345,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 	@Override
 	@Transactional
-	public SharedTransactionUpdateResponseDTO updateTransaction(String header, Long transactionId,
+	public SharedTransactionUpdateResponseDTO updateTransaction(String header, Long challengeId,Long transactionId,
 		SharedTransactionUpdateRequestDTO request) {
 		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
 		User user = userRepository.findByPhoneNumber(loginUserPhoneNumber)
 			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+		Challenge challenge = challengeRepository.findById(challengeId)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_CHALLENGE_EXCEPTION));
 
 		SharedTransaction sharedTransaction = sharedTransactionRepository.findById(transactionId)
 			.orElseThrow(() -> new ExceptionResponse(
@@ -359,6 +362,10 @@ public class ChallengeServiceImpl implements ChallengeService {
 			throw new ExceptionResponse(CustomException.ACCESS_DENIED_EXCEPTION);
 		}
 
+		UserChallenge userChallenge = userChallengeRepository.findByChallengeAndUser(challenge, user)
+				.orElseThrow(()-> new ExceptionResponse(CustomException.NOT_FOUND_JOIN_EXCEPTION));
+
+		userChallenge.updateSpendingAmount(sharedTransaction.getTransactionAmount(), request.transactionAmount());
 		sharedTransaction.updateSharedTransaction(request);
 
 		return SharedTransactionUpdateResponseDTO.fromRequest(request, transactionId);

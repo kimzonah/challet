@@ -61,4 +61,9 @@ public class UserChallenge {
         this.spendingAmount += amount;
     }
 
+    public void updateSpendingAmount(Long oldAmount, Long newAmount) {
+        this.spendingAmount -= oldAmount;
+        this.spendingAmount += newAmount;
+    }
+
 }

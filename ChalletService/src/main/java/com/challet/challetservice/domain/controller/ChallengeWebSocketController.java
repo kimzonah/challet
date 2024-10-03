@@ -26,20 +26,28 @@ public class ChallengeWebSocketController {
 
     @MessageMapping("/challenges/{id}/shared-transactions")
     @SendTo("/topic/challenges/{id}/shared-transactions")
-    public SharedTransactionRegisterResponseDTO registerTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long id, SharedTransactionRegisterRequestDTO request) {
-        return challengeService.registerTransaction(headerAccessor.getFirstNativeHeader("Authorization"),id, request);
+    public SharedTransactionRegisterResponseDTO registerTransaction(
+        StompHeaderAccessor headerAccessor, @DestinationVariable Long id,
+        SharedTransactionRegisterRequestDTO request) {
+        return challengeService.registerTransaction(
+            headerAccessor.getFirstNativeHeader("Authorization"), id, request);
     }
 
     @MessageMapping("/challenges/{challengeId}/shared-transactions/{transactionId}")
     @SendTo("/topic/challenges/{challengeId}/shared-transactions")
-    public SharedTransactionUpdateResponseDTO updateTransaction(StompHeaderAccessor headerAccessor, @DestinationVariable Long transactionId, SharedTransactionUpdateRequestDTO request) {
-        return challengeService.updateTransaction(headerAccessor.getFirstNativeHeader("Authorization"), transactionId, request);
+    public SharedTransactionUpdateResponseDTO updateTransaction(StompHeaderAccessor headerAccessor,
+        @DestinationVariable Long challengeId, @DestinationVariable Long transactionId,
+        SharedTransactionUpdateRequestDTO request) {
+        return challengeService.updateTransaction(
+            headerAccessor.getFirstNativeHeader("Authorization"), challengeId, transactionId, request);
     }
 
 
     @MessageMapping("/challenges/{id}/emoji")
     @SendTo("/topic/challenges/{id}/emoji")
-    public EmojiResponseDTO handleEmoji (StompHeaderAccessor headerAccessor, @DestinationVariable Long id, EmojiRequestDTO request) {
-        return sharedTransactionService.handleEmoji(headerAccessor.getFirstNativeHeader("Authorization"), request);
+    public EmojiResponseDTO handleEmoji(StompHeaderAccessor headerAccessor,
+        @DestinationVariable Long id, EmojiRequestDTO request) {
+        return sharedTransactionService.handleEmoji(
+            headerAccessor.getFirstNativeHeader("Authorization"), request);
     }
 }
