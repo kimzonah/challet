@@ -175,11 +175,11 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
       if (scrollToBottom && transactionListRef.current) {
         // 새로운 데이터를 추가한 후 스크롤 위치 복원
-        requestAnimationFrame(() => {
+        setTimeout(() => {
           const newScrollHeight = transactionListRef.current!.scrollHeight;
           transactionListRef.current!.scrollTop =
             newScrollHeight - previousScrollHeight + previousScrollTop;
-        });
+        }, 100);
       } else if (!scrollToBottom && transactionListRef.current) {
         requestAnimationFrame(() => {
           const newScrollHeight = transactionListRef.current!.scrollHeight;
@@ -204,7 +204,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     ) {
       fetchTransactions(); // 새로운 데이터를 미리 가져옴
     }
-  }, 100); // 100ms 동안 스크롤 이벤트를 조절 (성능 최적화)
+  }, 300); // 300ms 동안 스크롤 이벤트를 조절 (성능 최적화)
 
   useEffect(() => {
     fetchTransactions(true); // 처음 로드될 때 스크롤을 맨 아래로 이동
