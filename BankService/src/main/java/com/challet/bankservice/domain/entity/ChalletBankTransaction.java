@@ -71,4 +71,8 @@ public class ChalletBankTransaction {
             .transactionBalance(transactionBalance)
             .build();
     }
+
+    public void updateCategory(String category) {
+        this.category = Category.valueOf(category);
+    }
 }

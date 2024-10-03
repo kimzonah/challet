@@ -4,6 +4,7 @@ import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankTransferRequestDTO;
+import com.challet.bankservice.domain.dto.request.ConfirmPaymentRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
@@ -22,6 +23,7 @@ import com.challet.bankservice.domain.entity.ChalletBankTransaction;
 import com.challet.bankservice.domain.repository.CategoryMappingRepository;
 import com.challet.bankservice.domain.repository.CategoryRepository;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
+import com.challet.bankservice.domain.repository.ChalletBankTransactionRepository;
 import com.challet.bankservice.global.client.ChalletFeignClient;
 import com.challet.bankservice.global.client.KbBankFeignClient;
 import com.challet.bankservice.global.client.NhBankFeignClient;
@@ -30,7 +32,6 @@ import com.challet.bankservice.global.exception.CustomException;
 import com.challet.bankservice.global.exception.ExceptionResponse;
 import com.challet.bankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
-import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChalletBankServiceImpl implements ChalletBankService {
 
     private final ChalletBankRepository challetBankRepository;
+    private final ChalletBankTransactionRepository challetBankTransactionRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryMappingRepository categoryMappingRepository;
     private final Environment env;
@@ -197,8 +199,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             paymentRequestDTO, transactionBalance, categoryName);
 
         challetBank.addTransaction(paymentTransaction);
+        challetBankTransactionRepository.save(paymentTransaction);
 
-        return createPaymentResponse(paymentRequestDTO, categoryName);
+        return PaymentResponseDTO.fromPaymentResponseDTO(paymentTransaction);
     }
 
     private long calculateTransactionBalance(ChalletBank challetBank, long transactionAmount) {
@@ -240,13 +243,32 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             .build();
     }
 
-    private PaymentResponseDTO createPaymentResponse(PaymentRequestDTO paymentRequestDTO,
-        String categoryName) {
-        return PaymentResponseDTO.builder()
-            .transactionAmount(paymentRequestDTO.transactionAmount())
-            .deposit(paymentRequestDTO.deposit())
-            .category(categoryName)
-            .build();
+    @Transactional
+    @Override
+    public PaymentResponseDTO confirmPaymentInfo(Long accountId,
+        ConfirmPaymentRequestDTO paymentRequestDTO) {
+
+        ChalletBankTransaction transaction = challetBankTransactionRepository.findById(paymentRequestDTO.id())
+            .orElseThrow(() -> new ExceptionResponse(
+                CustomException.NOT_FOUND_TRANSACTION_DETAIL_EXCEPTION));
+
+        if (!transaction.getCategory().equals(paymentRequestDTO.category())) {
+            CategoryT categoryInfo = categoryRepository.getCategoryInfo(accountId, paymentRequestDTO.category());
+            long notFindSameCategory = categoryMappingRepository.updateCategory(accountId, categoryInfo.getId(),
+                paymentRequestDTO);
+
+            if(notFindSameCategory == 0){
+                CategoryMapping newPayment = CategoryMapping
+                    .builder()
+                    .depositName(paymentRequestDTO.deposit())
+                    .categoryT(categoryInfo)
+                    .challetBank(transaction.getChalletBank())
+                    .build();
+                categoryMappingRepository.save(newPayment);
+            }
+            transaction.updateCategory(paymentRequestDTO.category());
+        }
+        return PaymentResponseDTO.fromPaymentResponseDTO(transaction);
     }
 
     @Transactional

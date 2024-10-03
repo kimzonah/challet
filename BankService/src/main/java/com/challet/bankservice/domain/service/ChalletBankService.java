@@ -2,6 +2,7 @@ package com.challet.bankservice.domain.service;
 
 import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
+import com.challet.bankservice.domain.dto.request.ConfirmPaymentRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
@@ -21,6 +22,8 @@ public interface ChalletBankService {
     TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
 
     PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
+
+    PaymentResponseDTO confirmPaymentInfo(Long accountId, ConfirmPaymentRequestDTO paymentRequestDTO);
 
     int sendPaymentInfoToChallet(Long accountId, PaymentResponseDTO paymentInfoDTO);
 
