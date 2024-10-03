@@ -106,7 +106,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     @Transactional(readOnly = true)
-    public SearchedChallengesResponseDTO searchChallenges(String header, String category,
+    public SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header, String category,
         String keyword) {
         String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
         userRepository.findByPhoneNumber(loginUserPhoneNumber)
@@ -114,6 +114,27 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         return SearchedChallengesResponseDTO.fromSearchedChallenges(getResult(category, keyword));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ChallengeListResponseDTO searchChallengesFromMySQL(String header, String category, String keyword) {
+        String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+        userRepository.findByPhoneNumber(loginUserPhoneNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+        List<Challenge> searchChallenges = challengeRepositoryImpl.searchChallengeByKeywordAndCategory(
+            keyword, category);
+        if (searchChallenges == null || searchChallenges.isEmpty()) {
+            return null;
+        }
+        List<ChallengeInfoResponseDTO> result = searchChallenges.stream()
+            .map(challenge -> ChallengeInfoResponseDTO.fromChallenge(challenge,
+                challenge.getUserChallenges().size()))
+            .toList();
+
+        return new ChallengeListResponseDTO(result);
+    }
+
 
     public List<SearchedChallenge> getResult(String category, String keyword) {
         String status = ChallengeStatus.RECRUITING.toString();

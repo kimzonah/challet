@@ -20,8 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +64,7 @@ public class ChallengeController {
         return ResponseEntity.status(HttpStatus.OK).body(myChallenges);
     }
 
-    @Operation(summary = "챌린지 검색 (완료)", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
+    @Operation(summary = "챌린지 검색 - Elasticsearch (완료)", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
         "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "챌린지 검색 성공"),
@@ -78,16 +77,42 @@ public class ChallengeController {
         @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
     })
     @GetMapping()
-    public ResponseEntity<SearchedChallengesResponseDTO> searchChallenges(
+    public ResponseEntity<SearchedChallengesResponseDTO> searchChallengesByElasticsearch(
         @RequestHeader(value = "Authorization", required = false) String header,
         @RequestParam(value = "category", required = false) String category,
         @RequestParam(value = "keyword", required = false) String keyword) {
-        SearchedChallengesResponseDTO searchedChallengesResponseDTO = challengeService.searchChallenges(
+        SearchedChallengesResponseDTO searchedChallengesResponseDTO = challengeService.searchChallengesFromElasticsearch(
             header, category, keyword);
         if (searchedChallengesResponseDTO == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(searchedChallengesResponseDTO);
+    }
+
+    @Operation(summary = "챌린지 검색 - MySQL (완료)", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
+        "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "챌린지 검색 성공"),
+        @ApiResponse(responseCode = "204", description = "검색 결과 없음"),
+        @ApiResponse(responseCode = "400", description = "챌린지 검색 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @Parameters(value = {
+        @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
+        @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
+    })
+    @GetMapping("/mysql")
+    public ResponseEntity<ChallengeListResponseDTO> searchChallengesByMySQL(
+        @RequestHeader(value = "Authorization", required = false) String header,
+        @RequestParam(value = "category", required = false) String category,
+        @RequestParam(value = "keyword", required = false) String keyword) {
+        ChallengeListResponseDTO searchChallenges = challengeService.searchChallengesFromMySQL(header,
+            category, keyword);
+        if (searchChallenges == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(searchChallenges);
+
     }
 
     @Operation(summary = "챌린지 정보 상세 조회 (완료)", description = "챌린지ID로 챌린지 정보 조회")
