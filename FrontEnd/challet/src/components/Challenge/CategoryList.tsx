@@ -29,7 +29,6 @@ const CategoryList = ({
   ];
 
   const handleCategoryClick = (className: string) => {
-    onSearch('');
     onCategoryChange(className);
   };
 
