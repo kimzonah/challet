@@ -68,7 +68,11 @@ public class SharedTransactionServiceImpl implements SharedTransactionService {
         EmojiReactionDTO emojiReaction = emojiRepositoryImpl.getEmojiReaction(
             sharedTransaction.getId(), user);
 
-        return new EmojiResponseDTO(sharedTransaction.getId(), emojiReaction);
+        return EmojiResponseDTO.builder()
+            .sharedTransactionId(sharedTransaction.getId())
+            .userId(user.getId())
+            .emoji(emojiReaction)
+            .build();
     }
 
     @Override
