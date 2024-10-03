@@ -85,7 +85,6 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         categoryMappingData.put("SHOPPING", Arrays.asList("무신사", "네이버쇼핑"));
         categoryMappingData.put("ETC", Collections.emptyList()); // 기타 카테고리 (매핑 없음)
 
-
         for (Map.Entry<String, List<String>> entry : categoryMappingData.entrySet()) {
             String categoryName = entry.getKey();
             List<String> paymentNames = entry.getValue();
@@ -191,6 +190,13 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
         long transactionBalance = calculateTransactionBalance(challetBank,
             paymentRequestDTO.transactionAmount());
+
+        String categoryName = challetBankRepository.getCateGoryName(accountId,
+            paymentRequestDTO.deposit());
+
+        if(categoryName.equals("ETC")) {
+            
+        }
 
         ChalletBankTransaction paymentTransaction = createTransaction(challetBank,
             paymentRequestDTO, transactionBalance);
