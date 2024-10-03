@@ -115,6 +115,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
         webSocketService.subscribeEmoji(challengeId.toString(), (message) => {
           const emojiUpdate = JSON.parse(message.body);
+
           setSharedTransactions((prevTransactions) =>
             prevTransactions.map((transaction) =>
               transaction.sharedTransactionId ===
@@ -124,7 +125,10 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                     goodCount: emojiUpdate.emoji.goodCount,
                     sosoCount: emojiUpdate.emoji.sosoCount,
                     badCount: emojiUpdate.emoji.badCount,
-                    userEmoji: emojiUpdate.emoji.userEmoji,
+                    userEmoji:
+                      emojiUpdate.userId === userId
+                        ? emojiUpdate.emoji.userEmoji
+                        : transaction.userEmoji,
                   }
                 : transaction
             )
@@ -236,7 +240,6 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
       sharedTransactionId: transaction.sharedTransactionId,
       action: action,
       type: emojiType,
-      beforeType: beforeType,
     };
 
     webSocketService.sendMessage(
