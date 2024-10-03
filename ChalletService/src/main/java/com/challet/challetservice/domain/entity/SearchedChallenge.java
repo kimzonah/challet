@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Builder
-@Document(indexName = "challenges")
+@Document(indexName = "challenge_data_index")
 @Schema(description = "챌린지 검색")
 public record SearchedChallenge(
 
