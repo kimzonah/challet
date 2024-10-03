@@ -33,6 +33,7 @@ import com.challet.challetservice.global.util.JwtUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -114,15 +115,31 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header,
-		String category, String keyword, int page, int size) {
+	public SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header, String category, String keyword, int page, int size) {
 		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
 		userRepository.findByPhoneNumber(loginUserPhoneNumber)
 			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
 		Pageable pageable = PageRequest.of(page, size);
-		return SearchedChallengesResponseDTO.fromSearchedChallenges(
-			getResult(category, keyword, pageable));
+		Page<SearchedChallenge> searchedChallengePage = getResult(category, keyword, pageable);
+
+		boolean isLastPage = searchedChallengePage.isLast();
+
+		return SearchedChallengesResponseDTO.fromSearchedChallenges(searchedChallengePage.getContent(), isLastPage);
+	}
+
+	private Page<SearchedChallenge> getResult(String category, String keyword, Pageable pageable) {
+		String status = ChallengeStatus.RECRUITING.toString();
+		if (category != null && keyword != null) {
+			return searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(status, category, keyword, pageable);
+		}
+		if (category != null) {
+			return searchedChallengeRepository.findByStatusAndCategoryContaining(status, category, pageable);
+		}
+		if (keyword != null) {
+			return searchedChallengeRepository.findByStatusAndTitleContaining(status, keyword, pageable);
+		}
+		return searchedChallengeRepository.findByStatusContaining(status, pageable);
 	}
 
 	@Override
@@ -134,23 +151,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 
 		return SearchedChallengesResponseDTO.fromSearchedChallenges(
 			getResult(category, keyword));
-	}
-
-	private List<SearchedChallenge> getResult(String category, String keyword, Pageable pageable) {
-		String status = ChallengeStatus.RECRUITING.toString();
-		if (category != null && keyword != null) {
-			return searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(status,
-				category, keyword, pageable).getContent();
-		}
-		if (category != null) {
-			return searchedChallengeRepository.findByStatusAndCategoryContaining(status, category,
-				pageable).getContent();
-		}
-		if (keyword != null) {
-			return searchedChallengeRepository.findByStatusAndTitleContaining(status, keyword,
-				pageable).getContent();
-		}
-		return searchedChallengeRepository.findByStatusContaining(status, pageable).getContent();
 	}
 
 	private List<SearchedChallenge> getResult(String category, String keyword) {
