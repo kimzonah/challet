@@ -125,6 +125,17 @@ public class ChallengeServiceImpl implements ChallengeService {
 			getResult(category, keyword, pageable));
 	}
 
+	@Override
+	public SearchedChallengesResponseDTO searchChallengesFromElasticsearch(final String header,
+		final String category, final String keyword) {
+		String loginUserPhoneNumber = jwtUtil.getLoginUserPhoneNumber(header);
+		userRepository.findByPhoneNumber(loginUserPhoneNumber)
+			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
+
+		return SearchedChallengesResponseDTO.fromSearchedChallenges(
+			getResult(category, keyword));
+	}
+
 	private List<SearchedChallenge> getResult(String category, String keyword, Pageable pageable) {
 		String status = ChallengeStatus.RECRUITING.toString();
 		if (category != null && keyword != null) {
@@ -140,6 +151,21 @@ public class ChallengeServiceImpl implements ChallengeService {
 				pageable).getContent();
 		}
 		return searchedChallengeRepository.findByStatusContaining(status, pageable).getContent();
+	}
+
+	private List<SearchedChallenge> getResult(String category, String keyword) {
+		String status = ChallengeStatus.RECRUITING.toString();
+		if (category != null && keyword != null) {
+			return searchedChallengeRepository.findByStatusAndCategoryAndTitleContaining(status,
+				category, keyword);
+		}
+		if (category != null) {
+			return searchedChallengeRepository.findByStatusAndCategoryContaining(status, category);
+		}
+		if (keyword != null) {
+			return searchedChallengeRepository.findByStatusAndTitleContaining(status, keyword);
+		}
+		return searchedChallengeRepository.findByStatusContaining(status);
 	}
 
 	@Override

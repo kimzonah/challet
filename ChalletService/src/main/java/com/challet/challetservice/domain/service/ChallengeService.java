@@ -21,6 +21,8 @@ public interface ChallengeService {
 
     SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header, String category, String keyword, int page, int size);
 
+    SearchedChallengesResponseDTO searchChallengesFromElasticsearch(String header, String category, String keyword);
+
     ChallengeListResponseDTO searchChallengesFromMySQL(String header, String category, String keyword);
 
     ChallengeDetailResponseDTO getChallengeDetail(String header, Long id);

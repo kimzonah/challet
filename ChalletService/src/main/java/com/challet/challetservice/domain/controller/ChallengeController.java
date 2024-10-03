@@ -88,6 +88,28 @@ public class ChallengeController {
         return ResponseEntity.ok(result);
     }
 
+    @Operation(summary = "챌린지 검색 - Elasticsearch (완료)", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
+        "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "챌린지 검색 성공"),
+        @ApiResponse(responseCode = "204", description = "검색 결과 없음"),
+        @ApiResponse(responseCode = "400", description = "챌린지 검색 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @Parameters(value = {
+        @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
+        @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
+    })
+    @GetMapping()
+    public ResponseEntity<SearchedChallengesResponseDTO> searchChallengesByElasticSearch(
+        @RequestHeader("Authorization") String header,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) String keyword) {
+
+        SearchedChallengesResponseDTO result = challengeService.searchChallengesFromElasticsearch(header, category, keyword);
+        return ResponseEntity.ok(result);
+    }
+
     @Operation(summary = "챌린지 검색 - MySQL (완료)", description = "모집중인 챌린지 중 검색어와 카테고리로 챌린지 검색" +
         "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
     @ApiResponses(value = {
