@@ -100,7 +100,7 @@ public class ChallengeController {
         @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
         @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
     })
-    @GetMapping()
+    @GetMapping("/elasticsearch")
     public ResponseEntity<SearchedChallengesResponseDTO> searchChallengesByElasticSearch(
         @RequestHeader("Authorization") String header,
         @RequestParam(required = false) String category,
