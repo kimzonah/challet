@@ -101,7 +101,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             })
             .toList();
 
-        return new ChallengeListResponseDTO(result);
+        return ChallengeListResponseDTO.fromChallengeList(result);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                 challenge.getUserChallenges().size()))
             .toList();
 
-        return new ChallengeListResponseDTO(result);
+        return ChallengeListResponseDTO.fromChallengeList(result);
     }
 
 
