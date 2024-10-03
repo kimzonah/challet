@@ -15,8 +15,12 @@ import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.entity.Category;
+import com.challet.bankservice.domain.entity.CategoryMapping;
+import com.challet.bankservice.domain.entity.CategoryT;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.ChalletBankTransaction;
+import com.challet.bankservice.domain.repository.CategoryMappingRepository;
+import com.challet.bankservice.domain.repository.CategoryRepository;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.global.client.ChalletFeignClient;
 import com.challet.bankservice.global.client.KbBankFeignClient;
@@ -27,7 +31,11 @@ import com.challet.bankservice.global.exception.ExceptionResponse;
 import com.challet.bankservice.global.util.JwtUtil;
 import com.querydsl.core.NonUniqueResultException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +51,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChalletBankServiceImpl implements ChalletBankService {
 
     private final ChalletBankRepository challetBankRepository;
+    private final CategoryRepository categoryRepository;
+    private final CategoryMappingRepository categoryMappingRepository;
     private final Environment env;
     private final JwtUtil jwtUtil;
     private final KbBankFeignClient kbBankFeignClient;
@@ -55,13 +65,49 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         for (int retry = 0; retry < 6; retry++) {
             String accountNum = createAccountNum();
             try {
-                saveAccount(phoneNumber, accountNum);
+                ChalletBank challetBank = saveAccount(phoneNumber, accountNum);
+                createDefaultCategoriesAndMappingsForAccount(challetBank);
                 return;
             } catch (DataIntegrityViolationException e) {
                 log.warn("중복된 계좌 번호 발견, 다시 생성합니다. 중복 계좌 번호: " + accountNum);
             }
         }
         throw new ExceptionResponse(CustomException.NOT_CREATE_USER_ACCOUNT_EXCEPTION);
+    }
+
+    // 계좌별 기본 카테고리 및 매핑 생성
+    private void createDefaultCategoriesAndMappingsForAccount(ChalletBank challetBank) {
+        Map<String, List<String>> categoryMappingData = new HashMap<>();
+        categoryMappingData.put("DELIVERY", Arrays.asList("쿠팡이츠", "배달의 민족", "배달", "요기요"));
+        categoryMappingData.put("TRANSPORT", Arrays.asList("택시", "킥보드", "우버"));
+        categoryMappingData.put("COFFEE",
+            Arrays.asList("스타벅스", "할리스", "파스쿠치", "투썸", "이디야", "커피", "카페"));
+        categoryMappingData.put("SHOPPING", Arrays.asList("무신사", "네이버쇼핑"));
+        categoryMappingData.put("ETC", Collections.emptyList()); // 기타 카테고리 (매핑 없음)
+
+
+        for (Map.Entry<String, List<String>> entry : categoryMappingData.entrySet()) {
+            String categoryName = entry.getKey();
+            List<String> paymentNames = entry.getValue();
+
+            // 카테고리 생성
+            CategoryT category = CategoryT.builder()
+                .categoryName(categoryName)
+                .challetBank(challetBank)
+                .build();
+
+            categoryRepository.save(category);
+
+            // 결제명과 카테고리 매핑 생성
+            for (String paymentName : paymentNames) {
+                CategoryMapping categoryMapping = CategoryMapping.builder()
+                    .depositName(paymentName)
+                    .challetBank(challetBank)
+                    .categoryT(category)
+                    .build();
+                categoryMappingRepository.save(categoryMapping);
+            }
+        }
     }
 
     @Override
@@ -102,9 +148,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     @Transactional
-    protected void saveAccount(String phoneNumber, String accountNum) {
+    protected ChalletBank saveAccount(String phoneNumber, String accountNum) {
         ChalletBank account = ChalletBank.createAccount(phoneNumber, accountNum);
-        challetBankRepository.save(account);
+        return challetBankRepository.save(account);
     }
 
     private String createAccountNum() {
