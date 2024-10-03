@@ -13,10 +13,7 @@ public record EmojiRequestDTO(
     ActionType action,
 
     @Schema(description = "유저가 선택한 이모지", allowableValues = {"GOOD", "SOSO", "BAD"})
-    EmojiType type,
-
-    @Schema(description = "(update시) 기존 이모지")
-    EmojiType beforeType
+    EmojiType type
 
 ) {
 
