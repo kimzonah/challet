@@ -1,4 +1,4 @@
-package com.challet.shbankservice.domain.repository;
+package com.challet.shbankservice.domain.elasticsearch.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
