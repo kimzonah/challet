@@ -1,25 +1,7 @@
 package com.challet.shbankservice.domain.controller;
 
-import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
-import com.challet.shbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
-import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
-import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
-import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseListDTO;
-import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
-import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
-import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
-import com.challet.shbankservice.domain.entity.Category;
-import com.challet.shbankservice.domain.service.ShBankService;
-import com.challet.shbankservice.global.exception.ExceptionDto;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +11,31 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
+import com.challet.shbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
+import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.shbankservice.domain.dto.request.SearchTransactionRequestDTO;
+import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
+import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
+import com.challet.shbankservice.domain.dto.response.SearchedTransactionResponseDTO;
+import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
+import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.shbankservice.domain.entity.Category;
+import com.challet.shbankservice.domain.service.ShBankService;
+import com.challet.shbankservice.global.exception.ExceptionDto;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/sh-bank")
@@ -78,6 +85,40 @@ public class ShBankController {
         @RequestHeader("TransactionId") Long transactionId) {
         TransactionDetailResponseDTO transaction = shBankService.getTransactionInfo(transactionId);
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
+    }
+
+
+    @Operation(summary = "거래내역 검색 - Elasticsearch (완료)", description = "내 거래내역 중 검색어로 검색" +
+        "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "거래내역 검색 성공"),
+        @ApiResponse(responseCode = "204", description = "검색 결과 없음"),
+        @ApiResponse(responseCode = "400", description = "챌린지 검색 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
+        @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @Parameters(value = {
+        @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
+        @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
+    })
+    @GetMapping("/search")
+    public ResponseEntity<SearchedTransactionResponseDTO> searchTransactions(
+        @RequestHeader("Authorization") String header,
+        @RequestParam Long accountId,
+        @RequestParam(required = false) String deposit,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+
+        if (shBankService.getAccountsByPhoneNumber(header).accountCount() == 0) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        SearchTransactionRequestDTO searchTransactionRequestDTO = SearchTransactionRequestDTO.of(
+            accountId, deposit, page, size);
+
+        SearchedTransactionResponseDTO searchedTransactionResponseDTO = shBankService.searchTransaction(
+            searchTransactionRequestDTO);
+
+        return ResponseEntity.ok(searchedTransactionResponseDTO);
     }
 
     @PostMapping("/mydata-connect")
