@@ -3,10 +3,14 @@ package com.challet.nhbankservicedemo.domain.service;
 import com.challet.nhbankservicedemo.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.nhbankservicedemo.domain.dto.request.PaymentRequestDTO;
+import com.challet.nhbankservicedemo.domain.dto.request.SearchTransactionRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.BankTransferResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryListDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.PaymentResponseDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.SearchedTransactionResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.TransactionResponseListDTO;
 import com.challet.nhbankservicedemo.domain.entity.Category;
@@ -28,4 +32,9 @@ public interface NhBankService {
         MonthlyTransactionRequestDTO requestDTO);
 
     Map<Category, Long> getTransactionByGroupCategory(BankToAnalysisMessageRequestDTO requestDTO);
+
+    SearchedTransactionResponseDTO searchTransaction(
+        SearchTransactionRequestDTO searchTransactionRequestDTO);
+
+    PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
 }
