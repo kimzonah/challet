@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import CalendarSpendingPage from './CalendarSpending'; // CalendarSpendingPage 컴포넌트 임포트
-import Statistics from '../../components/Analysis/statistics'; // statistics 컴포넌트 임포트
+import Statistics from '../../components/Analysis/Statistics'; // statistics 컴포넌트 임포트
 
 const AnalysisPage = () => {
   const [activeTab, setActiveTab] = useState('내 소비'); // 기본 활성화된 탭을 '내 소비'로 설정

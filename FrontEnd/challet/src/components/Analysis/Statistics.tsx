@@ -18,7 +18,7 @@ const Statistics = () => {
 
   // 데이터가 없는 경우 처리
   if (statistics.length === 0) {
-    return <p>No data available</p>;
+    return <p>소비 내역이 없습니다.</p>;
   }
 
   const data = statistics; // 이미 categoryList를 추출했으므로 그대로 사용
