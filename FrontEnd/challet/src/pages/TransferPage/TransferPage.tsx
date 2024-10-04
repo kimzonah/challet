@@ -75,7 +75,7 @@ function TransferPage() {
   const handleSubmit = async () => {
     setLoading(true); // 로딩 시작
     try {
-      const bankCode = bankCodes[form.bank];
+      const bankCode = bankCodes[form.bank]?.code;
       const transactionAmount = parseInt(
         form.amount.replace(/[^0-9]/g, ''),
         10
@@ -230,11 +230,11 @@ function TransferPage() {
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50'>
           <div className='bg-white rounded-t-3xl w-full pb-20 relative min-h-[50%]'>
             <div className='p-6'>
-              <div className='flex justify-center items-center mb-4'>
+              <div className='flex justify-center items-center mt-16 mb-4'>
                 <img
                   src={bankCodes[form.bank]?.logo}
                   alt={`${form.bank} 로고`}
-                  className='w-10 h-10 mr-2'
+                  className='w-16 h-16 mr-2'
                 />
                 <p className='text-xl font-medium text-center text-[#373A3F]'>
                   <span className='text-[#00CCCC]'>{form.accountNumber}</span>
@@ -251,7 +251,7 @@ function TransferPage() {
               onClick={handleSubmit}
               className='w-full py-5 bg-[#00CCCC] text-white text-lg font-medium fixed bottom-0 left-0 right-0'
             >
-              {loading ? '로딩중...' : '송금하기'}
+              {loading ? '송금 중' : '송금하기'}
             </button>
           </div>
         </div>
