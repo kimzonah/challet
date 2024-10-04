@@ -57,7 +57,7 @@ public class ShBankTransaction {
     }
 
     public static ShBankTransaction createAccountTransferHistory(ShBank shBank,
-        AccountTransferRequestDTO requestDTO, long accountTransactionBalance) {
+        AccountTransferRequestDTO requestDTO, long accountTransactionBalance, String category) {
 
         return ShBankTransaction
             .builder()
@@ -66,6 +66,7 @@ public class ShBankTransaction {
             .deposit(shBank.getAccountNumber())
             .withdrawal(requestDTO.name())
             .transactionBalance(accountTransactionBalance)
+            .category(Category.valueOf(category))
             .build();
     }
 }

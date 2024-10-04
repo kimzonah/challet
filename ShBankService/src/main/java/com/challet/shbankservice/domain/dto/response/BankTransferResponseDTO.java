@@ -9,13 +9,16 @@ import lombok.Builder;
 public record BankTransferResponseDTO(
 
     @Schema(description = "이체 받은 사용자 이름")
-    String name
-) {
+    String name,
 
-    public static BankTransferResponseDTO fromBankTransferResponseDTO(ShBank nhBank) {
+    @Schema(description = "이체받은 계좌 번호")
+    String accountNumber
+) {
+    public static BankTransferResponseDTO fromBankTransferResponseDTO(ShBank shBank) {
         return BankTransferResponseDTO
             .builder()
-            .name(nhBank.getName())
+            .name(shBank.getName())
+            .accountNumber(shBank.getAccountNumber())
             .build();
     }
 }

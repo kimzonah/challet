@@ -97,7 +97,7 @@ public class ShBankServiceImpl implements ShBankService {
 
 		long accountTransactionBalance = shBank.getAccountBalance() + requestDTO.amount();
 		ShBankTransaction transaction = ShBankTransaction.createAccountTransferHistory(shBank,
-			requestDTO, accountTransactionBalance);
+			requestDTO, accountTransactionBalance, "ETC");
 
 		shBank.addTransaction(transaction);
 
