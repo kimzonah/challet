@@ -3,15 +3,19 @@ package com.challet.kbbankservice.domain.service;
 import com.challet.kbbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.kbbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.kbbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.kbbankservice.domain.dto.request.SearchTransactionRequestDTO;
 import com.challet.kbbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.kbbankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
+import com.challet.kbbankservice.domain.dto.response.SearchedTransactionResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.kbbankservice.domain.dto.response.TransactionResponseListDTO;
+import com.challet.kbbankservice.domain.elasticsearch.repository.SearchedTransactionRepository;
 import com.challet.kbbankservice.domain.entity.Category;
 import com.challet.kbbankservice.domain.entity.KbBank;
 import com.challet.kbbankservice.domain.entity.KbBankTransaction;
+import com.challet.kbbankservice.domain.entity.SearchedTransaction;
 import com.challet.kbbankservice.domain.repository.KbBankRepository;
 import com.challet.kbbankservice.global.exception.CustomException;
 import com.challet.kbbankservice.global.exception.ExceptionResponse;
@@ -21,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class KbBankServiceImpl implements KbBankService {
 
     private final KbBankRepository kbBankRepository;
+    private final SearchedTransactionRepository searchedTransactionRepository;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -98,4 +106,24 @@ public class KbBankServiceImpl implements KbBankService {
         BankToAnalysisMessageRequestDTO requestDTO) {
         return kbBankRepository.getTransactionByGroupCategory(requestDTO);
     }
+
+    @Override
+    public SearchedTransactionResponseDTO searchTransaction(SearchTransactionRequestDTO searchTransactionRequestDTO) {
+        Pageable pageable = PageRequest.of(searchTransactionRequestDTO.page(), searchTransactionRequestDTO.size());
+        Page<SearchedTransaction> searchedTransactions = getResult(searchTransactionRequestDTO, pageable);
+
+        boolean isLastPage = searchedTransactions.isLast();
+
+        return SearchedTransactionResponseDTO.fromSearchedTransaction(searchedTransactions.getContent(), isLastPage);
+    }
+
+    private Page<SearchedTransaction> getResult(SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
+        if(searchTransactionRequestDTO.deposit() != null) {
+            return searchedTransactionRepository.findByAccountIdAndDepositContaining(searchTransactionRequestDTO.accountId(),
+                searchTransactionRequestDTO.deposit(), pageable);
+        }
+        return searchedTransactionRepository.findByAccountId(searchTransactionRequestDTO.accountId(), pageable);
+    }
+
+
 }
