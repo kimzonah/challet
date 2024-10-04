@@ -32,6 +32,7 @@ const ChallengeModal = ({
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [isClosing, setIsClosing] = useState(false); // 모달이 닫히는 중인지 추적하는 상태
+  const [isCopyModalVisible, setIsCopyModalVisible] = useState(false); // 복사 성공 모달 상태
   const navigate = useNavigate(); // useNavigate 훅 사용
 
   if (!challengeDetail) return null; // 선택된 챌린지가 없으면 렌더링 안 함
@@ -68,6 +69,18 @@ const ChallengeModal = ({
     }
   };
 
+  // 초대 코드 클릭 시 클립보드로 복사
+  const handleCopyInviteCode = () => {
+    if (challengeDetail.inviteCode) {
+      navigator.clipboard.writeText(challengeDetail.inviteCode).then(() => {
+        setIsCopyModalVisible(true); // 성공 모달 표시
+        setTimeout(() => {
+          setIsCopyModalVisible(false); // 1.5초 후 모달 사라지기
+        }, 1500);
+      });
+    }
+  };
+
   return (
     <div
       className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 ${
@@ -99,7 +112,7 @@ const ChallengeModal = ({
                 {challengeDetail.maxParticipants}명 참여 중
               </div>
               <div className='flex text-sm mr-16 text-base'>
-                <div className='text-[#00B8B8]'>
+                <div className='text-[#00CCCC]'>
                   {challengeDetail.spendingLimit.toLocaleString()}원&nbsp;
                 </div>
                 <div>사용 한도</div>
@@ -126,7 +139,7 @@ const ChallengeModal = ({
           <div className='flex justify-center'>
             {/* 챌린지가 완료된 경우 "수고하셨습니다" 버튼 */}
             {challengeDetail.status === 'END' && (
-              <div className='mt-4 font-bold text-[#00B8B8]'>
+              <div className='mt-4 font-bold text-[#00CCCC]'>
                 수고하셨습니다!
               </div>
             )}
@@ -135,10 +148,22 @@ const ChallengeModal = ({
             {challengeDetail.isIncluded &&
               !challengeDetail.isPublic &&
               challengeDetail.status === 'RECRUITING' && (
-                <div className='mt-4 font-bold text-[#00B8B8]'>
-                  챌린지코드: {challengeDetail.inviteCode || 'A1B2C3'}
+                <div className='mt-4'>
+                  <button
+                    onClick={handleCopyInviteCode} // 초대코드를 클릭하면 복사
+                    className='bg-gray-300 text-gray-500 py-4 px-4 rounded-lg cursor-pointer'
+                  >
+                    챌린지코드: {challengeDetail.inviteCode || 'A1B2C3'}
+                  </button>
                 </div>
               )}
+
+            {/* 복사 성공 모달 */}
+            {isCopyModalVisible && (
+              <div className='fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-black text-white text-sm py-2 px-4 rounded-lg shadow-md'>
+                초대 코드가 복사되었습니다!
+              </div>
+            )}
 
             {/* 공개 챌린지이고 이미 참가한 경우 비활성화된 대기중 버튼 */}
             {challengeDetail.isIncluded &&

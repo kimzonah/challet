@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRewardStore } from '../../store/useRewardStore';
 import RewardItem from '../RewardsPage/RewardItem'; // 리워드 아이템 컴포넌트
 import RewardDetail from './RewardDetail'; // 모달 컴포넌트
+import { TopBar } from '../../components/topbar/topbar';
 
 const RewardPage = () => {
   const { rewards, rewardDetail, fetchRewards, fetchRewardDetail } =
@@ -21,8 +22,8 @@ const RewardPage = () => {
 
   return (
     <div className='reward-page p-4'>
-      <h1 className='reward-title text-2xl font-bold mb-6'>내 리워드</h1>
-      <div className='reward-list grid grid-cols-3 gap-4'>
+      <TopBar title='나의 챌린지 리워드' />
+      <div className='reward-list grid grid-cols-3 gap-4 mt-20'>
         {rewards.map((reward) => (
           <RewardItem
             key={reward.rewardId}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ChalletLogo from '../../assets/wallet/challet-logo.png';
 import useAuthStore from '../../store/useAuthStore';
+import { SyncLoader } from 'react-spinners';
 
 const RealOnboardingPage = () => {
   const [isImageVisible, setIsImageVisible] = useState(false); // 이미지 표시 상태 (처음에는 false)
@@ -51,15 +52,15 @@ const RealOnboardingPage = () => {
       <img
         src={ChalletLogo}
         alt='온보딩 이미지'
-        className={`w-64 mt-32 mb-4 transition-opacity duration-1000 ${
+        className={`w-48 mt-60 mb-4 transition-opacity duration-1000 ${
           isImageVisible && !isFadeOut ? 'opacity-100' : 'opacity-0'
         }`} // 이미지가 서서히 나타나고 사라짐
       />
 
       {/* 로딩 애니메이션 */}
       {isLoading && (
-        <div className='mt-8 mb-16'>
-          <div className='w-8 h-8 border-4 border-[#00CCCC] border-dashed rounded-full animate-spin'></div>
+        <div className='mt-8 mb-16 '>
+          <SyncLoader color='#00CCCC' />
         </div>
       )}
     </div>

@@ -3,19 +3,22 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons'; // 카메라 아이콘 추가
-import { useChallengeApi } from '../../hooks/useChallengeApi'; // useChallengeApi 임포트
+import useFile2URL from '../../hooks/useFile2URL'; // useFile2URL 임포트
+import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 임포트
 
 const SharedTransactionEdit = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { editTransaction } = useChallengeApi(); // 트랜잭션 수정 및 더미 데이터
-  const { transaction } = location.state || {}; // SharedTransactionDetail에서 전달된 거래 데이터
+  const { transaction, challengeId } = location.state || {}; // SharedTransactionDetail에서 전달된 거래 데이터
+  const { file2URL } = useFile2URL(); // AWS S3 업로드 함수 사용
   const [image, setImage] = useState<File | null>(null); // 이미지 파일
   const [deposit, setdeposit] = useState(''); // 출금처
   const [transactionAmount, setTransactionAmount] = useState<number | ''>(''); // 거래 금액
   const [content, setContent] = useState(''); // 내용
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
   const [isSuccess, setIsSuccess] = useState(false); // 성공 여부 상태 관리
+  const [isError, setIsError] = useState(false); // 에러 모달 상태 관리
+  const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 관리
 
   useEffect(() => {
     if (transaction) {
@@ -38,32 +41,46 @@ const SharedTransactionEdit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // JSON 형태로 보낼 데이터 구조 생성
-    const formData = {
-      image: image ? URL.createObjectURL(image) : transaction.image, // 기존 이미지가 없으면 빈 문자열, 아니면 그대로 사용
-      deposit, // 출금처
-      transactionAmount: Number(transactionAmount), // 거래 금액
-      content, // 내용
-    };
-
     try {
-      setIsLoading(true); // API 호출 전 로딩 상태로 전환
-      // registTransaction API 호출 - 수정된 데이터를 전송
-      await editTransaction(transaction.sharedTransactionId, formData); // JSON 데이터를 전달
+      setIsLoading(true); // 로딩 상태 전환
+
+      let imageUrl = transaction.image || ''; // 기존 이미지가 있으면 그대로 사용
+      if (image) {
+        // 새 이미지가 있으면 업로드 후 URL 생성
+        imageUrl = await file2URL(image);
+      }
+
+      // 웹소켓을 통해 수정된 데이터를 서버로 전송
+      const webSocketMessage = {
+        image: imageUrl, // 업로드된 이미지 URL (또는 기존 이미지)
+        deposit, // 출금처
+        transactionAmount: Number(transactionAmount), // 거래 금액
+        content, // 결제 내용
+      };
+
+      console.log('수정할 데이터:', webSocketMessage);
+      console.log('수정할 거래 ID:', transaction.sharedTransactionId);
+
+      webSocketService.sendMessage(
+        `/app/challenges/${challengeId}/shared-transactions/${transaction.sharedTransactionId}`, // 수정할 항목의 웹소켓 경로
+        webSocketMessage
+      );
 
       // 성공 메시지 설정
       setIsSuccess(true);
     } catch (error) {
       console.error('거래 내역 수정 중 오류 발생:', error);
+      setErrorMessage('거래 내역 수정 중 오류가 발생했습니다.');
+      setIsError(true);
     } finally {
-      setIsLoading(false); // API 응답 후 로딩 상태 해제
+      setIsLoading(false); // 로딩 상태 해제
     }
   };
 
   return (
     <div className='min-h-screen bg-white flex justify-center items-center relative'>
       {/* 모달이 로딩 중이거나 성공 시 표시 */}
-      {(isLoading || isSuccess) && (
+      {(isLoading || isSuccess || isError) && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
           <div className='bg-white p-6 rounded-lg text-center'>
             {isLoading ? (
@@ -73,7 +90,7 @@ const SharedTransactionEdit = () => {
                 </div>
                 <p className='text-lg font-semibold'>수정 중입니다...</p>
               </>
-            ) : (
+            ) : isSuccess ? (
               <>
                 <p className='text-lg font-semibold text-[#00CCCC]'>
                   수정이 완료되었습니다!
@@ -85,6 +102,20 @@ const SharedTransactionEdit = () => {
                   확인
                 </button>
               </>
+            ) : (
+              isError && (
+                <>
+                  <p className='text-lg font-semibold text-red-500'>
+                    {errorMessage}
+                  </p>
+                  <button
+                    className='mt-4 py-2 px-4 bg-red-500 text-white rounded-lg'
+                    onClick={() => setIsError(false)} // 에러 모달 닫기
+                  >
+                    확인
+                  </button>
+                </>
+              )
             )}
           </div>
         </div>

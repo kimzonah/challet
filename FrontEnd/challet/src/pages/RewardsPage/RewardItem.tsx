@@ -14,34 +14,47 @@ interface RewardItemProps {
   onClick: (rewardId: number) => void;
 }
 
+const categoryThumbnails: Record<string, string> = {
+  DELIVERY: Delivery,
+  COFFEE: Coffee,
+  TRANSPORT: Transport,
+  SHOPPING: Shopping,
+};
+
+// 랜덤 색상
+const backgroundColors = [
+  'bg-red-200',
+  'bg-blue-200',
+  'bg-green-200',
+  'bg-yellow-200',
+  'bg-purple-200',
+];
+
 const RewardItem = ({ reward, onClick }: RewardItemProps) => {
-  const getThumbnail = (category: string) => {
-    switch (category) {
-      case 'DELIVERY':
-        return Delivery;
-      case 'COFFEE':
-        return Coffee;
-      case 'TRANSPORT':
-        return Transport;
-      case 'SHOPPING':
-        return Shopping;
-      default:
-        return '';
-    }
-  };
+  const randomBackgroundColor =
+    backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
+
+  const thumbnail = categoryThumbnails[reward.category] || '';
 
   return (
-    <div className='reward-item' onClick={() => onClick(reward.rewardId)}>
-      <img
-        src={getThumbnail(reward.category)}
-        alt={reward.category}
-        className='reward-thumbnail'
-      />
-      <div className='reward-info'>
-        <h2 className='text-sm font-medium'>{reward.title}</h2>
-        <p className='text-xs text-gray-500'>{reward.datetime}</p>
-        <p>결과: {reward.type ? '성공' : '실패'}</p>
+    <div
+      className='flex flex-col items-center'
+      onClick={() => onClick(reward.rewardId)}
+    >
+      <div
+        className={`w-24 h-24 rounded-full overflow-hidden mb-2 ${randomBackgroundColor} flex items-center justify-center`}
+      >
+        {thumbnail && (
+          <img
+            src={thumbnail}
+            alt={reward.category}
+            className='w-16 h-16 object-contain'
+          />
+        )}
       </div>
+      <p className='text-center text-xs font-medium text-gray-800 w-full px-1 truncate'>
+        {reward.title}
+      </p>
     </div>
   );
 };
