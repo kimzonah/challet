@@ -147,6 +147,21 @@ public class ChalletBankController {
         return ResponseEntity.status(HttpStatus.CREATED).body(accountTransferResponseDTO);
     }
 
+    @PostMapping("/confirm-account-transfers")
+    @Operation(summary = "계좌이체 확인 서비스", description = "이체 확인시 카테고리 변경확인 및 수정")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "확인 및 메시지 성공"),
+        @ApiResponse(responseCode = "400", description = "실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<PaymentResponseDTO> confirmAccountTransfer(
+        @RequestHeader("AccountId") Long accountId,
+        @RequestBody ConfirmPaymentRequestDTO paymentRequestDTO) {
+        PaymentResponseDTO paymentResponseDTO = challetBankService.confirmPaymentInfo(accountId,
+            paymentRequestDTO);
+        challetBankService.sendPaymentInfoToChallet(accountId, paymentResponseDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponseDTO);
+    }
+
     @PostMapping("/mydata-connect")
     @Operation(summary = "마이데이터 연결", description = "선택한 은행 기반 마이 데이터 연결")
     @ApiResponses(value = {

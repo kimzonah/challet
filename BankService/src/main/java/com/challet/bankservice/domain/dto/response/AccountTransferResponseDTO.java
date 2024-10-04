@@ -1,5 +1,6 @@
 package com.challet.bankservice.domain.dto.response;
 
+import com.challet.bankservice.domain.dto.request.BankTransferRequestDTO;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -11,8 +12,8 @@ public record AccountTransferResponseDTO(
     @Schema(description = "id")
     Long id,
 
-    @Schema(description = "이름")
-    String name,
+    @Schema(description = "출금계좌 유저 이름")
+    String depositAccountName,
 
     @Schema(description = "내 계좌")
     String myAccountNumber,
@@ -24,18 +25,35 @@ public record AccountTransferResponseDTO(
     Long balance,
 
     @Schema(description = "출금 금액")
-    Long amount
+    Long amount,
+
+    @Schema(description = "출금 계좌 번호")
+    String depositNumber
 ) {
 
     public static AccountTransferResponseDTO fromTransferInfo(Long id ,ChalletBank fromBank,
-        String toBankName, Long amount, String category) {
+        ChalletBank toBank, Long amount, String category) {
         return AccountTransferResponseDTO.builder()
             .id(id)
-            .name(toBankName)
+            .depositAccountName(toBank.getName())
             .myAccountNumber(fromBank.getAccountNumber())
             .category(category)
             .balance(fromBank.getAccountBalance())
-            .amount(amount)
+            .amount(amount*-1)
+            .depositNumber(toBank.getAccountNumber())
+            .build();
+    }
+
+    public static AccountTransferResponseDTO fromExternalTransferInfo(Long id ,ChalletBank fromBank,
+        BankTransferRequestDTO toBank, Long amount, String category) {
+        return AccountTransferResponseDTO.builder()
+            .id(id)
+            .depositAccountName(toBank.name())
+            .myAccountNumber(fromBank.getAccountNumber())
+            .category(category)
+            .balance(fromBank.getAccountBalance())
+            .amount(amount*-1)
+            .depositNumber(toBank.accountNumber())
             .build();
     }
 }

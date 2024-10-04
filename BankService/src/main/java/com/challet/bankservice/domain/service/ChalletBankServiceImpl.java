@@ -257,8 +257,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             CategoryT categoryInfo = categoryRepository.getCategoryInfo(accountId,
                 paymentRequestDTO.category());
             long notFindSameCategory = categoryMappingRepository.updateCategory(accountId,
-                categoryInfo.getId(),
-                paymentRequestDTO);
+                categoryInfo.getId(), paymentRequestDTO);
 
             if (notFindSameCategory == 0) {
                 CategoryMapping newPayment = CategoryMapping
@@ -393,10 +392,12 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
 
         //카테고리 확인
-        String categoryName = getCategoryName(fromBank, requestTransactionDTO.depositAccountNumber());
+        String categoryName = getCategoryName(fromBank,
+            requestTransactionDTO.depositAccountNumber());
 
         ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-            fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true, categoryName);
+            fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true,
+            categoryName);
         fromBank.addTransaction(paymentTransaction);
 
         ChalletBankTransaction accountTransferHistory = ChalletBankTransaction.createAccountTransferHistory(
@@ -405,8 +406,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
         challetBankTransactionRepository.save(accountTransferHistory);
 
-        return AccountTransferResponseDTO.fromTransferInfo(accountTransferHistory.getId() ,fromBank, toBank.getName(),
-            requestTransactionDTO.transactionAmount(), categoryName);
+        return AccountTransferResponseDTO.fromTransferInfo(accountTransferHistory.getId(), fromBank,
+            toBank, requestTransactionDTO.transactionAmount(), categoryName);
     }
 
     private AccountTransferResponseDTO processExternalTransfer(ChalletBank fromBank,
@@ -420,16 +421,20 @@ public class ChalletBankServiceImpl implements ChalletBankService {
                 requestTransactionDTO.bankCode());
 
             //카테고리 확인
-            String categoryName = getCategoryName(fromBank, requestTransactionDTO.depositAccountNumber());
+            String categoryName = getCategoryName(fromBank,
+                requestTransactionDTO.depositAccountNumber());
 
             ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-                fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true, categoryName);
+                fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true,
+                categoryName);
             fromBank.addTransaction(paymentTransaction);
 
             challetBankTransactionRepository.save(paymentTransaction);
 
-            return AccountTransferResponseDTO.fromTransferInfo(paymentTransaction.getId() , fromBank, toBank.name(),
-                requestTransactionDTO.transactionAmount(), categoryName);
+            /// 외부에서 받을때 name만 받아서 안됌, accountNumber가 필요
+
+            return AccountTransferResponseDTO.fromExternalTransferInfo(paymentTransaction.getId(),
+                fromBank, toBank, requestTransactionDTO.transactionAmount(), categoryName);
         } catch (Exception e) {
             throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
         }

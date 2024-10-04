@@ -6,7 +6,7 @@ import lombok.Builder;
 @Schema(description = "결제 내용 DTO")
 @Builder
 public record ConfirmPaymentRequestDTO(
-    @Schema(description = "결제transaction id")
+    @Schema(description = "결제내역 id")
     Long id,
 
     @Schema(description = "결제 금액")
