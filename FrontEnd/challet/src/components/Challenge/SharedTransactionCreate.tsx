@@ -22,8 +22,16 @@ const SharedTransactionCreate = () => {
 
   // 이미지 업로드 처리 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]); // 첫 번째 파일을 설정
+    const file = e.target.files && e.target.files[0];
+
+    if (file) {
+      // 이미지 파일인지 확인
+      if (!file.type.startsWith('image/')) {
+        setErrorMessage('이미지 파일만 업로드할 수 있습니다.');
+        setIsError(true);
+        return;
+      }
+      setImage(file); // 이미지 파일만 설정
     }
   };
 
@@ -159,7 +167,7 @@ const SharedTransactionCreate = () => {
             <input
               id='file-upload'
               type='file'
-              accept='image/*'
+              accept='image/*' // 이미지 파일만 선택 가능
               className='hidden'
               onChange={handleImageChange}
             />
