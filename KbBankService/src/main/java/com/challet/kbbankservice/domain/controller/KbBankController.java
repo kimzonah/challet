@@ -59,7 +59,7 @@ public class KbBankController {
         return ResponseEntity.status(HttpStatus.OK).body(accounts);
     }
 
-    @Operation(summary = "챌린지 검색 - Elasticsearch (완료)", description = "내 거래내역 중 검색어로 검색" +
+    @Operation(summary = "거래내역 검색 - Elasticsearch (완료)", description = "내 거래내역 중 검색어로 검색" +
         "검색어와 카테고리 모두 주어진 값이 없다면 전체조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "거래내역 검색 성공"),
@@ -68,8 +68,10 @@ public class KbBankController {
         @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @Parameters(value = {
-        @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
-        @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
+        @Parameter(name = "accountId", description = "계좌 ID", in = ParameterIn.QUERY),
+        @Parameter(name = "deposit", description = "입금처", in = ParameterIn.QUERY),
+        @Parameter(name = "page", description = "페이지", in = ParameterIn.QUERY),
+        @Parameter(name = "size", description = "사이즈", in = ParameterIn.QUERY),
     })
     @GetMapping("/search")
     public ResponseEntity<SearchedTransactionResponseDTO> searchTransactions(
