@@ -143,6 +143,7 @@ public class ChalletBankController {
         @RequestBody AccountTransferRequestDTO accountTransferRequestDTO) {
         AccountTransferResponseDTO accountTransferResponseDTO = challetBankService.accountTransfer(
             accountId, accountTransferRequestDTO);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(accountTransferResponseDTO);
     }
 

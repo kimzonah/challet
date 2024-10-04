@@ -194,7 +194,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         long transactionBalance = calculateTransactionBalance(challetBank,
             paymentRequestDTO.transactionAmount());
 
-        String categoryName = getCategoryName(accountId, paymentRequestDTO, challetBank);
+        String categoryName = getCategoryName(challetBank, paymentRequestDTO.deposit());
         ChalletBankTransaction paymentTransaction = createTransaction(challetBank,
             paymentRequestDTO, transactionBalance, categoryName);
 
@@ -212,17 +212,17 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return transactionBalance;
     }
 
-    private String getCategoryName(Long accountId, PaymentRequestDTO paymentRequestDTO,
-        ChalletBank challetBank) {
-        String categoryName = challetBankRepository.getCategoryName(accountId,
-            paymentRequestDTO.deposit());
+    private String getCategoryName(ChalletBank challetBank, String deposit) {
+        String categoryName = challetBankRepository.getCategoryName(challetBank.getId(),
+            deposit);
 
         if (categoryName.equals("ETC")) {
-            CategoryT categoryInfo = categoryRepository.getCategoryInfo(accountId, categoryName);
+            CategoryT categoryInfo = categoryRepository.getCategoryInfo(challetBank.getId(),
+                categoryName);
 
             CategoryMapping newPayment = CategoryMapping
                 .builder()
-                .depositName(paymentRequestDTO.deposit())
+                .depositName(deposit)
                 .categoryT(categoryInfo)
                 .challetBank(challetBank)
                 .build();
@@ -248,16 +248,19 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     public PaymentResponseDTO confirmPaymentInfo(Long accountId,
         ConfirmPaymentRequestDTO paymentRequestDTO) {
 
-        ChalletBankTransaction transaction = challetBankTransactionRepository.findById(paymentRequestDTO.id())
+        ChalletBankTransaction transaction = challetBankTransactionRepository.findById(
+                paymentRequestDTO.id())
             .orElseThrow(() -> new ExceptionResponse(
                 CustomException.NOT_FOUND_TRANSACTION_DETAIL_EXCEPTION));
 
         if (!transaction.getCategory().equals(paymentRequestDTO.category())) {
-            CategoryT categoryInfo = categoryRepository.getCategoryInfo(accountId, paymentRequestDTO.category());
-            long notFindSameCategory = categoryMappingRepository.updateCategory(accountId, categoryInfo.getId(),
+            CategoryT categoryInfo = categoryRepository.getCategoryInfo(accountId,
+                paymentRequestDTO.category());
+            long notFindSameCategory = categoryMappingRepository.updateCategory(accountId,
+                categoryInfo.getId(),
                 paymentRequestDTO);
 
-            if(notFindSameCategory == 0){
+            if (notFindSameCategory == 0) {
                 CategoryMapping newPayment = CategoryMapping
                     .builder()
                     .depositName(paymentRequestDTO.deposit())
@@ -389,16 +392,19 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
         long addMoney = toBank.getAccountBalance() + requestTransactionDTO.transactionAmount();
 
+        //카테고리 확인
+        String categoryName = getCategoryName(fromBank, requestTransactionDTO.depositAccountNumber());
+
         ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-            fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true);
+            fromBank, toBank.getName(), requestTransactionDTO, transactionBalance, true, categoryName);
         fromBank.addTransaction(paymentTransaction);
 
         ChalletBankTransaction accountTransferHistory = ChalletBankTransaction.createAccountTransferHistory(
-            fromBank, toBank.getName(), requestTransactionDTO, addMoney, false);
+            fromBank, toBank.getName(), requestTransactionDTO, addMoney, false, "ETC");
         toBank.addTransaction(accountTransferHistory);
 
         return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.getName(),
-            requestTransactionDTO.transactionAmount());
+            requestTransactionDTO.transactionAmount(), categoryName);
     }
 
     private AccountTransferResponseDTO processExternalTransfer(ChalletBank fromBank,
@@ -411,12 +417,15 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             BankTransferRequestDTO toBank = getExternalBankTransferAccount(bankDTO,
                 requestTransactionDTO.bankCode());
 
+            //카테고리 확인
+            String categoryName = getCategoryName(fromBank, requestTransactionDTO.depositAccountNumber());
+
             ChalletBankTransaction paymentTransaction = ChalletBankTransaction.createAccountTransferHistory(
-                fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true);
+                fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true, categoryName);
             fromBank.addTransaction(paymentTransaction);
 
             return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
-                requestTransactionDTO.transactionAmount());
+                requestTransactionDTO.transactionAmount(), categoryName);
         } catch (Exception e) {
             throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
         }

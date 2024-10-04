@@ -14,6 +14,9 @@ public record AccountTransferResponseDTO(
     @Schema(description = "내 계좌")
     String myAccountNumber,
 
+    @Schema(description = "카테고리")
+    String category,
+
     @Schema(description = "잔액")
     Long balance,
 
@@ -21,10 +24,12 @@ public record AccountTransferResponseDTO(
     Long amount
 ) {
 
-    public static AccountTransferResponseDTO fromTransferInfo(ChalletBank fromBank, String toBankName, Long amount) {
+    public static AccountTransferResponseDTO fromTransferInfo(ChalletBank fromBank,
+        String toBankName, Long amount, String category) {
         return AccountTransferResponseDTO.builder()
             .name(toBankName)
             .myAccountNumber(fromBank.getAccountNumber())
+            .category(category)
             .balance(fromBank.getAccountBalance())
             .amount(amount)
             .build();
