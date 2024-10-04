@@ -197,7 +197,7 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
     }
 
     @Override
-    public String getCateGoryName(Long accountId, String deposit) {
+    public String getCategoryName(Long accountId, String deposit) {
         QCategoryMapping categoryMapping = QCategoryMapping.categoryMapping;
         QCategoryT categoryT = QCategoryT.categoryT;
 
@@ -205,9 +205,17 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
             .from(categoryMapping)
             .join(categoryMapping.categoryT, categoryT)
             .where(categoryMapping.challetBank.id.eq(accountId)
-                .and(categoryMapping.depositName.contains(deposit)))
+                .and(categoryMapping.depositName.eq(deposit)))
             .fetchFirst();
 
+        if (categoryName == null) {
+            categoryName = query.select(categoryT.categoryName)
+                .from(categoryMapping)
+                .join(categoryMapping.categoryT, categoryT)
+                .where(categoryMapping.challetBank.id.eq(accountId)
+                    .and(categoryMapping.depositName.contains(deposit)))
+                .fetchFirst();
+        }
         return categoryName != null ? categoryName : "ETC";
     }
 

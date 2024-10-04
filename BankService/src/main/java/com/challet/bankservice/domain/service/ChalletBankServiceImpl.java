@@ -214,7 +214,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     private String getCategoryName(Long accountId, PaymentRequestDTO paymentRequestDTO,
         ChalletBank challetBank) {
-        String categoryName = challetBankRepository.getCateGoryName(accountId,
+        String categoryName = challetBankRepository.getCategoryName(accountId,
             paymentRequestDTO.deposit());
 
         if (categoryName.equals("ETC")) {
