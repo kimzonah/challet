@@ -29,6 +29,8 @@ const CategoryList = ({
   ];
 
   const handleCategoryClick = (className: string) => {
+    const searchTerm = searchInputRef.current?.value || '';
+    onSearch(searchTerm);
     onCategoryChange(className);
   };
 
