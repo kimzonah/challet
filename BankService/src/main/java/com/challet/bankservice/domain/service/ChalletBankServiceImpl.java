@@ -6,12 +6,14 @@ import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.ConfirmPaymentRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
+import com.challet.bankservice.domain.dto.request.SearchTransactionRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentHttpMessageResponseDTO;
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
+import com.challet.bankservice.domain.dto.response.SearchedTransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
@@ -20,10 +22,12 @@ import com.challet.bankservice.domain.entity.CategoryMapping;
 import com.challet.bankservice.domain.entity.CategoryT;
 import com.challet.bankservice.domain.entity.ChalletBank;
 import com.challet.bankservice.domain.entity.ChalletBankTransaction;
+import com.challet.bankservice.domain.entity.SearchedTransaction;
 import com.challet.bankservice.domain.repository.CategoryMappingRepository;
 import com.challet.bankservice.domain.repository.CategoryRepository;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.domain.repository.ChalletBankTransactionRepository;
+import com.challet.bankservice.domain.repository.SearchedTransactionRepository;
 import com.challet.bankservice.global.client.ChalletFeignClient;
 import com.challet.bankservice.global.client.KbBankFeignClient;
 import com.challet.bankservice.global.client.NhBankFeignClient;
@@ -44,6 +48,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +63,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private final ChalletBankTransactionRepository challetBankTransactionRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryMappingRepository categoryMappingRepository;
+    private final SearchedTransactionRepository searchedTransactionRepository;
     private final Environment env;
     private final JwtUtil jwtUtil;
     private final KbBankFeignClient kbBankFeignClient;
@@ -200,6 +208,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
         challetBank.addTransaction(paymentTransaction);
         challetBankTransactionRepository.save(paymentTransaction);
+        searchedTransactionRepository.save(
+            SearchedTransaction.fromAccountIdAndChalletBankTransaction(accountId,
+                paymentTransaction));
 
         return PaymentResponseDTO.fromPaymentResponseDTO(paymentTransaction);
     }
@@ -377,6 +388,31 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         }
 
         return processExternalTransfer(fromBank, requestTransactionDTO, transactionBalance);
+    }
+
+    @Override
+    public SearchedTransactionResponseDTO searchTransaction(
+        final SearchTransactionRequestDTO searchTransactionRequestDTO) {
+        Pageable pageable = PageRequest.of(searchTransactionRequestDTO.page(),
+            searchTransactionRequestDTO.size());
+        Page<SearchedTransaction> searchedTransactions = getResult(searchTransactionRequestDTO,
+            pageable);
+
+        boolean isLastPage = searchedTransactions.isLast();
+
+        return SearchedTransactionResponseDTO.fromSearchedTransaction(
+            searchedTransactions.getContent(), isLastPage);
+    }
+
+    private Page<SearchedTransaction> getResult(
+        SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
+        if (searchTransactionRequestDTO.deposit() != null) {
+            return searchedTransactionRepository.findByAccountIdAndDepositContaining(
+                searchTransactionRequestDTO.accountId(),
+                searchTransactionRequestDTO.deposit(), pageable);
+        }
+        return searchedTransactionRepository.findByAccountId(
+            searchTransactionRequestDTO.accountId(), pageable);
     }
 
     private AccountTransferResponseDTO processInternalTransfer(ChalletBank fromBank,
