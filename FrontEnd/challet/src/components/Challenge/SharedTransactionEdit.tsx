@@ -197,18 +197,25 @@ const SharedTransactionEdit = () => {
           <div className='mb-4'>
             <label className='flex block text-gray-700 mb-2'>결제 금액</label>
             <input
-              type='number'
+              type='text' // number 대신 text로 변경하여 선행 0을 쉽게 처리
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
-              value={transactionAmount}
+              value={transactionAmount === '' ? '' : transactionAmount}
               placeholder='결제한 금액을 입력해주세요'
-              max={9999999}
+              maxLength={7} // 최대 7자리
               onChange={(e) => {
-                const value = e.target.value;
-                // 빈 값 처리 및 마이너스 값 또는 1천만(10,000,000) 이상을 입력하지 않도록 제한
-                if (value === '') {
-                  setTransactionAmount(''); // 빈 값일 때 null로 설정
-                } else if (Number(value) >= 0 && Number(value) <= 9999999) {
-                  setTransactionAmount(Number(value));
+                let value = e.target.value.trim();
+
+                // 숫자인지 확인하고, 숫자가 아니면 무시
+                if (/^\d*$/.test(value)) {
+                  // 숫자로 변환 후 다시 문자열로 변환 (선행 0 제거)
+                  if (value !== '') {
+                    value = String(Number(value));
+                  }
+
+                  // 값이 유효한 범위에 있는지 확인
+                  if (Number(value) >= 0 && Number(value) <= 9999999) {
+                    setTransactionAmount(Number(value));
+                  }
                 }
               }}
               required
