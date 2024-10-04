@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import TransactionListItem from './TransactionItem';
 import useAuthStore from '../../store/useAuthStore';
 import webSocketService from '../../hooks/websocket'; // 웹소켓 서비스 추가
-import throttle from 'lodash/throttle'; // 스크롤 이벤트 성능 최적화를 위한 throttle 함수 추가
 import { useChallengeApi } from '../../hooks/useChallengeApi'; // API 함수 추가
 import { Transaction } from './TransactionType'; // Transaction 타입 추가
 import { format } from 'date-fns'; // 날짜 형식화 라이브러리
@@ -172,7 +171,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
           const newScrollHeight = transactionListRef.current!.scrollHeight;
           transactionListRef.current!.scrollTop =
             newScrollHeight - previousScrollHeight + previousScrollTop;
-        }, 10);
+        }, 50);
       }
     }
 
@@ -180,10 +179,10 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     isLoadingRef.current = false;
   };
 
-  const handleScrollThrottled = throttle(() => {
+  const handleScroll = () => {
     if (
       transactionListRef.current &&
-      transactionListRef.current.scrollTop < 300 &&
+      transactionListRef.current.scrollTop < 400 &&
       hasNextPageRef.current &&
       !isLoadingRef.current &&
       !isFetchingRef.current
@@ -200,17 +199,17 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     ) {
       setIsNewMessageButtonVisible(false);
     }
-  });
+  };
 
   useEffect(() => {
     fetchTransactions(true);
     const ref = transactionListRef.current;
     if (ref) {
-      ref.addEventListener('scroll', handleScrollThrottled);
+      ref.addEventListener('scroll', handleScroll);
     }
     return () => {
       if (ref) {
-        ref.removeEventListener('scroll', handleScrollThrottled);
+        ref.removeEventListener('scroll', handleScroll);
       }
     };
   }, []);
