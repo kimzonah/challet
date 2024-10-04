@@ -94,7 +94,7 @@ public class NhBankServiceImpl implements NhBankService {
 
         long accountTransactionBalance = nhBank.getAccountBalance() + requestDTO.amount();
         NhBankTransaction transaction = NhBankTransaction.createAccountTransferHistory(nhBank,
-            requestDTO, accountTransactionBalance);
+            requestDTO, accountTransactionBalance, "ETC");
 
         nhBank.addTransaction(transaction);
 

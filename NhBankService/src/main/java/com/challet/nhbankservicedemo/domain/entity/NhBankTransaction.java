@@ -58,7 +58,7 @@ public class NhBankTransaction {
 
 
     public static NhBankTransaction createAccountTransferHistory(NhBank nhBank,
-        AccountTransferRequestDTO requestDTO, long accountTransactionBalance) {
+        AccountTransferRequestDTO requestDTO, long accountTransactionBalance, String category) {
 
         return NhBankTransaction
             .builder()
@@ -67,6 +67,7 @@ public class NhBankTransaction {
             .deposit(nhBank.getAccountNumber())
             .withdrawal(requestDTO.name())
             .transactionBalance(accountTransactionBalance)
+            .category(Category.valueOf(category))
             .build();
     }
 }
