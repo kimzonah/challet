@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.shbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
+import com.challet.shbankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.shbankservice.domain.dto.request.SearchTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.BankTransferResponseDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
+import com.challet.shbankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.shbankservice.domain.dto.response.SearchedTransactionResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseListDTO;
@@ -36,7 +38,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/sh-bank")
 @RequiredArgsConstructor
@@ -97,8 +101,10 @@ public class ShBankController {
         @ApiResponse(responseCode = "401", description = "접근 권한 없음", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     @Parameters(value = {
-        @Parameter(name = "category", description = "카테고리", in = ParameterIn.QUERY),
-        @Parameter(name = "keyword", description = "검색어", in = ParameterIn.QUERY),
+        @Parameter(name = "accountId", description = "계좌 ID", in = ParameterIn.QUERY),
+        @Parameter(name = "deposit", description = "입금처", in = ParameterIn.QUERY),
+        @Parameter(name = "page", description = "페이지", in = ParameterIn.QUERY),
+        @Parameter(name = "size", description = "사이즈", in = ParameterIn.QUERY),
     })
     @GetMapping("/search")
     public ResponseEntity<SearchedTransactionResponseDTO> searchTransactions(
@@ -109,14 +115,19 @@ public class ShBankController {
         @RequestParam(defaultValue = "10") int size) {
 
         if (shBankService.getAccountsByPhoneNumber(header).accountCount() == 0) {
+            log.info("accountCount == 0");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
         SearchTransactionRequestDTO searchTransactionRequestDTO = SearchTransactionRequestDTO.of(
             accountId, deposit, page, size);
 
+        log.info("controller request dto {}", searchTransactionRequestDTO.toString());
+
         SearchedTransactionResponseDTO searchedTransactionResponseDTO = shBankService.searchTransaction(
             searchTransactionRequestDTO);
+
+        log.info("controller response dto {}", searchedTransactionResponseDTO.toString());
 
         return ResponseEntity.ok(searchedTransactionResponseDTO);
     }
@@ -150,18 +161,6 @@ public class ShBankController {
     }
 
 
-    @GetMapping("/search")
-    @Operation(summary = "SH은행 계좌 거래 내역 검색", description = "keyword, category를 통해 거래 내역 검색")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "검색 성공"),
-        @ApiResponse(responseCode = "400", description = "검색 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
-    })
-    public ResponseEntity<TransactionResponseListDTO> searchAccountTransactions(
-        @RequestParam String keyword,
-        @RequestParam String category) {
-        return null;
-    }
-
     @GetMapping("/transactions-monthly")
     @Operation(summary = "한달 결제내역", description = "year, month를 통해 거래 내역 검색")
     @ApiResponses(value = {
@@ -185,5 +184,19 @@ public class ShBankController {
         Map<Category, Long> transactionByGroupCategory = shBankService.getTransactionByGroupCategory(
             requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
+    }
+
+    @PostMapping("/payments")
+    @Operation(summary = "결제 서비스", description = "결제 금액, 결제 장소 데이터를 이용한 결제")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "결제 성공"),
+        @ApiResponse(responseCode = "400", description = "결제 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<PaymentResponseDTO> processPayment(
+        @RequestHeader("AccountId") Long accountId
+        , @RequestBody PaymentRequestDTO paymentRequestDTO) {
+        PaymentResponseDTO paymentResponseDTO = shBankService.qrPayment(accountId,
+            paymentRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponseDTO);
     }
 }

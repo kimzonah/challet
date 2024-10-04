@@ -28,7 +28,7 @@ import com.challet.shbankservice.domain.entity.Category;
 import com.challet.shbankservice.domain.entity.SearchedTransaction;
 import com.challet.shbankservice.domain.entity.ShBank;
 import com.challet.shbankservice.domain.entity.ShBankTransaction;
-import com.challet.shbankservice.domain.repository.SearchedTransactionRepository;
+import com.challet.shbankservice.domain.elasticsearch.repository.SearchedTransactionRepository;
 import com.challet.shbankservice.domain.repository.ShBankRepository;
 import com.challet.shbankservice.domain.repository.ShBankTransactionRepository;
 import com.challet.shbankservice.global.exception.CustomException;
@@ -37,7 +37,9 @@ import com.challet.shbankservice.global.util.JwtUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShBankServiceImpl implements ShBankService {
@@ -127,6 +129,8 @@ public class ShBankServiceImpl implements ShBankService {
 			pageable);
 
 		boolean isLastPage = searchedTransactions.isLast();
+
+		log.info("{}", searchedTransactions.getContent());
 
 		return SearchedTransactionResponseDTO.fromSearchedTransaction(
 			searchedTransactions.getContent(), isLastPage);

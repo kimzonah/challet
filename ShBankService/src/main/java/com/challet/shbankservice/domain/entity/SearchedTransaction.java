@@ -14,8 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Document(indexName = "kb_bank_transaction")
-@Schema(description = "국민은행 거래내역 검색")
+@Document(indexName = "sh_bank_transaction")
+@Schema(description = "신한은행 거래내역 검색")
 public record SearchedTransaction(
 
     @Id
