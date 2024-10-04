@@ -92,7 +92,7 @@ public class KbBankServiceImpl implements KbBankService {
 
         long accountTransactionBalance = kbBank.getAccountBalance() + requestDTO.amount();
         KbBankTransaction transaction = KbBankTransaction.createAccountTransferHistory(kbBank,
-            requestDTO, accountTransactionBalance);
+            requestDTO, accountTransactionBalance, "ETC");
 
         kbBank.addTransaction(transaction);
 

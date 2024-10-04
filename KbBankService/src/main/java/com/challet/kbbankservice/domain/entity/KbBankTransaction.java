@@ -57,7 +57,7 @@ public class KbBankTransaction {
     }
 
     public static KbBankTransaction createAccountTransferHistory(KbBank kbBank,
-        AccountTransferRequestDTO requestDTO, long accountTransactionBalance) {
+        AccountTransferRequestDTO requestDTO, long accountTransactionBalance, String category) {
 
         return KbBankTransaction
             .builder()
@@ -66,6 +66,7 @@ public class KbBankTransaction {
             .deposit(kbBank.getAccountNumber())
             .withdrawal(requestDTO.name())
             .transactionBalance(accountTransactionBalance)
+            .category(Category.valueOf(category))
             .build();
     }
 }
