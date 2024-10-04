@@ -164,7 +164,7 @@ public class ShBankServiceImpl implements ShBankService {
 		shBankTransactionRepository.save(paymentTransaction);
 
 		searchedTransactionRepository.save(
-			SearchedTransaction.fromAccountIdAndKbBankTransaction(accountId, paymentTransaction));
+			SearchedTransaction.fromAccountIdAndShBankTransaction(accountId, paymentTransaction));
 
 		return PaymentResponseDTO.fromPaymentResponseDTO(paymentTransaction);
 	}

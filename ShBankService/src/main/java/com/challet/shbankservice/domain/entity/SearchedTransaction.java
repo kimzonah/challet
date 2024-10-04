@@ -43,7 +43,7 @@ public record SearchedTransaction(
     Long transactionAmount
 ) {
 
-    public static SearchedTransaction fromAccountIdAndKbBankTransaction(final Long accountId, final ShBankTransaction transaction) {
+    public static SearchedTransaction fromAccountIdAndShBankTransaction(final Long accountId, final ShBankTransaction transaction) {
         return SearchedTransaction.builder()
             .transactionId(String.valueOf(transaction.getId()))
             .accountId(accountId)
