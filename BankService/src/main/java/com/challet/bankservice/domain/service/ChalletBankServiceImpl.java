@@ -403,7 +403,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             fromBank, toBank.getName(), requestTransactionDTO, addMoney, false, "ETC");
         toBank.addTransaction(accountTransferHistory);
 
-        return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.getName(),
+        challetBankTransactionRepository.save(accountTransferHistory);
+
+        return AccountTransferResponseDTO.fromTransferInfo(accountTransferHistory.getId() ,fromBank, toBank.getName(),
             requestTransactionDTO.transactionAmount(), categoryName);
     }
 
@@ -424,7 +426,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
                 fromBank, toBank.name(), requestTransactionDTO, transactionBalance, true, categoryName);
             fromBank.addTransaction(paymentTransaction);
 
-            return AccountTransferResponseDTO.fromTransferInfo(fromBank, toBank.name(),
+            challetBankTransactionRepository.save(paymentTransaction);
+
+            return AccountTransferResponseDTO.fromTransferInfo(paymentTransaction.getId() , fromBank, toBank.name(),
                 requestTransactionDTO.transactionAmount(), categoryName);
         } catch (Exception e) {
             throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);

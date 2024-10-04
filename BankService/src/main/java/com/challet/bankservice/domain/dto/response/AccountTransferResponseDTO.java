@@ -8,6 +8,9 @@ import lombok.Builder;
 @Schema(description = "계좌 이체 후 응답 DTO")
 public record AccountTransferResponseDTO(
 
+    @Schema(description = "id")
+    Long id,
+
     @Schema(description = "이름")
     String name,
 
@@ -24,9 +27,10 @@ public record AccountTransferResponseDTO(
     Long amount
 ) {
 
-    public static AccountTransferResponseDTO fromTransferInfo(ChalletBank fromBank,
+    public static AccountTransferResponseDTO fromTransferInfo(Long id ,ChalletBank fromBank,
         String toBankName, Long amount, String category) {
         return AccountTransferResponseDTO.builder()
+            .id(id)
             .name(toBankName)
             .myAccountNumber(fromBank.getAccountNumber())
             .category(category)
