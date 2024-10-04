@@ -54,9 +54,11 @@ spring:
         p6spy: "%(currentTime)|%(executionTime)|%(category)|%(sqlSingleLine)"
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
       dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+  elasticsearch:
+    uris: "challet.world:9200"
 
 
 springdoc:
