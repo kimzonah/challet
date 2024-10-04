@@ -172,9 +172,12 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
           transactionListRef.current!.scrollTop =
             newScrollHeight - previousScrollHeight + previousScrollTop;
         }, 50);
+      } else if (!scrollToBottom && transactionListRef.current) {
+        const newScrollHeight = transactionListRef.current!.scrollHeight;
+        transactionListRef.current!.scrollTop =
+          newScrollHeight - previousScrollHeight + previousScrollTop;
       }
     }
-
     isFetchingRef.current = false;
     isLoadingRef.current = false;
   };
