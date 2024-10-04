@@ -174,12 +174,9 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
         }, 50);
       } else if (!scrollToBottom && transactionListRef.current) {
         setTimeout(() => {
-          const newScrollHeight = transactionListRef.current!.scrollHeight;
-
-          // 스크롤 위치를 애니메이션 없이 조정 (iOS 환경에서만)
           transactionListRef.current!.scrollTop =
-            newScrollHeight - previousScrollHeight + previousScrollTop;
-        }, 200); // 지연 시간을 늘려 DOM이 완전히 렌더링된 후에 스크롤 위치를 조정
+            transactionListRef.current!.scrollHeight - previousScrollHeight;
+        }, 50);
       }
     }
     isFetchingRef.current = false;
