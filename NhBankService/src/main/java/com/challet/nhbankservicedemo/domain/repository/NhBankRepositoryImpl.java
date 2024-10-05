@@ -61,6 +61,7 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
                 bankTransaction.id,
                 bankTransaction.transactionDatetime,
                 bankTransaction.deposit,
+                bankTransaction.withdrawal,
                 bankTransaction.transactionBalance,
                 bankTransaction.transactionAmount))
             .from(bankTransaction)

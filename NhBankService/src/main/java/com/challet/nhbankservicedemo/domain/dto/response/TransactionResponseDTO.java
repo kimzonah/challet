@@ -15,6 +15,9 @@ public record TransactionResponseDTO(
     @Schema(description = "입금처")
     String deposit,
 
+    @Schema(description = "출금처")
+    String withdrawal,
+
     @Schema(description = "거래 후 잔액")
     Long transactionBalance,
 
