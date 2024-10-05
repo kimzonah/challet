@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // useLocation 가져오기
 import axiosInstance from '../../api/axiosInstance';
 import useSignUpStore from '../../store/useSignUpStore';
 import Button from '../../components/Button/Button';
-import './PhoneCheckPage.css'; // CSS 파일을 추가합니다
+import './PhoneCheckPage.css';
 
 const PhoneCheckPage = () => {
   const [phoneNumber, setPhoneNumber] = useState(''); // 실제 입력된 전화번호
@@ -13,6 +13,7 @@ const PhoneCheckPage = () => {
   const [isDuplicate, setIsDuplicate] = useState(false); // 중복 여부
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { setSignUpData } = useSignUpStore(); // Zustand에서 상태 업데이트 함수 가져오기
 
   // 전화번호 포맷팅 함수 (010-xxxx-xxxx 형식으로 변환)
@@ -69,6 +70,15 @@ const PhoneCheckPage = () => {
       setIsDuplicate(false); // 중복 상태 초기화
     }
   }, [phoneNumber]);
+
+  // 처음 페이지가 로드될 때 location.state에서 phoneNumber 가져오기
+  useEffect(() => {
+    const passedPhoneNumber = location.state?.phoneNumber || '';
+    if (passedPhoneNumber) {
+      setPhoneNumber(passedPhoneNumber);
+      setFormattedPhoneNumber(formatPhoneNumber(passedPhoneNumber));
+    }
+  }, [location.state]);
 
   // 확인 버튼 클릭 핸들러
   const handleConfirm = () => {
