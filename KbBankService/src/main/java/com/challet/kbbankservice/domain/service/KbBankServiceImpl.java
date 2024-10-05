@@ -178,4 +178,10 @@ public class KbBankServiceImpl implements KbBankService {
             .build();
     }
 
+    @Override
+    public Map<Category, Long> getMyTransactionByCategory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        return kbBankRepository.getMyTransactionByCategory(phoneNumber, requestDTO);
+    }
 }
