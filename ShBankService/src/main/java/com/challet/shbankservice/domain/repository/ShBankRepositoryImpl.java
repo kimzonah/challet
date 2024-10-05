@@ -61,6 +61,7 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
                 bankTransaction.id,
                 bankTransaction.transactionDatetime,
                 bankTransaction.deposit,
+                bankTransaction.withdrawal,
                 bankTransaction.transactionBalance,
                 bankTransaction.transactionAmount))
             .from(bankTransaction)
