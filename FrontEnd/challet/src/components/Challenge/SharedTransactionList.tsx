@@ -191,7 +191,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     // 스크롤이 위쪽으로 올라갔고, 추가 데이터가 있으면 새로운 거래내역을 불러옴
     if (
       ref &&
-      ref.scrollTop < 400 &&
+      ref.scrollTop < 300 &&
       hasNextPageRef.current &&
       !isLoadingRef.current &&
       !isFetchingRef.current
@@ -201,8 +201,10 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
 
       // 거래내역 불러오기
       fetchTransactions(false).then(() => {
-        // 거래내역을 불러온 후 다시 스크롤 감시 시작
-        ref.addEventListener('scroll', handleScrollThrottled);
+        // 0.5초 후에 스크롤 감시 재개
+        setTimeout(() => {
+          ref.addEventListener('scroll', handleScrollThrottled);
+        }, 500);
       });
     }
 
