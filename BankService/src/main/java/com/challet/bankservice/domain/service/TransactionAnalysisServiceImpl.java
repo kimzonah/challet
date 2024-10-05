@@ -81,7 +81,7 @@ public class TransactionAnalysisServiceImpl implements TransactionAnalysisServic
             message);
         List<CategoryPercentageResponseDTO> categoryList = calculatePercent(totalCategoryAmount);
 
-        return CategoryPercentageResponseListDTO.fromCategoryList(myCategoryList,categoryList);
+        return CategoryPercentageResponseListDTO.fromCategoryList(userInfo,myCategoryList,categoryList);
     }
 
     private List<CategoryPercentageResponseDTO> getMyCategoryPercent(
