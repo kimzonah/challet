@@ -1,4 +1,4 @@
-import AxiosInstance from '../../src/api/axiosInstance';
+import axiosInstance from '../../src/api/axiosInstance';
 import { useState } from 'react';
 
 // API 요청 공통 함수
@@ -41,7 +41,7 @@ export const useChallengeApi = () => {
       };
 
       // POST 요청 전송
-      const response = await AxiosInstance.post(url, requestBody);
+      const response = await axiosInstance.post(url, requestBody);
 
       console.log('챌린지 참가 성공:', response.data);
 
@@ -58,7 +58,7 @@ export const useChallengeApi = () => {
   const createChallenge = async (requestBody: Record<string, any>) => {
     try {
       const url = `${API_BASE_URL}/api/challet/challenges`;
-      const response = await AxiosInstance.post(url, requestBody);
+      const response = await axiosInstance.post(url, requestBody);
 
       console.log('챌린지 생성 성공:', response.data);
     } catch (error) {
@@ -70,7 +70,7 @@ export const useChallengeApi = () => {
   const fetchChallengeDetail = async (challengeId: number) => {
     try {
       const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}`;
-      const response = await AxiosInstance.get(url);
+      const response = await axiosInstance.get(url);
       return response.data; // 상세 내역 데이터 반환
     } catch (error) {
       console.error('챌린지 상세 조회 중 오류 발생:', error);
@@ -82,7 +82,7 @@ export const useChallengeApi = () => {
   const fetchCurrentSpending = async (challengeId: number) => {
     try {
       const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/spending-amount`;
-      const response = await AxiosInstance.get(url);
+      const response = await axiosInstance.get(url);
       return response.data.spendingAmount; // 소비 금액 데이터 반환
     } catch (error) {
       console.error('소비 금액 조회 중 오류 발생:', error);
@@ -105,7 +105,7 @@ export const useChallengeApi = () => {
       let params = { category, keyword, page, size }; // 파라미터 설정
 
       if (isMyChallenges) {
-        const response = await AxiosInstance.get(url);
+        const response = await axiosInstance.get(url);
         console.log('나의 챌린지 조회 성공:', response);
 
         // 페이지가 0일 때는 새로 설정, 그 외에는 기존 목록에 추가
@@ -122,7 +122,7 @@ export const useChallengeApi = () => {
         if (keyword === '') {
           delete (params as Record<string, any>)?.keyword; // 검색어가 없는 경우 삭제
         }
-        const response = await AxiosInstance.get(url, { params });
+        const response = await axiosInstance.get(url, { params });
         console.log('챌린지 조회 성공:', response);
 
         // 마지막 페이지 여부 설정
@@ -154,7 +154,7 @@ export const useChallengeApi = () => {
       const url = `${API_BASE_URL}/api/challet/challenges/${challengeId}/history`;
       const param = cursor ? { cursor } : {}; // 커서 값이 있으면 파라미터에 추가
 
-      const response = await AxiosInstance.get(url, { params: param });
+      const response = await axiosInstance.get(url, { params: param });
 
       // API 응답 성공 시 로그 및 상태 업데이트
       console.log('트랜잭션 조회 성공:', response.data);
@@ -176,7 +176,7 @@ export const useChallengeApi = () => {
       const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}`;
 
       console.log('transaction:', transaction);
-      const response = await AxiosInstance.patch(url, transaction, {
+      const response = await axiosInstance.patch(url, transaction, {
         headers: {
           'Content-Type': 'application/json', // JSON으로 전송할 때 명시적으로 Content-Type 설정
         },
@@ -192,7 +192,7 @@ export const useChallengeApi = () => {
   const fetchSharedTransactionDetail = async (sharedTransactionId: number) => {
     try {
       const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}`;
-      const response = await AxiosInstance.get(url);
+      const response = await axiosInstance.get(url);
       console.log('트랜잭션 상세 조회 성공:', response.data);
       return response.data; // 상세 내역 데이터 반환
     } catch (error) {
@@ -206,7 +206,7 @@ export const useChallengeApi = () => {
     // 실제 API 요청 부분은 주석 처리합니다.
     try {
       const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}/comments`;
-      const response = await AxiosInstance.get(url);
+      const response = await axiosInstance.get(url);
       return response.data.comments; // 댓글 데이터 반환
     } catch (error) {
       console.error('댓글 조회 중 오류 발생:', error);
@@ -222,7 +222,7 @@ export const useChallengeApi = () => {
       const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}/comments`;
       const requestBody = { content };
 
-      const response = await AxiosInstance.post(url, requestBody);
+      const response = await axiosInstance.post(url, requestBody);
 
       console.log('댓글 등록 성공:', response.data);
     } catch (error) {

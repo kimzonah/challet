@@ -142,21 +142,26 @@ const ChallengeCreatePage: React.FC = () => {
               지출 한도
             </label>
             <input
-              type='number'
+              type='text' // text로 변경하여 선행 0을 쉽게 처리
               value={spendingLimit}
               onChange={(e) => {
-                const value = e.target.value;
-                // 마이너스 값 또는 1억(100,000,000) 이상을 입력하지 않도록 제한
-                if (value === '') {
-                  setSpendingLimit(''); // 빈 값일 때 빈 값으로 설정
-                } else if (Number(value) >= 0 && Number(value) <= 100000000) {
-                  setSpendingLimit(e.target.value);
+                let value = e.target.value.trim();
+
+                // 숫자인지 확인하고, 숫자가 아니면 무시
+                if (/^\d*$/.test(value)) {
+                  // 숫자로 변환 후 다시 문자열로 변환 (선행 0 제거)
+                  if (value !== '') {
+                    value = String(Number(value));
+                  }
+
+                  // 값이 유효한 범위에 있는지 확인 (0 ~ 100,000,000 사이만 허용)
+                  if (Number(value) >= 0 && Number(value) <= 100000000) {
+                    setSpendingLimit(value);
+                  }
                 }
               }}
               className='w-[85vw] px-2 py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               placeholder='지출 한도를 입력하세요'
-              min='0'
-              max='100000000'
             />
           </div>
 
