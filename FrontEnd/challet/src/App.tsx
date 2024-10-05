@@ -40,6 +40,7 @@ import ImageUpload from './pages/TestPage/ImageUpload';
 import WebSocketTest from './pages/TestPage/WebSocketTest';
 import CalendarSpendingPage from './pages/AnalysisPage/CalendarSpendingPage';
 import CalendarSpendingPage2 from './pages/AnalysisPage/CalendarSpending';
+import ProtectedRoute from './components/ProtectedRoute';
 import './assets/App.css';
 
 function App() {
@@ -90,6 +91,7 @@ function App() {
     <div className='min-h-screen flex flex-col justify-between'>
       {/* Routes 설정 */}
       <Routes>
+        {/* 공개된 페이지 */}
         <Route path='/' element={<RealOnboardingPage />} />
         <Route path='/onboarding' element={<OnboardingPage />} />
         <Route path='/phone-auth' element={<PhoneAuthPage />} />
@@ -98,53 +100,56 @@ function App() {
         <Route path='/signup2' element={<SignUpPage2 />} />
         <Route path='/set-password' element={<SetPasswordPage />} />
         <Route path='/login' element={<LoginPage />} />
-        <Route path='/wallet' element={<WalletPage />} />
-        <Route path='/mydata-history' element={<MyDataHistoryPage />} />
-        <Route
-          path='/history-detail/:transactionId'
-          element={<HistoryDetailPage />}
-        />
-        <Route
-          path='/mydata-detail/:transactionId'
-          element={<MyDataDetailPage />}
-        />
+        {/* 보호된 경로들은 ProtectedRoute로 그룹화 */}
+        <Route element={<ProtectedRoute />}>
+          <Route path='/wallet' element={<WalletPage />} />
+          <Route path='/mydata-history' element={<MyDataHistoryPage />} />
+          <Route
+            path='/history-detail/:transactionId'
+            element={<HistoryDetailPage />}
+          />
+          <Route
+            path='/mydata-detail/:transactionId'
+            element={<MyDataDetailPage />}
+          />
 
-        <Route path='/history' element={<HistoryPage />} />
-        <Route path='/transfer' element={<TransferPage />} />
-        <Route path='/transfer-result' element={<TransferResultPage />} />
-        <Route path='/challenge' element={<ChallengePage />} />
-        <Route path='/challenge/create' element={<ChallengeCreatePage />} />
-        <Route path='/analysis' element={<AnalysisPage />} />
-        <Route path='/payment' element={<PaymentPage />} />
-        <Route path='/payreview' element={<PayReviewPage />} />
-        <Route path='/payresult' element={<PayResult />} />
-        <Route path='/mydataselect' element={<MyDataSelectPage />} />
-        <Route path='/mypage' element={<MyPage2 />} />
-        <Route path='/rewards' element={<RewardsPage />} />
-        <Route path='/challet-service/users/login' element={<LoginPage />} />
-        <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
-        <Route
-          path='/sharedTransactionCreate'
-          element={<SharedTransactionCreate />}
-        />
-        <Route
-          path='/sharedTransactionDetail/:id'
-          element={<SharedTransactionDetail />}
-        />
-        <Route
-          path='/sharedTransactionEdit'
-          element={<SharedTransactionEdit />}
-        />
-        <Route path='/test' element={<ImageUpload />} />
-        <Route path='/websocket-test' element={<WebSocketTest />}></Route>
-        <Route
-          path='/calendarSpendingPage'
-          element={<CalendarSpendingPage />}
-        />
-        <Route
-          path='/calendarSpendingPage2'
-          element={<CalendarSpendingPage2 />}
-        />
+          <Route path='/history' element={<HistoryPage />} />
+          <Route path='/transfer' element={<TransferPage />} />
+          <Route path='/transfer-result' element={<TransferResultPage />} />
+          <Route path='/challenge' element={<ChallengePage />} />
+          <Route path='/challenge/create' element={<ChallengeCreatePage />} />
+          <Route path='/analysis' element={<AnalysisPage />} />
+          <Route path='/payment' element={<PaymentPage />} />
+          <Route path='/payreview' element={<PayReviewPage />} />
+          <Route path='/payresult' element={<PayResult />} />
+          <Route path='/mydataselect' element={<MyDataSelectPage />} />
+          <Route path='/mypage' element={<MyPage2 />} />
+          <Route path='/rewards' element={<RewardsPage />} />
+          <Route path='/challet-service/users/login' element={<LoginPage />} />
+          <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
+          <Route
+            path='/sharedTransactionCreate'
+            element={<SharedTransactionCreate />}
+          />
+          <Route
+            path='/sharedTransactionDetail/:id'
+            element={<SharedTransactionDetail />}
+          />
+          <Route
+            path='/sharedTransactionEdit'
+            element={<SharedTransactionEdit />}
+          />
+          <Route path='/test' element={<ImageUpload />} />
+          <Route path='/websocket-test' element={<WebSocketTest />}></Route>
+          <Route
+            path='/calendarSpendingPage'
+            element={<CalendarSpendingPage />}
+          />
+          <Route
+            path='/calendarSpendingPage2'
+            element={<CalendarSpendingPage2 />}
+          />
+        </Route>
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
