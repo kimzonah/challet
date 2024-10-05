@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useStatisticsApi } from '../../hooks/statisticsApi';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-const Statistics = () => {
-  const { statistics, isLoading, fetchStatistics, nickname, fetchUserData } =
+const MyStatistics = () => {
+  const { myStatistics, isLoading, fetchStatistics, nickname, fetchUserData } =
     useStatisticsApi();
 
   useEffect(() => {
@@ -17,11 +17,11 @@ const Statistics = () => {
   }
 
   // 데이터가 없는 경우 처리
-  if (statistics.length === 0) {
+  if (myStatistics.length === 0) {
     return <p>소비 내역이 없습니다.</p>;
   }
 
-  const data = statistics; // 이미 categoryList를 추출했으므로 그대로 사용
+  const data = myStatistics; // 이미 categoryList를 추출했으므로 그대로 사용
 
   // 차트 색상 배열
   const COLORS = ['#00CCCC', '#E24D42', '#EAB839', '#7EB26D', '#7B61FF'];
@@ -30,9 +30,9 @@ const Statistics = () => {
   const categoryMap: { [key: string]: string } = {
     SHOPPING: '쇼핑',
     COFFEE: '커피',
-    ETC: '기타 비용',
-    TRANSPORT: '교통비',
-    DELIVERY: '배달비',
+    ETC: '기타',
+    TRANSPORT: '교통',
+    DELIVERY: '배달',
   };
 
   return (
@@ -42,9 +42,9 @@ const Statistics = () => {
         <div className='text-xl'>
           <div className='mb-2'>
             <span className='text-[#00CCCC]'>{nickname}</span>
-            <span>&nbsp;님과 비슷한</span>
+            <span>&nbsp;님이</span>
           </div>
-          <span> 연령대가 지난 달에 소비한 내역은?</span>
+          <span> 지난 달에 소비한 내역은?</span>
         </div>
       </div>
 
@@ -109,16 +109,8 @@ const Statistics = () => {
           </ul>
         </div>
       </div>
-
-      {/* 설명 텍스트 */}
-      <div className='mt-6 p-4 rounded-lg shadow-md bg-[#F1F4F6] text-center text-sm'>
-        <p>
-          <span className='text-[#00CCCC] font-bold'>20대 여성</span>의 소비
-          패턴으로는 현재 배달비 다음으로 식비가 많습니다!
-        </p>
-      </div>
     </div>
   );
 };
 
-export default Statistics;
+export default MyStatistics;

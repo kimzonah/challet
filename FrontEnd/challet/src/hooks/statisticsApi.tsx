@@ -3,7 +3,10 @@ import axiosInstance from '../api/axiosInstance';
 
 export const useStatisticsApi = () => {
   const API_BASE_URL = import.meta.env.VITE_API_URL as string;
-  const [statistics, setStatistics] = useState<any[]>([]); // 초기값을 빈 배열로 설정
+  const [myStatistics, setMyStatistics] = useState<any[]>([]); // 초기값을 빈 배열로 설정
+  const [AverageStatistics, setAverageStatistics] = useState<any[]>([]); // 초기값을 빈 배열로 설정
+  const [age, setAge] = useState(0); // API 응답에서 나이 설정
+  const [gender, setgender] = useState(''); // API 응답에서 성별 설정
   const [nickname, setNickname] = useState(''); // API 응답에서 닉네임 설정
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
@@ -28,7 +31,10 @@ export const useStatisticsApi = () => {
       console.log('통계 데이터 조회 성공:', response.data);
 
       // 응답에서 categoryList 추출
-      setStatistics(response.data.categoryList || []); // categoryList 설정
+      setMyStatistics(response.data.myCategoryList || []); // categoryList 설정
+      setAverageStatistics(response.data.categoryList || []);
+      setAge(response.data.age); // 나이대 설정
+      setgender(response.data.gender ? '여성' : '남성'); // 성별 설정
       return true; // 성공 시 true 반환
     } catch (error) {
       console.error('통계 데이터 조회 중 오류 발생:', error);
@@ -49,5 +55,14 @@ export const useStatisticsApi = () => {
     }
   };
 
-  return { statistics, isLoading, fetchStatistics, fetchUserData, nickname };
+  return {
+    myStatistics,
+    AverageStatistics,
+    age,
+    gender,
+    isLoading,
+    fetchStatistics,
+    fetchUserData,
+    nickname,
+  };
 };
