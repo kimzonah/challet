@@ -61,6 +61,7 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
                 bankTransaction.id,
                 bankTransaction.transactionDatetime,
                 bankTransaction.deposit,
+                bankTransaction.withdrawal,
                 bankTransaction.transactionBalance,
                 bankTransaction.transactionAmount))
             .from(bankTransaction)
