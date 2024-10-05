@@ -95,8 +95,13 @@ public class KbBankServiceImpl implements KbBankService {
             requestDTO, accountTransactionBalance, "ETC");
 
         kbBank.addTransaction(transaction);
-
-        return BankTransferResponseDTO.fromBankTransferResponseDTO(kbBank);
+        try{
+            BankTransferResponseDTO bankTransferResponseDTO = BankTransferResponseDTO.fromBankTransferResponseDTO(
+                kbBank);
+            return bankTransferResponseDTO;
+        }catch (Exception e){
+            throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
+        }
     }
 
     @Override
