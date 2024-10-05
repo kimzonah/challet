@@ -40,9 +40,9 @@ const CategoryList = ({
   };
 
   return (
-    <div className='w-full p-4 border-b-2 mb-2'>
+    <div className='p-4 border-b-2 mb-2'>
       {/* 검색창 */}
-      <div className='flex items-center mb-4'>
+      <div className='w-full flex items-center mb-4'>
         <input
           type='text'
           ref={searchInputRef}
