@@ -6,7 +6,7 @@ import { useChallengeApi } from '../../hooks/useChallengeApi'; // API 함수 추
 import { Transaction } from './TransactionType'; // Transaction 타입 추가
 import { format } from 'date-fns'; // 날짜 형식화 라이브러리
 import { ko } from 'date-fns/locale'; // 한국어 로케일
-import { throttle } from 'lodash';
+// import { throttle } from 'lodash';
 
 const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const [sharedTransactions, setSharedTransactions] = useState<Transaction[]>(
@@ -185,7 +185,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     isLoadingRef.current = false;
   };
 
-  const handleScrollThrottled = throttle(() => {
+  const handleScrollThrottled = () => {
     const ref = transactionListRef.current;
 
     // 스크롤이 위쪽으로 올라갔고, 추가 데이터가 있으면 새로운 거래내역을 불러옴
@@ -212,7 +212,7 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     if (ref && ref.scrollTop + ref.clientHeight >= ref.scrollHeight - 100) {
       setIsNewMessageButtonVisible(false);
     }
-  }, 100);
+  };
 
   useEffect(() => {
     fetchTransactions(true);
