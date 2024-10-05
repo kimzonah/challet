@@ -21,6 +21,7 @@ import HistoryDetailPage from './pages/HistoryDetailPage/HistoryDetailPage';
 import MyDataHistoryPage from './pages/MyDataHistoryPage/MyDataHistoryPage';
 import MyDataDetailPage from './pages/MyDataDetailPage/MyDataDetailPage';
 import TransferPage from './pages/TransferPage/TransferPage';
+import TransferResultPage from './pages/TransferResultPage/TransferResultPage';
 import ChallengePage from './pages/ChallengePage/ChallengePage';
 import AnalysisPage from './pages/AnalysisPage/AnalysisPage';
 import MyPage2 from './pages/MyPage/MyPage2';
@@ -59,6 +60,7 @@ function App() {
   const matchHistory = useMatch('/history');
   const matchHistorydetail = useMatch('//history-detail/:transactionId');
   const matchTransfer = useMatch('/transfer');
+  const matchTransferPage = useMatch('/transfer-result');
   const matchmydataselect = useMatch('/mydataselect');
   const PhoneCheck = useMatch('/phone-check');
   const Login = useMatch('/login');
@@ -79,6 +81,7 @@ function App() {
     matchpayreview ||
     matchpayresult ||
     matchTransfer ||
+    matchTransferPage ||
     matchmydataselect ||
     PhoneCheck ||
     Login ||
@@ -110,42 +113,42 @@ function App() {
             element={<MyDataDetailPage />}
           />
 
-          <Route path='/history' element={<HistoryPage />} />
-          <Route path='/transfer' element={<TransferPage />} />
-          <Route path='/challenge' element={<ChallengePage />} />
-          <Route path='/challenge/create' element={<ChallengeCreatePage />} />
-          <Route path='/analysis' element={<AnalysisPage />} />
-          <Route path='/payment' element={<PaymentPage />} />
-          <Route path='/payreview' element={<PayReviewPage />} />
-          <Route path='/payresult' element={<PayResult />} />
-          <Route path='/mydataselect' element={<MyDataSelectPage />} />
-          <Route path='/mypage' element={<MyPage2 />} />
-          <Route path='/rewards' element={<RewardsPage />} />
-          <Route path='/challet-service/users/login' element={<LoginPage />} />
-          <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
-          <Route
-            path='/sharedTransactionCreate'
-            element={<SharedTransactionCreate />}
-          />
-          <Route
-            path='/sharedTransactionDetail/:id'
-            element={<SharedTransactionDetail />}
-          />
-          <Route
-            path='/sharedTransactionEdit'
-            element={<SharedTransactionEdit />}
-          />
-          <Route path='/test' element={<ImageUpload />} />
-          <Route path='/websocket-test' element={<WebSocketTest />}></Route>
-          <Route
-            path='/calendarSpendingPage'
-            element={<CalendarSpendingPage />}
-          />
-          <Route
-            path='/calendarSpendingPage2'
-            element={<CalendarSpendingPage2 />}
-          />
-        </Route>
+        <Route path='/history' element={<HistoryPage />} />
+        <Route path='/transfer' element={<TransferPage />} />
+        <Route path='/transfer-result' element={<TransferResultPage />} />
+        <Route path='/challenge' element={<ChallengePage />} />
+        <Route path='/challenge/create' element={<ChallengeCreatePage />} />
+        <Route path='/analysis' element={<AnalysisPage />} />
+        <Route path='/payment' element={<PaymentPage />} />
+        <Route path='/payreview' element={<PayReviewPage />} />
+        <Route path='/payresult' element={<PayResult />} />
+        <Route path='/mydataselect' element={<MyDataSelectPage />} />
+        <Route path='/mypage' element={<MyPage2 />} />
+        <Route path='/rewards' element={<RewardsPage />} />
+        <Route path='/challet-service/users/login' element={<LoginPage />} />
+        <Route path='/challengeRoom/:id' element={<ChallengeRoom />} />
+        <Route
+          path='/sharedTransactionCreate'
+          element={<SharedTransactionCreate />}
+        />
+        <Route
+          path='/sharedTransactionDetail/:id'
+          element={<SharedTransactionDetail />}
+        />
+        <Route
+          path='/sharedTransactionEdit'
+          element={<SharedTransactionEdit />}
+        />
+        <Route path='/test' element={<ImageUpload />} />
+        <Route path='/websocket-test' element={<WebSocketTest />}></Route>
+        <Route
+          path='/calendarSpendingPage'
+          element={<CalendarSpendingPage />}
+        />
+        <Route
+          path='/calendarSpendingPage2'
+          element={<CalendarSpendingPage2 />}
+        />
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
