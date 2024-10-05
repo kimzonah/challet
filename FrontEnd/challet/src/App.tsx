@@ -149,6 +149,7 @@ function App() {
           path='/calendarSpendingPage2'
           element={<CalendarSpendingPage2 />}
         />
+        <Route>
       </Routes>
       {/* /challenge 경로에서만 챌린지 생성 버튼 보여줌 */}
       {location.pathname === '/challenge' && <ChallengeCreateButton />}
