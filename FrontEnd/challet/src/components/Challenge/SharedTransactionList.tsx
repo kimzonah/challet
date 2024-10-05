@@ -6,6 +6,7 @@ import { useChallengeApi } from '../../hooks/useChallengeApi'; // API 함수 추
 import { Transaction } from './TransactionType'; // Transaction 타입 추가
 import { format } from 'date-fns'; // 날짜 형식화 라이브러리
 import { ko } from 'date-fns/locale'; // 한국어 로케일
+import { throttle } from 'lodash';
 
 const TransactionList = ({ challengeId }: { challengeId: number }) => {
   const [sharedTransactions, setSharedTransactions] = useState<Transaction[]>(
@@ -183,37 +184,42 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
     isLoadingRef.current = false;
   };
 
-  const handleScroll = () => {
+  const handleScrollThrottled = throttle(() => {
+    const ref = transactionListRef.current;
+
+    // 스크롤이 위쪽으로 올라갔고, 추가 데이터가 있으면 새로운 거래내역을 불러옴
     if (
-      transactionListRef.current &&
-      transactionListRef.current.scrollTop < 400 &&
+      ref &&
+      ref.scrollTop < 400 &&
       hasNextPageRef.current &&
       !isLoadingRef.current &&
       !isFetchingRef.current
     ) {
-      fetchTransactions();
+      // 스크롤 이벤트 리스너 제거
+      ref.removeEventListener('scroll', handleScrollThrottled);
+
+      // 거래내역 불러오기
+      fetchTransactions(false).then(() => {
+        // 거래내역을 불러온 후 다시 스크롤 감시 시작
+        ref.addEventListener('scroll', handleScrollThrottled);
+      });
     }
 
     // 사용자가 수동으로 맨 아래까지 스크롤하면 버튼 숨기기
-    if (
-      transactionListRef.current &&
-      transactionListRef.current.scrollTop +
-        transactionListRef.current.clientHeight >=
-        transactionListRef.current.scrollHeight - 100
-    ) {
+    if (ref && ref.scrollTop + ref.clientHeight >= ref.scrollHeight - 100) {
       setIsNewMessageButtonVisible(false);
     }
-  };
+  }, 100);
 
   useEffect(() => {
     fetchTransactions(true);
     const ref = transactionListRef.current;
     if (ref) {
-      ref.addEventListener('scroll', handleScroll);
+      ref.addEventListener('scroll', handleScrollThrottled);
     }
     return () => {
       if (ref) {
-        ref.removeEventListener('scroll', handleScroll);
+        ref.removeEventListener('scroll', handleScrollThrottled);
       }
     };
   }, []);
