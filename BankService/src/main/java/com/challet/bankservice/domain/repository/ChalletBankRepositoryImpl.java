@@ -65,6 +65,7 @@ public class ChalletBankRepositoryImpl implements ChalletBankRepositoryCustom {
                 challetBankTransaction.id,
                 challetBankTransaction.transactionDatetime,
                 challetBankTransaction.deposit,
+                challetBankTransaction.withdrawal,
                 challetBankTransaction.transactionBalance,
                 challetBankTransaction.transactionAmount))
             .from(challetBankTransaction)
