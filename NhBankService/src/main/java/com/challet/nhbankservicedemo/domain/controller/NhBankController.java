@@ -174,6 +174,22 @@ public class NhBankController {
         return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
     }
 
+    @GetMapping("/transaction-category-month")
+    @Operation(summary = "카테고리별 한달 결제내역", description = "year, month를 통해 거래 내역 검색")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "조회 성공"),
+        @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<Map<Category, Long>> getMyTransactionCategory(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
+        @RequestParam int year, @RequestParam int month) {
+
+        MonthlyTransactionRequestDTO requestDTO = MonthlyTransactionRequestDTO.fromDTO(year, month);
+        Map<Category, Long> transactionByGroupCategory = nhBankService.getMyTransactionByCategory(
+            tokenHeader, requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(transactionByGroupCategory);
+    }
+
     @PostMapping("/payments")
     @Operation(summary = "결제 서비스", description = "결제 금액, 결제 장소 데이터를 이용한 결제")
     @ApiResponses(value = {

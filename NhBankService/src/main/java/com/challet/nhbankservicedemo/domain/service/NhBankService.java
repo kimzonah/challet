@@ -37,4 +37,7 @@ public interface NhBankService {
         SearchTransactionRequestDTO searchTransactionRequestDTO);
 
     PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
+
+    Map<Category, Long> getMyTransactionByCategory(String phoneNumber,
+        MonthlyTransactionRequestDTO requestDTO);
 }

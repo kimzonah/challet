@@ -30,4 +30,7 @@ public interface NhBankRepositoryCustom {
         MonthlyTransactionRequestDTO requestDTO);
 
     Map<Category, Long> getTransactionByGroupCategory(BankToAnalysisMessageRequestDTO requestDTO);
+
+    Map<Category, Long> getMyTransactionByCategory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO);
 }

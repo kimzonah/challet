@@ -4,6 +4,7 @@ import com.challet.nhbankservicedemo.domain.dto.request.BankToAnalysisMessageReq
 import com.challet.nhbankservicedemo.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.AccountInfoResponseListDTO;
+import com.challet.nhbankservicedemo.domain.dto.response.CategoryAmountMonthResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.CategoryAmountResponseDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryDTO;
 import com.challet.nhbankservicedemo.domain.dto.response.MonthlyTransactionHistoryListDTO;
@@ -187,7 +188,8 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
                 .and(nhBankTransaction.transactionDatetime.year().eq(requestDTO.getYear()))
                 .and(nhBankTransaction.transactionDatetime.month().eq(requestDTO.getMonth()))
                 .and(nhBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
-                    Category.SHOPPING, Category.TRANSPORT, Category.ETC)))
+                    Category.SHOPPING, Category.TRANSPORT, Category.ETC))
+                .and(nhBankTransaction.transactionAmount.lt(0)))
             .groupBy(nhBankTransaction.category)
             .fetch();
     }
@@ -199,5 +201,43 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
                 categorySums.getOrDefault(result.category(), 0l) + (result.totalAmount()
                     / result.count()));
         }
+    }
+
+    @Override
+    public Map<Category, Long> getMyTransactionByCategory(
+        String phoneNumber, MonthlyTransactionRequestDTO requestDTO) {
+        QNhBankTransaction nhBankTransaction = QNhBankTransaction.nhBankTransaction;
+        QNhBank nhBank = QNhBank.nhBank;
+
+        Map<Category, Long> categorySums = new HashMap<>();
+
+        List<CategoryAmountMonthResponseDTO> results = getCategoryMyList(requestDTO,
+            nhBankTransaction, nhBank, phoneNumber);
+
+        for (CategoryAmountMonthResponseDTO result : results) {
+            categorySums.put(result.category(),
+                categorySums.getOrDefault(result.category(), 0l) + (result.totalAmount()));
+        }
+        return categorySums;
+    }
+
+    private List<CategoryAmountMonthResponseDTO> getCategoryMyList(MonthlyTransactionRequestDTO requestDTO,
+        QNhBankTransaction nhBankTransaction, QNhBank nhBank, String phoneNumber) {
+        return query
+            .select(Projections.constructor(CategoryAmountMonthResponseDTO.class,
+                nhBankTransaction.category,
+                nhBankTransaction.transactionAmount.sum()))
+            .from(nhBankTransaction)
+            .join(nhBankTransaction.nhBank, nhBank)
+            .where(
+                nhBank.phoneNumber.eq(phoneNumber)
+                    .and(
+                        nhBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                    .and(nhBankTransaction.transactionDatetime.month().eq(requestDTO.month()))
+                    .and(nhBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
+                        Category.SHOPPING, Category.TRANSPORT, Category.ETC))
+                    .and(nhBankTransaction.transactionAmount.lt(0)))
+            .groupBy(nhBankTransaction.category)
+            .fetch();
     }
 }
