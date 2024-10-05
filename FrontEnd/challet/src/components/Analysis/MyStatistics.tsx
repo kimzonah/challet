@@ -30,9 +30,9 @@ const MyStatistics = () => {
   const categoryMap: { [key: string]: string } = {
     SHOPPING: '쇼핑',
     COFFEE: '커피',
-    ETC: '기타 비용',
-    TRANSPORT: '교통비',
-    DELIVERY: '배달비',
+    ETC: '기타',
+    TRANSPORT: '교통',
+    DELIVERY: '배달',
   };
 
   return (

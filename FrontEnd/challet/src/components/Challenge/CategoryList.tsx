@@ -48,11 +48,12 @@ const CategoryList = ({
           ref={searchInputRef}
           maxLength={15}
           placeholder='관심 있는 키워드'
-          className='flex-grow border rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00CCCC] bg-[#F1F4F6]'
+          className='flex-grow border rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00CCCC] bg-[#F1F4F6] max-w-[80%]'
         />
         <button
           onClick={handleSearchClick}
           className='ml-2 bg-[#F1F4F6] p-2 rounded-2xl'
+          style={{ minWidth: '48px', minHeight: '48px' }}
         >
           <img src={SearchBar} alt='검색' className='w-8 h-8' />
         </button>

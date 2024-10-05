@@ -1,4 +1,3 @@
-// AverageStatistics.tsx
 import { useEffect } from 'react';
 import { useStatisticsApi } from '../../hooks/statisticsApi';
 import {
@@ -26,7 +25,7 @@ const AverageStatistics = () => {
   }, []);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <p></p>;
   }
 
   // 데이터가 없는 경우 처리
@@ -38,9 +37,9 @@ const AverageStatistics = () => {
   const categoryMap: { [key: string]: string } = {
     SHOPPING: '쇼핑',
     COFFEE: '커피',
-    ETC: '기타 비용',
-    TRANSPORT: '교통비',
-    DELIVERY: '배달비',
+    ETC: '기타',
+    TRANSPORT: '교통',
+    DELIVERY: '배달',
   };
 
   // 내 소비습관과 평균 소비습관을 비교하기 위해 데이터를 매핑
@@ -72,9 +71,9 @@ const AverageStatistics = () => {
       {/* 막대 차트 */}
       <div style={{ width: '100%', height: 300 }}>
         <ResponsiveContainer>
-          <BarChart data={comparisonData} layout='vertical'>
-            <XAxis type='number' />
-            <YAxis type='category' dataKey='category' />
+          <BarChart data={comparisonData}>
+            <XAxis dataKey='category' />
+            <YAxis />
             <Tooltip />
             <Legend />
             <Bar dataKey='myPercentage' fill='#00CCCC' name='나의 소비' />
