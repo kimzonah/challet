@@ -52,7 +52,7 @@ const CategoryList = ({
         />
         <button
           onClick={handleSearchClick}
-          className='ml-2 bg-[#F1F4F6] p-2 rounded-2xl flex-shrink-0'
+          className='ml-2 bg-[#F1F4F6] p-2 rounded-2xl'
         >
           <img src={SearchBar} alt='검색' className='w-8 h-8' />
         </button>
