@@ -9,12 +9,20 @@ import lombok.Builder;
 public record UserInfoMessageResponseDTO (
 
     @Schema(description = "전화번호 목록")
-    List<String> phoneNumbers
+    List<String> phoneNumbers,
+
+    @Schema(description = "성별")
+    boolean gender,
+
+    @Schema(description = "나이")
+    int age
 ){
-    public static UserInfoMessageResponseDTO from(List<String> phoneNumbers) {
+    public static UserInfoMessageResponseDTO from(List<String> phoneNumbers, boolean gender, int age) {
         return UserInfoMessageResponseDTO
             .builder()
             .phoneNumbers(phoneNumbers)
+            .gender(gender)
+            .age(age)
             .build();
     }
 }

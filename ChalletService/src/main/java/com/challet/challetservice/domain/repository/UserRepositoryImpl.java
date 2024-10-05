@@ -35,6 +35,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .and(user.age.between(lowerBound, upperBound - 1)))
             .fetch();
 
-        return UserInfoMessageResponseDTO.from(userInfo);
+        return UserInfoMessageResponseDTO.from(userInfo, gender, lowerBound);
     }
 }
