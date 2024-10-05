@@ -3,7 +3,6 @@ package com.challet.shbankservice.domain.repository;
 import com.challet.shbankservice.domain.dto.request.BankToAnalysisMessageRequestDTO;
 import com.challet.shbankservice.domain.dto.request.MonthlyTransactionRequestDTO;
 import com.challet.shbankservice.domain.dto.response.AccountInfoResponseListDTO;
-import com.challet.shbankservice.domain.dto.response.CategoryAmountResponseListDTO;
 import com.challet.shbankservice.domain.dto.response.MonthlyTransactionHistoryListDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionDetailResponseDTO;
 import com.challet.shbankservice.domain.dto.response.TransactionResponseDTO;
@@ -31,4 +30,7 @@ public interface ShBankRepositoryCustom {
         MonthlyTransactionRequestDTO requestDTO);
 
     Map<Category, Long> getTransactionByGroupCategory(BankToAnalysisMessageRequestDTO requestDTO);
+
+    Map<Category, Long> getMyTransactionByCategory(String tokenHeader,
+        MonthlyTransactionRequestDTO requestDTO);
 }
