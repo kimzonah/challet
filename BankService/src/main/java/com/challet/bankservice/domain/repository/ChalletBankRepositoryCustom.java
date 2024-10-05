@@ -37,4 +37,7 @@ public interface ChalletBankRepositoryCustom {
         MonthlyTransactionRequestDTO requestDTO);
 
     String getCategoryName(Long accountId, String deposit);
+
+    Map<Category, Long> getMyTransactionByCategory(String phoneNumber,
+        MonthlyTransactionRequestDTO requestDTO);
 }

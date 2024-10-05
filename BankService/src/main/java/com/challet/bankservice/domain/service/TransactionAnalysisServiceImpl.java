@@ -70,6 +70,8 @@ public class TransactionAnalysisServiceImpl implements TransactionAnalysisServic
     @Override
     public CategoryPercentageResponseListDTO getTransactionByGroupCategory(String tokenHeader,
         MonthlyTransactionRequestDTO requestDTO) {
+        List<CategoryPercentageResponseDTO> myCategoryList = getMyCategoryPercent(
+            tokenHeader, requestDTO);
 
         UserInfoMessageRequestDTO userInfo = challetFeignClient.getUserInfo(tokenHeader);
         BankToAnalysisMessageRequestDTO message = BankToAnalysisMessageRequestDTO.ofRequestMessage(
@@ -79,7 +81,40 @@ public class TransactionAnalysisServiceImpl implements TransactionAnalysisServic
             message);
         List<CategoryPercentageResponseDTO> categoryList = calculatePercent(totalCategoryAmount);
 
-        return CategoryPercentageResponseListDTO.fromCategoryList(categoryList);
+        return CategoryPercentageResponseListDTO.fromCategoryList(myCategoryList,categoryList);
+    }
+
+    private List<CategoryPercentageResponseDTO> getMyCategoryPercent(
+        String tokenHeader, MonthlyTransactionRequestDTO requestDTO) {
+        String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
+        Map<Category, Long> chBankMyCategory = challetBankRepository.getMyTransactionByCategory(
+            phoneNumber, requestDTO);
+
+        Map<Category, Long> kbBankMyCategory = kbBankFeignClient.getMyTransactionCategory(
+            tokenHeader,
+            requestDTO.year(), requestDTO.month());
+        Map<Category, Long> nhBankMyCategory = nhBankFeignClient.getMyTransactionCategory(
+            tokenHeader,
+            requestDTO.year(), requestDTO.month());
+        Map<Category, Long> shBankMyCategory = shBankFeignClient.getMyTransactionCategory(
+            tokenHeader,
+            requestDTO.year(), requestDTO.month());
+
+        System.out.println("---------------------------");
+        System.out.println(chBankMyCategory);
+        System.out.println(kbBankMyCategory);
+        System.out.println(nhBankMyCategory);
+        System.out.println(shBankMyCategory);
+        System.out.println("----------------------------");
+
+        Map<Category, Long> totalCategoryAmount = new HashMap<>();
+        combineCategoryAmounts(totalCategoryAmount, chBankMyCategory);
+        combineCategoryAmounts(totalCategoryAmount, kbBankMyCategory);
+        combineCategoryAmounts(totalCategoryAmount, nhBankMyCategory);
+        combineCategoryAmounts(totalCategoryAmount, shBankMyCategory);
+
+        List<CategoryPercentageResponseDTO> myCategoryList = calculatePercent(totalCategoryAmount);
+        return myCategoryList;
     }
 
     private Map<Category, Long> getMyDataBankCategoryPayment(

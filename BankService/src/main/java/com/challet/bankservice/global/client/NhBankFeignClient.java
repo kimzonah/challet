@@ -37,4 +37,9 @@ public interface NhBankFeignClient {
     @PostMapping("/api/nh-bank/transaction-category")
     Map<Category, Long> getTransactionGroupCategory(
         @RequestBody BankToAnalysisMessageRequestDTO message);
+
+    @GetMapping("/api/nh-bank/transaction-category-month")
+    Map<Category, Long> getMyTransactionCategory(
+        @RequestHeader(value = "Authorization", required = false) String tokenHeader,
+        @RequestParam int year, @RequestParam int month);
 }
