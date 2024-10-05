@@ -2,7 +2,6 @@ package com.challet.kbbankservice.domain.dto.response;
 
 import com.challet.kbbankservice.domain.entity.KbBank;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.NonNull;
 
