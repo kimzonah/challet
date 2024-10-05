@@ -3,7 +3,7 @@
 
 spring:
   profiles:
-    active: dev # 로컬(dev) / git(prod)
+    active: prod # 로컬(dev) / git(prod)
 
 ---
 # 로컬(dev) 환경 설정
@@ -61,7 +61,8 @@ spring:
     uris: "challet.world:9200"
   data:
     redis:
-      url: "challet.world:6379"
+      host: challet.world
+      port: ${redis_port}
 
 
 springdoc:
