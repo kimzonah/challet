@@ -2,7 +2,6 @@ import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react'; // useState 추가
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import ChallengeProgressbar from './ChallengeProgressbar'; // Progressbar 임포트
 import TransactionList from './SharedTransactionList';
@@ -77,7 +76,7 @@ const ChallengeRoom = () => {
             onClick={handleBackClick} // 뒤로가기 클릭 시 웹소켓 연결 해제 후 이동
           />
           <p className='text-lg font-semibold'>{challenge.title}</p>
-          <FontAwesomeIcon icon={faBars} className='' />
+          <div className=''></div>
         </div>
       </div>
 
@@ -100,7 +99,7 @@ const ChallengeRoom = () => {
       {/* 지출 추가하기 버튼 */}
       <div className='w-full fixed bottom-0'>
         <button
-          className='w-full py-[4.2vh] bg-[#00CCCC] text-white hover:bg-teal-600'
+          className='w-full py-5 bg-[#00CCCC] text-white font-medium text-lg hover:bg-teal-600'
           onClick={handleAddTransaction} // 버튼 클릭 시 함수 호출
         >
           지출 추가하기

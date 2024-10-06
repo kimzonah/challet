@@ -48,7 +48,7 @@ const TransactionListItem = ({
             )}
             <div className='flex items-center w-full'>
               <div
-                className='bg-white p-3 rounded-xl shadow-md mb-2 w-full cursor-pointer'
+                className='bg-white p-3 rounded-xl shadow-md mb-2 w-[90%] cursor-pointer'
                 onClick={() =>
                   navigate(
                     `/sharedTransactionDetail/${transaction.sharedTransactionId}`,
@@ -57,8 +57,9 @@ const TransactionListItem = ({
                 }
               >
                 <div className='flex items-center justify-between'>
+                  <div></div>
                   <div
-                    className='font-semibold overflow-hidden'
+                    className='font-semibold overflow-hidden w-[90%]'
                     style={{
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -130,6 +131,7 @@ const TransactionListItem = ({
                 }
               >
                 <div className='flex items-center justify-between'>
+                  <div></div>
                   <div
                     className='font-semibold overflow-hidden'
                     style={{

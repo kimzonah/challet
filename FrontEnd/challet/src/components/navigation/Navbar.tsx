@@ -28,7 +28,7 @@ const Navbar = () => {
     },
     {
       path: '/analysis',
-      label: '분석',
+      label: '지출',
       icon: AnalysisIcon,
       activeIcon: AnalysisIconActive,
     },
