@@ -15,7 +15,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const { accessToken } = useAuthStore.getState(); // Zustand에서 accessToken 가져오기
     if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+      config.headers.Authorization = `Bearer ${accessToken}`; // 수정된 부분: 문자열에 템플릿 리터럴 사용
     }
     return config;
   },
@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
 );
 
 // 액세스 토큰 재발급 함수
-const refreshAccessToken = async (): Promise<string> => {
+export const refreshAccessToken = async (): Promise<string> => {
   console.log('토큰 재발급 시도 중...');
   try {
     // axiosInstance 사용
@@ -75,7 +75,7 @@ axiosInstance.interceptors.request.use(
           const newAccessToken = await refreshAccessToken();
 
           // 재발급 받은 토큰을 Authorization 헤더에 추가
-          config.headers.Authorization = `Bearer ${newAccessToken}`;
+          config.headers.Authorization = `Bearer ${newAccessToken}`; // 수정된 부분: 문자열에 템플릿 리터럴 사용
 
           // 재발급 성공 메시지와 토큰 출력
           console.log('토큰 재발급 완료:', newAccessToken);
@@ -88,7 +88,7 @@ axiosInstance.interceptors.request.use(
         }
       } else {
         // 토큰이 만료되지 않았을 경우, 기존 토큰을 Authorization 헤더에 추가
-        config.headers.Authorization = `Bearer ${accessToken}`;
+        config.headers.Authorization = `Bearer ${accessToken}`; // 수정된 부분: 문자열에 템플릿 리터럴 사용
       }
     }
 

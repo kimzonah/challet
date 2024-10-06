@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CalendarSpendingPage from './CalendarSpending'; // CalendarSpendingPage 컴포넌트 임포트
-import Statistics from '../../components/Analysis/Statistics'; // statistics 컴포넌트 임포트
+import MyStatistics from '../../components/Analysis/MyStatistics'; // statistics 컴포넌트 임포트
+import AverageStatistics from '../../components/Analysis/AverageStatics';
 
 const AnalysisPage = () => {
   const [activeTab, setActiveTab] = useState('내 소비'); // 기본 활성화된 탭을 '내 소비'로 설정
@@ -32,13 +33,14 @@ const AnalysisPage = () => {
       {/* 탭에 따른 콘텐츠 표시 */}
       <div className='w-full flex justify-center items-center'>
         {activeTab === '내 소비' && (
-          <div className='w-full' style={{ paddingBottom: '52px' }}>
+          <div className='w-full' style={{ paddingBottom: '76px' }}>
             <CalendarSpendingPage />
           </div>
         )}
         {activeTab === '소비 비교' && (
-          <div className='w-full'>
-            <Statistics />
+          <div className='w-full scrollbar-hide overflow-y-auto max-h-[75vh]'>
+            <MyStatistics />
+            <AverageStatistics />
           </div>
         )}
       </div>
