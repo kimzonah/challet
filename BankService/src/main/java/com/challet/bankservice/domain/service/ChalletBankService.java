@@ -15,7 +15,7 @@ import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 
 public interface ChalletBankService {
 
-	void createAccount(String phoneNumber);
+	void createAccount(String name, String phoneNumber);
 
 	AccountInfoResponseListDTO getAccountsByPhoneNumber(String phoneNumber);
 

@@ -11,7 +11,6 @@ import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponse
 import com.challet.bankservice.domain.dto.response.PaymentResponseDTO;
 import com.challet.bankservice.domain.dto.response.SearchedTransactionResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionDetailResponseDTO;
-import com.challet.bankservice.domain.dto.response.TransactionHistoryResponseDTO;
 import com.challet.bankservice.domain.dto.response.TransactionResponseListDTO;
 import com.challet.bankservice.domain.service.ChalletBankService;
 import com.challet.bankservice.global.exception.ExceptionDto;
@@ -24,7 +23,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,9 +48,9 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "201", description = "계좌 생성 성공"),
         @ApiResponse(responseCode = "400", description = "계좌 생성 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity createAccount(
+    public ResponseEntity createAccount(@RequestHeader("name") String name,
         @RequestHeader("phoneNumber") String phoneNumber) {
-        challetBankService.createAccount(phoneNumber);
+        challetBankService.createAccount(name, phoneNumber);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

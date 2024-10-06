@@ -72,11 +72,11 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     private final ChalletFeignClient challetFeignClient;
 
     @Override
-    public void createAccount(String phoneNumber) {
+    public void createAccount(String name, String phoneNumber) {
         for (int retry = 0; retry < 6; retry++) {
             String accountNum = createAccountNum();
             try {
-                ChalletBank challetBank = saveAccount(phoneNumber, accountNum);
+                ChalletBank challetBank = saveAccount(name, phoneNumber, accountNum);
                 createDefaultCategoriesAndMappingsForAccount(challetBank);
                 return;
             } catch (DataIntegrityViolationException e) {
@@ -158,8 +158,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     @Transactional
-    protected ChalletBank saveAccount(String phoneNumber, String accountNum) {
-        ChalletBank account = ChalletBank.createAccount(phoneNumber, accountNum);
+    protected ChalletBank saveAccount(String name, String phoneNumber, String accountNum) {
+        ChalletBank account = ChalletBank.createAccount(name, phoneNumber, accountNum);
         return challetBankRepository.save(account);
     }
 

@@ -60,8 +60,9 @@ public class ChalletBank {
         challetBankTransaction.assignTransactionChAccount(this);
     }
 
-    public static ChalletBank createAccount(String phoneNumber, String accountNumber) {
+    public static ChalletBank createAccount(String name,String phoneNumber, String accountNumber) {
         return ChalletBank.builder()
+            .name(name)
             .phoneNumber(phoneNumber)
             .accountNumber(accountNumber)
             .accountBalance(0L)
