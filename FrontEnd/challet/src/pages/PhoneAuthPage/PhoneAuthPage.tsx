@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 가져오기
 import axiosInstance from '../../api/axiosInstance'; // Axios 인스턴스 가져오기
 import { AxiosError } from 'axios'; // AxiosError 타입 가져오기
-
+import { TopBar } from '../../components/topbar/topbar';
 const PhoneAuthPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [isTimerRunning, setIsTimerRunning] = useState(false); // 타이머 시작 여부
   const [timeRemaining, setTimeRemaining] = useState(180); // 3분 카운트다운 (180초)
-  const [isCheckingPhoneNumber, setIsCheckingPhoneNumber] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [verificationCode, setVerificationCode] = useState(''); // 인증번호 입력값
   const [isCodeSent, setIsCodeSent] = useState(false); // 인증번호가 발송되었는지 여부
@@ -51,8 +50,6 @@ const PhoneAuthPage = () => {
     e.preventDefault();
 
     try {
-      setIsCheckingPhoneNumber(true); // 전화번호 체크 중
-
       // 전화번호 인증번호 전송 API 요청
       const response = await axiosInstance.post('/api/challet/auth/sms', {
         phoneNumber: phoneNumber.replace(/-/g, ''), // 하이픈 제거 후 전송
@@ -78,8 +75,6 @@ const PhoneAuthPage = () => {
       } else {
         setErrorMessage('알 수 없는 오류가 발생했습니다.');
       }
-    } finally {
-      setIsCheckingPhoneNumber(false); // 전화번호 체크 완료
     }
   };
 
@@ -107,7 +102,7 @@ const PhoneAuthPage = () => {
       // error가 AxiosError인지 체크
       if (error instanceof AxiosError) {
         setErrorMessage(
-          error.response?.data?.message || '인증번호 확인에 실패했습니다.'
+          error.response?.data?.message || '인증번호를 다시 확인해주세요.'
         );
       } else if (error instanceof Error) {
         // 기타 일반적인 오류 처리
@@ -126,94 +121,82 @@ const PhoneAuthPage = () => {
   };
 
   return (
-    <div className='w-full max-w-md p-8 space-y-6 mb-48'>
-      <div className='mb-4'>
-        <div className='text-left mb-6'>
-          <p className='text-xl font-bold text-gray-800'>휴대폰 번호를</p>
-          <p className='text-xl text-gray-800'>입력해주세요</p>
-        </div>
+    <div className='w-full max-w-md mx-auto mt-20 p-8 space-y-6'>
+      {/* TopBar 컴포넌트 사용 */}
+      <TopBar title='번호 인증' />
 
-        {/* 전화번호 입력 필드 */}
-        <div className='w-full border-b-2 border-teal-500 focus-within:border-teal-600'>
-          <input
-            type='tel'
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
-            placeholder='010-0000-0000'
-            className='w-full text-lg font-bold text-gray-800 px-3 py-2 focus:outline-none'
-            maxLength={13}
-            required
-          />
-        </div>
-
-        {/* 전화번호 확인 중 메시지 */}
-        {isCheckingPhoneNumber && (
-          <p className='text-teal-500 text-sm mt-2'></p>
-        )}
-      </div>
-
-      {/* 인증번호 받기 버튼 */}
-      <form onSubmit={handleSubmit}>
+      {/* 전화번호 입력 필드와 인증 버튼 */}
+      <div className='flex items-center space-x-4 mt-16'>
+        <input
+          type='tel'
+          value={phoneNumber}
+          onChange={handlePhoneNumberChange}
+          placeholder='전화번호'
+          className='w-3/4 bg-gray-100 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-700 '
+          maxLength={13}
+          required
+          disabled={isRequestSent} // 요청 후 비활성화
+        />
         <button
           type='submit'
-          className={`w-full text-white bg-teal-500 py-2 rounded ${
+          className={`w-1/4 bg-[#00CCCC] text-white px-4 py-2 rounded-lg flex items-center justify-center ${
             isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''
           }`}
+          onClick={handleSubmit}
           disabled={isButtonDisabled}
         >
-          인증번호 받기
+          전송
         </button>
-      </form>
+      </div>
 
-      {/* 인증번호 입력창 및 확인 버튼 */}
+      {/* 인증번호 입력 필드 */}
       {isCodeSent && (
-        <form
-          onSubmit={handleVerificationSubmit}
-          className='mt-4 flex items-center'
-        >
+        <div className='mt-6'>
           <input
             type='text'
             value={verificationCode}
             onChange={(e) =>
               setVerificationCode(e.target.value.replace(/\D/g, ''))
-            } // 숫자만 입력 가능
-            placeholder='인증번호 입력'
+            }
+            placeholder='인증번호'
+            className='w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-gray-700'
             maxLength={6}
-            className='w-40 text-lg font-bold text-gray-800 px-3 py-2 border-b-2 border-teal-500 focus:outline-none'
             required
           />
-          <button
-            type='submit'
-            className={`ml-auto py-2 px-4 rounded ${
-              verificationCode.length === 6
-                ? 'bg-teal-500 text-white hover:bg-teal-600' // 활성화 상태일 때 버튼 스타일
-                : 'bg-gray-400 text-gray-200 cursor-not-allowed' // 비활성화 상태일 때 스타일
-            }`}
-            disabled={verificationCode.length !== 6} // 인증번호가 6자리가 아니면 비활성화
-          >
-            확인
-          </button>
-        </form>
+        </div>
       )}
 
       {/* 카운트다운 표시 */}
       {isTimerRunning && (
-        <p className='text-red-500 text-center text-lg mt-4'>
+        <p className='text-red-500 text-center mt-4'>
           남은 시간: {formatTime(timeRemaining)}
         </p>
       )}
 
       {/* 에러 메시지 */}
       {errorMessage && (
-        <p className='text-red-500 text-sm mt-2'>{errorMessage}</p>
+        <p className='text-red-500 text-center mt-2'>{errorMessage}</p>
       )}
 
       {/* 인증 성공 메시지 */}
       {verificationSuccess && (
-        <p className='text-green-500 text-center text-lg mt-4'>
+        <p className='text-green-500 text-center mt-4'>
           인증이 성공적으로 완료되었습니다!
         </p>
       )}
+
+      {/* 확인 버튼 */}
+      <button
+        className={`w-full rounded-xl text-white py-3 mt-6 ${
+          verificationCode.length === 6
+            ? 'bg-[#00CCCC] hover:bg-teal-600' // 활성화 상태일 때 전송 버튼과 동일한 색상
+            : 'bg-gray-400 opacity-50 cursor-not-allowed' // 비활성화 상태일 때 전송 버튼과 동일한 색상
+        }`}
+        onClick={handleVerificationSubmit}
+        disabled={verificationCode.length !== 6}
+      >
+        확인
+      </button>
     </div>
   );
 };

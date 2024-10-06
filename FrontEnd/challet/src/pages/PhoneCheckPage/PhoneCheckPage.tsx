@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'; // useLocation 가�
 import axiosInstance from '../../api/axiosInstance';
 import useSignUpStore from '../../store/useSignUpStore';
 import Button from '../../components/Button/Button';
+import { TopBar } from '../../components/topbar/topbar';
 import './PhoneCheckPage.css';
 
 const PhoneCheckPage = () => {
@@ -43,7 +44,7 @@ const PhoneCheckPage = () => {
         { phoneNumber: number }
       );
       if (response.data.isDuplicated) {
-        setErrorMessage('이미 사용중인 전화번호입니다.');
+        setErrorMessage('이미 가입된 회원입니다.');
         setIsValid(false);
         setIsDuplicate(true); // 중복된 상태로 설정
       } else {
@@ -93,14 +94,11 @@ const PhoneCheckPage = () => {
   };
 
   return (
-    <div className='phone-check-container flex flex-col items-center justify-center min-h-screen pt-16'>
-      <h1 className='text-2xl font-bold mb-8'>번호 입력</h1>
+    <div className='phone-check-container'>
+      <TopBar title='회원가입' />
 
       {/* 전화번호 입력 필드 */}
       <div className='input-group'>
-        <label htmlFor='phone-number' className='input-label'>
-          전화번호
-        </label>
         <input
           type='tel'
           id='phone-number'
@@ -109,11 +107,11 @@ const PhoneCheckPage = () => {
           placeholder='전화번호'
           maxLength={13}
           inputMode='numeric'
-          className='phone-input'
+          className='w-full bg-transparent border-b-2 border-[#00cccc] focus:outline-none focus:border-[#00cccc] text-center text-lg'
           pattern='[0-9]*'
+          disabled
         />
       </div>
-
       {errorMessage && (
         <p className={`error-message ${isValid ? 'valid' : 'invalid'}`}>
           {errorMessage}
