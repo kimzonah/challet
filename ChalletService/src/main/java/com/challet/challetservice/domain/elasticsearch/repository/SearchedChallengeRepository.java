@@ -34,5 +34,7 @@ public interface SearchedChallengeRepository
 	List<SearchedChallenge> findByStatusContaining(String status);
 
 	List<SearchedChallenge> findByStartDateAndStatus(LocalDate startDate, String status);
+
+	List<SearchedChallenge> findByEndDateBeforeAndStatus(LocalDate today, String status);
 }
 
