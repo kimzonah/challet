@@ -131,7 +131,7 @@ const SharedTransactionCreate = () => {
           />
           <p className='text-lg font-semibold'>지출 추가하기</p>
           <button
-            className='text-[#00CCCC] font-semibold'
+            className='text-[#00CCCC] font-semibold bg-white'
             onClick={handleSubmit}
           >
             완료

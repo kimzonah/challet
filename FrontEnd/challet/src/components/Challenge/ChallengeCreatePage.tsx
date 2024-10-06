@@ -16,7 +16,7 @@ interface RequestBody {
   isPublic: boolean;
 }
 
-const ChallengeCreatePage: React.FC = () => {
+const ChallengeCreatePage = () => {
   const { createChallenge } = useChallengeApi();
   const navigate = useNavigate();
 
@@ -107,7 +107,7 @@ const ChallengeCreatePage: React.FC = () => {
           <div>
             <label className='flex text-sm font-semibold mb-2 ml-2'>주제</label>
             <select
-              className='w-[85vw] py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              className='w-[85vw] py-3 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               value={category}
               onChange={handleInputChange(setCategory)}
             >
@@ -131,7 +131,7 @@ const ChallengeCreatePage: React.FC = () => {
               value={roomName}
               maxLength={15}
               onChange={handleInputChange(setRoomName)}
-              className='w-[85vw] px-2 py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              className='w-[85vw] px-2 py-3 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               placeholder='방 이름 (최대 15자)'
             />
           </div>
@@ -160,7 +160,7 @@ const ChallengeCreatePage: React.FC = () => {
                   }
                 }
               }}
-              className='w-[85vw] px-2 py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              className='w-[85vw] px-2 py-3 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
               placeholder='지출 한도를 입력하세요'
             />
           </div>
@@ -183,7 +183,7 @@ const ChallengeCreatePage: React.FC = () => {
               locale={ko}
               dateFormat='yyyy년 MM월 dd일'
               placeholderText='시작 날짜 ~ 종료 날짜'
-              className='w-[85vw] px-2 py-2 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
+              className='w-[85vw] px-2 py-3 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
             />
           </div>
 
@@ -195,7 +195,7 @@ const ChallengeCreatePage: React.FC = () => {
             <select
               value={maxParticipants}
               onChange={handleInputChange(setMaxParticipants)}
-              className='w-[85vw] px-2 py-4 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
+              className='w-[85vw] px-2 py-3 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
             >
               {[...Array(10).keys()].map((num) => (
                 <option key={num + 1} value={num + 1}>

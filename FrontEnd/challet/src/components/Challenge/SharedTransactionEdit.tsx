@@ -139,7 +139,7 @@ const SharedTransactionEdit = () => {
           />
           <p className='text-lg font-semibold'>지출 수정하기</p>
           <button
-            className='text-[#00CCCC] font-semibold'
+            className='text-[#00CCCC] font-semibold bg-white'
             onClick={handleSubmit}
           >
             수정
