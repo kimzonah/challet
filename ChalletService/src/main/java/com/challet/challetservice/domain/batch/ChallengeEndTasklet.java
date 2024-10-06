@@ -83,6 +83,7 @@ public class ChallengeEndTasklet implements Tasklet {
                 .status("END")
                 .category(searchedChallenge.category())
                 .title(searchedChallenge.title())
+                .spendingLimit(searchedChallenge.spendingLimit())
                 .startDate(searchedChallenge.startDate())
                 .endDate(searchedChallenge.endDate())
                 .maxParticipants(searchedChallenge.maxParticipants())

@@ -38,6 +38,7 @@ public class ChallengeStartScheduler {
                 .status("PROGRESSING")
                 .category(searchedChallenge.category())
                 .title(searchedChallenge.title())
+                .spendingLimit(searchedChallenge.spendingLimit())
                 .startDate(searchedChallenge.startDate())
                 .endDate(searchedChallenge.endDate())
                 .maxParticipants(searchedChallenge.maxParticipants())
