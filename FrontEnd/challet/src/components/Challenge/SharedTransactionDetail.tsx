@@ -68,31 +68,33 @@ const SharedTransactionDetail = () => {
             {transactionDetail.deposit} | {transactionDetail.transactionAmount}
             원
           </p>
-          {transactionDetail.userId === userId ? (
-            <FontAwesomeIcon
-              icon={faEdit} // 수정 아이콘
-              className='cursor-pointer'
-              onClick={() => {
-                // 수정 페이지로 이동하고, transactionDetail 데이터를 전달
-                navigate('/sharedTransactionEdit', {
-                  state: {
-                    transaction: transactionDetail,
-                    challengeId: challengeId,
-                  },
-                });
-              }}
-            />
-          ) : (
+          {/* 내 거래내역인 경우 수정과 새로고침 둘 다, 아닌 경우 새로고침만 */}
+          <div className='flex space-x-4'>
+            {transactionDetail.userId === userId && (
+              <FontAwesomeIcon
+                icon={faEdit} // 수정 아이콘
+                className='cursor-pointer'
+                onClick={() => {
+                  // 수정 페이지로 이동하고, transactionDetail 데이터를 전달
+                  navigate('/sharedTransactionEdit', {
+                    state: {
+                      transaction: transactionDetail,
+                      challengeId: challengeId,
+                    },
+                  });
+                }}
+              />
+            )}
             <FontAwesomeIcon
               icon={faSyncAlt} // 새로고침 아이콘
               className='cursor-pointer'
               onClick={() => setRefreshComments((prev) => !prev)} // 새로고침
             />
-          )}
+          </div>
         </div>
       </div>
 
-      <div className='mt-16 scrollbar-hide overflow-y-auto max-h-[580px]'>
+      <div className='mt-16 scrollbar-hide overflow-y-auto max-h-[80vh]'>
         <div className='flex items-center'>
           <img
             src={transactionDetail.profileImage || '/default_profile.png'}
@@ -150,7 +152,7 @@ const SharedTransactionDetail = () => {
             maxLength={50} // 최대 글자 수 제한
             onChange={(e) => setCommentContent(e.target.value)} // 입력된 댓글 내용 업데이트
             placeholder='댓글을 입력하세요.'
-            className='flex-grow px-4 py-2 border rounded-lg mr-2 focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
+            className='flex-grow px-4 py-2 border rounded-lg mr-2 max-w-[80%] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
           />
           <button
             className='bg-[#00CCCC] text-white px-4 py-2 rounded-lg'

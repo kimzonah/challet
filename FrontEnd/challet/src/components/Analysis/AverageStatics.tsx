@@ -29,7 +29,7 @@ const AverageStatistics = () => {
   }
 
   // 데이터가 없는 경우 처리
-  if (AverageStatistics.length === 0 || myStatistics.length === 0) {
+  if (AverageStatistics.length === 0) {
     return <p>평균 소비 내역이 없습니다.</p>;
   }
 
@@ -42,14 +42,17 @@ const AverageStatistics = () => {
     DELIVERY: '배달',
   };
 
-  // 내 소비습관과 평균 소비습관을 비교하기 위해 데이터를 매핑
-  const comparisonData = myStatistics.map((myStat) => {
+  // myStatistics가 없는 경우 기본값으로 myPercentage를 0으로 설정
+  const categories = ['SHOPPING', 'COFFEE', 'ETC', 'TRANSPORT', 'DELIVERY'];
+
+  const comparisonData = categories.map((category) => {
+    const myStat = myStatistics.find((stat) => stat.category === category);
     const averageStat = AverageStatistics.find(
-      (avgStat) => avgStat.category === myStat.category
+      (avgStat) => avgStat.category === category
     );
     return {
-      category: categoryMap[myStat.category] || myStat.category, // 한글 변환
-      myPercentage: myStat.percentage,
+      category: categoryMap[category] || category, // 한글 변환
+      myPercentage: myStat ? myStat.percentage : 0, // 없으면 0% 설정
       averagePercentage: averageStat ? averageStat.percentage : 0,
     };
   });
