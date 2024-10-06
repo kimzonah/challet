@@ -53,13 +53,10 @@ const SignUpPage = () => {
   useEffect(() => {
     const isValidForm = () => {
       if (!name) {
-        setErrorMessage('이름을 입력해주세요');
         return false;
       } else if (idNumberFront.length !== 6) {
-        setErrorMessage('주민등록번호 앞자리는 6자리여야 합니다');
         return false;
       } else if (idNumberBackFirst.length !== 1) {
-        setErrorMessage('주민등록번호 뒷자리 첫 자리를 입력해주세요');
         return false;
       } else {
         const year = parseInt(idNumberFront.slice(0, 2), 10);
@@ -197,7 +194,6 @@ const SignUpPage = () => {
               type='text'
               value={idNumberBackFirst}
               onChange={(e) => setIdNumberBackFirst(e.target.value)}
-              placeholder='뒷자리 첫 숫자'
               maxLength={1}
               required
               className='border border-gray-300 rounded-md py-2 px-3 ml-2 w-12 focus:outline-none focus:ring-2 focus:ring-[#00cccc]'
