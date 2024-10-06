@@ -3,14 +3,8 @@ import { useRewardStore } from '../../store/useRewardStore';
 import RewardItem from '../RewardsPage/RewardItem'; // 리워드 아이템 컴포넌트
 import RewardDetail from './RewardDetail'; // 모달 컴포넌트
 import { TopBar } from '../../components/topbar/topbar';
-import CheckIcon from '../../../src/assets/mypage/Check.png';
 import CrossIcon from '../../../src/assets/mypage/Cross.png';
-import CheckIcon2 from '../../../src/assets/mypage/Check2.png';
-import CrossIcon2 from '../../../src/assets/mypage/Cross2.png';
-import CheckIcon3 from '../../../src/assets/mypage/Check3.png';
-import CrossIcon3 from '../../../src/assets/mypage/Cross3.png';
 import CheckIcon4 from '../../../src/assets/mypage/Check4.png';
-import CrossIcon4 from '../../../src/assets/mypage/Cross4.png';
 
 const RewardPage = () => {
   const { rewards, rewardDetail, fetchRewards, fetchRewardDetail } =
