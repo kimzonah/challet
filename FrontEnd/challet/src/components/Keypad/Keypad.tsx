@@ -1,72 +1,66 @@
 import { useState, useCallback, useEffect } from 'react';
-import { FaBackspace } from 'react-icons/fa'; // 아이콘을 추가합니다.
-import './Keypad.css'; // CSS 파일을 임포트합니다.
+import { FaBackspace } from 'react-icons/fa';
+import './Keypad.css';
 
 interface KeypadProps {
   onPinChange: (pin: string) => void;
   maxLength?: number;
-  onComplete?: () => void; // 비밀번호 입력 완료 시 호출되는 함수
+  onComplete?: () => void;
 }
 
 const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
-  const [pin, setPin] = useState<string>(''); // 현재 입력된 비밀번호
-  const [shuffledKeys, setShuffledKeys] = useState<string[]>([]); // 랜덤으로 섞인 키패드 숫자
+  const [pin, setPin] = useState<string>('');
+  const [shuffledKeys, setShuffledKeys] = useState<string[]>([]);
 
   // 숫자를 무작위로 섞는 함수
   const shuffleKeys = useCallback(() => {
     const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-    const shuffled = [...keys].sort(() => Math.random() - 0.5); // 무작위로 섞기
+    const shuffled = [...keys].sort(() => Math.random() - 0.5);
     setShuffledKeys(shuffled);
   }, []);
 
-  // 컴포넌트가 마운트될 때 키패드를 섞음
   useEffect(() => {
-    shuffleKeys(); // 컴포넌트가 처음 렌더링될 때 키패드 숫자 섞기
+    shuffleKeys();
   }, [shuffleKeys]);
 
-  // 비밀번호 입력 처리
   const handleInputPin = useCallback(
     (value: string) => {
       if (pin.length < maxLength) {
         const newPin = pin + value;
         setPin(newPin);
-        onPinChange(newPin); // 비밀번호 변경을 상위 컴포넌트에 전달
+        onPinChange(newPin);
 
-        // 6자리 비밀번호가 입력되면 onComplete가 있으면 호출
         if (newPin.length === maxLength && onComplete) {
-          onComplete(); // onComplete가 있을 때만 호출
+          onComplete();
         }
       }
     },
     [pin, maxLength, onPinChange, onComplete]
   );
 
-  // 한 글자 삭제
   const handleDelete = useCallback(() => {
     const newPin = pin.slice(0, -1);
     setPin(newPin);
-    onPinChange(newPin); // 변경된 비밀번호를 상위 컴포넌트에 전달
+    onPinChange(newPin);
   }, [pin, onPinChange]);
 
-  // 전체 삭제
   const handleClear = useCallback(() => {
     setPin('');
-    onPinChange(''); // 비밀번호를 완전히 삭제하여 상위 컴포넌트에 전달
+    onPinChange('');
   }, [onPinChange]);
 
   return (
     <>
-      {/* 비밀번호 표시 */}
-      <div className='pin-display-container pb-40'>
-        {[...Array(maxLength)].map((_, i) => (
-          <span
-            key={i}
-            className={`pin-circle ${pin[i] ? 'filled' : 'empty'}`}
-          ></span>
-        ))}
-      </div>
-
-      <div className='keypad-container'>
+      <div className='keypad-container fixed bottom-0 w-full bg-white'>
+        {/* 비밀번호 표시 */}
+        <div className='pin-display-container absolute top-[-30%] left-1/2 transform -translate-x-1/2'>
+          {[...Array(maxLength)].map((_, i) => (
+            <span
+              key={i}
+              className={`pin-circle ${pin[i] ? 'filled' : 'empty'}`}
+            ></span>
+          ))}
+        </div>
         {/* 키패드 렌더링 */}
         <table className='SecureKeyboard_keyboard' role='presentation'>
           <tbody>
@@ -123,7 +117,6 @@ const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
               <td>
                 <button
                   className='keypad-button flex justify-center items-center'
-                  style={{ height: '48px', width: '48px', marginLeft: '36px' }} // 필요한 만큼 margin-left 조정
                   onClick={handleDelete}
                 >
                   <FaBackspace size={24} />
