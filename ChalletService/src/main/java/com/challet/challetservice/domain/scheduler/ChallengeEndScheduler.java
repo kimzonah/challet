@@ -18,7 +18,7 @@ public class ChallengeEndScheduler {
     private final JobLauncher jobLauncher;
     private final Job challengeEndJob;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 10 15 * * ?")
     public void challengeEndJob()
         throws Exception {
         jobLauncher.run(challengeEndJob, new JobParametersBuilder()
