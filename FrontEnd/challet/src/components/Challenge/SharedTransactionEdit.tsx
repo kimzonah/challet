@@ -29,19 +29,29 @@ const SharedTransactionEdit = () => {
       setImage(null); // 기본 이미지는 새로 등록하지 않음 (이미지 미리보기를 위한 설정)
     }
   }, [transaction]);
-
   // 이미지 업로드 처리 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
 
     if (file) {
-      // 이미지 파일이 아닌 경우 차단
-      if (!file.type.startsWith('image/')) {
-        setErrorMessage('이미지 파일만 업로드할 수 있습니다.');
+      const allowedTypes = ['image/jpeg', 'image/png']; // 허용할 이미지 파일 형식
+      const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+
+      // 파일 형식 검사
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMessage('jpg 또는 png 형식의 파일만 업로드할 수 있습니다.');
         setIsError(true);
         return;
       }
-      setImage(file); // 유효한 이미지 파일인 경우에만 상태 설정
+
+      // 파일 크기 검사
+      if (file.size > maxSizeInBytes) {
+        setErrorMessage('이미지 파일의 크기는 10MB 이하로 제한됩니다.');
+        setIsError(true);
+        return;
+      }
+
+      setImage(file); // 유효한 파일인 경우 상태에 설정
     }
   };
 
