@@ -40,6 +40,24 @@ const ChallengeCreatePage = () => {
       setter(e.target.value);
     };
 
+  // 숫자에 세 자리마다 콤마를 붙여주는 함수
+  const formatNumberWithCommas = (number: number) => {
+    return new Intl.NumberFormat('ko-KR').format(number);
+  };
+
+  // 사용자가 입력한 값을 숫자로 변환하고 세 자리마다 콤마와 "원"을 붙여 표시
+  const handleSpendingLimitChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자가 아닌 것은 제거
+    if (value !== '') {
+      const numericValue = Number(value);
+      if (numericValue >= 0 && numericValue <= 100000000) {
+        setSpendingLimit(formatNumberWithCommas(numericValue));
+      }
+    } else {
+      setSpendingLimit(''); // 값이 없을 때 빈 문자열 설정
+    }
+  };
+
   // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
   const formatDateToLocal = (date: Date) => {
     const year = date.getFullYear();
@@ -59,10 +77,11 @@ const ChallengeCreatePage = () => {
       return;
     }
 
+    // 숫자만 추출하여 서버에 보내기
     const requestBody: RequestBody = {
       category,
       title: roomName,
-      spendingLimit: Number(spendingLimit),
+      spendingLimit: Number(spendingLimit.replace(/,/g, '')), // 콤마 제거 후 숫자 변환
       startDate: formatDateToLocal(startDate),
       endDate: formatDateToLocal(endDate),
       maxParticipants: Number(maxParticipants),
@@ -144,24 +163,9 @@ const ChallengeCreatePage = () => {
             <input
               type='text' // text로 변경하여 선행 0을 쉽게 처리
               value={spendingLimit}
-              onChange={(e) => {
-                let value = e.target.value.trim();
-
-                // 숫자인지 확인하고, 숫자가 아니면 무시
-                if (/^\d*$/.test(value)) {
-                  // 숫자로 변환 후 다시 문자열로 변환 (선행 0 제거)
-                  if (value !== '') {
-                    value = String(Number(value));
-                  }
-
-                  // 값이 유효한 범위에 있는지 확인 (0 ~ 100,000,000 사이만 허용)
-                  if (Number(value) >= 0 && Number(value) <= 100000000) {
-                    setSpendingLimit(value);
-                  }
-                }
-              }}
+              onChange={handleSpendingLimitChange}
               className='w-[85vw] px-2 py-3 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
-              placeholder='지출 한도를 입력하세요'
+              placeholder='지출 한도 0 ~ 100,000,000원'
             />
           </div>
 
@@ -178,7 +182,7 @@ const ChallengeCreatePage = () => {
               startDate={startDate}
               endDate={endDate}
               selectsRange={true} // 시작 날짜와 종료 날짜를 동시에 선택
-              minDate={startDateLimit} // 시작 날짜를 6일 후 부터 선택 가능
+              minDate={startDateLimit} // 시작 날짜를 하루 뒤부터 선택 가능
               maxDate={endDateLimit} // 종료 날짜를 1년 후까지 선택 가능
               locale={ko}
               dateFormat='yyyy년 MM월 dd일'
