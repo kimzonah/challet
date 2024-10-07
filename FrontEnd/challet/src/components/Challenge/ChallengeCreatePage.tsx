@@ -85,9 +85,9 @@ const ChallengeCreatePage = () => {
     }
   };
 
-  // 오늘 날짜 + 6 (일주일) 계산
+  // 오늘 날짜 + 하루(내일부터) 계산
   const startDateLimit = new Date();
-  startDateLimit.setDate(startDateLimit.getDate() + 6);
+  startDateLimit.setDate(startDateLimit.getDate() + 1);
 
   // 종료 날짜 제한을 동적으로 지정
   // startDate가 없을 경우 오늘 날짜의 1년 뒤로 설정

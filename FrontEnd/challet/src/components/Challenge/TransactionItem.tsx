@@ -3,6 +3,7 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { Transaction } from './TransactionType';
 import EmojiButtons from './TransactionEmojiButtons'; // EmojiButtons 컴포넌트 임포트
+import defaultProfile from '../../assets/mypage/default-profile.png';
 
 const TransactionListItem = ({
   transaction,
@@ -97,7 +98,11 @@ const TransactionListItem = ({
       ) : (
         <div className='flex'>
           <img
-            src={transaction.profileImage || '/default_profile.png'}
+            src={
+              transaction.profileImage === ''
+                ? defaultProfile
+                : transaction.profileImage
+            }
             alt={transaction.nickname}
             className='w-10 h-10 rounded-full mr-3'
           />
