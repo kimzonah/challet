@@ -12,6 +12,7 @@ import Emoji_1 from '../../assets/Challenge/Emoji-1.png'; // 이모티콘 이미
 import Emoji_2 from '../../assets/Challenge/Emoji-2.png';
 import Emoji_3 from '../../assets/Challenge/Emoji-3.png';
 import Comment from '../../assets/Challenge/Comment.png';
+import defaultProfile from '../../assets/mypage/default-profile.png';
 import useAuthStore from '../../store/useAuthStore';
 
 const SharedTransactionDetail = () => {
@@ -97,7 +98,11 @@ const SharedTransactionDetail = () => {
       <div className='mt-16 scrollbar-hide overflow-y-auto max-h-[80vh]'>
         <div className='flex items-center'>
           <img
-            src={transactionDetail.profileImage || '/default_profile.png'}
+            src={
+              transactionDetail.profileImage === null
+                ? defaultProfile
+                : transactionDetail.profileImage
+            }
             alt={transactionDetail.nickname}
             className='w-10 h-10 rounded-full mr-2'
           />

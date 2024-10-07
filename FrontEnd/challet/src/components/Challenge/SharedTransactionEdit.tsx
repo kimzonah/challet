@@ -207,23 +207,27 @@ const SharedTransactionEdit = () => {
             <input
               type='text' // number 대신 text로 변경하여 선행 0을 쉽게 처리
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
-              value={transactionAmount === '' ? '' : transactionAmount}
+              value={
+                transactionAmount === ''
+                  ? ''
+                  : new Intl.NumberFormat('ko-KR').format(
+                      Number(transactionAmount)
+                    )
+              } // 콤마가 추가된 형식으로 표시
               placeholder='결제한 금액을 입력해주세요'
-              maxLength={7} // 최대 7자리
+              maxLength={10} // 최대 10자리 (콤마 포함)
               onChange={(e) => {
-                let value = e.target.value.trim();
+                let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자가 아닌 것은 제거
 
-                // 숫자인지 확인하고, 숫자가 아니면 무시
-                if (/^\d*$/.test(value)) {
-                  // 숫자로 변환 후 다시 문자열로 변환 (선행 0 제거)
-                  if (value !== '') {
-                    value = String(Number(value));
-                  }
+                if (value !== '') {
+                  let numericValue = Number(value);
 
-                  // 값이 유효한 범위에 있는지 확인
-                  if (Number(value) >= 0 && Number(value) <= 9999999) {
-                    setTransactionAmount(Number(value));
+                  // 값이 유효한 범위에 있는지 확인 (0 ~ 10,000,000)
+                  if (numericValue >= 0 && numericValue <= 10000000) {
+                    setTransactionAmount(numericValue); // 상태에는 숫자만 저장
                   }
+                } else {
+                  setTransactionAmount(''); // 값이 없을 때 빈 문자열 설정
                 }
               }}
               required

@@ -19,18 +19,16 @@ const PaymentPage = () => {
           throw new Error('No video input devices found.');
         }
 
-        const storedDeviceId = localStorage.getItem('preferredCameraDeviceId');
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-        let preferredDevice;
+        let preferredDevice = null;
 
-        if (storedDeviceId) {
-          preferredDevice = videoDevices.find(
-            (device) => device.deviceId === storedDeviceId
-          );
-        }
-
-        if (!preferredDevice) {
-          // 후면 카메라를 찾고, 없으면 첫 번째 장치를 선택
+        if (isIOS) {
+          preferredDevice =
+            videoDevices.find((device) =>
+              device.label.toLowerCase().includes('back')
+            ) || videoDevices[videoDevices.length - 1];
+        } else {
           preferredDevice =
             videoDevices.find((device) =>
               device.label.toLowerCase().includes('back')
@@ -38,11 +36,13 @@ const PaymentPage = () => {
         }
 
         if (preferredDevice) {
+          // 선택한 카메라 장치 ID 저장
           localStorage.setItem(
             'preferredCameraDeviceId',
             preferredDevice.deviceId
           );
 
+          // QR 코드 스캔 시작
           controlsRef.current = await codeReader.decodeFromVideoDevice(
             preferredDevice.deviceId,
             'video',
@@ -66,10 +66,10 @@ const PaymentPage = () => {
       }
     };
 
-    // 스캔을 시작
+    // 스캔 시작
     startScanning();
 
-    // 컴포넌트가 언마운트될 때 스캔을 중지
+    // 컴포넌트 언마운트 시 스캔 중지
     return () => {
       controlsRef.current?.stop();
     };
