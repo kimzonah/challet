@@ -133,7 +133,7 @@ public class ChalletBankController {
     })
     public ResponseEntity<?> checkPassword(@RequestBody String password){
 
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/payments")

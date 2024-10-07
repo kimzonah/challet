@@ -193,6 +193,12 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return sb.toString();
     }
 
+    @Override
+    public int isCheckPassword(String phoneNumber, String password) {
+
+        return 0;
+    }
+
     @Transactional
     @Override
     public PaymentResponseDTO qrPayment(Long accountId,

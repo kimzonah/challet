@@ -23,6 +23,8 @@ public interface ChalletBankService {
 
 	TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
 
+	int isCheckPassword(String phoneNumber, String password);
+
 	PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
 
     PaymentResponseDTO confirmPaymentInfo(Long accountId, ConfirmPaymentRequestDTO paymentRequestDTO);
