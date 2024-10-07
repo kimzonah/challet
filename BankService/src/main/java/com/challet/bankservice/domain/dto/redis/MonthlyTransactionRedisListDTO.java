@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.RedisHash;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash(value = "MonthlyTransactionHistoryList", timeToLive = 300)
+@RedisHash(value = "MonthlyTransactionHistoryList", timeToLive = 60)
 public class MonthlyTransactionRedisListDTO implements Serializable {
 
     @Id
