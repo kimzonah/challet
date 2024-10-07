@@ -32,6 +32,7 @@ const ChallengeCreatePage = () => {
   const [showModal, setShowModal] = useState<boolean>(false); // 모달 상태 관리
   const [modalMessage, setModalMessage] = useState<string>(''); // 모달 메시지 관리
   const [startDate, endDate] = dateRange;
+  const [isSuccess, setIsSuccess] = useState<boolean>(false); // 성공 여부 상태 추가
 
   // 카테고리 및 입력 필드의 값 변경 핸들러
   const handleInputChange =
@@ -74,6 +75,7 @@ const ChallengeCreatePage = () => {
     if (!category || !roomName || !spendingLimit || !startDate || !endDate) {
       setModalMessage('모든 값을 입력해주세요!');
       setShowModal(true);
+      setIsSuccess(false); // 실패 상태로 설정
       return;
     }
 
@@ -97,10 +99,12 @@ const ChallengeCreatePage = () => {
       console.log('requestBody:', requestBody);
       setModalMessage('챌린지 생성이 완료되었습니다!');
       setShowModal(true);
+      setIsSuccess(true); // 성공 상태로 설정
     } catch (error) {
       console.error('챌린지 생성 중 오류 발생:', error);
       setModalMessage('챌린지 생성 중 오류가 발생했습니다.');
       setShowModal(true);
+      setIsSuccess(false); // 실패 상태로 설정
     }
   };
 
@@ -255,7 +259,9 @@ const ChallengeCreatePage = () => {
               className='w-full py-2 bg-[#00CCCC] text-white rounded-lg hover:bg-teal-600'
               onClick={() => {
                 setShowModal(false);
-                navigate(-1); // 모달을 닫을 때 뒤로가기
+                if (isSuccess) {
+                  navigate(-1); // 성공 시 뒤로가기
+                }
               }}
             >
               닫기
