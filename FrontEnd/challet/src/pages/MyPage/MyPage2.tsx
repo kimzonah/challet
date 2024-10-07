@@ -60,7 +60,6 @@ const MyPage = () => {
       );
 
       console.log('프로필 이미지 수정 성공:', response.data);
-      alert('프로필 이미지가 수정되었습니다.');
       setProfileImageUrl(urlImage);
     } catch (error) {
       console.error('프로필 이미지 수정 실패:', error);
@@ -69,7 +68,21 @@ const MyPage = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (file) {
+      // 이미지 파일 형식인지 확인
+      const validImageTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+      ];
+      if (!validImageTypes.includes(file.type)) {
+        alert('이미지 파일만 업로드 가능합니다. (JPEG, PNG, GIF, WEBP)');
+        return;
+      }
+
+      // 이미지 파일이 유효하다면 기존 로직 호출
       handleProfileImageChange(file);
     }
   };
@@ -79,9 +92,22 @@ const MyPage = () => {
     setIsNicknameModalOpen(false);
   };
 
-  const handleLogout = () => {
-    clearAuthData();
-    navigate('/');
+  // 로그아웃 수정
+  const handleLogout = async () => {
+    try {
+      // 로그아웃 API 요청
+      await axiosInstance.post('/api/challet/users/logout');
+
+      // 로그아웃 성공 시 인증 정보 삭제 및 메인 페이지로 이동
+      clearAuthData();
+      navigate('/');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('로그아웃 실패:', error.response?.data || error.message);
+      } else {
+        console.error('로그아웃 실패:', error);
+      }
+    }
   };
 
   // 각각의 버튼 클릭 시 이동할 페이지 처리
@@ -122,13 +148,16 @@ const MyPage = () => {
         </div>
 
         {/* 닉네임과 수정 아이콘 */}
-        <div className='mt-6 flex items-center '>
-          <h2 className='font-semibold text-xl'>{nickname}</h2>
-          <FontAwesomeIcon
-            icon={faPencilAlt}
-            className='text-gray-600 ml-2 cursor-pointer'
-            onClick={() => setIsNicknameModalOpen(true)}
-          />
+        <div className='mt-6 w-full text-center'>
+          {/* 닉네임을 중앙에 배치하고 그 옆에 아이콘 */}
+          <span className='inline-block relative'>
+            <h2 className='font-semibold text-xl inline'>{nickname}</h2>
+            <FontAwesomeIcon
+              icon={faPencilAlt}
+              className='text-gray-600 ml-2 cursor-pointer absolute top-1/2 transform -translate-y-1/2' // ml-4로 간격 조정
+              onClick={() => setIsNicknameModalOpen(true)}
+            />
+          </span>
         </div>
       </div>
 
@@ -144,16 +173,14 @@ const MyPage = () => {
           </div>
 
           <div
-            className='flex justify-between items-center py-4 px-4 cursor-pointer border-b border-gray-200' // Bottom border added
+            className='flex justify-between items-center py-4 px-4 cursor-pointer border-b border-gray-200'
             onClick={handleLogout}
           >
             <span>로그아웃</span>
             <FontAwesomeIcon icon={faSignOutAlt} className='text-gray-600' />
           </div>
 
-          <div
-            className='flex justify-between items-center py-4 px-4' // No extra margin needed here
-          >
+          <div className='flex justify-between items-center py-4 px-4'>
             <span>앱 정보</span>
             <span>1.01</span>
           </div>

@@ -312,7 +312,7 @@ const ChallengeForm = ({
       ) : (
         <div
           ref={scrollContainerRef}
-          className='scrollbar-hide overflow-y-auto max-h-[60vh] mb-4'
+          className='scrollbar-hide overflow-y-auto max-h-[55vh] mb-4'
         >
           {renderChallenges(validChallenges)}
         </div>

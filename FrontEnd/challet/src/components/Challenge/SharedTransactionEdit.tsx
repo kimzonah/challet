@@ -12,8 +12,8 @@ const SharedTransactionEdit = () => {
   const { transaction, challengeId } = location.state || {}; // SharedTransactionDetail에서 전달된 거래 데이터
   const { file2URL } = useFile2URL(); // AWS S3 업로드 함수 사용
   const [image, setImage] = useState<File | null>(null); // 이미지 파일
-  const [deposit, setdeposit] = useState(''); // 출금처
-  const [transactionAmount, setTransactionAmount] = useState<number | ''>(''); // 거래 금액
+  const [deposit, setDeposit] = useState(''); // 출금처
+  const [transactionAmount, setTransactionAmount] = useState<string>(''); // 거래 금액
   const [content, setContent] = useState(''); // 내용
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
   const [isSuccess, setIsSuccess] = useState(false); // 성공 여부 상태 관리
@@ -23,8 +23,8 @@ const SharedTransactionEdit = () => {
   useEffect(() => {
     if (transaction) {
       // 거래 내역에서 전달된 값들로 기본 값을 설정
-      setdeposit(transaction.deposit);
-      setTransactionAmount(transaction.transactionAmount);
+      setDeposit(transaction.deposit);
+      setTransactionAmount(transaction.transactionAmount.toLocaleString()); // 금액에 콤마 추가
       setContent(transaction.content);
       setImage(null); // 기본 이미지는 새로 등록하지 않음 (이미지 미리보기를 위한 설정)
     }
@@ -62,7 +62,7 @@ const SharedTransactionEdit = () => {
       const webSocketMessage = {
         image: imageUrl, // 업로드된 이미지 URL (또는 기존 이미지)
         deposit, // 출금처
-        transactionAmount: Number(transactionAmount), // 거래 금액
+        transactionAmount: Number(transactionAmount.replace(/,/g, '')), // 콤마 제거 후 숫자 변환
         content, // 결제 내용
       };
 
@@ -83,6 +83,11 @@ const SharedTransactionEdit = () => {
     } finally {
       setIsLoading(false); // 로딩 상태 해제
     }
+  };
+
+  // 숫자에 세 자리마다 콤마를 붙여주는 함수
+  const formatNumberWithCommas = (number: string) => {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
   return (
@@ -196,7 +201,7 @@ const SharedTransactionEdit = () => {
               value={deposit}
               maxLength={12}
               placeholder='직접 추가할 항목을 작성해주세요'
-              onChange={(e) => setdeposit(e.target.value)}
+              onChange={(e) => setDeposit(e.target.value)}
               required
             />
           </div>
@@ -207,7 +212,7 @@ const SharedTransactionEdit = () => {
             <input
               type='text' // number 대신 text로 변경하여 선행 0을 쉽게 처리
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
-              value={transactionAmount === '' ? '' : transactionAmount}
+              value={transactionAmount}
               placeholder='결제한 금액을 입력해주세요'
               maxLength={7} // 최대 7자리
               onChange={(e) => {
@@ -215,15 +220,8 @@ const SharedTransactionEdit = () => {
 
                 // 숫자인지 확인하고, 숫자가 아니면 무시
                 if (/^\d*$/.test(value)) {
-                  // 숫자로 변환 후 다시 문자열로 변환 (선행 0 제거)
-                  if (value !== '') {
-                    value = String(Number(value));
-                  }
-
-                  // 값이 유효한 범위에 있는지 확인
-                  if (Number(value) >= 0 && Number(value) <= 9999999) {
-                    setTransactionAmount(Number(value));
-                  }
+                  // 세 자리마다 콤마 추가
+                  setTransactionAmount(formatNumberWithCommas(value));
                 }
               }}
               required

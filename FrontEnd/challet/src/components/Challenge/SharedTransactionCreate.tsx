@@ -12,13 +12,18 @@ const SharedTransactionCreate = () => {
   const { file2URL } = useFile2URL(); // AWS S3 업로드 함수 사용
 
   const [image, setImage] = useState<File | null>(null); // 이미지 파일
-  const [deposit, setdeposit] = useState(''); // 출금처
-  const [transactionAmount, setTransactionAmount] = useState<number | ''>(''); // 거래 금액
+  const [deposit, setDeposit] = useState(''); // 출금처
+  const [transactionAmount, setTransactionAmount] = useState<string>(''); // 거래 금액
   const [content, setContent] = useState(''); // 내용
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
   const [isSuccess, setIsSuccess] = useState(false); // 성공 여부 상태 관리
   const [isError, setIsError] = useState(false); // 에러 모달 상태 관리
   const [errorMessage, setErrorMessage] = useState(''); // 에러 메시지 관리
+
+  // 숫자에 세 자리마다 콤마를 붙여주는 함수
+  const formatNumberWithCommas = (number: string) => {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
 
   // 이미지 업로드 처리 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +64,7 @@ const SharedTransactionCreate = () => {
       const webSocketMessage = {
         image: imageUrl, // 업로드된 이미지 URL
         deposit, // 출금처
-        transactionAmount: Number(transactionAmount), // 거래 금액
+        transactionAmount: Number(transactionAmount.replace(/,/g, '')), // 콤마 제거 후 숫자 변환
         content, // 결제 내용
       };
 
@@ -182,7 +187,7 @@ const SharedTransactionCreate = () => {
               value={deposit}
               maxLength={12}
               placeholder='직접 추가할 항목을 작성해주세요'
-              onChange={(e) => setdeposit(e.target.value)}
+              onChange={(e) => setDeposit(e.target.value)}
               required
             />
           </div>
@@ -193,7 +198,7 @@ const SharedTransactionCreate = () => {
             <input
               type='text' // number 대신 text로 변경하여 선행 0을 쉽게 처리
               className='w-full p-2 border rounded-lg bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
-              value={transactionAmount === '' ? '' : transactionAmount}
+              value={transactionAmount}
               placeholder='결제한 금액을 입력해주세요'
               maxLength={7} // 최대 7자리
               onChange={(e) => {
@@ -201,15 +206,8 @@ const SharedTransactionCreate = () => {
 
                 // 숫자인지 확인하고, 숫자가 아니면 무시
                 if (/^\d*$/.test(value)) {
-                  // 숫자로 변환 후 다시 문자열로 변환 (선행 0 제거)
-                  if (value !== '') {
-                    value = String(Number(value));
-                  }
-
-                  // 값이 유효한 범위에 있는지 확인
-                  if (Number(value) >= 0 && Number(value) <= 9999999) {
-                    setTransactionAmount(Number(value));
-                  }
+                  // 세 자리마다 콤마 추가
+                  setTransactionAmount(formatNumberWithCommas(value));
                 }
               }}
               required

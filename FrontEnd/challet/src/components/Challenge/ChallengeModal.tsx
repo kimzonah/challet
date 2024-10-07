@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 임포트
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons'; // 클립보드 아이콘 추가
 import AllSearch from '../../assets/Challenge/Search.png';
 import Delivery from '../../assets/Challenge/Motorcycle_Delivery.png';
 import Car from '../../assets/Challenge/Car.png';
@@ -81,6 +83,17 @@ const ChallengeModal = ({
     }
   };
 
+  // 초대 코드 입력 핸들러 (영문/숫자만 입력되도록 하고 대문자로 변환)
+  const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+
+    // 영문 대문자와 숫자만 남기기, 대문자로 변환
+    value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+    // 초대 코드 상태 업데이트
+    setInviteCodeInput(value);
+  };
+
   return (
     <div
       className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 ${
@@ -148,12 +161,16 @@ const ChallengeModal = ({
             {challengeDetail.isIncluded &&
               !challengeDetail.isPublic &&
               challengeDetail.status === 'RECRUITING' && (
-                <div className='mt-4'>
+                <div className='mt-4 flex items-center'>
                   <button
                     onClick={handleCopyInviteCode} // 초대코드를 클릭하면 복사
-                    className='bg-gray-300 text-gray-500 py-4 px-4 rounded-lg cursor-pointer'
+                    className='bg-gray-300 text-gray-500 py-4 px-4 rounded-lg cursor-pointer flex items-center'
                   >
-                    챌린지코드: {challengeDetail.inviteCode || 'A1B2C3'}
+                    초대코드: {challengeDetail.inviteCode || 'A1B2C3'}
+                    <FontAwesomeIcon
+                      icon={faCopy}
+                      className='ml-2 text-gray-500'
+                    />
                   </button>
                 </div>
               )}
@@ -187,7 +204,7 @@ const ChallengeModal = ({
                   <input
                     type='text'
                     value={inviteCodeInput}
-                    onChange={(e) => setInviteCodeInput(e.target.value)}
+                    onChange={handleInviteCodeChange} // 영문 숫자만 입력되도록 처리
                     placeholder='초대 코드'
                     maxLength={6} // 초대코드 최대 길이 6자
                     className='py-4 mr-4 rounded-lg text-center text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
