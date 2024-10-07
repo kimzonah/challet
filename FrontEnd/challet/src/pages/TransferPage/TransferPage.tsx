@@ -259,7 +259,6 @@ function TransferPage() {
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50'>
           <div className='bg-white rounded-t-3xl w-full pb-20 relative min-h-[50%]'>
             <div className='p-6'>
-              {/* 오른쪽 상단 X 버튼 */}
               <button
                 className='absolute right-6 top-6 text-[#373A3F] text-3xl bg-white'
                 onClick={() => setIsModalOpen(false)}
