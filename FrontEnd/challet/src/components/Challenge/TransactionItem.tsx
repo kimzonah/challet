@@ -99,7 +99,7 @@ const TransactionListItem = ({
         <div className='flex'>
           <img
             src={
-              transaction.profileImage === ''
+              transaction.profileImage === null
                 ? defaultProfile
                 : transaction.profileImage
             }

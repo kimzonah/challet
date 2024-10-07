@@ -79,8 +79,12 @@ const AverageStatistics = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey='myPercentage' fill='#00CCCC' name='나의 소비' />
-            <Bar dataKey='averagePercentage' fill='#FF8042' name='평균 소비' />
+            <Bar dataKey='myPercentage' fill='#00CCCC' name='나의 소비(%)' />
+            <Bar
+              dataKey='averagePercentage'
+              fill='#FF8042'
+              name='평균 소비(%)'
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
