@@ -25,13 +25,24 @@ const SharedTransactionCreate = () => {
     const file = e.target.files && e.target.files[0];
 
     if (file) {
-      // 이미지 파일인지 확인
-      if (!file.type.startsWith('image/')) {
-        setErrorMessage('이미지 파일만 업로드할 수 있습니다.');
+      const allowedTypes = ['image/jpeg', 'image/png']; // 허용할 이미지 파일 형식
+      const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+
+      // 파일 형식 검사
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMessage('jpg 또는 png 형식의 파일만 업로드할 수 있습니다.');
         setIsError(true);
         return;
       }
-      setImage(file); // 이미지 파일만 설정
+
+      // 파일 크기 검사
+      if (file.size > maxSizeInBytes) {
+        setErrorMessage('이미지 파일의 크기는 10MB 이하로 제한됩니다.');
+        setIsError(true);
+        return;
+      }
+
+      setImage(file); // 유효한 파일인 경우 상태에 설정
     }
   };
 

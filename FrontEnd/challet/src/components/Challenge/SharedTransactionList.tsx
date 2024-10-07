@@ -61,26 +61,31 @@ const TransactionList = ({ challengeId }: { challengeId: number }) => {
                   const updatedTransactions = [
                     ...prevTransactions,
                     transaction,
-                  ];
-                  return updatedTransactions.sort(
+                  ].sort(
                     (a, b) =>
                       new Date(a.transactionDateTime).getTime() -
                       new Date(b.transactionDateTime).getTime()
                   );
+
+                  // 스크롤이 하단에 있는 경우 맨 아래로 자동 스크롤
+                  if (
+                    transactionListRef.current &&
+                    transactionListRef.current.scrollTop +
+                      transactionListRef.current.clientHeight >=
+                      transactionListRef.current.scrollHeight - 100
+                  ) {
+                    setTimeout(() => {
+                      transactionListRef.current!.scrollTop =
+                        transactionListRef.current!.scrollHeight;
+                    }, 100); // 스크롤 애니메이션을 위한 약간의 딜레이
+                  } else {
+                    setIsNewMessageButtonVisible(true); // 스크롤이 위에 있으면 버튼을 표시
+                  }
+
+                  return updatedTransactions;
                 }
                 return prevTransactions;
               });
-
-              // 사용자가 현재 스크롤을 맨 아래로 내리지 않았을 때 버튼을 보여줌
-              if (
-                transactionListRef.current &&
-                transactionListRef.current.scrollTop +
-                  transactionListRef.current.clientHeight <
-                  transactionListRef.current.scrollHeight - 100
-              ) {
-                console.log('새 메시지 버튼 표시');
-                setIsNewMessageButtonVisible(true);
-              }
             } else if (receivedTransaction.action === 'UPDATE') {
               setSharedTransactions((prevTransactions) =>
                 prevTransactions.map((t) =>

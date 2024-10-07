@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
+import defaultProfile from '../../assets/mypage/default-profile.png';
 
 interface Comment {
   nickname: string;
@@ -37,15 +38,25 @@ const SharedTransactionComments = ({
       <div className='mt-4'>
         {comments.map((comment, index) => (
           <div key={index} className='mb-4 p-3 bg-gray-100 rounded-lg'>
-            <div className='flex items-center mb-2'>
+            <div className='flex items-start mb-2 border-b-2 border-dashed'>
               <img
-                src={comment.profileImage || '/default_profile.png'}
+                src={
+                  comment.profileImage === null
+                    ? defaultProfile
+                    : comment.profileImage
+                }
                 alt={comment.nickname}
-                className='w-8 h-8 rounded-full mr-2'
+                className='w-8 h-8 rounded-full mr-2 mb-2'
               />
               <span className='font-semibold'>{comment.nickname}</span>
             </div>
-            <p>{comment.content}</p>
+            {/* 긴 영어 단어도 줄바꿈되도록 word-break: break-all 적용하고, 왼쪽 정렬 */}
+            <p
+              className='break-words text-left'
+              style={{ wordBreak: 'break-all' }}
+            >
+              {comment.content}
+            </p>
           </div>
         ))}
       </div>
