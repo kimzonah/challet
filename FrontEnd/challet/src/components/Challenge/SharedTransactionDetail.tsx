@@ -25,6 +25,7 @@ const SharedTransactionDetail = () => {
   const userId = useAuthStore((state) => state.userId);
   const location = useLocation();
   const { challengeId } = location.state || {};
+  const maxCommentLength = 100; // 최대 글자 수 제한
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -73,7 +74,7 @@ const SharedTransactionDetail = () => {
           <div className='flex space-x-4'>
             {transactionDetail.userId === userId && (
               <FontAwesomeIcon
-                icon={faEdit} // 수정 아이콘
+                icon={faEdit}
                 className='cursor-pointer'
                 onClick={() => {
                   // 수정 페이지로 이동하고, transactionDetail 데이터를 전달
@@ -87,7 +88,7 @@ const SharedTransactionDetail = () => {
               />
             )}
             <FontAwesomeIcon
-              icon={faSyncAlt} // 새로고침 아이콘
+              icon={faSyncAlt}
               className='cursor-pointer'
               onClick={() => setRefreshComments((prev) => !prev)} // 새로고침
             />
@@ -95,7 +96,7 @@ const SharedTransactionDetail = () => {
         </div>
       </div>
 
-      <div className='mt-16 scrollbar-hide overflow-y-auto max-h-[80vh]'>
+      <div className='mt-16 w-full scrollbar-hide overflow-y-auto max-h-[70vh]'>
         <div className='flex items-center'>
           <img
             src={
@@ -151,21 +152,32 @@ const SharedTransactionDetail = () => {
       {/* 댓글 입력창 */}
       <div className='fixed bottom-0 left-0 right-0 bg-white p-4 border-t-2'>
         <div className='flex items-center'>
-          <input
-            type='text'
+          <textarea
             value={commentContent}
-            maxLength={50} // 최대 글자 수 제한
+            maxLength={maxCommentLength} // 최대 글자 수 제한
             onChange={(e) => setCommentContent(e.target.value)} // 입력된 댓글 내용 업데이트
-            placeholder='댓글을 입력하세요.'
-            className='flex-grow px-4 py-2 border rounded-lg mr-2 max-w-[80%] focus:outline-none focus:ring-2 focus:ring-[#00CCCC]'
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // Enter 키만 눌렀을 때는 줄바꿈 방지
+                handleCommentSubmit(); // 댓글 등록 함수 호출
+              }
+            }}
+            placeholder='100자 까지만 입력 가능 합니다.'
+            className='flex-grow px-4 py-2 border rounded-lg mr-2 max-w-[80%] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] h-20 resize-none' // h-20으로 높이 설정
           />
-          <button
-            className='bg-[#00CCCC] text-white px-4 py-2 rounded-lg'
-            onClick={handleCommentSubmit} // 댓글 등록 함수 호출
-          >
-            확인
-          </button>
+          <div className=''>
+            <button
+              className='bg-[#00CCCC] text-white px-4 py-2 rounded-lg'
+              onClick={handleCommentSubmit} // 댓글 등록 함수 호출
+            >
+              확인
+            </button>
+            <p className=' text-sm text-gray-500 mt-1'>
+              {commentContent.length}/{maxCommentLength}
+            </p>
+          </div>
         </div>
+        {/* 글자 수 표시 */}
       </div>
     </div>
   );
