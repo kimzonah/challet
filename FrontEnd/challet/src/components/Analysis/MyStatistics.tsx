@@ -88,7 +88,10 @@ const MyStatistics = () => {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value, name) => [value, categoryMap[name as string]]}
+              formatter={(value, name, props) => [
+                `${value} (%)`,
+                `${categoryMap[name as string]}: ${Math.abs(props.payload.totalMoney).toLocaleString()}원`,
+              ]}
             />
           </PieChart>
         </ResponsiveContainer>
