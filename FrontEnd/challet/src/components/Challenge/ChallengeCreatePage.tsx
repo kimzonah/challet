@@ -124,6 +124,7 @@ const ChallengeCreatePage = () => {
   // 임시(최종 전에는 지우자)
   const startDateLimit = new Date();
   const endDateLimit = new Date();
+  endDateLimit.setFullYear(endDateLimit.getFullYear() + 1);
 
   return (
     <div>
