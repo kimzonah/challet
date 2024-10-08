@@ -3,7 +3,8 @@ import axiosInstance from '../../api/axiosInstance';
 import useAccountStore from '../../store/useAccountStore';
 
 interface Transaction {
-  id: string; // transactionId를 id로 변환
+  transactionId: string; // transactionId 추가
+  id: string; // 변환된 id를 위한 선택적 필드
   transactionDate: string;
   deposit: string;
   withdrawal: string;

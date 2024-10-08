@@ -8,7 +8,7 @@ import TransactionSearch from '../../components/HistoryPage/TransactionSearch';
 import TransactionList from '../../components/HistoryPage/TransactionList';
 
 interface Transaction {
-  id: string;
+  id: string; // 'undefined' 허용하지 않음
   transactionDate: string;
   deposit: string;
   withdrawal: string;
