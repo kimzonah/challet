@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
 import SharedTransactionComments from './SharedTransactionComments';
@@ -21,12 +21,17 @@ const SharedTransactionDetail = () => {
   const [transactionDetail, setTransactionDetail] = useState<any>(null);
   const [commentContent, setCommentContent] = useState(''); // 댓글 내용을 관리할 상태
   const [refreshComments, setRefreshComments] = useState(false); // 댓글 목록 새로고침 상태
+  const [refreshPage, setRefreshPage] = useState(false); // 페이지 전체 리렌더링을 위한 상태
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
   const userId = useAuthStore((state) => state.userId);
   const location = useLocation();
   const { challengeId } = location.state || {};
   const maxCommentLength = 100; // 최대 글자 수 제한
 
+  // 스크롤 컨테이너 ref 설정
+  const commentsContainerRef = useRef<HTMLDivElement>(null);
+
+  // 거래 내역 및 댓글을 다시 불러오는 useEffect
   useEffect(() => {
     const fetchDetail = async () => {
       if (id) {
@@ -35,7 +40,12 @@ const SharedTransactionDetail = () => {
       }
     };
     fetchDetail();
-  }, [id]);
+  }, [id, refreshPage]); // refreshPage가 변경될 때마다 리렌더링
+
+  // 댓글 목록 새로고침용 useEffect
+  useEffect(() => {
+    setRefreshComments((prev) => !prev);
+  }, [refreshPage]); // 페이지 리렌더링 시 댓글도 새로고침
 
   const handleCommentSubmit = async () => {
     if (commentContent.trim() === '') {
@@ -53,6 +63,14 @@ const SharedTransactionDetail = () => {
         ...prevDetail,
         commentCount: prevDetail.commentCount + 1, // 댓글 수 증가
       }));
+
+      // 댓글 추가 후 스크롤을 맨 아래로 이동
+      setTimeout(() => {
+        if (commentsContainerRef.current) {
+          commentsContainerRef.current.scrollTop =
+            commentsContainerRef.current.scrollHeight;
+        }
+      }, 100); // 약간의 지연을 두어 DOM이 업데이트되기 전에 스크롤을 이동하지 않게 함
     } catch (error) {
       console.error('댓글 등록 중 오류 발생:', error);
     }
@@ -96,13 +114,16 @@ const SharedTransactionDetail = () => {
             <FontAwesomeIcon
               icon={faSyncAlt}
               className='cursor-pointer'
-              onClick={() => setRefreshComments((prev) => !prev)} // 새로고침
+              onClick={() => setRefreshPage((prev) => !prev)} // 새로고침 시 페이지 전체 리렌더링
             />
           </div>
         </div>
       </div>
 
-      <div className='mt-16 w-full scrollbar-hide overflow-y-auto max-h-[70vh]'>
+      <div
+        className='mt-16 w-full scrollbar-hide overflow-y-auto max-h-[70vh]'
+        ref={commentsContainerRef} // 댓글 컨테이너에 ref 설정
+      >
         <div className='flex items-center'>
           <img
             src={
