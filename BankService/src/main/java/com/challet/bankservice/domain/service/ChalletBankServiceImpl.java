@@ -379,6 +379,26 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         return getMyDataAccounts(kbBanks, nhBanks, shBanks);
     }
 
+    @Override
+    public String getAccountName(AccountTransferRequestDTO accountTransferRequestDTO) {
+        String accountName = "";
+        if (accountTransferRequestDTO.bankCode().equals("8082")) {
+            accountName = challetBankRepository.getAccountByAccountNumber(
+                accountTransferRequestDTO.depositAccountNumber()).getName();
+        } else if (accountTransferRequestDTO.bankCode().equals("8083")) {
+            accountName = kbBankFeignClient.getAccountInfo(
+                accountTransferRequestDTO.depositAccountNumber());
+        } else if (accountTransferRequestDTO.bankCode().equals("8084")) {
+            accountName = nhBankFeignClient.getAccountInfo(
+                accountTransferRequestDTO.depositAccountNumber());
+        } else if (accountTransferRequestDTO.bankCode().equals("8085")) {
+            accountName = shBankFeignClient.getAccountInfo(
+                accountTransferRequestDTO.depositAccountNumber());
+        }
+
+        return "";
+    }
+
     @Transactional
     @Override
     public AccountTransferResponseDTO accountTransfer(Long accountId,
