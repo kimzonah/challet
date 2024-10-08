@@ -3,7 +3,7 @@ import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import { Transaction } from './TransactionType';
 import EmojiButtons from './TransactionEmojiButtons'; // EmojiButtons 컴포넌트 임포트
-import defaultProfile from '../../assets/mypage/default-profile.png';
+import defaultProfile from '../../assets/mypage/default-profile.jpg';
 
 const TransactionListItem = ({
   transaction,
@@ -21,7 +21,7 @@ const TransactionListItem = ({
   return (
     <div
       key={transaction.sharedTransactionId}
-      className={`p-4 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px] ${
+      className={`p-2 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px] ${
         transaction.userId === userId ? 'ml-auto ml-4' : 'mr-auto mr-4'
       }`}
     >
@@ -37,9 +37,9 @@ const TransactionListItem = ({
               }
             )}
           </div>
-          <div className='w-full'>
+          <div className='w-full max-w-[90%]'>
             {transaction.image && (
-              <div className='my-2'>
+              <div className=''>
                 <img
                   src={transaction.image}
                   alt='거래 이미지'
@@ -47,6 +47,7 @@ const TransactionListItem = ({
                 />
               </div>
             )}
+
             <div className='flex items-center w-full'>
               <div
                 className='bg-white p-3 rounded-xl shadow-md mb-2 w-[90%] cursor-pointer'
@@ -104,7 +105,7 @@ const TransactionListItem = ({
                 : transaction.profileImage
             }
             alt={transaction.nickname}
-            className='w-10 h-10 rounded-full mr-3'
+            className='w-10 h-10 rounded-full'
           />
           <div className='max-w-[85%] w-full'>
             <span
