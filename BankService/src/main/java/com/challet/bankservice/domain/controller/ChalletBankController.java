@@ -180,8 +180,7 @@ public class ChalletBankController {
     public ResponseEntity<String> accountUserName(
         @RequestBody AccountTransferRequestDTO accountTransferRequestDTO) {
         String accountName = challetBankService.getAccountName(accountTransferRequestDTO);
-        System.out.println(accountName);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(accountName);
     }
 
     @PostMapping("/account-transfers")
