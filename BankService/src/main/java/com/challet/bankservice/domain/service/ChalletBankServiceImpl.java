@@ -411,10 +411,12 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         long transactionBalance = calculateTransactionBalance(fromBank,
             requestTransactionDTO.transactionAmount());
 
+        // 만약에 이체은행이 챌렛이라면
         if (requestTransactionDTO.bankCode().equals("8082")) {
             return processInternalTransfer(fromBank, requestTransactionDTO, transactionBalance);
         }
 
+        // 이체은행이 챌렛이 아니라면
         return processExternalTransfer(fromBank, requestTransactionDTO, transactionBalance);
     }
 
@@ -434,10 +436,9 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     private Page<SearchedTransaction> getResult(
         SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
-        if (searchTransactionRequestDTO.deposit() != null) {
-            return searchedTransactionRepository.findByAccountIdAndDepositContaining(
-                searchTransactionRequestDTO.accountId(),
-                searchTransactionRequestDTO.deposit(), pageable);
+        if (searchTransactionRequestDTO.keyword() != null) {
+            return searchedTransactionRepository.findByAccountIdAndKeyword(
+                searchTransactionRequestDTO.accountId(), searchTransactionRequestDTO.keyword(), pageable);
         }
         return searchedTransactionRepository.findByAccountId(
             searchTransactionRequestDTO.accountId(), pageable);
@@ -468,7 +469,13 @@ public class ChalletBankServiceImpl implements ChalletBankService {
             fromBank, toBank.getName(), requestTransactionDTO, addMoney, false, "ETC");
         toBank.addTransaction(toTransaction);
 
-        challetBankTransactionRepository.save(fromTransaction);
+        ChalletBankTransaction savedFromTransaction = challetBankTransactionRepository.save(fromTransaction);
+        ChalletBankTransaction savedToTransaction = challetBankTransactionRepository.save(toTransaction);
+
+        System.out.println("돈 보낸 쪽 엘라스틱 저장");
+        searchedTransactionRepository.save(SearchedTransaction.fromAccountTransferByFrom(savedFromTransaction));
+        System.out.println("돈 받는 쪽 엘라스틱 저장");
+        searchedTransactionRepository.save(SearchedTransaction.fromAccountTransferByTo(savedToTransaction));
 
         return AccountTransferResponseDTO.fromTransferInfo(fromTransaction.getId(), fromBank,
             toBank, requestTransactionDTO.transactionAmount(), categoryName);
