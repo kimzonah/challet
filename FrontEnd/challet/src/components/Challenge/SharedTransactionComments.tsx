@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
-import defaultProfile from '../../assets/mypage/default-profile.png';
+import defaultProfile from '../../assets/mypage/default-profile.jpg';
 
 interface Comment {
   nickname: string;

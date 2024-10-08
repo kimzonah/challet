@@ -12,7 +12,7 @@ import Emoji_1 from '../../assets/Challenge/Emoji-1.png'; // 이모티콘 이미
 import Emoji_2 from '../../assets/Challenge/Emoji-2.png';
 import Emoji_3 from '../../assets/Challenge/Emoji-3.png';
 import Comment from '../../assets/Challenge/Comment.png';
-import defaultProfile from '../../assets/mypage/default-profile.png';
+import defaultProfile from '../../assets/mypage/default-profile.jpg';
 import useAuthStore from '../../store/useAuthStore';
 
 const SharedTransactionDetail = () => {
@@ -47,6 +47,12 @@ const SharedTransactionDetail = () => {
       await registComment(Number(id), commentContent);
       setCommentContent(''); // 댓글 입력창 초기화
       setRefreshComments((prev) => !prev); // 댓글 목록 새로고침
+
+      // 댓글 수 증가
+      setTransactionDetail((prevDetail: any) => ({
+        ...prevDetail,
+        commentCount: prevDetail.commentCount + 1, // 댓글 수 증가
+      }));
     } catch (error) {
       console.error('댓글 등록 중 오류 발생:', error);
     }
@@ -116,6 +122,7 @@ const SharedTransactionDetail = () => {
               src={transactionDetail.image}
               alt='거래 이미지'
               className='w-full h-64 object-cover rounded-lg mb-2'
+              style={{ maxWidth: '100%', height: 'auto' }} // 이미지가 화면을 넘지 않도록 고정
             />
           </div>
         )}
@@ -138,7 +145,8 @@ const SharedTransactionDetail = () => {
           </div>
           <div className='flex items-center'>
             <img src={Comment} alt='comment' className='w-5 h-5 mr-1' />
-            <span>{transactionDetail.commentCount}</span>
+            <span>{transactionDetail.commentCount}</span>{' '}
+            {/* 댓글 수 업데이트 */}
           </div>
         </div>
 
@@ -177,7 +185,6 @@ const SharedTransactionDetail = () => {
             </p>
           </div>
         </div>
-        {/* 글자 수 표시 */}
       </div>
     </div>
   );
