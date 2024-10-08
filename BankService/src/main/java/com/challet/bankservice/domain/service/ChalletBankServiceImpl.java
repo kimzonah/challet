@@ -194,9 +194,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     @Override
-    public int isCheckPassword(String phoneNumber, String password) {
-
-        return 0;
+    public boolean verifyPassword(String password) {
+        return challetFeignClient.sendSimplePassword(password);
     }
 
     @Transactional

@@ -132,8 +132,10 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "400", description = "비밀번호 인증 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
     public ResponseEntity<?> checkPassword(@RequestBody String password){
-
-        return ResponseEntity.status(HttpStatus.OK).build();
+        if(challetBankService.verifyPassword(password)){
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PostMapping("/payments")
