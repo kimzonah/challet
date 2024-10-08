@@ -86,6 +86,21 @@ const SharedTransactionDetail = () => {
     setRefreshPage((prev) => !prev); // 페이지 리렌더링
   };
 
+  // 줄바꿈 문자 (\n)를 <br> 태그로 치환하고 중복 줄바꿈과 끝부분을 제거하는 함수
+  const renderContentWithBreaks = (text: string) => {
+    // 1. 여러 줄바꿈을 1개로 제한
+    let formattedText = text.replace(/\n{2,}/g, '\n');
+    // 2. 마지막 줄바꿈을 제거 (줄바꿈만 있는 경우)
+    formattedText = formattedText.trimEnd();
+
+    return formattedText.split('\n').map((line, index) => (
+      <span key={index}>
+        {line}
+        <br />
+      </span>
+    ));
+  };
+
   if (!transactionDetail) {
     return <div>Loading...</div>;
   }
@@ -94,7 +109,7 @@ const SharedTransactionDetail = () => {
     <div className='p-4'>
       {/* 탑바 */}
       <div className='fixed top-0 left-0 right-0 bg-white z-10'>
-        <div className='flex justify-between pt-8 px-3 items-center'>
+        <div className='flex justify-between pt-8 px-6 items-center'>
           <FontAwesomeIcon
             icon={faAngleLeft}
             className='cursor-pointer'
@@ -105,7 +120,7 @@ const SharedTransactionDetail = () => {
             원
           </p>
           {/* 내 거래내역인 경우 수정과 새로고침 둘 다, 아닌 경우 새로고침만 */}
-          <div className='flex space-x-4'>
+          <div className='flex space-x-4 items-center'>
             {transactionDetail.userId === userId && (
               <FontAwesomeIcon
                 icon={faEdit}
@@ -122,7 +137,7 @@ const SharedTransactionDetail = () => {
               />
             )}
             <button
-              className='relative'
+              className='relative bg-white '
               onClick={handleRefresh} // 새로고침 핸들러
               disabled={isLoading} // 로딩 중일 때 버튼 비활성화
             >
@@ -141,7 +156,7 @@ const SharedTransactionDetail = () => {
       </div>
 
       <div
-        className='mt-16 w-full scrollbar-hide overflow-y-auto max-h-[70vh]'
+        className='mt-20 w-full scrollbar-hide overflow-y-auto max-h-[70vh]'
         ref={commentsContainerRef} // 댓글 컨테이너에 ref 설정
       >
         <div className='flex items-center'>
@@ -168,7 +183,10 @@ const SharedTransactionDetail = () => {
           </div>
         )}
 
-        <p className='mb-4 text-lg text-left'>{transactionDetail.content}</p>
+        {/* 거래 내역 내용에 줄바꿈 처리 */}
+        <p className='mb-4 text-lg text-left'>
+          {renderContentWithBreaks(transactionDetail.content)}
+        </p>
 
         {/* 이모티콘 및 댓글 개수 */}
         <div className='flex space-x-4 py-2 border-b-2 border-dashed'>
