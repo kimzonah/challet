@@ -449,6 +449,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 
     private Page<SearchedTransaction> getResult(
         SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
+        log.info(searchTransactionRequestDTO.keyword());
         if (searchTransactionRequestDTO.keyword() != null) {
             return searchedTransactionRepository.findByAccountIdAndKeyword(
                 searchTransactionRequestDTO.accountId(), searchTransactionRequestDTO.keyword(), pageable);
