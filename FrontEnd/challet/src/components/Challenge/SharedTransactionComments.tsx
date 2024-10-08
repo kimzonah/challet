@@ -30,7 +30,7 @@ const SharedTransactionComments = ({
   }, [sharedTransactionId, refreshComments]);
 
   if (comments.length === 0) {
-    return <div>댓글이 없습니다.</div>;
+    return <div className='mt-4'>댓글이 없습니다.</div>;
   }
 
   // 줄바꿈 문자 (\n)를 <br> 태그로 치환하되, 중복 줄바꿈은 1개로 제한하고, 마지막 공백 제거

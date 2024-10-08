@@ -108,18 +108,23 @@ const ChallengeCreatePage = () => {
     }
   };
 
-  // 오늘 날짜 + 하루(내일부터) 계산
-  const startDateLimit = new Date();
-  startDateLimit.setDate(startDateLimit.getDate() + 1);
+  // // 오늘 날짜 + 하루(내일부터) 계산
+  // const startDateLimit = new Date();
+  // startDateLimit.setDate(startDateLimit.getDate() + 1);
 
-  // 종료 날짜 제한을 동적으로 지정
-  // startDate가 없을 경우 오늘 날짜의 1년 뒤로 설정
-  const endDateLimit = startDate ? new Date(startDate.getTime()) : new Date();
-  if (startDate) {
-    endDateLimit.setFullYear(startDate.getFullYear() + 1);
-  } else {
-    endDateLimit.setFullYear(endDateLimit.getFullYear() + 1); // 오늘 날짜 기준 1년 뒤
-  }
+  // // 종료 날짜 제한을 동적으로 지정
+  // // startDate가 없을 경우 오늘 날짜의 1년 뒤로 설정
+  // const endDateLimit = startDate ? new Date(startDate.getTime()) : new Date();
+  // if (startDate) {
+  //   endDateLimit.setFullYear(startDate.getFullYear() + 1);
+  // } else {
+  //   endDateLimit.setFullYear(endDateLimit.getFullYear() + 1); // 오늘 날짜 기준 1년 뒤
+  // }
+
+  // 임시(최종 전에는 지우자)
+  const startDateLimit = new Date();
+  const endDateLimit = new Date();
+  endDateLimit.setFullYear(endDateLimit.getFullYear() + 1);
 
   return (
     <div>

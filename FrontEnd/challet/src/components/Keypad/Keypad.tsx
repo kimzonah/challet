@@ -5,7 +5,7 @@ import './Keypad.css';
 interface KeypadProps {
   onPinChange: (pin: string) => void;
   maxLength?: number;
-  onComplete?: () => void;
+  onComplete?: (pin: string) => void; // 인자를 받는 함수로 정의
   showMessage?: boolean;
 }
 
@@ -37,7 +37,7 @@ const Keypad = ({
         onPinChange(newPin);
 
         if (newPin.length === maxLength && onComplete) {
-          onComplete();
+          onComplete(newPin);
         }
       }
     },
@@ -70,7 +70,7 @@ const Keypad = ({
             height: '20%', // 높이를 20%로 설정 (필요에 맞게 조정 가능)
             backgroundColor: 'white', // 배경색 설정 (필요에 따라)
             padding: '10px', // 메시지 패딩
-            zIndex: 9999, // 다른 요소보다 위에 위치하도록 설정
+            zIndex: 50, // 다른 요소보다 위에 위치하도록 설정
             textAlign: 'center', // 텍스트를 중앙 정렬
             display: 'flex', // 플렉스 박스를 사용하여 가운데 정렬
             justifyContent: 'center', // 수평 가운데 정렬

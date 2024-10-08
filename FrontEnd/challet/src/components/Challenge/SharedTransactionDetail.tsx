@@ -1,3 +1,4 @@
+// SharedTransactionDetail.tsx
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useChallengeApi } from '../../hooks/useChallengeApi';
@@ -37,11 +38,19 @@ const SharedTransactionDetail = () => {
     const fetchDetail = async () => {
       if (id) {
         const detail = await fetchSharedTransactionDetail(Number(id));
-        setTransactionDetail(detail);
+        if (!detail) {
+          // ID에 해당하는 거래가 없으면 /wallet 경로로 리다이렉트
+          navigate('/wallet');
+        } else {
+          setTransactionDetail(detail);
+        }
+      } else {
+        // ID가 없는 경우에도 /wallet 경로로 리다이렉트
+        navigate('/wallet');
       }
     };
     fetchDetail();
-  }, [id, refreshPage]); // refreshPage가 변경될 때마다 리렌더링
+  }, [id, navigate, refreshPage]);
 
   // 댓글 목록 새로고침용 useEffect
   useEffect(() => {
@@ -87,7 +96,11 @@ const SharedTransactionDetail = () => {
   };
 
   // 줄바꿈 문자 (\n)를 <br> 태그로 치환하고 중복 줄바꿈과 끝부분을 제거하는 함수
-  const renderContentWithBreaks = (text: string) => {
+  const renderContentWithBreaks = (text: string | null | undefined) => {
+    if (!text) {
+      return null; // 또는 빈 문자열을 반환하고 싶다면 return ''로 변경
+    }
+
     // 1. 여러 줄바꿈을 1개로 제한
     let formattedText = text.replace(/\n{2,}/g, '\n');
     // 2. 마지막 줄바꿈을 제거 (줄바꿈만 있는 경우)
