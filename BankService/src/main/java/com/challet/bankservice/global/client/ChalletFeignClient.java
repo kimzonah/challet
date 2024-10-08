@@ -19,5 +19,6 @@ public interface ChalletFeignClient {
         @RequestHeader(value = "Authorization", required = false) String header);
 
     @PostMapping("/api/challet/message/simple-password")
-    boolean sendSimplePassword(@RequestBody String password);
+    boolean sendSimplePassword(@RequestHeader("Authorization") String header,
+        @RequestBody String password);
 }
