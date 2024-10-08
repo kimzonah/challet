@@ -22,7 +22,7 @@ public interface NhBankRepositoryCustom {
 
     Long findAccountBalanceById(Long accountId);
 
-    void connectMyDataAccount(String phoneNumber);
+    void connectMyDataAccount(String phoneNumber, boolean myDataStatus);
 
     Optional<NhBank> findByAccountNumber(String accountNumber);
 

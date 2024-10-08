@@ -102,11 +102,11 @@ public class NhBankRepositoryImpl implements NhBankRepositoryCustom {
     }
 
     @Override
-    public void connectMyDataAccount(String phoneNumber) {
+    public void connectMyDataAccount(String phoneNumber, boolean myDataStatus) {
         QNhBank nhBank = QNhBank.nhBank;
         query
             .update(nhBank)
-            .set(nhBank.myDataStatus, true)
+            .set(nhBank.myDataStatus, myDataStatus)
             .where(nhBank.phoneNumber.eq(phoneNumber))
             .execute();
     }
