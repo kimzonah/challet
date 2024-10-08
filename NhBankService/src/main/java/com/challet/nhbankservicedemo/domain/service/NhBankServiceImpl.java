@@ -79,6 +79,14 @@ public class NhBankServiceImpl implements NhBankService {
         }
     }
 
+    @Override
+    public String getAccountName(String accountNumber) {
+        String memberName = nhBankRepository.findByAccountNumber(accountNumber)
+            .orElseThrow(() -> new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION))
+            .getName();
+        return memberName;
+    }
+
     @Transactional
     @Override
     public void connectMyDataAccount(String tokenHeader) {

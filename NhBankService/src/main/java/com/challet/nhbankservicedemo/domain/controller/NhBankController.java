@@ -99,6 +99,18 @@ public class NhBankController {
         return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
     }
 
+    @PostMapping("/account-name")
+    @Operation(summary = "계좌 유저이름 반환", description = "계좌 번호를 이용한 계좌 유저이름 반환")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "조회 성공"),
+        @ApiResponse(responseCode = "400", description = "조회 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public ResponseEntity<String> userAccountName(
+        @RequestBody String accountNumber) {
+        String accountName = nhBankService.getAccountName(accountNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(accountName);
+    }
+
     @PostMapping("/account-transfers")
     @Operation(summary = "계좌 이체시 계좌 입금", description = "계좌 번호, 입금금액, 사용자 정보를 받아 계좌 입금")
     @ApiResponses(value = {

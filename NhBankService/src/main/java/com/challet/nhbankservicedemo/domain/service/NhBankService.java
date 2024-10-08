@@ -24,6 +24,8 @@ public interface NhBankService {
 
     TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
 
+    String getAccountName(String accountNumber);
+
     void connectMyDataAccount(String tokenHeader);
 
     BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO);
