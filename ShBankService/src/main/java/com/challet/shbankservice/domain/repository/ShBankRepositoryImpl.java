@@ -102,11 +102,11 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
     }
 
     @Override
-    public void connectMyDataAccount(String phoneNumber) {
+    public void connectMyDataAccount(String phoneNumber, boolean myDataStatus) {
         QShBank shBank = QShBank.shBank;
         query
             .update(shBank)
-            .set(shBank.myDataStatus, true)
+            .set(shBank.myDataStatus, myDataStatus)
             .where(shBank.phoneNumber.eq(phoneNumber))
             .execute();
     }

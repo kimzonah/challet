@@ -22,7 +22,7 @@ public interface ShBankRepositoryCustom {
 
     Long getAccountBalanceById(Long accountId);
 
-    void connectMyDataAccount(String phoneNumber);
+    void connectMyDataAccount(String phoneNumber, boolean myDataStatus);
 
     Optional<ShBank> findByAccountNumber(String accountNumber);
 

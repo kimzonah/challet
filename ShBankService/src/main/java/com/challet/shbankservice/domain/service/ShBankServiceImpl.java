@@ -92,9 +92,9 @@ public class ShBankServiceImpl implements ShBankService {
 
 	@Transactional
 	@Override
-	public void connectMyDataAccount(String tokenHeader) {
+	public void connectMyDataAccount(String tokenHeader, boolean myDataStatus) {
 		String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
-		shBankRepository.connectMyDataAccount(phoneNumber);
+		shBankRepository.connectMyDataAccount(phoneNumber, myDataStatus);
 	}
 
 	@Transactional
