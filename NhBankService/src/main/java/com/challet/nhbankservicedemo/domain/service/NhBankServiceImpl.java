@@ -106,7 +106,6 @@ public class NhBankServiceImpl implements NhBankService {
 
         nhBank.addTransaction(transaction);
         NhBankTransaction savedToTransaction = nhBankTransactionRepository.save(transaction);
-        System.out.println("농협계좌로 들어온 거 저장");
         searchedTransactionRepository.save(SearchedTransaction.fromAccountTransferByTo(savedToTransaction));
 
         return BankTransferResponseDTO.fromBankTransferResponseDTO(nhBank);
