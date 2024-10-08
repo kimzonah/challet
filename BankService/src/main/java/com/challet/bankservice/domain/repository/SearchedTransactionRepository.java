@@ -1,6 +1,6 @@
 package com.challet.bankservice.domain.repository;
 
-import feign.Param;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
@@ -19,7 +19,7 @@ public interface SearchedTransactionRepository extends
     Page<SearchedTransaction> findByAccountIdAndDepositContainingOrWithdrawalContaining(
         Long accountId, String deposit, String withdrawal, Pageable pageable);
 
-    @Query("{\"bool\": { \"must\": [ { \"term\": { \"accountId\": \"?0\" } }, { \"bool\": { \"should\": [ { \"wildcard\": { \"deposit\": \"*?1*\" } }, { \"wildcard\": { \"withdrawal\": \"*?1*\" } } ] } } ] }, \"sort\": [{ \"transactionDate\": { \"order\": \"desc\" } }] }")
+    @Query("{\"bool\": { \"must\": [ { \"term\": { \"accountId\": :accountId } }, { \"bool\": { \"should\": [ { \"wildcard\": { \"deposit\": \"*:keyword*\" } }, { \"wildcard\": { \"withdrawal\": \"*:keyword*\" } } ] } } ] }, \"sort\": [{ \"transactionDate\": { \"order\": \"desc\" } }] }")
     Page<SearchedTransaction> findByAccountIdAndKeyword(@Param("accountId") Long accountId, @Param("keyword") String keyword, Pageable pageable);
 
 
