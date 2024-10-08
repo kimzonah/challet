@@ -7,6 +7,7 @@ import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.ConfirmPaymentRequestDTO;
 import com.challet.bankservice.domain.dto.request.PaymentRequestDTO;
 import com.challet.bankservice.domain.dto.request.SearchTransactionRequestDTO;
+import com.challet.bankservice.domain.dto.request.SimplePasswordRequestDTO;
 import com.challet.bankservice.domain.dto.response.AccountInfoResponseListDTO;
 import com.challet.bankservice.domain.dto.response.AccountTransferResponseDTO;
 import com.challet.bankservice.domain.dto.response.MyDataBankAccountInfoResponseDTO;
@@ -135,8 +136,8 @@ public class ChalletBankController {
     })
     public ResponseEntity<?> checkPassword(
         @RequestHeader("Authorization") String header,
-        @RequestBody String password){
-        if(challetBankService.verifyPassword(header, password)){
+        @RequestBody SimplePasswordRequestDTO requestDTO){
+        if(challetBankService.verifyPassword(header, requestDTO.password())){
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
