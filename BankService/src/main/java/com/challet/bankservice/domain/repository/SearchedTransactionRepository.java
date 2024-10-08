@@ -19,7 +19,7 @@ public interface SearchedTransactionRepository extends
     Page<SearchedTransaction> findByAccountIdAndDepositContainingOrWithdrawalContaining(
         Long accountId, String deposit, String withdrawal, Pageable pageable);
 
-    @Query("{\"bool\": { \"must\": [ { \"term\": { \"accountId\": :accountId } }, { \"bool\": { \"should\": [ { \"wildcard\": { \"deposit\": \"*:keyword*\" } }, { \"wildcard\": { \"withdrawal\": \"*:keyword*\" } } ] } } ] }, \"sort\": [{ \"transactionDate\": { \"order\": \"desc\" } }] }")
+    @Query("{\"bool\": { \"must\": [ { \"term\": { \"accountId\": \"?0\" } }, { \"bool\": { \"should\": [ { \"wildcard\": { \"deposit\": \"*?1*\" } }, { \"wildcard\": { \"withdrawal\": \"*?1*\" } } ] } } ] }}")
     Page<SearchedTransaction> findByAccountIdAndKeyword(@Param("accountId") Long accountId, @Param("keyword") String keyword, Pageable pageable);
 
 
