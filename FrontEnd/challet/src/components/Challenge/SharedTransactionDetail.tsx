@@ -22,6 +22,7 @@ const SharedTransactionDetail = () => {
   const [commentContent, setCommentContent] = useState(''); // 댓글 내용을 관리할 상태
   const [refreshComments, setRefreshComments] = useState(false); // 댓글 목록 새로고침 상태
   const [refreshPage, setRefreshPage] = useState(false); // 페이지 전체 리렌더링을 위한 상태
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
   const userId = useAuthStore((state) => state.userId);
   const location = useLocation();
@@ -76,6 +77,15 @@ const SharedTransactionDetail = () => {
     }
   };
 
+  const handleRefresh = () => {
+    setIsLoading(true); // 로딩 시작
+    // 로딩 상태 해제 (1초 후)
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // 피드백을 주기 위해 1초 정도 지연
+    setRefreshPage((prev) => !prev); // 페이지 리렌더링
+  };
+
   if (!transactionDetail) {
     return <div>Loading...</div>;
   }
@@ -111,11 +121,21 @@ const SharedTransactionDetail = () => {
                 }}
               />
             )}
-            <FontAwesomeIcon
-              icon={faSyncAlt}
-              className='cursor-pointer'
-              onClick={() => setRefreshPage((prev) => !prev)} // 새로고침 시 페이지 전체 리렌더링
-            />
+            <button
+              className='relative'
+              onClick={handleRefresh} // 새로고침 핸들러
+              disabled={isLoading} // 로딩 중일 때 버튼 비활성화
+            >
+              <FontAwesomeIcon
+                icon={faSyncAlt}
+                className={`cursor-pointer ${isLoading ? 'text-gray-400' : ''}`} // 로딩 중이면 아이콘 색상 변경
+              />
+              {isLoading && (
+                <span className='absolute top-0 right-0 h-3 w-3'>
+                  <div className='animate-spin rounded-full h-3 w-3 border-t-2 border-b-2 border-[#00CCCC]'></div>
+                </span>
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -148,7 +168,7 @@ const SharedTransactionDetail = () => {
           </div>
         )}
 
-        <p className='mb-4 text-lg'>{transactionDetail.content}</p>
+        <p className='mb-4 text-lg text-left'>{transactionDetail.content}</p>
 
         {/* 이모티콘 및 댓글 개수 */}
         <div className='flex space-x-4 py-2 border-b-2 border-dashed'>
