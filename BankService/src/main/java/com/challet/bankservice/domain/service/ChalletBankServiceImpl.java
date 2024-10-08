@@ -472,9 +472,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
         ChalletBankTransaction savedFromTransaction = challetBankTransactionRepository.save(fromTransaction);
         ChalletBankTransaction savedToTransaction = challetBankTransactionRepository.save(toTransaction);
 
-        System.out.println("돈 보낸 쪽 엘라스틱 저장");
         searchedTransactionRepository.save(SearchedTransaction.fromAccountTransferByFrom(savedFromTransaction));
-        System.out.println("돈 받는 쪽 엘라스틱 저장");
         searchedTransactionRepository.save(SearchedTransaction.fromAccountTransferByTo(savedToTransaction));
 
         return AccountTransferResponseDTO.fromTransferInfo(fromTransaction.getId(), fromBank,
@@ -500,7 +498,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
                 categoryName);
             fromBank.addTransaction(paymentTransaction);
 
-            challetBankTransactionRepository.save(paymentTransaction);
+            ChalletBankTransaction savedFromTransaction = challetBankTransactionRepository.save(paymentTransaction);
+            searchedTransactionRepository.save(SearchedTransaction.fromAccountTransferByFrom(savedFromTransaction));
 
             /// 외부에서 받을때 name만 받아서 안됌, accountNumber가 필요
 
