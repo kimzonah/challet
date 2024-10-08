@@ -27,11 +27,26 @@ const SharedTransactionComments = ({
 
     // 댓글을 처음 불러올 때와 refreshComments 또는 sharedTransactionId가 변경될 때만 호출
     fetchComments();
-  }, [sharedTransactionId, refreshComments]); // fetchTransactionComments는 의존성 배열에서 제거
+  }, [sharedTransactionId, refreshComments]);
 
   if (comments.length === 0) {
     return <div>댓글이 없습니다.</div>;
   }
+
+  // 줄바꿈 문자 (\n)를 <br> 태그로 치환하되, 중복 줄바꿈은 1개로 제한하고, 마지막 공백 제거
+  const renderCommentWithBreaks = (text: string) => {
+    // 1. 여러 줄바꿈을 1개로 제한
+    let formattedText = text.replace(/\n{2,}/g, '\n');
+    // 2. 마지막 줄바꿈을 제거 (줄바꿈만 있는 경우)
+    formattedText = formattedText.trimEnd();
+
+    return formattedText.split('\n').map((line, index) => (
+      <span key={index}>
+        {line}
+        <br />
+      </span>
+    ));
+  };
 
   return (
     <div className='mt-6'>
@@ -50,12 +65,12 @@ const SharedTransactionComments = ({
               />
               <span className='font-semibold'>{comment.nickname}</span>
             </div>
-            {/* 긴 영어 단어도 줄바꿈되도록 word-break: break-all 적용하고, 왼쪽 정렬 */}
+            {/* 줄바꿈 문자를 <br>로 변환하여 댓글을 렌더링 */}
             <p
               className='break-words text-left'
               style={{ wordBreak: 'break-all' }}
             >
-              {comment.content}
+              {renderCommentWithBreaks(comment.content)}
             </p>
           </div>
         ))}
