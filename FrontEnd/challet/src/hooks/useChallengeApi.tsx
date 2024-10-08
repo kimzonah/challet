@@ -207,6 +207,7 @@ export const useChallengeApi = () => {
     try {
       const url = `${API_BASE_URL}/api/challet/shared-transactions/${sharedTransactionId}/comments`;
       const response = await axiosInstance.get(url);
+      console.log('댓글 조회 성공:', response.data);
       return response.data.comments; // 댓글 데이터 반환
     } catch (error) {
       console.error('댓글 조회 중 오류 발생:', error);
