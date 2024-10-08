@@ -25,7 +25,7 @@ public interface KbBankService {
 
     String getAccountName(String accountNumber);
 
-    void connectMyDataAccount(String tokenHeader);
+    void connectMyDataAccount(String tokenHeader, boolean myDataStatus);
 
     BankTransferResponseDTO addFundsToAccount(AccountTransferRequestDTO requestDTO);
 

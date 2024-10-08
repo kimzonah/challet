@@ -102,11 +102,11 @@ public class KbBankRepositoryImpl implements KbBankRepositoryCustom {
     }
 
     @Override
-    public void connectMyDataAccount(String phoneNumber) {
+    public void connectMyDataAccount(String phoneNumber, boolean myDataStatus) {
         QKbBank bank = QKbBank.kbBank;
         query
             .update(bank)
-            .set(bank.myDataStatus, true)
+            .set(bank.myDataStatus, myDataStatus)
             .where(bank.phoneNumber.eq(phoneNumber))
             .execute();
     }

@@ -127,10 +127,20 @@ public class KbBankController {
     })
     public ResponseEntity<AccountInfoResponseListDTO> connectMyDataAccount(
         @RequestHeader(value = "Authorization", required = false) String tokenHeader) {
-        kbBankService.connectMyDataAccount(tokenHeader);
+        kbBankService.connectMyDataAccount(tokenHeader, true);
         AccountInfoResponseListDTO myDataAccounts = kbBankService.getAccountsByPhoneNumber(
             tokenHeader);
         return ResponseEntity.status(HttpStatus.OK).body(myDataAccounts);
+    }
+
+    @PostMapping("/mydata-disconnect")
+    @Operation(summary = "은행 계좌 마이데이터 취소", description = "전화번호를 통해 계좌 취소")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "계좌 취소 성공"),
+        @ApiResponse(responseCode = "400", description = "계좌 취소 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
+    })
+    public void disconnectMyDataKbBank(@RequestHeader(value = "Authorization") String tokenHeader){
+        kbBankService.connectMyDataAccount(tokenHeader, false);
     }
 
     @PostMapping("/account-name")

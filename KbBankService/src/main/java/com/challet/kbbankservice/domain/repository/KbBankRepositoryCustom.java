@@ -22,7 +22,7 @@ public interface KbBankRepositoryCustom {
 
     Long findAccountBalanceById(Long accountId);
 
-    void connectMyDataAccount(String phoneNumber);
+    void connectMyDataAccount(String phoneNumber, boolean myDataStatus);
 
     Optional<KbBank> findByAccountNumber(String accountNumber);
 

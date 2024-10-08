@@ -87,9 +87,9 @@ public class KbBankServiceImpl implements KbBankService {
 
     @Transactional
     @Override
-    public void connectMyDataAccount(String tokenHeader) {
+    public void connectMyDataAccount(String tokenHeader, boolean myDataStatus) {
         String phoneNumber = jwtUtil.getLoginUserPhoneNumber(tokenHeader);
-        kbBankRepository.connectMyDataAccount(phoneNumber);
+        kbBankRepository.connectMyDataAccount(phoneNumber, myDataStatus);
     }
 
     @Override
