@@ -147,7 +147,7 @@ const LoginPage = () => {
         </div>
       )}
       <div className='flex-grow flex items-center justify-center'>
-        <div className='w-full max-w-md p-8 space-y-6 mb-48'>
+        <div className='w-full max-w-md p-8 space-y-6 mb-80'>
           {(!isPhoneNumberComplete || !isExistingMember) && (
             <div className='mb-4'>
               <div className='text-left mb-6'>
@@ -211,15 +211,18 @@ const LoginPage = () => {
               ></div>
 
               {/* 비밀번호 오류 메시지 고정된 공간 */}
-              <div className='min-h-[1.5rem]'>
-                {' '}
-                {/* 고정된 높이를 설정 */}
+              <div className='min-h-[1.5rem] relative'>
                 <p
-                  className={`text-red-500 text-sm mt-2 ${
+                  className={`text-red-500 text-sm mt-2 absolute left-1/2 transform -translate-x-1/2 bottom-[30px] whitespace-nowrap ${
                     passwordErrorMessage && password.length === 6
                       ? 'visible'
                       : 'invisible'
                   }`}
+                  style={{
+                    whiteSpace: 'nowrap', // 줄바꿈 없이 한 줄로 출력
+                    overflow: 'hidden', // 내용이 넘칠 경우 숨김
+                    textOverflow: 'ellipsis', // 넘칠 경우 '...'으로 표시
+                  }}
                 >
                   {passwordErrorMessage || ' '}
                 </p>

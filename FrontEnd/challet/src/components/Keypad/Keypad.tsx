@@ -6,9 +6,15 @@ interface KeypadProps {
   onPinChange: (pin: string) => void;
   maxLength?: number;
   onComplete?: () => void;
+  showMessage?: boolean;
 }
 
-const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
+const Keypad = ({
+  onPinChange,
+  maxLength = 6,
+  onComplete,
+  showMessage,
+}: KeypadProps) => {
   const [pin, setPin] = useState<string>('');
   const [shuffledKeys, setShuffledKeys] = useState<string[]>([]);
 
@@ -50,10 +56,36 @@ const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
   }, [onPinChange]);
 
   return (
-    <>
-      <div className='keypad-container fixed bottom-0 w-full bg-white'>
-        {/* 비밀번호 표시 */}
-        <div className='pin-display-container absolute top-[-30%] left-1/2 transform -translate-x-1/2'>
+    <div className='keypad-wrapper'>
+      {/* 안내 메시지 고정된 위치에 표시 */}
+      {showMessage && (
+        <div
+          className='fixed-message'
+          style={{
+            position: 'fixed',
+            top: '20%', // 화면 상단에서 20% 위치
+            left: '50%', // 화면의 가운데 위치
+            transform: 'translateX(-50%)', // 수평 중앙 정렬
+            width: '100%', // 너비를 100%로 설정
+            height: '20%', // 높이를 20%로 설정 (필요에 맞게 조정 가능)
+            backgroundColor: 'white', // 배경색 설정 (필요에 따라)
+            padding: '10px', // 메시지 패딩
+            zIndex: 9999, // 다른 요소보다 위에 위치하도록 설정
+            textAlign: 'center', // 텍스트를 중앙 정렬
+            display: 'flex', // 플렉스 박스를 사용하여 가운데 정렬
+            justifyContent: 'center', // 수평 가운데 정렬
+            alignItems: 'center', // 수직 가운데 정렬
+          }}
+        >
+          <p className='text-xl font-bold text-gray-800'>결제 비밀번호</p>
+        </div>
+      )}
+
+      {/* 전체를 감싸는 div */}
+      <div className='keypad-container'>
+        {/* 키패드 컨테이너를 담는 div */}
+        {/* 비밀번호 표시 영역 */}
+        <div className='pin-display-container'>
           {[...Array(maxLength)].map((_, i) => (
             <span
               key={i}
@@ -61,6 +93,7 @@ const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
             ></span>
           ))}
         </div>
+
         {/* 키패드 렌더링 */}
         <table className='SecureKeyboard_keyboard' role='presentation'>
           <tbody>
@@ -126,7 +159,7 @@ const Keypad = ({ onPinChange, maxLength = 6, onComplete }: KeypadProps) => {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 };
 
