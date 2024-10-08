@@ -63,6 +63,7 @@ const AverageStatistics = () => {
       <div className='mb-6 text-center p-4 '>
         <div className='text-xl'>
           <div className='mb-2'>
+            <span>전월&nbsp;</span>
             <span className='text-[#00CCCC]'>
               {age}대 {gender}
             </span>
