@@ -22,7 +22,7 @@ const TransactionListItem = ({
     <div
       key={transaction.sharedTransactionId}
       className={`p-2 bg-[#F1F4F6] rounded-lg max-w-[90%] md:max-w-[500px] ${
-        transaction.userId === userId ? 'ml-auto ' : 'mr-auto '
+        transaction.userId === userId ? 'ml-auto ml-4' : 'mr-auto mr-4'
       }`}
     >
       {transaction.userId === userId ? (
@@ -37,7 +37,7 @@ const TransactionListItem = ({
               }
             )}
           </div>
-          <div className='w-full max-w-[80%]'>
+          <div className='w-full max-w-[90%]'>
             {transaction.image && (
               <div className=''>
                 <img
