@@ -23,7 +23,7 @@ public interface ChalletBankService {
 
 	TransactionDetailResponseDTO getTransactionInfo(Long transactionId);
 
-	boolean verifyPassword(String password);
+	boolean verifyPassword(String accountId,String password);
 
 	PaymentResponseDTO qrPayment(Long accountId, PaymentRequestDTO paymentRequestDTO);
 

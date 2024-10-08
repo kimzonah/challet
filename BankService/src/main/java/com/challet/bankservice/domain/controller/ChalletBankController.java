@@ -1,5 +1,7 @@
 package com.challet.bankservice.domain.controller;
 
+import static com.netflix.appinfo.AmazonInfo.MetaDataKey.accountId;
+
 import com.challet.bankservice.domain.dto.request.AccountTransferRequestDTO;
 import com.challet.bankservice.domain.dto.request.BankSelectionRequestDTO;
 import com.challet.bankservice.domain.dto.request.ConfirmPaymentRequestDTO;
@@ -131,8 +133,10 @@ public class ChalletBankController {
         @ApiResponse(responseCode = "200", description = "비밀번호 인증 성공"),
         @ApiResponse(responseCode = "400", description = "비밀번호 인증 실패", content = @Content(schema = @Schema(implementation = Exception.class))),
     })
-    public ResponseEntity<?> checkPassword(@RequestBody String password){
-        if(challetBankService.verifyPassword(password)){
+    public ResponseEntity<?> checkPassword(
+        @RequestHeader("Authorization") String header,
+        @RequestBody String password){
+        if(challetBankService.verifyPassword(header, password)){
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
