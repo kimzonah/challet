@@ -71,7 +71,7 @@ const SharedTransactionDetail = () => {
           commentsContainerRef.current.scrollTop =
             commentsContainerRef.current.scrollHeight;
         }
-      }, 100); // 약간의 지연을 두어 DOM이 업데이트되기 전에 스크롤을 이동하지 않게 함
+      }, 200); // 약간의 지연을 두어 DOM이 업데이트되기 전에 스크롤을 이동하지 않게 함
     } catch (error) {
       console.error('댓글 등록 중 오류 발생:', error);
     }
@@ -205,12 +205,6 @@ const SharedTransactionDetail = () => {
             value={commentContent}
             maxLength={maxCommentLength} // 최대 글자 수 제한
             onChange={(e) => setCommentContent(e.target.value)} // 입력된 댓글 내용 업데이트
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); // Enter 키만 눌렀을 때는 줄바꿈 방지
-                handleCommentSubmit(); // 댓글 등록 함수 호출
-              }
-            }}
             placeholder='100자 까지만 입력 가능 합니다.'
             className='flex-grow px-4 py-2 border rounded-lg mr-2 max-w-[80%] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] h-20 resize-none' // h-20으로 높이 설정
           />
