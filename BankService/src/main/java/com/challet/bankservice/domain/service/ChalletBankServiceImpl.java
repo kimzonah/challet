@@ -164,7 +164,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     private String createAccountNum() {
-        String bankCode = "8082"  // 은행 코드
+        String bankCode = "8082";  // 은행 코드
         String accountType = "01";  // 계좌 유형
 
         // 밀리초 단위 시간에서 마지막 6자리 사용
