@@ -85,7 +85,7 @@ const TransactionSearch = ({ onSearch }: TransactionSearchProps) => {
 
         <button
           onClick={handleSearch}
-          className='ml-2 bg-[#00CCCC] text-white px-4 py-2 rounded-md w-auto whitespace-nowrap'
+          className='ml-1 bg-[#00CCCC] text-white px-4 py-2 rounded-md w-auto whitespace-nowrap'
         >
           검색
         </button>
