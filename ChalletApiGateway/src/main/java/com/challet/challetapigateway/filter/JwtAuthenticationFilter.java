@@ -25,11 +25,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
 
             // /challet-service/auth/와 Swagger 경로들은 토큰 검증을 제외
             if (path.startsWith("/challet-service/auth") ||
-                path.startsWith("/challet-service/v3/api-docs") ||
-                path.startsWith("/bank-service/v3/api-docs") ||
-                path.startsWith("/kb-bank-service/v3/api-docs") ||
-                path.startsWith("/nh-bank-service/v3/api-docs") ||
-                path.startsWith("/sh-bank-service/v3/api-docs") ) {
+                path.startsWith("/api/challet/v3/api-docs") ||
+                path.startsWith("/api/ch-bank/v3/api-docs") ||
+                path.startsWith("/api/kb-bank/v3/api-docs") ||
+                path.startsWith("/api/nh-bank/v3/api-docs") ||
+                path.startsWith("/api/sh-bank/v3/api-docs") ) {
                 return chain.filter(exchange);
             }
 

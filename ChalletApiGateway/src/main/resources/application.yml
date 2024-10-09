@@ -5,12 +5,14 @@ spring:
   profiles:
     active: prod #로컬(dev) / git(prod)
 
+
 ---
 # 로컬(dev) 환경 설정
 spring:
   config:
     activate:
       on-profile: dev
+    import: application-key.yml
 
 eureka:
   client:
@@ -25,7 +27,7 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: "optional:file:/ChalletApiGateway/src/main/resources/application-key.yml"
+    import: "classpath:/application-key.yml"
 
 eureka:
   client:
