@@ -10,12 +10,15 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Document(indexName = "ch_bank_transaction")
+@Document(indexName = "ch_bank_transaction", createIndex = false)
 @Schema(description = "챌렛은행 거래내역 검색")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record SearchedTransaction(
 
     @Id
