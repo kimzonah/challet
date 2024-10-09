@@ -443,7 +443,7 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 		Pageable pageable = PageRequest.of(
 			searchTransactionRequestDTO.page(),
 			searchTransactionRequestDTO.size(),
-			Sort.by(Sort.Order.desc("transactionId"))
+			Sort.by(Sort.Order.desc("transactionDate"))
 		);
 
 		Page<SearchedTransaction> searchedTransactions = getResult(searchTransactionRequestDTO,
