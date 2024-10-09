@@ -46,6 +46,12 @@ const ChallengeCreatePage = () => {
     return new Intl.NumberFormat('ko-KR').format(number);
   };
 
+  const handleRoomNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // 특수기호를 제외한 문자만 허용 (한글, 영어, 숫자, 공백만 허용)
+    const value = e.target.value.replace(/[^a-zA-Z0-9ㄱ-ㅎ가-힣\s]/g, '');
+    setRoomName(value);
+  };
+
   // 사용자가 입력한 값을 숫자로 변환하고 세 자리마다 콤마와 "원"을 붙여 표시
   const handleSpendingLimitChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자가 아닌 것은 제거
@@ -158,9 +164,9 @@ const ChallengeCreatePage = () => {
               type='text'
               value={roomName}
               maxLength={15}
-              onChange={handleInputChange(setRoomName)}
+              onChange={handleRoomNameChange} // 특수기호를 제외하는 핸들러 사용
               className='w-[85vw] px-2 py-3 rounded-lg text-gray-500 bg-[#F1F4F6] focus:outline-none focus:ring-2 focus:ring-[#00CCCC] mb-2'
-              placeholder='방 이름 (최대 15자)'
+              placeholder='방 이름 (최대 15자, 특수기호 불가)'
             />
           </div>
 
