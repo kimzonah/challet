@@ -9,6 +9,7 @@ import org.hibernate.NonUniqueResultException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.challet.shbankservice.domain.dto.request.AccountTransferRequestDTO;
@@ -133,14 +134,16 @@ public class ShBankServiceImpl implements ShBankService {
 	@Override
 	public SearchedTransactionResponseDTO searchTransaction(
 		final SearchTransactionRequestDTO searchTransactionRequestDTO) {
-		Pageable pageable = PageRequest.of(searchTransactionRequestDTO.page(),
-			searchTransactionRequestDTO.size());
+		Pageable pageable = PageRequest.of(
+			searchTransactionRequestDTO.page(),
+			searchTransactionRequestDTO.size(),
+			Sort.by(Sort.Order.desc("transactionDate"))
+		);
+
 		Page<SearchedTransaction> searchedTransactions = getResult(searchTransactionRequestDTO,
 			pageable);
 
 		boolean isLastPage = searchedTransactions.isLast();
-
-		log.info("{}", searchedTransactions.getContent());
 
 		return SearchedTransactionResponseDTO.fromSearchedTransaction(
 			searchedTransactions.getContent(), isLastPage);
@@ -148,10 +151,11 @@ public class ShBankServiceImpl implements ShBankService {
 
 	private Page<SearchedTransaction> getResult(
 		SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
-		if (searchTransactionRequestDTO.keyword() != null) {
+		if (searchTransactionRequestDTO.keyword() != null && !searchTransactionRequestDTO.keyword()
+			.isEmpty()) {
 			return searchedTransactionRepository.findByAccountIdAndKeyword(
-				searchTransactionRequestDTO.accountId(),
-				searchTransactionRequestDTO.keyword(), pageable);
+				searchTransactionRequestDTO.accountId(), searchTransactionRequestDTO.keyword(),
+				pageable);
 		}
 		return searchedTransactionRepository.findByAccountId(
 			searchTransactionRequestDTO.accountId(), pageable);
