@@ -10,12 +10,16 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+
 @Builder
-@Document(indexName = "nh_bank_transaction")
+@Document(indexName = "nh_bank_transaction", createIndex = false)
 @Schema(description = "농협은행 거래내역 검색")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record SearchedTransaction(
 
     @Id
@@ -63,15 +67,15 @@ public record SearchedTransaction(
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static SearchedTransaction fromAccountTransferByTo(NhBankTransaction transaction) {
+    public static SearchedTransaction fromAccountTransferByTo(NhBankTransaction toTransaction) {
         return SearchedTransaction.builder()
-            .transactionId(String.valueOf(transaction.getId()))
-            .accountId(transaction.getNhBank().getId())
-            .transactionDate(convertToDate(transaction.getTransactionDatetime()))
-            .deposit(transaction.getDeposit())
-            .withdrawal(transaction.getWithdrawal())
-            .transactionBalance(transaction.getTransactionBalance())
-            .transactionAmount(transaction.getTransactionAmount())
+            .transactionId(String.valueOf(toTransaction.getId()))
+            .accountId(toTransaction.getNhBank().getId())
+            .transactionDate(convertToDate(toTransaction.getTransactionDatetime()))
+            .deposit(toTransaction.getDeposit())
+            .withdrawal(toTransaction.getWithdrawal())
+            .transactionBalance(toTransaction.getTransactionBalance())
+            .transactionAmount(toTransaction.getTransactionAmount())
             .build();
     }
 }
