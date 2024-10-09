@@ -420,6 +420,8 @@ public class ChalletBankServiceImpl implements ChalletBankService {
 					accountTransferRequestDTO.depositAccountNumber());
 			}
 			return accountName;
+		}catch (ExceptionResponse e) {
+			throw e;
 		} catch (Exception e) {
 			throw new ExceptionResponse(CustomException.ACCOUNT_NOT_FOUND_EXCEPTION);
 		}
