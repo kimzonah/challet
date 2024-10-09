@@ -27,7 +27,7 @@ import com.challet.bankservice.domain.repository.CategoryMappingRepository;
 import com.challet.bankservice.domain.repository.CategoryRepository;
 import com.challet.bankservice.domain.repository.ChalletBankRepository;
 import com.challet.bankservice.domain.repository.ChalletBankTransactionRepository;
-import com.challet.bankservice.domain.repository.SearchedTransactionRepository;
+import com.challet.bankservice.domain.elastic.repository.SearchedTransactionRepository;
 import com.challet.bankservice.global.client.ChalletFeignClient;
 import com.challet.bankservice.global.client.KbBankFeignClient;
 import com.challet.bankservice.global.client.NhBankFeignClient;
@@ -434,23 +434,17 @@ public class ChalletBankServiceImpl implements ChalletBankService {
     }
 
     @Override
-    public SearchedTransactionResponseDTO searchTransaction(
-        final SearchTransactionRequestDTO searchTransactionRequestDTO) {
-        Pageable pageable = PageRequest.of(searchTransactionRequestDTO.page(),
-            searchTransactionRequestDTO.size());
-        Page<SearchedTransaction> searchedTransactions = getResult(searchTransactionRequestDTO,
-            pageable);
+    public SearchedTransactionResponseDTO searchTransaction(final SearchTransactionRequestDTO searchTransactionRequestDTO) {
+        Pageable pageable = PageRequest.of(searchTransactionRequestDTO.page(), searchTransactionRequestDTO.size());
+        Page<SearchedTransaction> searchedTransactions = getResult(searchTransactionRequestDTO, pageable);
 
         boolean isLastPage = searchedTransactions.isLast();
 
-        return SearchedTransactionResponseDTO.fromSearchedTransaction(
-            searchedTransactions.getContent(), isLastPage);
+        return SearchedTransactionResponseDTO.fromSearchedTransaction(searchedTransactions.getContent(), isLastPage);
     }
 
-    private Page<SearchedTransaction> getResult(
-        SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
-        log.info(searchTransactionRequestDTO.keyword());
-        if (searchTransactionRequestDTO.keyword() != null) {
+    private Page<SearchedTransaction> getResult(SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
+        if (searchTransactionRequestDTO.keyword() != null && !searchTransactionRequestDTO.keyword().isEmpty()) {
             return searchedTransactionRepository.findByAccountIdAndKeyword(
                 searchTransactionRequestDTO.accountId(), searchTransactionRequestDTO.keyword(), pageable);
         }
