@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
             String path = exchange.getRequest().getURI().getPath();
 
             // /challet-service/auth/와 Swagger 경로들은 토큰 검증을 제외
-            if (path.startsWith("/challet-service/auth") ||
+            if (path.startsWith("/api/challet/auth") ||
                 path.startsWith("/api/challet/v3/api-docs") ||
                 path.startsWith("/api/ch-bank/v3/api-docs") ||
                 path.startsWith("/api/kb-bank/v3/api-docs") ||
