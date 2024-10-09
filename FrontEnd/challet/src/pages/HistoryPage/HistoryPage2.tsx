@@ -7,29 +7,28 @@ import nhLogo from '../../assets/mydata/nh-logo.svg';
 import shLogo from '../../assets/mydata/sh-logo.svg';
 
 interface Transaction {
-  transactionId: string;
-  accountId: number;
+  id: number;
+  transactionId?: string;
   transactionDate: string;
   deposit: string;
-  withdrawal: string;
   transactionBalance: number;
   transactionAmount: number;
 }
 
 interface TransactionResponse {
   count: number;
-  accountBalance: number | null; // 여기서 null을 허용하도록 변경
+  isLastPage: boolean;
   searchedTransactions: Transaction[];
 }
 
-function MyDataHistoryPage() {
+function History2Page() {
   const location = useLocation();
   const navigate = useNavigate();
   const [transactionData, setTransactionData] =
     useState<TransactionResponse | null>(null);
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태
-  const [initialBalance, setInitialBalance] = useState<number | null>(null); // 초기 계좌 잔액 상태
-  const { bankShortName, accountNumber, accountId } = location.state || {}; // accountId 추가
+  const [category, setCategory] = useState<string>(''); // 카테고리 상태
+  const { bankShortName, accountNumber, accountId } = location.state || {};
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -38,48 +37,36 @@ function MyDataHistoryPage() {
   useEffect(() => {
     if (location.state?.transactionData) {
       setTransactionData(location.state.transactionData);
-      setInitialBalance(location.state.transactionData.accountBalance); // 초기 계좌 잔액 설정
     }
   }, [location.state]);
 
-  const getSearchApiUrl = (bankShortName: string): string => {
-    switch (bankShortName) {
-      case '국민':
-        return '/api/kb-bank/search';
-      case '농협':
-        return '/api/nh-bank/search';
-      case '신한':
-        return '/api/sh-bank/search';
-      default:
-        throw new Error('지원하지 않는 은행입니다.');
-    }
-  };
-
   const handleSearch = async () => {
     try {
-      const apiUrl = getSearchApiUrl(bankShortName);
+      const apiUrl = '/api/ch-bank/search';
 
       const response = await axiosInstance.get(apiUrl, {
         params: {
           accountId,
           keyword: searchTerm, // 검색어 전달
+          category: category, // 카테고리 전달
+          page: 0,
+          size: 10,
         },
       });
 
       console.log('검색 응답 받음:', response.data); // 검색 API 응답 확인
 
-      // 'transactionId'를 기존 id로 사용
+      // 'transactionId'를 'id'로 변환
       const formattedTransactions = response.data.searchedTransactions.map(
         (transaction: Transaction) => ({
           ...transaction,
-          id: transaction.transactionId, // 새로운 응답에 맞춰 id 설정
+          id: transaction.transactionId,
         })
       );
 
-      // 변환된 데이터로 상태 업데이트 (잔액은 유지)
+      // 변환된 데이터로 상태 업데이트
       setTransactionData({
-        count: response.data.count,
-        accountBalance: initialBalance,
+        ...response.data,
         searchedTransactions: formattedTransactions,
       });
     } catch (error) {
@@ -87,23 +74,22 @@ function MyDataHistoryPage() {
     }
   };
 
-  // 검색 필드 변경 시 검색어 상태 업데이트
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleTransactionClick = async (transactionId: string) => {
+  const handleTransactionClick = async (transactionId: number) => {
     const apiUrl = `/api/ch-bank/details`;
     try {
       const response = await axiosInstance.get(apiUrl, {
         headers: {
-          TransactionId: transactionId,
+          TransactionId: transactionId.toString(),
         },
       });
 
       console.log('거래 상세 내역 응답:', response.data);
 
-      navigate(`/mydata-detail/${transactionId}`, {
+      navigate(`/history-detail/${transactionId}`, {
         state: { transactionDetails: response.data },
       });
     } catch (error) {
@@ -142,13 +128,10 @@ function MyDataHistoryPage() {
           <p className='text-sm font-medium mb-1 text-[#6C6C6C]'>
             {bankShortName} {accountNumber}
           </p>
-          <h2 className='text-3xl font-bold'>
-            {transactionData.accountBalance?.toLocaleString()}원
-          </h2>
         </div>
       </div>
 
-      {/* 거래 내역 검색 필드 */}
+      {/* 검색 필드 */}
       <div className='px-4 py-2'>
         <div className='flex items-center bg-gray-100 rounded-md px-3 py-1'>
           <svg
@@ -192,11 +175,9 @@ function MyDataHistoryPage() {
 
             return (
               <div
-                key={transaction.transactionId}
+                key={transaction.id}
                 className='px-4 py-4 cursor-pointer'
-                onClick={() =>
-                  handleTransactionClick(transaction.transactionId)
-                }
+                onClick={() => handleTransactionClick(transaction.id)}
               >
                 <div className='flex items-center'>
                   <p className='text-sm font-medium text-gray-800 mr-1'>
@@ -208,7 +189,7 @@ function MyDataHistoryPage() {
                 <div className='flex justify-between items-start mt-4'>
                   <p className='text-base font-medium text-[#373A3F]'>
                     {transaction.transactionAmount > 0
-                      ? transaction.withdrawal
+                      ? transaction.deposit
                       : transaction.deposit}
                   </p>
                   <div className='text-right'>
@@ -242,4 +223,4 @@ function MyDataHistoryPage() {
   );
 }
 
-export default MyDataHistoryPage;
+export default History2Page;
