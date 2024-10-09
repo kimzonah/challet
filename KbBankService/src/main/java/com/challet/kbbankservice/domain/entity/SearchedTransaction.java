@@ -17,8 +17,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Document(indexName = "nh_bank_transaction", createIndex = false)
-@Schema(description = "농협은행 거래내역 검색")
+@Document(indexName = "kb_bank_transaction", createIndex = false)
+@Schema(description = "국민은행 거래내역 검색")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record SearchedTransaction(
 
