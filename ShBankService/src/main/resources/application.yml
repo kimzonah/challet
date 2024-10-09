@@ -46,11 +46,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: challet
     password: ${mysqlpassword}
-    p6spy:
-      enabled: true
-      appender: com.p6spy.engine.spy.appender.Slf4JLogger
-      logMessageFormat:
-        p6spy: "%(currentTime)|%(executionTime)|%(category)|%(sqlSingleLine)"
+    hikari:
+      maximum-pool-size: 30  # 최대 30개의 연결
+      minimum-idle: 10       # 최소 10개의 유휴 연결
+      idle-timeout: 30000    # 30초 동안 유휴 상태일 때 연결을 닫음
   jpa:
     hibernate:
       ddl-auto: validate
