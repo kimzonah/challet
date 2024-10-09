@@ -22,6 +22,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<Object
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
+            System.out.println(path);
 
             // /challet-service/auth/와 Swagger 경로들은 토큰 검증을 제외
             if (path.startsWith("/api/challet/auth") ||
