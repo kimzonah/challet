@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -129,9 +130,13 @@ public class NhBankServiceImpl implements NhBankService {
 
     @Override
     public SearchedTransactionResponseDTO searchTransaction(
-        SearchTransactionRequestDTO searchTransactionRequestDTO) {
-        Pageable pageable = PageRequest.of(searchTransactionRequestDTO.page(),
-            searchTransactionRequestDTO.size());
+        final SearchTransactionRequestDTO searchTransactionRequestDTO) {
+        Pageable pageable = PageRequest.of(
+            searchTransactionRequestDTO.page(),
+            searchTransactionRequestDTO.size(),
+            Sort.by(Sort.Order.desc("transactionDate"))
+        );
+
         Page<SearchedTransaction> searchedTransactions = getResult(searchTransactionRequestDTO,
             pageable);
 
@@ -143,10 +148,11 @@ public class NhBankServiceImpl implements NhBankService {
 
     private Page<SearchedTransaction> getResult(
         SearchTransactionRequestDTO searchTransactionRequestDTO, Pageable pageable) {
-        if (searchTransactionRequestDTO.keyword() != null) {
+        if (searchTransactionRequestDTO.keyword() != null && !searchTransactionRequestDTO.keyword()
+            .isEmpty()) {
             return searchedTransactionRepository.findByAccountIdAndKeyword(
-                searchTransactionRequestDTO.accountId(),
-                searchTransactionRequestDTO.keyword(), pageable);
+                searchTransactionRequestDTO.accountId(), searchTransactionRequestDTO.keyword(),
+                pageable);
         }
         return searchedTransactionRepository.findByAccountId(
             searchTransactionRequestDTO.accountId(), pageable);

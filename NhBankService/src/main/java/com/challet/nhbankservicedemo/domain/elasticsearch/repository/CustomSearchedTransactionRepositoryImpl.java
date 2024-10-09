@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import com.challet.nhbankservicedemo.domain.entity.SearchedTransaction;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -27,7 +29,6 @@ public class CustomSearchedTransactionRepositoryImpl implements CustomSearchedTr
 	@Override
 	public Page<SearchedTransaction> findByAccountIdAndKeyword(Long accountId, String keyword, Pageable pageable) {
 		try {
-			// Bool 쿼리 생성
 			BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder()
 				.must(mq -> mq.term(t -> t.field("accountId").value(accountId)));
 
@@ -42,19 +43,22 @@ public class CustomSearchedTransactionRepositoryImpl implements CustomSearchedTr
 
 			Query query = boolQueryBuilder.build()._toQuery();
 
-			// 검색 요청 생성
+			SortOptions sortOptions = SortOptions.of(so -> so
+				.field(f -> f.field("transactionDate").order(SortOrder.Desc))
+			);
+
 			SearchResponse<SearchedTransaction> searchResponse = elasticsearchClient.search(s -> s
 					.index("ch_bank_transaction")
 					.query(query)
+					.sort(sortOptions)
 					.from((int) pageable.getOffset())
 					.size(pageable.getPageSize()),
 				SearchedTransaction.class
 			);
 
-			// 검색 결과 처리
 			List<SearchedTransaction> content = searchResponse.hits().hits().stream()
 				.map(Hit::source)
-				.collect(Collectors.toList());
+				.toList();
 
 			long total = searchResponse.hits().total() != null ? searchResponse.hits().total().value() : 0;
 
