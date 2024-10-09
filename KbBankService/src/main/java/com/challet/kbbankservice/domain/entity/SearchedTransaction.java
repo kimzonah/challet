@@ -1,19 +1,25 @@
 package com.challet.kbbankservice.domain.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import lombok.Builder;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+
 @Builder
-@Document(indexName = "kb_bank_transaction")
-@Schema(description = "국민은행 거래내역 검색")
+@Document(indexName = "nh_bank_transaction", createIndex = false)
+@Schema(description = "농협은행 거래내역 검색")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record SearchedTransaction(
 
     @Id
@@ -61,15 +67,15 @@ public record SearchedTransaction(
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static SearchedTransaction fromAccountTransferByTo(KbBankTransaction transaction) {
+    public static SearchedTransaction fromAccountTransferByTo(KbBankTransaction toTransaction) {
         return SearchedTransaction.builder()
-            .transactionId(String.valueOf(transaction.getId()))
-            .accountId(transaction.getKbBank().getId())
-            .transactionDate(convertToDate(transaction.getTransactionDatetime()))
-            .deposit(transaction.getDeposit())
-            .withdrawal(transaction.getWithdrawal())
-            .transactionBalance(transaction.getTransactionBalance())
-            .transactionAmount(transaction.getTransactionAmount())
+            .transactionId(String.valueOf(toTransaction.getId()))
+            .accountId(toTransaction.getKbBank().getId())
+            .transactionDate(convertToDate(toTransaction.getTransactionDatetime()))
+            .deposit(toTransaction.getDeposit())
+            .withdrawal(toTransaction.getWithdrawal())
+            .transactionBalance(toTransaction.getTransactionBalance())
+            .transactionAmount(toTransaction.getTransactionAmount())
             .build();
     }
 }
