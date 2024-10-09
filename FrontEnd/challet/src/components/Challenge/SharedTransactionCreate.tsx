@@ -29,15 +29,15 @@ const SharedTransactionCreate = () => {
       const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
 
       // // 파일 확장자 검사 (jpg, jpeg만 허용)
-      // const fileExtension = file.name.split('.').pop()?.toLowerCase();
-      // if (
-      //   file.type === 'image/jpeg' &&
-      //   !['jpg', 'jpeg'].includes(fileExtension || '')
-      // ) {
-      //   setErrorMessage('jpg 또는 jpeg 확장자만 허용됩니다.');
-      //   setIsError(true);
-      //   return;
-      // }
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      if (
+        file.type === 'image/jpeg' &&
+        !['jpg', 'jpeg'].includes(fileExtension || '')
+      ) {
+        setErrorMessage(' jpg 파일은 jpg 또는 jpeg 확장자만 허용됩니다.');
+        setIsError(true);
+        return;
+      }
 
       // 파일 형식 검사 (MIME 타입 검사)
       if (!allowedTypes.includes(file.type)) {
