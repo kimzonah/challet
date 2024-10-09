@@ -32,20 +32,17 @@ public class CustomSearchedTransactionRepositoryImpl implements CustomSearchedTr
 			BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder()
 				.must(mq -> mq.term(t -> t.field("accountId").value(accountId)));
 
-			// transactionAmount 값을 기준으로 필드 선택
 			if (keyword != null && !keyword.isEmpty()) {
 				boolQueryBuilder.must(mq -> mq
 					.bool(bq -> bq
-						// 음수일 경우 deposit 필드에서 검색
 						.should(sq -> sq.bool(subBq -> subBq
 							.must(m -> m.range(r -> r.field("transactionAmount").lt(
-								JsonData.fromJson("0"))))  // 음수
+								JsonData.fromJson("0"))))
 							.must(m -> m.wildcard(wq -> wq.field("deposit").value("*" + keyword + "*")))
 						))
-						// 양수일 경우 withdrawal 필드에서 검색
 						.should(sq -> sq.bool(subBq -> subBq
 							.must(m -> m.range(r -> r.field("transactionAmount").gt(
-								JsonData.fromJson("0"))))  // 양수
+								JsonData.fromJson("0"))))
 							.must(m -> m.wildcard(wq -> wq.field("withdrawal").value("*" + keyword + "*")))
 						))
 					)
