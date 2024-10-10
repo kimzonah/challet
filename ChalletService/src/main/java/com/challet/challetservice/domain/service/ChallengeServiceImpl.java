@@ -121,7 +121,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 		userRepository.findByPhoneNumber(loginUserPhoneNumber)
 			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("startDate")));
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("startDate")));
 		Page<SearchedChallenge> searchedChallengePage = getResult(category, keyword, pageable);
 
 		boolean isLastPage = searchedChallengePage.isLast();
