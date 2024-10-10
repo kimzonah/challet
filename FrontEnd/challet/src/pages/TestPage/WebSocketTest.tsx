@@ -25,12 +25,12 @@ const WebSocketTest: React.FC = () => {
     stompClientInstance.connect(
       { Authorization: `Bearer ${token}` },
       (frame: any) => {
-        console.log('Connected: ' + frame);
+        // console.log('Connected: ' + frame);
         stompClientInstance.subscribe(
           '/topic/challenges/1/shared-transactions',
           (message: any) => {
             const response = JSON.parse(message.body);
-            console.log('Received Response DTO:', response);
+            // console.log('Received Response DTO:', response);
             setTransactions((prevTransactions) => [
               ...prevTransactions,
               response,
@@ -39,7 +39,7 @@ const WebSocketTest: React.FC = () => {
         );
       },
       (error: any) => {
-        console.log('Error connecting to WebSocket: ' + error);
+        // console.log('Error connecting to WebSocket: ' + error);
       }
     );
 
@@ -47,7 +47,7 @@ const WebSocketTest: React.FC = () => {
 
     return () => {
       stompClientInstance.disconnect(() => {
-        console.log('Disconnected');
+        // console.log('Disconnected');
       });
     };
   }, []);
@@ -68,7 +68,7 @@ const WebSocketTest: React.FC = () => {
         { Authorization: `Bearer ${token}` },
         JSON.stringify(transactionData)
       );
-      console.log('Sent Transaction:', transactionData);
+      // console.log('Sent Transaction:', transactionData);
     }
   };
 

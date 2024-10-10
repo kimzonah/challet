@@ -60,7 +60,7 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
       });
 
       // 응답 데이터를 로그로 출력
-      console.log('응답 데이터:', response.data);
+      // console.log('응답 데이터:', response.data);
 
       navigate('/mydata-history', {
         state: {

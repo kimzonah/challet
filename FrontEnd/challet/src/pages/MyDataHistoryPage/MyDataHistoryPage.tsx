@@ -63,7 +63,7 @@ function MyDataHistoryPage() {
           },
         });
 
-        console.log(`응답 받은 데이터 (페이지 ${pageNumber}):`, response.data);
+        // console.log(`응답 받은 데이터 (페이지 ${pageNumber}):`, response.data);
 
         const { searchedTransactions, isLastPage } = response.data;
 
@@ -122,7 +122,7 @@ function MyDataHistoryPage() {
   }, [handleScroll]);
 
   const handleTransactionClick = async (transactionId: string) => {
-    console.log(`클릭된 거래 ID: ${transactionId}`); // 클릭된 거래 ID 출력
+    // console.log(`클릭된 거래 ID: ${transactionId}`); // 클릭된 거래 ID 출력
 
     const bankKey =
       bankShortName === '국민'
@@ -147,7 +147,7 @@ function MyDataHistoryPage() {
         },
       });
 
-      console.log('거래 상세 내역 응답:', response.data); // 응답 데이터 출력
+      // console.log('거래 상세 내역 응답:', response.data); // 응답 데이터 출력
 
       navigate(`/mydata-detail/${transactionId}`, {
         state: { transactionDetails: response.data },
@@ -177,7 +177,6 @@ function MyDataHistoryPage() {
           {/* 여기에서 location.state에서 받은 accountBalance를 사용합니다 */}
           <h2 className='text-3xl font-bold'>
             {accountBalance?.toLocaleString()}원
-            {accountBalance?.toLocaleString()}원
           </h2>
         </div>
       </div>
@@ -194,7 +193,7 @@ function MyDataHistoryPage() {
           />
           <button
             onClick={handleSearch} // 검색 버튼 클릭 시 검색 실행
-            className='ml-2 bg-[#00CCCC] text-white rounded px-3 py-1'
+            className='ml-2 bg-[#00CCCC] text-white rounded px-3 py-1 flex-shrink-0'
           >
             검색
           </button>
