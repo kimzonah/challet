@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import AxiosInstance from '../../api/axiosInstance';
 import { TopBar } from '../../components/topbar/topbar';
 import TransactionInfo from '../../components/HistoryDetail/TransactionInfo';
@@ -23,6 +23,8 @@ interface TransactionDetail {
 
 const HistoryDetailPage = () => {
   const { transactionId } = useParams<{ transactionId: string }>();
+  const navigate = useNavigate(); // navigate 추가
+  const location = useLocation(); // location 추가
   const [transactionDetail, setTransactionDetail] =
     useState<TransactionDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -87,9 +89,19 @@ const HistoryDetailPage = () => {
 
   const categoryIcon = getCategoryIcon(transactionDetail.category);
 
+  // 뒤로가기 클릭 시 검색 결과를 유지하도록 navigate로 전달
+  const handleBackClick = () => {
+    navigate(-1, {
+      state: {
+        searchResults: location.state?.searchResults || null, // 검색 결과를 그대로 전달
+      },
+    });
+  };
+
   return (
     <div className='min-h-screen bg-white'>
-      <TopBar title='상세 내역' />
+      {/* 뒤로가기 처리에 handleBackClick 추가 */}
+      <TopBar title='상세 내역' backAction={handleBackClick} />
       {/* 거래 내역 정보 */}
       <TransactionInfo
         deposit={transactionDetail.deposit}
