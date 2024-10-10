@@ -118,15 +118,50 @@ const SignUpPage = () => {
     navigate('/set-password');
   };
 
-  // 이름 입력 핸들러
+  // // 이름 입력 핸들러
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   // 한글 조합이 끝나면 유효성 검사를 진행
+  //   if (!isComposing) {
+  //     const value = e.target.value;
+  //     setName(value.replace(/[^가-힣\s]/g, '')); // 완성형 한글과 공백만 허용
+  //   } else {
+  //     // 조합 중일 때도 입력된 값 반영
+  //     setName(e.target.value);
+  //   }
+  // };
+
+  // // 한글 조합 시작
+  // const handleCompositionStart = () => {
+  //   setIsComposing(true);
+  // };
+
+  // // 한글 조합 완료
+  // const handleCompositionEnd = (
+  //   e: React.CompositionEvent<HTMLInputElement>
+  // ) => {
+  //   setIsComposing(false);
+  //   const value = e.currentTarget.value;
+  //   setName(value.replace(/[^가-힣a-zA-Z\s]/g, '')); // 유효성 검사 후 최종값 반영
+  // };
+
+  ////// 아이폰 수정 버전 /////////
+  // iOS 기기 감지 함수
+  const isIOS = () => {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  };
+
+  // 입력 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 한글 조합이 끝나면 유효성 검사를 진행
+    const value = e.target.value;
+
     if (!isComposing) {
-      const value = e.target.value;
-      setName(value.replace(/[^가-힣\s]/g, '')); // 완성형 한글과 공백만 허용
-    } else {
-      // 조합 중일 때도 입력된 값 반영
-      setName(e.target.value);
+      if (!isIOS()) {
+        // iOS가 아닌 경우 유효성 검사 적용
+        setName(value.replace(/[^가-힣\s]/g, ''));
+      } else {
+        // iOS에서는 유효성 검사 없이 값 반영
+        setName(value);
+      }
     }
   };
 
@@ -135,14 +170,47 @@ const SignUpPage = () => {
     setIsComposing(true);
   };
 
+  // 한글 조합 중 업데이트
+  const handleCompositionUpdate = (
+    e: React.CompositionEvent<HTMLInputElement>
+  ) => {
+    setName(e.currentTarget.value);
+  };
+
   // 한글 조합 완료
   const handleCompositionEnd = (
     e: React.CompositionEvent<HTMLInputElement>
   ) => {
     setIsComposing(false);
+
     const value = e.currentTarget.value;
-    setName(value.replace(/[^가-힣a-zA-Z\s]/g, '')); // 유효성 검사 후 최종값 반영
+
+    if (!isIOS()) {
+      // iOS가 아닌 경우 유효성 검사 적용
+      setName(value.replace(/[^가-힣\s]/g, ''));
+    } else {
+      // iOS에서는 그대로 값 반영
+      setName(value);
+    }
   };
+
+  {
+    /* 이름 입력 필드 */
+  }
+  <div className='mb-6 mt-20'>
+    <input
+      type='text'
+      value={name} // name 상태 사용
+      onChange={handleInputChange}
+      onCompositionStart={handleCompositionStart}
+      onCompositionUpdate={handleCompositionUpdate} // 조합 중 업데이트 처리
+      onCompositionEnd={handleCompositionEnd}
+      placeholder='이름'
+      required
+      lang='ko'
+      className='border border-gray-300 rounded-md py-2 px-3 w-full focus:outline-none focus:ring-2 focus:ring-[#00cccc]'
+    />
+  </div>;
 
   return (
     <div className='min-h-screen flex flex-col justify-between px-6'>

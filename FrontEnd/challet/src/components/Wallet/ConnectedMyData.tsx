@@ -39,12 +39,6 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
   const setAccountInfo = useAccountStore((state) => state.setAccountInfo);
   const [showAllAccounts, setShowAllAccounts] = useState(false);
 
-  const apiEndpoints: Record<BankKey, string> = {
-    nh: '/api/nh-bank/account',
-    kb: '/api/kb-bank/account',
-    sh: '/api/sh-bank/account',
-  };
-
   const handleAccountClick = async (bankKey: BankKey, account: Account) => {
     setAccountInfo({
       id: Number(account.id),
@@ -53,10 +47,20 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
     });
 
     try {
-      const apiUrl = apiEndpoints[bankKey];
+      // 은행별로 API 요청을 보내기 위한 URL 설정
+      const apiUrl = `/api/${bankKey}-bank/search`;
+
+      // axiosInstance로 API 요청을 보냄 (params로 accountId, page, size를 전달)
       const response = await axiosInstance.get(apiUrl, {
-        headers: { AccountId: account.id.toString() },
+        params: {
+          accountId: account.id,
+          page: 0,
+          size: 10,
+        },
       });
+
+      // 응답 데이터를 로그로 출력
+      console.log('응답 데이터:', response.data);
 
       navigate('/mydata-history', {
         state: {
@@ -64,6 +68,7 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
           accountNumber: account.accountNumber,
           accountId: account.id,
           transactionData: response.data,
+          accountBalance: account.accountBalance,
         },
       });
     } catch (error) {
@@ -131,7 +136,7 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
         {accountsToShow.map(({ account, bankKey }) => (
           <div
             key={account.id}
-            className='p-4 bg-white w-full flex items-center cursor-pointer mb-4'
+            className='p-4 bg-white w-full flex items-center mb-4'
             onClick={() => handleAccountClick(bankKey, account)}
           >
             <div className='flex-shrink-0'>
@@ -143,7 +148,7 @@ function ConnectedMyData({ data }: ConnectedMyDataProps) {
             </div>
             <div className='flex flex-col text-left'>
               <p
-                className='text-sm text-[#6C6C6C] cursor-pointer'
+                className='text-sm text-[#6C6C6C] cursor-pointer underline flex items-center'
                 onClick={(e) => {
                   e.stopPropagation(); // 클릭 이벤트 전파 방지
                   handleAccountNumberCopy(account.accountNumber);
