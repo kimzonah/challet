@@ -31,7 +31,7 @@ class WebSocketService {
       });
 
       this.stompClient.onConnect = (frame) => {
-        // console.log('WebSocket 연결 성공:', frame);
+        console.log(frame);
         resolve(); // 연결 성공 시 resolve 호출
       };
 
@@ -41,7 +41,7 @@ class WebSocketService {
       };
 
       this.stompClient.onDisconnect = (frame) => {
-        // console.log('WebSocket 연결 종료:', frame);
+        console.log(frame);
       };
 
       // console.log('WebSocket 연결 시도:', this.stompClient);

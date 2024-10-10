@@ -71,7 +71,7 @@ const WalletBalancePay = () => {
   };
 
   useEffect(() => {
-    // console.log(
+    console.log(
       'WalletBalanceForPayReview 컴포넌트가 마운트되었습니다. 계좌 정보를 불러옵니다.'
     );
     fetchAccountInfo();

@@ -43,7 +43,7 @@ export const useChallengeApi = () => {
       // POST 요청 전송
       const response = await axiosInstance.post(url, requestBody);
 
-      // console.log('챌린지 참가 성공:', response.data);
+      console.log(response.data);
 
       return true; // 성공 시 true 반환
     } catch (error) {
@@ -60,7 +60,7 @@ export const useChallengeApi = () => {
       const url = `${API_BASE_URL}/api/challet/challenges`;
       const response = await axiosInstance.post(url, requestBody);
 
-      // console.log('챌린지 생성 성공:', response.data);
+      console.log(response.data);
     } catch (error) {
       console.error('챌린지 생성 중 오류 발생:', error);
     }
@@ -182,7 +182,7 @@ export const useChallengeApi = () => {
         },
       });
 
-      // console.log('트랜잭션 수정 성공:', response.data);
+      console.log(response.data);
     } catch (error) {
       console.error('트랜잭션 수정 중 오류 발생:', error);
     }
@@ -225,7 +225,7 @@ export const useChallengeApi = () => {
 
       const response = await axiosInstance.post(url, requestBody);
 
-      // console.log('댓글 등록 성공:', response.data);
+      console.log(response.data);
     } catch (error) {
       console.error('댓글 등록 중 오류 발생:', error);
     }
