@@ -58,7 +58,7 @@ public class CustomSearchedTransactionRepositoryImpl implements CustomSearchedTr
 			);
 
 			SearchResponse<SearchedTransaction> searchResponse = elasticsearchClient.search(s -> s
-					.index("ch_bank_transaction")
+					.index("nh_bank_transaction")
 					.query(query)
 					.sort(sortOptions)
 					.from((int) pageable.getOffset())
