@@ -8,6 +8,7 @@ import shLogo from '../../assets/mydata/sh-logo.svg';
 
 interface Transaction {
   transactionId: string;
+  transactionId: string;
   transactionDate: string;
   deposit: string;
   withdrawal: string;
@@ -16,6 +17,9 @@ interface Transaction {
 }
 
 interface TransactionResponse {
+  count: number;
+  isLastPage: boolean;
+  searchedTransactions: Transaction[];
   count: number;
   isLastPage: boolean;
   searchedTransactions: Transaction[];
@@ -144,6 +148,7 @@ function MyDataHistoryPage() {
       const response = await axiosInstance.get(apiUrl, {
         headers: {
           TransactionId: transactionId,
+          TransactionId: transactionId,
         },
       });
 
@@ -174,7 +179,9 @@ function MyDataHistoryPage() {
           <p className='text-sm font-medium mb-1 text-[#6C6C6C]'>
             {bankShortName} {accountNumber}
           </p>
+          {/* 여기에서 location.state에서 받은 accountBalance를 사용합니다 */}
           <h2 className='text-3xl font-bold'>
+            {accountBalance?.toLocaleString()}원
             {accountBalance?.toLocaleString()}원
           </h2>
         </div>
@@ -209,7 +216,11 @@ function MyDataHistoryPage() {
             return (
               <div
                 key={transaction.transactionId}
+                key={transaction.transactionId}
                 className='px-4 py-4 cursor-pointer'
+                onClick={() =>
+                  handleTransactionClick(transaction.transactionId)
+                }
                 onClick={() =>
                   handleTransactionClick(transaction.transactionId)
                 }
