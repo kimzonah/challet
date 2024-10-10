@@ -8,7 +8,6 @@ import shLogo from '../../assets/mydata/sh-logo.svg';
 
 interface Transaction {
   transactionId: string;
-  transactionId: string;
   transactionDate: string;
   deposit: string;
   withdrawal: string;
@@ -17,9 +16,6 @@ interface Transaction {
 }
 
 interface TransactionResponse {
-  count: number;
-  isLastPage: boolean;
-  searchedTransactions: Transaction[];
   count: number;
   isLastPage: boolean;
   searchedTransactions: Transaction[];
@@ -148,7 +144,6 @@ function MyDataHistoryPage() {
       const response = await axiosInstance.get(apiUrl, {
         headers: {
           TransactionId: transactionId,
-          TransactionId: transactionId,
         },
       });
 
@@ -216,11 +211,7 @@ function MyDataHistoryPage() {
             return (
               <div
                 key={transaction.transactionId}
-                key={transaction.transactionId}
                 className='px-4 py-4 cursor-pointer'
-                onClick={() =>
-                  handleTransactionClick(transaction.transactionId)
-                }
                 onClick={() =>
                   handleTransactionClick(transaction.transactionId)
                 }

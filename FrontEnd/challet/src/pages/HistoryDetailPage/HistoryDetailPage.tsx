@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import AxiosInstance from '../../api/axiosInstance';
 import { TopBar } from '../../components/topbar/topbar';
 import TransactionInfo from '../../components/HistoryDetail/TransactionInfo';
@@ -23,8 +23,7 @@ interface TransactionDetail {
 
 const HistoryDetailPage = () => {
   const { transactionId } = useParams<{ transactionId: string }>();
-  const navigate = useNavigate(); // navigate 추가
-  const location = useLocation(); // location 추가
+  const navigate = useNavigate();
   const [transactionDetail, setTransactionDetail] =
     useState<TransactionDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,14 +51,13 @@ const HistoryDetailPage = () => {
     const fetchTransactionDetail = async () => {
       if (!transactionId) return;
 
-      // transactionId를 확인하기 위한 콘솔 로그
       console.log('transactionId:', transactionId);
 
       try {
         const response = await AxiosInstance.get<TransactionDetail>(
           `api/ch-bank/details`,
           {
-            headers: { TransactionId: transactionId }, // transactionId를 헤더로 전송
+            headers: { TransactionId: transactionId },
           }
         );
 
@@ -89,27 +87,20 @@ const HistoryDetailPage = () => {
 
   const categoryIcon = getCategoryIcon(transactionDetail.category);
 
-  // 뒤로가기 클릭 시 검색 결과를 유지하도록 navigate로 전달
+  // 뒤로가기 클릭 시 단순히 이전 페이지로 이동
   const handleBackClick = () => {
-    navigate(-1, {
-      state: {
-        searchResults: location.state?.searchResults || null, // 검색 결과를 그대로 전달
-      },
-    });
+    navigate(-1); // 상태 전달 없이 뒤로 가기
   };
 
   return (
     <div className='min-h-screen bg-white'>
-      {/* 뒤로가기 처리에 handleBackClick 추가 */}
       <TopBar title='상세 내역' backAction={handleBackClick} />
-      {/* 거래 내역 정보 */}
       <TransactionInfo
         deposit={transactionDetail.deposit}
         withdrawal={transactionDetail.withdrawal}
         transactionAmount={transactionDetail.transactionAmount}
         categoryIcon={categoryIcon}
       />
-      {/* 상세 정보 카드 */}
       <TransactionDetailCard transactionDetail={transactionDetail} />
     </div>
   );
