@@ -1,10 +1,26 @@
-import { useState } from 'react';
-import CalendarSpendingPage from './CalendarSpending'; // CalendarSpendingPage 컴포넌트 임포트
-import MyStatistics from '../../components/Analysis/MyStatistics'; // statistics 컴포넌트 임포트
+import { useEffect, useState } from 'react';
+import CalendarSpendingPage from './CalendarSpending';
+import MyStatistics from '../../components/Analysis/MyStatistics';
 import AverageStatistics from '../../components/Analysis/AverageStatics';
+import { useStatisticsApi } from '../../hooks/statisticsApi';
 
 const AnalysisPage = () => {
-  const [activeTab, setActiveTab] = useState('내 소비'); // 기본 활성화된 탭을 '내 소비'로 설정
+  const [activeTab, setActiveTab] = useState('내 소비');
+  const {
+    averageStatistics,
+    myStatistics,
+    isLoading,
+    age,
+    gender,
+    fetchStatistics,
+    fetchUserData,
+    nickname,
+  } = useStatisticsApi();
+
+  useEffect(() => {
+    fetchStatistics();
+    fetchUserData();
+  }, []);
 
   // 탭 전환 처리
   const handleTabClick = (tabLabel: string) => {
@@ -12,11 +28,9 @@ const AnalysisPage = () => {
   };
 
   return (
-    <div className='flex flex-col items-center  p-2'>
+    <div className='flex flex-col items-center p-2'>
       {/* 탭 버튼 */}
       <div className='flex justify-center w-full max-w-[640px] mx-auto mt-4 mb-4'>
-        {' '}
-        {/* max-width와 mx-auto 적용 */}
         {['내 소비', '소비 비교'].map((tab) => (
           <button
             key={tab}
@@ -41,8 +55,17 @@ const AnalysisPage = () => {
         )}
         {activeTab === '소비 비교' && (
           <div className='w-full scrollbar-hide overflow-y-auto max-h-[75vh]'>
-            <MyStatistics />
-            <AverageStatistics />
+            <MyStatistics
+              myStatistics={myStatistics}
+              isLoading={isLoading}
+              nickname={nickname}
+            />
+            <AverageStatistics
+              myStatistics={myStatistics}
+              averageStatistics={averageStatistics}
+              age={age}
+              gender={gender}
+            />
           </div>
         )}
       </div>

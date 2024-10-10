@@ -1,21 +1,26 @@
-import { useEffect } from 'react';
-import { useStatisticsApi } from '../../hooks/statisticsApi';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-const MyStatistics = () => {
-  const { myStatistics, isLoading, fetchStatistics, nickname, fetchUserData } =
-    useStatisticsApi();
+interface Statistic {
+  category: string;
+  percentage: number;
+  totalMoney: number;
+}
 
-  useEffect(() => {
-    fetchStatistics();
-    fetchUserData();
-  }, []);
+interface MyStatisticsProps {
+  myStatistics: Statistic[];
+  isLoading: boolean;
+  nickname: string;
+}
 
+const MyStatistics: React.FC<MyStatisticsProps> = ({
+  myStatistics,
+  isLoading,
+  nickname,
+}) => {
   if (isLoading) {
     return <p>소비 내역 불러오는 중...</p>;
   }
 
-  // 데이터가 없는 경우 처리
   if (myStatistics.length === 0) {
     return (
       <p className='col-span-3 text-center text-[#9095A1]'>

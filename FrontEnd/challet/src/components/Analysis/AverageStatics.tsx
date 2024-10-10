@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useStatisticsApi } from '../../hooks/statisticsApi';
 import {
   BarChart,
   Bar,
@@ -10,26 +8,27 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const AverageStatistics = () => {
-  const {
-    AverageStatistics,
-    myStatistics,
-    isLoading,
-    age,
-    gender,
-    fetchStatistics,
-  } = useStatisticsApi();
+interface Statistic {
+  category: string;
+  percentage: number;
+  totalMoney: number;
+}
 
-  useEffect(() => {
-    fetchStatistics();
-  }, []);
+interface AverageStatisticsProps {
+  myStatistics: Statistic[];
+  averageStatistics: Statistic[];
+  age: number;
+  gender: string;
+}
 
-  if (isLoading) {
-    return <p></p>;
-  }
-
+const AverageStatistics: React.FC<AverageStatisticsProps> = ({
+  myStatistics,
+  averageStatistics,
+  age,
+  gender,
+}) => {
   // 데이터가 없는 경우 처리
-  if (myStatistics.length === 0) {
+  if (averageStatistics.length === 0) {
     return (
       <p className='col-span-3 text-center text-[#9095A1] mt-4'>
         전달 소비 내역이 없습니다.
@@ -51,7 +50,7 @@ const AverageStatistics = () => {
 
   const comparisonData = categories.map((category) => {
     const myStat = myStatistics.find((stat) => stat.category === category);
-    const averageStat = AverageStatistics.find(
+    const averageStat = averageStatistics.find(
       (avgStat) => avgStat.category === category
     );
     return {
