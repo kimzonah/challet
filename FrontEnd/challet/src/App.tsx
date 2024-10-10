@@ -70,6 +70,8 @@ function App() {
   const Signup = useMatch('/signup');
   const Setpassword = useMatch('/set-password');
   const calendarDetail = useMatch('/calendar-detail');
+  const myDataHistoryPage = useMatch('/mydata-history');
+  const myDataDEtailPage = useMatch('/mydata-detail/:transactionId');
 
   // 두 경로 중 하나와 매칭되는지 확인
   const shouldHideNavbar =
@@ -94,7 +96,9 @@ function App() {
     Main ||
     Setpassword ||
     Signup ||
-    calendarDetail;
+    calendarDetail ||
+    myDataHistoryPage ||
+    myDataDEtailPage;
 
   return (
     <div className='min-h-screen flex flex-col justify-between'>
