@@ -101,7 +101,7 @@ export const useChallengeApi = () => {
       let url =
         `${API_BASE_URL}/api/challet/challenges` +
         (isMyChallenges ? '/my-challenges' : ''); // URL 설정
-      let size = 20; // 페이지당 데이터 수
+      let size = 10; // 페이지당 데이터 수
       let params = { category, keyword, page, size }; // 파라미터 설정
 
       if (isMyChallenges) {
