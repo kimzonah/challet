@@ -163,7 +163,7 @@ function TransferPage() {
       });
     } catch (error) {
       console.error('송금 요청 실패:', error);
-      alert('송금에 실패했습니다. 계좌 정보를 다시 확인해주세요.');
+      alert('송금에 실패했습니다. 잔액을 확인해주세요.');
     } finally {
       setLoading(false);
       setIsModalOpen(false);
