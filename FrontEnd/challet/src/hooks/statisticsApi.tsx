@@ -28,11 +28,12 @@ export const useStatisticsApi = () => {
         month: lastMonth,
       });
 
-      // console.log('통계 데이터 조회 성공:', response.data);
+      console.log('통계 데이터 조회 성공:', response.data);
 
       // 응답에서 categoryList 추출
       setMyStatistics(response.data.myCategoryList || []); // categoryList 설정
       setAverageStatistics(response.data.categoryList || []);
+      console.log('잘 들어갔냐',AverageStatistics);
       setAge(response.data.age); // 나이대 설정
       setgender(response.data.gender ? '여성' : '남성'); // 성별 설정
       return true; // 성공 시 true 반환
