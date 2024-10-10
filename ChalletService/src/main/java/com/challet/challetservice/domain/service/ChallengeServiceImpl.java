@@ -36,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,7 +121,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 		userRepository.findByPhoneNumber(loginUserPhoneNumber)
 			.orElseThrow(() -> new ExceptionResponse(CustomException.NOT_FOUND_USER_EXCEPTION));
 
-		Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("startDate")));
 		Page<SearchedChallenge> searchedChallengePage = getResult(category, keyword, pageable);
 
 		boolean isLastPage = searchedChallengePage.isLast();
