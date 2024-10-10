@@ -20,7 +20,7 @@ public class ChallengeStartScheduler {
     private final ChallengeRepository challengeRepository;
     private final SearchedChallengeRepository searchedChallengeRepository;
 
-    @Scheduled(cron = "0 18 22 * * ?")
+    @Scheduled(cron = "0 50 1 * * ?")
     @Transactional
     public void startChallenge() {
 
