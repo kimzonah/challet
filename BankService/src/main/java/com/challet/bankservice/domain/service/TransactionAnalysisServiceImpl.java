@@ -41,6 +41,7 @@ public class TransactionAnalysisServiceImpl implements TransactionAnalysisServic
     private final ShBankFeignClient shBankFeignClient;
     private final ChalletFeignClient challetFeignClient;
     private final RedisTemplate<String, MonthlyTransactionRedisListDTO> redisTemplate;
+    private final ObjectMapper objectMapper;
 
 
     @Override
@@ -56,20 +57,12 @@ public class TransactionAnalysisServiceImpl implements TransactionAnalysisServic
         Object cachedData = redisTemplate.opsForValue().get(redisKey);
         MonthlyTransactionRedisListDTO redisHistoryDTO = null;
 
-        // 데이터를 LinkedHashMap에서 MonthlyTransactionRedisListDTO로 변환
-        if (cachedData instanceof LinkedHashMap) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());  // JavaTimeModule 등록
-            redisHistoryDTO = objectMapper.convertValue(cachedData, MonthlyTransactionRedisListDTO.class);
-        } else if (cachedData instanceof MonthlyTransactionRedisListDTO) {
-            redisHistoryDTO = (MonthlyTransactionRedisListDTO) cachedData;
-        }
-
         // Redis에 데이터가 있으면 해당 데이터를 반환
-        if (redisHistoryDTO != null) {
+        if (cachedData != null) {
+            redisHistoryDTO = objectMapper.convertValue(cachedData, MonthlyTransactionRedisListDTO.class);
             return MonthlyTransactionHistoryListDTO.from(redisHistoryDTO.getMonthlyTransactions());
         }
-
+        
         // 데이터가 없으면 각 은행에서 데이터를 조회
         MonthlyTransactionHistoryListDTO chMonthlyTransaction = challetBankRepository.getTransactionByPhoneNumberAndYearMonth(phoneNumber, requestDTO);
         MonthlyTransactionHistoryListDTO kbMonthlyTransaction = kbBankFeignClient.getMonthlyTransactionHistory(tokenHeader, requestDTO.year(), requestDTO.month());
