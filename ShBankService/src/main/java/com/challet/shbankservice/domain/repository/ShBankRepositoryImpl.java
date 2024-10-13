@@ -233,8 +233,8 @@ public class ShBankRepositoryImpl implements ShBankRepositoryCustom {
             .join(shBankTransaction.shBank, shBank)
             .where(
                 shBank.phoneNumber.eq(phoneNumber)
-                    .and(
-                        shBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
+                    .and(shBank.myDataStatus.isTrue())
+                    .and(shBankTransaction.transactionDatetime.year().eq(requestDTO.year()))
                     .and(shBankTransaction.transactionDatetime.month().eq(requestDTO.month()))
                     .and(shBankTransaction.category.in(Category.COFFEE, Category.DELIVERY,
                         Category.SHOPPING, Category.TRANSPORT, Category.ETC))
