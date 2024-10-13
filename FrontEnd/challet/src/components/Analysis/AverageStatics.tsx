@@ -55,8 +55,8 @@ const AverageStatistics: React.FC<AverageStatisticsProps> = ({
     );
     return {
       category: categoryMap[category] || category, // 한글 변환
-      myTotalMoney: myStat ? myStat.totalMoney : 0, // 없으면 0 설정
-      averageTotalMoney: averageStat ? averageStat.totalMoney : 0,
+      myTotalMoney: myStat ? Math.abs(myStat.totalMoney) : 0, // 음수 값을 양수로 변환
+      averageTotalMoney: averageStat ? Math.abs(averageStat.totalMoney) : 0, // 음수 값을 양수로 변환
     };
   });
 
