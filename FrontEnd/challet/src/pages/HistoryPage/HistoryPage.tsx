@@ -104,7 +104,7 @@ const HistoryPage = () => {
       const { scrollTop, scrollHeight, clientHeight } =
         scrollContainerRef.current;
 
-      if (scrollTop + clientHeight >= scrollHeight - 20) {
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
         setPage((prevPage) => prevPage + 1);
       }
     };
