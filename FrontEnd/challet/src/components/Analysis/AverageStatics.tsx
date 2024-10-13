@@ -55,8 +55,8 @@ const AverageStatistics: React.FC<AverageStatisticsProps> = ({
     );
     return {
       category: categoryMap[category] || category, // 한글 변환
-      myPercentage: myStat ? myStat.percentage : 0, // 없으면 0% 설정
-      averagePercentage: averageStat ? averageStat.percentage : 0,
+      myTotalMoney: myStat ? myStat.totalMoney : 0, // 없으면 0 설정
+      averageTotalMoney: averageStat ? averageStat.totalMoney : 0,
     };
   });
 
@@ -83,11 +83,11 @@ const AverageStatistics: React.FC<AverageStatisticsProps> = ({
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey='myPercentage' fill='#00CCCC' name='나의 소비(%)' />
+            <Bar dataKey='myTotalMoney' fill='#00CCCC' name='나의 소비(원)' />
             <Bar
-              dataKey='averagePercentage'
+              dataKey='averageTotalMoney'
               fill='#FF8042'
-              name='평균 소비(%)'
+              name='평균 소비(원)'
             />
           </BarChart>
         </ResponsiveContainer>
