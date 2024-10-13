@@ -31,6 +31,7 @@ function TransferResult() {
 
   useEffect(() => {
     if (!id || !amount || !AccountId) {
+      alert('잘못된 접근입니다.');
       navigate('/wallet');
     }
   }, [id, amount, AccountId, navigate]);
