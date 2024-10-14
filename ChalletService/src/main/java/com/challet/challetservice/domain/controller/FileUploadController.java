@@ -2,10 +2,8 @@ package com.challet.challetservice.domain.controller;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.webp.WebpWriter;
-
 import lombok.RequiredArgsConstructor;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.UUID;
 
 @RestController
@@ -34,25 +31,26 @@ public class FileUploadController {
 	@PostMapping
 	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
 		try {
-			String uniqueFileName = UUID.randomUUID().toString() + ".webp";
+			// 고유한 파일명 생성
+			String uniqueFileName = UUID.randomUUID().toString() + ".png"; // WebP 대신 PNG 사용
 			String fileUrl = "https://" + bucket + "/" + uniqueFileName;
 
-			File tempFile = File.createTempFile("temp", file.getOriginalFilename());
-			file.transferTo(tempFile);
+			// 이미지 리사이즈 및 PNG 변환 (thumbnailator 사용)
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			Thumbnails.of(file.getInputStream())
+				.size(800, 600) // 원하는 크기로 리사이즈
+				.outputFormat("png") // PNG로 변환
+				.toOutputStream(outputStream);
+			byte[] imageData = outputStream.toByteArray();
 
-			Path webpFilePath = Files.createTempFile("converted", ".webp");
-			ImmutableImage.loader()
-				.fromFile(tempFile)
-				.output(WebpWriter.DEFAULT, webpFilePath.toFile());
-
+			// S3에 업로드할 메타데이터 설정
 			ObjectMetadata metadata = new ObjectMetadata();
-			metadata.setContentType("image/webp");
-			metadata.setContentLength(Files.size(webpFilePath));
+			metadata.setContentType("image/png");  // Content-Type을 PNG로 설정
+			metadata.setContentLength(imageData.length);
 
-			amazonS3Client.putObject(bucket, uniqueFileName, Files.newInputStream(webpFilePath), metadata);
-
-			tempFile.delete();
-			Files.delete(webpFilePath);
+			// S3에 파일 업로드
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
+			amazonS3Client.putObject(bucket, uniqueFileName, inputStream, metadata);
 
 			return ResponseEntity.ok(fileUrl);
 		} catch (IOException e) {

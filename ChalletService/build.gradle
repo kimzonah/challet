@@ -48,8 +48,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     // webp
-    implementation "com.sksamuel.scrimage:scrimage-core:4.0.32"
-    implementation "com.sksamuel.scrimage:scrimage-webp:4.0.32"
+    implementation 'net.coobird:thumbnailator:0.4.14'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
