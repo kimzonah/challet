@@ -51,18 +51,30 @@ spring:
       maximum-pool-size: 30  # 최대 30개의 연결
       minimum-idle: 10       # 최소 10개의 유휴 연결
       idle-timeout: 30000    # 30초 동안 유휴 상태일 때 연결을 닫음
+
   jpa:
     hibernate:
       ddl-auto: validate
       dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+
   elasticsearch:
     uris: "challet.world:9200"
+
   data:
     redis:
       host: challet.world
       port: ${redis_port}
 
+cloud:
+  aws:
+    s3:
+      bucket: ${s3_bucket}
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      access-key: ${aws_access_key}
+      secret-key: ${aws_secret_key}
 
 springdoc:
   api-docs:
