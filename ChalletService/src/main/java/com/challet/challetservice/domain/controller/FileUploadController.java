@@ -31,24 +31,24 @@ public class FileUploadController {
 	@PostMapping
 	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
 		try {
-			// 고유한 파일명 생성
-			String uniqueFileName = UUID.randomUUID().toString() + ".png"; // WebP 대신 PNG 사용
+			String uniqueFileName = UUID.randomUUID().toString() + ".png";
 			String fileUrl = "https://" + bucket + "/" + uniqueFileName;
 
-			// 이미지 리사이즈 및 PNG 변환 (thumbnailator 사용)
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
 			Thumbnails.of(file.getInputStream())
-				.size(800, 600) // 원하는 크기로 리사이즈
-				.outputFormat("png") // PNG로 변환
+				.width(500)
+				.outputQuality(0.5)
+				.outputFormat("jpeg")
 				.toOutputStream(outputStream);
+
+
 			byte[] imageData = outputStream.toByteArray();
 
-			// S3에 업로드할 메타데이터 설정
 			ObjectMetadata metadata = new ObjectMetadata();
-			metadata.setContentType("image/png");  // Content-Type을 PNG로 설정
+			metadata.setContentType("image/png");
 			metadata.setContentLength(imageData.length);
 
-			// S3에 파일 업로드
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
 			amazonS3Client.putObject(bucket, uniqueFileName, inputStream, metadata);
 
