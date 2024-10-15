@@ -32,7 +32,7 @@ public class FileUploadController {
 	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
 		try {
 			String uniqueFileName = UUID.randomUUID().toString() + ".png";
-			String fileUrl = "https://" + bucket + "/" + uniqueFileName;
+			String fileUrl = "https://" + bucket + ".s3.ap-northeast-2.amazonaws.com/" + uniqueFileName;
 
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
