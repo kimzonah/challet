@@ -1,4 +1,4 @@
-# CHALLET 챌린지에 참여해 소비습관을 개선하는 금융 서비스 
+# CHALLET 챌린지를 통해 소비습관을 개선하는 금융 서비스 
 ![main](./imgs/main.PNG)
 
 ## 🚩Challet를 소개합니다
